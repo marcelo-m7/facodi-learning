@@ -1,0 +1,54 @@
+name: Odoo 19 CI
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Start PostgreSQL 16
+        run: |
+          docker network create facodi-learning-ci
+          docker run -d --name facodi-learning-db \
+            --network facodi-learning-ci \
+            -e POSTGRES_USER=odoo \
+            -e POSTGRES_PASSWORD=odoo \
+            -e POSTGRES_DB=facodi_learning_ci \
+            postgres:16
+          for i in $(seq 1 30); do
+            if docker exec facodi-learning-db pg_isready -U odoo -d facodi_learning_ci; then
+              exit 0
+            fi
+            sleep 2
+          done
+          exit 1
+
+      - name: Install addon and run Odoo tests
+        run: |
+          docker run --rm \
+            --network facodi-learning-ci \
+            -v "$GITHUB_WORKSPACE:/mnt/extra-addons:ro" \
+            odoo:19.0 \
+            --db_host=facodi-learning-db \
+            --db_port=5432 \
+            --db_user=odoo \
+            --db_password=odoo \
+            --addons-path=/usr/lib/python3/dist-packages/odoo/addons,/mnt/extra-addons \
+            --workers=0 \
+            --without-demo=all \
+            -d facodi_learning_ci \
+            -i facodi_learning \
+            --test-tags /facodi_learning \
+            --stop-after-init
+
+      - name: PostgreSQL logs on failure
+        if: failure()
+        run: docker logs facodi-learning-db || true
