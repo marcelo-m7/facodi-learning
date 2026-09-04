@@ -7,7 +7,9 @@
     "website": "https://facodi.pt",
     "license": "LGPL-3",
     "depends": ["website_slides"],
-    "data": [],
+    "data": [
+        "security/ir.model.access.csv",
+    ],
     "installable": True,
     "application": False,
 }
