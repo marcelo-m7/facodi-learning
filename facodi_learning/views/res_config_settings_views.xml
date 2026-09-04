@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="res_config_settings_view_form_facodi_learning" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.facodi.learning</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="website_slides.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//app[@name='website_slides']/block[@id='website_slides_selection_settings']" position="inside">
+                <setting id="facodi_learning_analysis_settings" string="FACODI Analysis" help="Configure the standard scheduled analysis pipeline for FACODI learning content.">
+                    <div class="content-group">
+                        <div class="row mt16">
+                            <label for="facodi_learning_analysis_provider" class="col-lg-4 o_light_label"/>
+                            <field name="facodi_learning_analysis_provider" class="oe_inline"/>
+                        </div>
+                        <div class="row mt16">
+                            <label for="facodi_learning_analysis_batch_size" class="col-lg-4 o_light_label"/>
+                            <field name="facodi_learning_analysis_batch_size" class="oe_inline"/>
+                        </div>
+                    </div>
+                </setting>
+            </xpath>
+        </field>
+    </record>
+</odoo>

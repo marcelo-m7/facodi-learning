@@ -1,0 +1,7 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_facodi_analysis_job_officer,FACODI analysis jobs - Officer,model_facodi_learning_analysis_job,website_slides.group_website_slides_officer,1,1,1,0
+access_facodi_analysis_job_manager,FACODI analysis jobs - Manager,model_facodi_learning_analysis_job,website_slides.group_website_slides_manager,1,1,1,1
+access_facodi_analysis_result_officer,FACODI analysis results - Officer,model_facodi_learning_analysis_result,website_slides.group_website_slides_officer,1,0,0,0
+access_facodi_analysis_result_manager,FACODI analysis results - Manager,model_facodi_learning_analysis_result,website_slides.group_website_slides_manager,1,1,1,1
+access_facodi_learning_mapping_officer,FACODI mappings - Officer,model_facodi_learning_mapping,website_slides.group_website_slides_officer,1,1,1,0
+access_facodi_learning_mapping_manager,FACODI mappings - Manager,model_facodi_learning_mapping,website_slides.group_website_slides_manager,1,1,1,1

@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_facodi_analysis_job_search" model="ir.ui.view">
+        <field name="name">facodi.learning.analysis.job.search</field>
+        <field name="model">facodi.learning.analysis.job</field>
+        <field name="arch" type="xml">
+            <search string="FACODI Analysis Jobs">
+                <field name="slide_id"/>
+                <field name="provider"/>
+                <field name="requested_by_id"/>
+                <filter name="pending" string="Pending" domain="[('state', '=', 'pending')]"/>
+                <filter name="failed" string="Failed" domain="[('state', '=', 'failed')]"/>
+                <group>
+                    <filter name="group_state" string="Status" context="{'group_by': 'state'}"/>
+                    <filter name="group_provider" string="Provider" context="{'group_by': 'provider'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="view_facodi_analysis_job_list" model="ir.ui.view">
+        <field name="name">facodi.learning.analysis.job.list</field>
+        <field name="model">facodi.learning.analysis.job</field>
+        <field name="arch" type="xml">
+            <list string="FACODI Analysis Jobs" create="0" decoration-danger="state == 'failed'" decoration-success="state == 'completed'">
+                <field name="slide_id"/>
+                <field name="state"/>
+                <field name="provider"/>
+                <field name="requested_by_id"/>
+                <field name="attempt_count"/>
+                <field name="create_date"/>
+                <field name="completed_at"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_facodi_analysis_job_form" model="ir.ui.view">
+        <field name="name">facodi.learning.analysis.job.form</field>
+        <field name="model">facodi.learning.analysis.job</field>
+        <field name="arch" type="xml">
+            <form string="FACODI Analysis Job" create="0">
+                <header>
+                    <button name="action_process" type="object" string="Process" class="btn-primary" invisible="state not in ('pending', 'failed')" groups="website_slides.group_website_slides_manager"/>
+                    <button name="action_retry" type="object" string="Retry" invisible="state != 'failed'" groups="website_slides.group_website_slides_officer"/>
+                    <field name="state" widget="statusbar" statusbar_visible="pending,processing,completed,failed"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="slide_id"/>
+                            <field name="provider"/>
+                            <field name="model_name"/>
+                            <field name="requested_by_id"/>
+                        </group>
+                        <group>
+                            <field name="attempt_count"/>
+                            <field name="started_at"/>
+                            <field name="completed_at"/>
+                            <field name="result_id"/>
+                        </group>
+                    </group>
+                    <group invisible="not last_error">
+                        <field name="last_error" readonly="1"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_facodi_analysis_result_list" model="ir.ui.view">
+        <field name="name">facodi.learning.analysis.result.list</field>
+        <field name="model">facodi.learning.analysis.result</field>
+        <field name="arch" type="xml">
+            <list string="FACODI Analysis Results" create="0" delete="0">
+                <field name="slide_id"/>
+                <field name="provider"/>
+                <field name="model_name"/>
+                <field name="detected_language"/>
+                <field name="suggested_tag_ids" widget="many2many_tags"/>
+                <field name="create_date"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_facodi_analysis_result_form" model="ir.ui.view">
+        <field name="name">facodi.learning.analysis.result.form</field>
+        <field name="model">facodi.learning.analysis.result</field>
+        <field name="arch" type="xml">
+            <form string="FACODI Analysis Result" create="0" delete="0">
+                <header>
+                    <button name="action_apply_suggested_tags" type="object" string="Apply Suggested Tags" class="btn-primary" groups="website_slides.group_website_slides_officer"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="slide_id"/>
+                            <field name="job_id"/>
+                            <field name="provider"/>
+                            <field name="model_name"/>
+                        </group>
+                        <group>
+                            <field name="detected_language"/>
+                            <field name="create_date"/>
+                            <field name="suggested_tag_ids" widget="many2many_tags"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="summary"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_facodi_learning_mapping_list" model="ir.ui.view">
+        <field name="name">facodi.learning.mapping.list</field>
+        <field name="model">facodi.learning.mapping</field>
+        <field name="arch" type="xml">
+            <list string="FACODI Learning Mappings" decoration-success="state == 'approved'" decoration-danger="state == 'rejected'">
+                <field name="source_slide_id"/>
+                <field name="target_slide_id"/>
+                <field name="mapping_type"/>
+                <field name="confidence"/>
+                <field name="origin"/>
+                <field name="state"/>
+                <field name="reviewed_by_id" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_facodi_learning_mapping_form" model="ir.ui.view">
+        <field name="name">facodi.learning.mapping.form</field>
+        <field name="model">facodi.learning.mapping</field>
+        <field name="arch" type="xml">
+            <form string="FACODI Learning Mapping">
+                <header>
+                    <button name="action_approve" type="object" string="Approve" class="btn-primary" invisible="state != 'proposed'" groups="website_slides.group_website_slides_manager"/>
+                    <button name="action_reject" type="object" string="Reject" invisible="state != 'proposed'" groups="website_slides.group_website_slides_manager"/>
+                    <field name="state" widget="statusbar" statusbar_visible="proposed,approved,rejected"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="source_slide_id"/>
+                            <field name="target_slide_id"/>
+                            <field name="mapping_type"/>
+                            <field name="confidence"/>
+                        </group>
+                        <group>
+                            <field name="origin"/>
+                            <field name="analysis_result_id"/>
+                            <field name="reviewed_by_id"/>
+                            <field name="reviewed_at"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_facodi_analysis_jobs" model="ir.actions.act_window">
+        <field name="name">Analysis Jobs</field>
+        <field name="res_model">facodi.learning.analysis.job</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_facodi_analysis_job_search"/>
+    </record>
+
+    <record id="action_facodi_analysis_results" model="ir.actions.act_window">
+        <field name="name">Analysis Results</field>
+        <field name="res_model">facodi.learning.analysis.result</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <record id="action_facodi_learning_mappings" model="ir.actions.act_window">
+        <field name="name">Learning Mappings</field>
+        <field name="res_model">facodi.learning.mapping</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <menuitem id="menu_facodi_learning_analysis"
+        name="FACODI Analysis"
+        parent="website_slides.website_slides_menu_root"
+        groups="website_slides.group_website_slides_officer"
+        sequence="8"/>
+    <menuitem id="menu_facodi_learning_jobs"
+        name="Jobs"
+        parent="menu_facodi_learning_analysis"
+        action="action_facodi_analysis_jobs"
+        sequence="1"/>
+    <menuitem id="menu_facodi_learning_results"
+        name="Results"
+        parent="menu_facodi_learning_analysis"
+        action="action_facodi_analysis_results"
+        sequence="2"/>
+    <menuitem id="menu_facodi_learning_mappings"
+        name="Mappings"
+        parent="menu_facodi_learning_analysis"
+        action="action_facodi_learning_mappings"
+        sequence="3"/>
+</odoo>
