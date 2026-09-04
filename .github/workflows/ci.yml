@@ -35,12 +35,12 @@ jobs:
         run: |
           docker run --rm \
             --network facodi-learning-ci \
+            -e HOST=facodi-learning-db \
+            -e PORT=5432 \
+            -e USER=odoo \
+            -e PASSWORD=odoo \
             -v "$GITHUB_WORKSPACE:/mnt/extra-addons:ro" \
             odoo:19.0 \
-            --db_host=facodi-learning-db \
-            --db_port=5432 \
-            --db_user=odoo \
-            --db_password=odoo \
             --addons-path=/usr/lib/python3/dist-packages/odoo/addons,/mnt/extra-addons \
             --workers=0 \
             --without-demo=all \
