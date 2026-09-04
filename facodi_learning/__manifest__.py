@@ -9,6 +9,11 @@
     "depends": ["website_slides"],
     "data": [
         "security/ir.model.access.csv",
+        "security/facodi_learning_security.xml",
+        "data/ir_cron.xml",
+        "views/slide_slide_views.xml",
+        "views/analysis_views.xml",
+        "views/res_config_settings_views.xml",
     ],
     "installable": True,
     "application": False,

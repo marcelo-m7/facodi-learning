@@ -31,3 +31,17 @@ class SlideSlide(models.Model):
             "slide_id": self.id,
             "provider": provider,
         })
+
+    def action_facodi_request_analysis_ui(self):
+        self.ensure_one()
+        job = self.action_facodi_request_analysis()
+        return {
+            "type": "ir.actions.client",
+            "tag": "display_notification",
+            "params": {
+                "title": self.env._("FACODI Analysis"),
+                "message": self.env._("Analysis job %(job)s was queued.", job=job.id),
+                "type": "success",
+                "sticky": False,
+            },
+        }

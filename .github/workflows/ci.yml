@@ -43,7 +43,7 @@ jobs:
             odoo:19.0 \
             --addons-path=/usr/lib/python3/dist-packages/odoo/addons,/mnt/extra-addons \
             --workers=0 \
-            --without-demo=all \
+            --without-demo=True \
             -d facodi_learning_ci \
             -i facodi_learning \
             --test-tags /facodi_learning \
