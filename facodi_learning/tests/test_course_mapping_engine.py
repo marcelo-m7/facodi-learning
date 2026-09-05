@@ -1,4 +1,5 @@
 from odoo import Command
+from odoo.exceptions import ValidationError
 from odoo.tests import TransactionCase
 
 
@@ -210,6 +211,38 @@ class TestCourseMappingEngine(TransactionCase):
         self.assertEqual(matching.origin, "analysis")
         self.assertEqual(matching.ranking_version, "course-mapping-v1")
         self.assertEqual(matching.state, "proposed")
+
+    def test_generation_refuses_unavailable_source_lock_before_creating_proposals(self):
+        source = self._channel(
+            "Concurrent Database Course",
+            user_id=self.officer.id,
+            tag_ids=[Command.link(self.database_tag.id)],
+        )
+        target = self._channel(
+            "Concurrent Database Course Advanced",
+            tag_ids=[Command.link(self.database_tag.id)],
+        )
+        source_as_officer = source.with_user(self.officer)
+        Mapping = self.env["facodi.learning.course.mapping"]
+        domain = [
+            ("source_channel_id", "=", source.id),
+            ("target_channel_id", "=", target.id),
+            ("mapping_type", "=", "related"),
+        ]
+
+        with self.registry.cursor() as lock_cr:
+            lock_cr.execute(
+                "SELECT pg_advisory_xact_lock(%s, %s)",
+                (0x4641434F, source.id),
+            )
+            with self.assertRaises(ValidationError):
+                source_as_officer._facodi_propose_course_mappings(limit=20)
+            self.assertFalse(Mapping.search(domain))
+
+        retry = source_as_officer._facodi_propose_course_mappings(limit=20)
+        matching = retry.filtered(lambda item: item.target_channel_id.id == target.id)
+        self.assertEqual(len(matching), 1)
+        self.assertEqual(Mapping.search_count(domain), 1)
 
     def test_engine_does_not_use_learner_membership(self):
         source = self._channel("Membership Source")
