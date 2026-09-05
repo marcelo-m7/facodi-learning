@@ -6,3 +6,4 @@ from . import slide_slide
 
 from . import analysis_attempt
 from . import learning_source
+from . import course_candidate
