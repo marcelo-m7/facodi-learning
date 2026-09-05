@@ -248,6 +248,13 @@ class TestCourseSelection(TransactionCase):
         self.assertEqual(action.view_mode, "list,form")
         self.env.ref("facodi_learning.menu_facodi_learning_course_candidates")
 
+    def test_new_candidate_identity_is_editable_only_before_first_save(self):
+        view = self.env.ref("facodi_learning.view_facodi_course_candidate_form")
+        arch = view.arch_db
+        self.assertIn('<field name="id" invisible="1"/>', arch)
+        self.assertIn('<field name="provider" readonly="id"/>', arch)
+        self.assertIn('<field name="external_id" readonly="id"/>', arch)
+
     def test_terminal_decision_snapshot_does_not_change_with_later_settings(self):
         params = self.env["ir.config_parameter"].sudo()
         params.set_param("facodi_learning.course_selection_mode", "auto")
