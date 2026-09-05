@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="approved_learning_resources" inherit_id="website_slides.slide_main" name="Reviewed learning resources">
+        <xpath expr="//t[@t-call='website_slides.slide_content_detailed']" position="after">
+            <t t-set="learning_resources" t-value="slide._facodi_related_slides(website)"/>
+            <aside t-if="learning_resources" class="mt-4 border-top pt-3" aria-label="Learning resources">
+                <h2 class="h5">Explore further</h2>
+                <ul class="list-unstyled">
+                    <li t-foreach="learning_resources" t-as="resource" class="mb-2">
+                        <a t-att-href="resource.website_url"><span t-field="resource.name"/></a>
+                    </li>
+                </ul>
+            </aside>
+        </xpath>
+    </template>
+</odoo>

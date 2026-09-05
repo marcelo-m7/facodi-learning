@@ -40,6 +40,7 @@ jobs:
             -e USER=odoo \
             -e PASSWORD=odoo \
             -v "$GITHUB_WORKSPACE:/mnt/extra-addons:ro" \
+            -v facodi-learning-data:/var/lib/odoo \
             odoo:19.0 \
             --addons-path=/usr/lib/python3/dist-packages/odoo/addons,/mnt/extra-addons \
             --workers=0 \
@@ -48,6 +49,19 @@ jobs:
             -i facodi_learning \
             --test-tags /facodi_learning \
             --stop-after-init
+
+      - name: Upgrade addon and run regression tests
+        run: |
+          docker run --rm \
+            --network facodi-learning-ci \
+            -e HOST=facodi-learning-db -e USER=odoo -e PASSWORD=odoo \
+            -v "$GITHUB_WORKSPACE:/mnt/extra-addons:ro" \
+            -v facodi-learning-data:/var/lib/odoo \
+            odoo:19.0 \
+            --addons-path=/usr/lib/python3/dist-packages/odoo/addons,/mnt/extra-addons \
+            --workers=0 --without-demo=True \
+            -d facodi_learning_ci -u facodi_learning \
+            --test-tags /facodi_learning --stop-after-init
 
       - name: PostgreSQL logs on failure
         if: failure()
