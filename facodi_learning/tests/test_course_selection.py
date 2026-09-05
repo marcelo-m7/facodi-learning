@@ -91,3 +91,45 @@ class TestCourseSelection(TransactionCase):
         )
         self.assertEqual(candidate.description, "Updated description")
         self.assertEqual(candidate.metadata, {"v": 2})
+
+    def test_title_duplicate_is_detected_deterministically(self):
+        candidate = self.env["facodi.learning.course.candidate"].create(
+            self._candidate_values(
+                name="  PYTHON basics  ", external_id="manual-title-duplicate"
+            )
+        )
+        candidate.action_evaluate()
+        self.assertEqual(candidate.matched_channel_id, self.channel)
+        self.assertEqual(candidate.duplication_risk, 1.0)
+        self.assertEqual(candidate.recommendation, "review_existing_match")
+
+    def test_manual_candidate_has_deterministic_local_scores(self):
+        candidate = self.env["facodi.learning.course.candidate"].create(
+            self._candidate_values(
+                name="Unique Systems Course", external_id="manual-scores"
+            )
+        )
+        candidate.action_evaluate()
+        first = (
+            candidate.relevance_score,
+            candidate.metadata_quality_score,
+            candidate.language_fit_score,
+            candidate.coverage_score,
+            candidate.duplication_risk,
+            candidate.recommendation,
+            candidate.evaluation_reasons,
+        )
+        candidate.action_evaluate()
+        second = (
+            candidate.relevance_score,
+            candidate.metadata_quality_score,
+            candidate.language_fit_score,
+            candidate.coverage_score,
+            candidate.duplication_risk,
+            candidate.recommendation,
+            candidate.evaluation_reasons,
+        )
+        self.assertEqual(first, second)
+        self.assertEqual(candidate.evaluation_policy_version, "course-evaluation-v1")
+        self.assertEqual(candidate.coverage_score, 1.0)
+        self.assertEqual(candidate.state, "evaluated")
