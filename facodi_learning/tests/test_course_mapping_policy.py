@@ -116,7 +116,6 @@ class TestCourseMappingPolicy(TransactionCase):
             self.assertFalse(mapping._maybe_auto_approve())
             mapping.invalidate_recordset()
             self.assertEqual(mapping.state, "proposed")
-            mapping.unlink()
 
     def test_prerequisite_never_auto_approves(self):
         self._set_auto(types="related,complements,prerequisite")
