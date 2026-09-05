@@ -188,7 +188,8 @@
         <field name="res_model">facodi.learning.mapping</field>
         <field name="view_mode">list,form</field>
     </record>
-    <menuitem id="menu_facodi_learning_analysis" name="FACODI Analysis" parent="website_slides.website_slides_menu_root" groups="website_slides.group_website_slides_officer" sequence="8"/>
+    <menuitem id="menu_facodi_learning_root" name="FACODI Learning" parent="website_slides.website_slides_menu_root" groups="website_slides.group_website_slides_officer" sequence="8"/>
+    <menuitem id="menu_facodi_learning_analysis" name="Content Analysis" parent="menu_facodi_learning_root" groups="website_slides.group_website_slides_officer" sequence="2"/>
     <menuitem id="menu_facodi_learning_jobs" name="Jobs" parent="menu_facodi_learning_analysis" action="action_facodi_analysis_jobs" sequence="1"/>
     <menuitem id="menu_facodi_learning_results" name="Results" parent="menu_facodi_learning_analysis" action="action_facodi_analysis_results" sequence="2"/>
     <menuitem id="menu_facodi_learning_mappings" name="Mappings" parent="menu_facodi_learning_analysis" action="action_facodi_learning_mappings" sequence="3"/>

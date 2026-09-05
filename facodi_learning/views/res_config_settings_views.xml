@@ -18,6 +18,44 @@
                         </div>
                     </div>
                 </setting>
+                <setting id="facodi_learning_course_selection_settings" string="FACODI Course Selection" help="Configure deterministic course candidate review and Auto Approve guardrails.">
+                    <div class="content-group">
+                        <div class="row mt16">
+                            <label for="facodi_learning_course_selection_mode" class="col-lg-4 o_light_label"/>
+                            <field name="facodi_learning_course_selection_mode" class="oe_inline"/>
+                        </div>
+                        <div class="row mt16">
+                            <label for="facodi_learning_course_selection_languages" class="col-lg-4 o_light_label"/>
+                            <field name="facodi_learning_course_selection_languages" class="oe_inline"/>
+                        </div>
+                        <div class="row mt16">
+                            <label for="facodi_learning_auto_approve_trusted_providers" class="col-lg-4 o_light_label"/>
+                            <field name="facodi_learning_auto_approve_trusted_providers" class="oe_inline"/>
+                        </div>
+                        <div invisible="facodi_learning_course_selection_mode == 'manual'">
+                            <div class="row mt16">
+                                <label for="facodi_learning_auto_approve_min_relevance" class="col-lg-4 o_light_label"/>
+                                <field name="facodi_learning_auto_approve_min_relevance" class="oe_inline"/>
+                            </div>
+                            <div class="row mt16">
+                                <label for="facodi_learning_auto_approve_min_metadata_quality" class="col-lg-4 o_light_label"/>
+                                <field name="facodi_learning_auto_approve_min_metadata_quality" class="oe_inline"/>
+                            </div>
+                            <div class="row mt16">
+                                <label for="facodi_learning_auto_approve_min_language_fit" class="col-lg-4 o_light_label"/>
+                                <field name="facodi_learning_auto_approve_min_language_fit" class="oe_inline"/>
+                            </div>
+                            <div class="row mt16">
+                                <label for="facodi_learning_auto_approve_min_coverage" class="col-lg-4 o_light_label"/>
+                                <field name="facodi_learning_auto_approve_min_coverage" class="oe_inline"/>
+                            </div>
+                            <div class="row mt16">
+                                <label for="facodi_learning_auto_approve_max_duplication_risk" class="col-lg-4 o_light_label"/>
+                                <field name="facodi_learning_auto_approve_max_duplication_risk" class="oe_inline"/>
+                            </div>
+                        </div>
+                    </div>
+                </setting>
             </xpath>
         </field>
     </record>

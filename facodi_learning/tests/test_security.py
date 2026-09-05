@@ -19,6 +19,19 @@ class TestPipelineSecurity(TransactionCase):
                 ],
             }
         )
+        cls.other_officer = cls.env["res.users"].create(
+            {
+                "name": "Other Officer",
+                "login": "pipeline-other-officer",
+                "group_ids": [
+                    (
+                        6,
+                        0,
+                        [cls.env.ref("website_slides.group_website_slides_officer").id],
+                    )
+                ],
+            }
+        )
         cls.channel = cls.env["slide.channel"].create(
             {"name": "Owned", "user_id": cls.officer.id}
         )
@@ -71,6 +84,63 @@ class TestPipelineSecurity(TransactionCase):
                 self.env["facodi.learning.analysis.job"].with_user(user).create(
                     {"slide_id": self.slide.id}
                 )
+
+    def test_course_candidate_public_and_portal_denied(self):
+        Candidate = self.env["facodi.learning.course.candidate"]
+        portal = self.env["res.users"].create(
+            {
+                "name": "Course Candidate Portal",
+                "login": "course-candidate-portal",
+                "group_ids": [(6, 0, [self.env.ref("base.group_portal").id])],
+            }
+        )
+        for user in (self.env.ref("base.public_user"), portal):
+            with self.assertRaises(AccessError):
+                Candidate.with_user(user).create(
+                    {
+                        "provider": "manual",
+                        "external_id": f"denied-{user.id}",
+                        "name": "Denied",
+                    }
+                )
+
+    def test_officer_cannot_terminally_resolve_course_candidate(self):
+        candidate = (
+            self.env["facodi.learning.course.candidate"]
+            .with_user(self.officer)
+            .create(
+                {
+                    "provider": "manual",
+                    "external_id": "officer-candidate",
+                    "name": "Officer Candidate",
+                    "description": "Safe description",
+                    "language": "pt",
+                }
+            )
+        )
+        candidate.with_user(self.officer).action_evaluate()
+        with self.assertRaises(AccessError):
+            candidate.with_user(self.officer).action_resolve_new()
+
+    def test_officer_cannot_edit_another_officers_course_candidate(self):
+        candidate = (
+            self.env["facodi.learning.course.candidate"]
+            .with_user(self.officer)
+            .create(
+                {
+                    "provider": "manual",
+                    "external_id": "officer-owned-candidate",
+                    "name": "Officer Owned Candidate",
+                    "description": "Original description",
+                    "language": "pt",
+                }
+            )
+        )
+        self.assertEqual(candidate.requested_by_id, self.officer)
+        with self.assertRaises(AccessError):
+            candidate.with_user(self.other_officer).write(
+                {"description": "Cross-owner mutation"}
+            )
 
     def test_ingest_idempotent(self):
         Source = self.env["facodi.learning.source"]
