@@ -161,3 +161,83 @@ class TestCourseSelection(TransactionCase):
         )
         self.assertFalse(eligible)
         self.assertTrue(any("duplicate" in reason.lower() for reason in reasons))
+
+    def test_auto_mode_resolves_eligible_candidate_to_unpublished_course(self):
+        self.env["ir.config_parameter"].sudo().set_param(
+            "facodi_learning.course_selection_mode", "auto"
+        )
+        candidate = self.env["facodi.learning.course.candidate"].create(
+            self._candidate_values(
+                external_id="auto-new",
+                name="Applied Cryptography Foundations",
+            )
+        )
+        candidate.action_evaluate()
+        self.assertEqual(candidate.state, "resolved")
+        self.assertEqual(candidate.resolution_type, "new")
+        self.assertEqual(candidate.decision_origin, "automatic")
+        self.assertEqual(candidate.decision_policy_version, "course-selection-v1")
+        self.assertFalse(candidate.reviewed_by_id)
+        self.assertTrue(candidate.decision_snapshot)
+        self.assertFalse(candidate.resolved_channel_id.website_published)
+
+    def test_auto_mode_never_auto_links_semantic_duplicate(self):
+        self.env["ir.config_parameter"].sudo().set_param(
+            "facodi_learning.course_selection_mode", "auto"
+        )
+        candidate = self.env["facodi.learning.course.candidate"].create(
+            self._candidate_values(external_id="auto-dup", name="Python Basics")
+        )
+        candidate.action_evaluate()
+        self.assertEqual(candidate.state, "shortlisted")
+        self.assertFalse(candidate.resolved_channel_id)
+
+    def test_manual_existing_resolution_creates_no_new_course(self):
+        before = self.env["slide.channel"].search_count([])
+        candidate = self.env["facodi.learning.course.candidate"].create(
+            self._candidate_values(
+                external_id="manual-existing", name="Existing Choice"
+            )
+        )
+        candidate.action_evaluate()
+        candidate.write({"matched_channel_id": self.channel.id})
+        candidate.action_resolve_existing()
+        self.assertEqual(candidate.state, "resolved")
+        self.assertEqual(candidate.resolved_channel_id, self.channel)
+        self.assertEqual(candidate.resolution_type, "existing")
+        self.assertEqual(candidate.decision_origin, "manual")
+        self.assertEqual(candidate.reviewed_by_id, self.env.user)
+        self.assertEqual(self.env["slide.channel"].search_count([]), before)
+
+    def test_manual_new_resolution_is_idempotent_and_unpublished(self):
+        candidate = self.env["facodi.learning.course.candidate"].create(
+            self._candidate_values(
+                external_id="idempotent-new", name="Unique Security Course"
+            )
+        )
+        candidate.action_evaluate()
+        candidate.action_resolve_new()
+        channel = candidate.resolved_channel_id
+        candidate.action_resolve_new()
+        self.assertEqual(candidate.resolved_channel_id, channel)
+        self.assertFalse(channel.website_published)
+
+    def test_resolution_failure_does_not_leave_partial_course(self):
+        from unittest.mock import patch
+
+        candidate = self.env["facodi.learning.course.candidate"].create(
+            self._candidate_values(external_id="failure", name="Failure Course")
+        )
+        candidate.action_evaluate()
+        before = self.env["slide.channel"].search_count([])
+        ChannelModel = type(self.env["slide.channel"])
+        with patch.object(
+            ChannelModel, "create", side_effect=RuntimeError("secret detail")
+        ):
+            candidate.action_resolve_new()
+        candidate.invalidate_recordset()
+        self.assertNotEqual(candidate.state, "resolved")
+        self.assertFalse(candidate.resolved_channel_id)
+        self.assertEqual(self.env["slide.channel"].search_count([]), before)
+        self.assertIn("RuntimeError: operation failed", candidate.last_error)
+        self.assertNotIn("secret detail", candidate.last_error)
