@@ -9,3 +9,4 @@ from . import test_course_mapping
 from . import test_course_mapping_engine
 from . import test_course_mapping_prerequisite
 from . import test_course_mapping_policy
+from . import test_course_mapping_visibility
