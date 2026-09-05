@@ -44,12 +44,10 @@ That GREEN validates the M3.3 functional surface loaded by Odoo, including:
 The implementation was hardened after the first functional GREEN rather than
 freezing the earlier test result as release evidence.
 
-Prerequisite application now serializes both participating `slide.channel` rows
-before re-reading the native prerequisite graph, checking for cycles and writing the
-standard field. This makes concurrent FACODI prerequisite approvals fail closed
-instead of allowing two transactions to validate against stale graph state. Exact
-SHA `4497c73b20b3a30b07f21436b5cc1e1f381a0522`, GitHub Actions run
-`33996049568`, passed both clean-install and upgrade gates.
+Prerequisite application first gained deterministic source/target row locking before
+re-reading the native prerequisite graph, checking for cycles and writing the
+standard field. Exact SHA `4497c73b20b3a30b07f21436b5cc1e1f381a0522`, GitHub
+Actions run `33996049568`, passed both clean-install and upgrade gates.
 
 Generated proposal provenance is also server-owned. Direct ORM `create()` accepts
 only manual proposals and rejects forged `origin="analysis"` or `ranking_version`
@@ -66,6 +64,21 @@ shared standard course tags first, then fills any remaining bounded slots using 
 stable `sequence,id` fallback. Exact SHA
 `c064c968b3338a075064fe26ec61554bfecf0811`, GitHub Actions run `33996912592`,
 passed both the clean-install and same-database upgrade gates.
+
+The PR review identified that source/target row locks alone cannot serialize two
+FACODI prerequisite writes with disjoint endpoints that jointly close a larger
+cycle. A deliberate RED was committed at exact SHA
+`63d3b403a8abf658f0ed1f7722b468894fc8facb`. Pull-request CI run `33997302875`
+reported **1 failure and 0 errors of 101 tests**, exclusively because graph-wide
+serialization was absent. The review path now acquires a database-transaction-level,
+fail-closed FACODI advisory lock before source/target row locks, cache invalidation,
+cycle validation and the native prerequisite write. This serializes prerequisite
+mutations made through the FACODI review path even when the new edges have disjoint
+endpoints. Exact SHA `2fedc8de95ca6c6a38d0d3463ef3ddd22891e2de`, pull-request
+CI run `33997458255`, passed both clean-install and same-database upgrade gates.
+The advisory lock is only a concurrency guard for FACODI review operations; native
+Odoo prerequisite edits performed outside this path remain ordinary Odoo writes.
+The only prerequisite truth continues to be `slide.channel.prerequisite_channel_ids`.
 
 The final documentation-only release commit is required to pass those same two CI
 gates before the M3.3 pull request is considered merge-ready.
