@@ -3,6 +3,18 @@ import unicodedata
 
 
 EVALUATION_POLICY_VERSION = "course-evaluation-v1"
+SELECTION_POLICY_VERSION = "course-selection-v1"
+
+_SELECTION_DEFAULTS = {
+    "mode": "manual",
+    "min_relevance": 0.80,
+    "min_metadata_quality": 0.70,
+    "min_language_fit": 0.90,
+    "min_coverage": 0.65,
+    "max_duplication_risk": 0.30,
+    "languages": "pt,en",
+    "trusted_providers": "manual",
+}
 
 
 def normalize_course_title(value):
@@ -19,6 +31,113 @@ def course_title_similarity(left, right):
     if left_tokens == right_tokens:
         return 1.0
     return len(left_tokens & right_tokens) / len(left_tokens | right_tokens)
+
+
+def _normalized_identifier_set(value, default):
+    raw = value if value is not None else default
+    return {
+        item.strip().lower()
+        for item in str(raw).split(",")
+        if item and item.strip()
+    }
+
+
+def _normalized_threshold(value, default):
+    try:
+        parsed = float(value)
+    except (TypeError, ValueError):
+        parsed = float(default)
+    return max(0.0, min(parsed, 1.0))
+
+
+def get_course_selection_policy(env):
+    parameters = env["ir.config_parameter"].sudo()
+    mode = parameters.get_param(
+        "facodi_learning.course_selection_mode", _SELECTION_DEFAULTS["mode"]
+    )
+    if mode not in {"manual", "assisted", "auto"}:
+        mode = "manual"
+
+    return {
+        "mode": mode,
+        "min_relevance": _normalized_threshold(
+            parameters.get_param(
+                "facodi_learning.auto_approve_min_relevance",
+                str(_SELECTION_DEFAULTS["min_relevance"]),
+            ),
+            _SELECTION_DEFAULTS["min_relevance"],
+        ),
+        "min_metadata_quality": _normalized_threshold(
+            parameters.get_param(
+                "facodi_learning.auto_approve_min_metadata_quality",
+                str(_SELECTION_DEFAULTS["min_metadata_quality"]),
+            ),
+            _SELECTION_DEFAULTS["min_metadata_quality"],
+        ),
+        "min_language_fit": _normalized_threshold(
+            parameters.get_param(
+                "facodi_learning.auto_approve_min_language_fit",
+                str(_SELECTION_DEFAULTS["min_language_fit"]),
+            ),
+            _SELECTION_DEFAULTS["min_language_fit"],
+        ),
+        "min_coverage": _normalized_threshold(
+            parameters.get_param(
+                "facodi_learning.auto_approve_min_coverage",
+                str(_SELECTION_DEFAULTS["min_coverage"]),
+            ),
+            _SELECTION_DEFAULTS["min_coverage"],
+        ),
+        "max_duplication_risk": _normalized_threshold(
+            parameters.get_param(
+                "facodi_learning.auto_approve_max_duplication_risk",
+                str(_SELECTION_DEFAULTS["max_duplication_risk"]),
+            ),
+            _SELECTION_DEFAULTS["max_duplication_risk"],
+        ),
+        "languages": _normalized_identifier_set(
+            parameters.get_param(
+                "facodi_learning.course_selection_languages",
+                _SELECTION_DEFAULTS["languages"],
+            ),
+            _SELECTION_DEFAULTS["languages"],
+        ),
+        "trusted_providers": _normalized_identifier_set(
+            parameters.get_param(
+                "facodi_learning.auto_approve_trusted_providers",
+                _SELECTION_DEFAULTS["trusted_providers"],
+            ),
+            _SELECTION_DEFAULTS["trusted_providers"],
+        ),
+        "policy_version": SELECTION_POLICY_VERSION,
+    }
+
+
+def candidate_is_auto_approve_eligible(candidate, policy):
+    reasons = []
+    if policy.get("mode") != "auto":
+        reasons.append("Course selection mode is not Auto Approve.")
+    if (candidate.provider or "").strip().lower() not in policy.get(
+        "trusted_providers", set()
+    ):
+        reasons.append("Candidate provider is not trusted for Auto Approve.")
+    if candidate.state in {"approved", "rejected", "resolved"}:
+        reasons.append("Candidate has already reached a terminal decision state.")
+    if candidate.recommendation in {"review_existing_match", "ignore"}:
+        reasons.append(
+            "Candidate recommendation requires review or exclusion before approval."
+        )
+    if candidate.relevance_score < policy["min_relevance"]:
+        reasons.append("Relevance score is below the Auto Approve minimum.")
+    if candidate.metadata_quality_score < policy["min_metadata_quality"]:
+        reasons.append("Metadata quality score is below the Auto Approve minimum.")
+    if candidate.language_fit_score < policy["min_language_fit"]:
+        reasons.append("Language fit score is below the Auto Approve minimum.")
+    if candidate.coverage_score < policy["min_coverage"]:
+        reasons.append("Coverage score is below the Auto Approve minimum.")
+    if candidate.duplication_risk > policy["max_duplication_risk"]:
+        reasons.append("Duplicate risk exceeds the Auto Approve maximum.")
+    return not reasons, reasons
 
 
 def evaluate_course_candidate(candidate, existing_channels, accepted_languages):
