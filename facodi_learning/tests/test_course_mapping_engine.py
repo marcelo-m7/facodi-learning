@@ -101,6 +101,28 @@ class TestCourseMappingEngine(TransactionCase):
         self.assertIn(global_target.id, target_ids)
         self.assertNotIn(other.id, target_ids)
 
+    def test_bounded_retrieval_prioritizes_shared_course_tags(self):
+        source = self._channel(
+            "Prioritized Source",
+            sequence=1,
+            tag_ids=[Command.link(self.database_tag.id)],
+        )
+        self._channel("Generic First", sequence=2)
+        self._channel("Generic Second", sequence=3)
+        relevant = self._channel(
+            "Relevant Despite Sequence",
+            sequence=999,
+            tag_ids=[Command.link(self.database_tag.id)],
+        )
+
+        target_ids = {
+            item["target_channel_id"]
+            for item in self._mapping_candidates(source, limit=2)
+        }
+
+        self.assertIn(relevant.id, target_ids)
+        self.assertEqual(len(target_ids), 2)
+
     def test_rank_prefers_shared_course_tags(self):
         source = self._channel(
             "Database Systems",
