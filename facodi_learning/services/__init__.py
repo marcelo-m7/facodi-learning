@@ -9,3 +9,4 @@ from .course_selection import (
     get_course_selection_policy,
     normalize_course_title,
 )
+from .course_profile import COURSE_PROFILE_VERSION, build_course_profile
