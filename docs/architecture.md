@@ -84,6 +84,71 @@ external discovery runs/providers, course-profile aggregation, semantic course
 mapping and AI ranking belong to later milestones and must not be inferred from the
 M3.1 candidate schema.
 
+## M3.2 course profile
+
+M3.2 adds no persistent model. `slide.channel` is extended only with the private
+method:
+
+```python
+profile = channel._facodi_course_profile()
+```
+
+The method delegates to `services/course_profile.py`, which computes a plain,
+JSON-serializable dictionary on demand. The schema is versioned as
+`course-profile-v1`; an incompatible future shape must use a new schema version
+rather than silently changing M3.2 semantics.
+
+Top-level keys are stable:
+
+```text
+schema_version
+channel
+course_tags
+prerequisite_channel_ids
+structure
+sections
+contents
+analysis
+approved_content_relations
+```
+
+`channel` contains canonical standard metadata and plain-text descriptions.
+`course_tags` preserves standard Odoo channel-tag grouping/order. Native
+`prerequisite_channel_ids` are copied only as ordered standard course IDs; FACODI
+does not create a duplicate prerequisite relation model.
+
+`structure` contains section/content counts, standard `slide.channel.total_time`
+and fixed category counts for article/document/infographic/quiz/video. Sections
+and contents are ordered deterministically by `(sequence, id)`. Content entries are
+compact signals only: ID, name, sequence, standard section/category/type,
+completion time and standard content tags. Category rows (`is_category=True`) are
+represented as sections, not duplicated as contents.
+
+Analysis contributes only safe aggregate evidence. For each current content item,
+the latest immutable `facodi.learning.analysis.result` by `create_date desc, id
+desc` may contribute its non-empty `detected_language`. The profile exposes only
+`analyzed_content_count` and the sorted distinct language set. Generated summary,
+transcript, raw payload, provider credentials/prompts and suggested-but-unreviewed
+content are not copied into the baseline profile.
+
+Content relations contribute only when `facodi.learning.mapping.state ==
+"approved"`. They are collapsed into deterministic course-level counts grouped by
+counterpart `slide.channel` and mapping type. Proposed/rejected mappings and raw
+mapping IDs do not affect the profile. This is evidence for later retrieval, not a
+course-level semantic mapping model; M3.3 owns that later decision layer.
+
+The builder performs no writes, no `sudo()`, no network call and no external AI
+request. It uses the caller's ordinary ORM environment and native access behavior.
+It intentionally includes current unpublished standard content because the profile
+represents canonical editorial state for internal processing. Learner-facing
+publication/access filtering remains separate and unchanged.
+
+Learner/member/progress state is outside the schema. Adding/removing a
+`slide.channel.partner` does not change the profile, and no partner identity,
+email, membership count, completion flag or user-specific progress is included.
+M3.2 therefore provides a deterministic internal retrieval input without creating
+a shadow LMS or a privacy-sensitive learner profile.
+
 ## Ingestion
 
 `source.ingest(values, slide_id=None)` serializes initial registration on the
@@ -152,7 +217,7 @@ relation lookup for learner links. The latter returns ordinary non-sudo slides,
 filtered by published content/course, native visibility/access and current website.
 Students cannot read raw jobs, provenance, transcript drafts, course candidates or
 confidence. Tag review records approver/rejector and timestamps separately from
-generated data.
+generated data. M3.2 profile generation itself uses no privilege elevation.
 
 ## Source website and portability
 
@@ -164,9 +229,10 @@ proposal backlog requires a separately mapped data migration, not a theme instal
 
 Schema changes preserve old results and approvals; new attempt records begin with
 new executions, without invented historical attempts. M3.1 adds candidate schema
-and backend views without rewriting existing learning/content-analysis data. Back
-up database+filestore before upgrades. Existing editorial pages are outside this
-addon's ownership.
+and backend views without rewriting existing learning/content-analysis data. M3.2
+adds only computed service/model-extension code and therefore requires no database
+profile migration. Back up database+filestore before upgrades. Existing editorial
+pages are outside this addon's ownership.
 
 Referenced source/target slides use restrictive foreign keys for mappings, so
 removing content cannot silently erase approved relation history. Remove an
