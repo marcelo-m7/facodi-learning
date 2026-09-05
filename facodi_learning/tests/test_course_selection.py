@@ -241,3 +241,9 @@ class TestCourseSelection(TransactionCase):
         self.assertEqual(self.env["slide.channel"].search_count([]), before)
         self.assertIn("RuntimeError: operation failed", candidate.last_error)
         self.assertNotIn("secret detail", candidate.last_error)
+
+    def test_course_candidate_action_and_views_are_loaded(self):
+        action = self.env.ref("facodi_learning.action_facodi_course_candidates")
+        self.assertEqual(action.res_model, "facodi.learning.course.candidate")
+        self.assertEqual(action.view_mode, "list,form")
+        self.env.ref("facodi_learning.menu_facodi_learning_course_candidates")
