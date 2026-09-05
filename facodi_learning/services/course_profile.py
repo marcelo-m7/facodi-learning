@@ -76,11 +76,82 @@ def _sections_and_contents(channel):
     return normalized_sections, normalized_contents, dict(category_counts)
 
 
+def _analysis_signals(channel, content_ids):
+    if not content_ids:
+        return {"analyzed_content_count": 0, "detected_languages": []}
+
+    results = channel.env["facodi.learning.analysis.result"].search(
+        [("slide_id", "in", content_ids)],
+        order="create_date desc, id desc",
+    )
+    latest_by_slide = {}
+    for result in results:
+        latest_by_slide.setdefault(result.slide_id.id, result)
+
+    languages = sorted(
+        {
+            result.detected_language.strip()
+            for result in latest_by_slide.values()
+            if result.detected_language and result.detected_language.strip()
+        }
+    )
+    return {
+        "analyzed_content_count": len(latest_by_slide),
+        "detected_languages": languages,
+    }
+
+
+def _approved_content_relations(channel, content_ids):
+    if not content_ids:
+        return {"outgoing": [], "incoming": []}
+
+    Mapping = channel.env["facodi.learning.mapping"]
+    outgoing = Mapping.search(
+        [("source_slide_id", "in", content_ids), ("state", "=", "approved")]
+    )
+    incoming = Mapping.search(
+        [("target_slide_id", "in", content_ids), ("state", "=", "approved")]
+    )
+
+    outgoing_counts = Counter(
+        (mapping.target_slide_id.channel_id.id, mapping.mapping_type)
+        for mapping in outgoing
+    )
+    incoming_counts = Counter(
+        (mapping.source_slide_id.channel_id.id, mapping.mapping_type)
+        for mapping in incoming
+    )
+
+    return {
+        "outgoing": [
+            {
+                "target_channel_id": target_channel_id,
+                "mapping_type": mapping_type,
+                "count": count,
+            }
+            for (target_channel_id, mapping_type), count in sorted(
+                outgoing_counts.items()
+            )
+        ],
+        "incoming": [
+            {
+                "source_channel_id": source_channel_id,
+                "mapping_type": mapping_type,
+                "count": count,
+            }
+            for (source_channel_id, mapping_type), count in sorted(
+                incoming_counts.items()
+            )
+        ],
+    }
+
+
 def build_course_profile(channel):
     channel.ensure_one()
     channel.check_access("read")
 
     sections, contents, category_counts = _sections_and_contents(channel)
+    content_ids = [content["id"] for content in contents]
 
     return {
         "schema_version": COURSE_PROFILE_VERSION,
@@ -110,6 +181,8 @@ def build_course_profile(channel):
         },
         "sections": sections,
         "contents": contents,
-        "analysis": {"analyzed_content_count": 0, "detected_languages": []},
-        "approved_content_relations": {"outgoing": [], "incoming": []},
+        "analysis": _analysis_signals(channel, content_ids),
+        "approved_content_relations": _approved_content_relations(
+            channel, content_ids
+        ),
     }
