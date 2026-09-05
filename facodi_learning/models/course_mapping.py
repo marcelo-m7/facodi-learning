@@ -199,6 +199,18 @@ class FacodiLearningCourseMapping(models.Model):
         source = self.source_channel_id
         target = self.target_channel_id
         source.check_access("write")
+        target.check_access("read")
+
+        channels = self.env["slide.channel"].browse(sorted({source.id, target.id}))
+        locked_channels = channels.try_lock_for_update()
+        if len(locked_channels) != len(channels):
+            raise ValidationError(
+                "The prerequisite courses are currently being updated. Please retry."
+            )
+        locked_channels.invalidate_recordset(["prerequisite_channel_ids"])
+        source.invalidate_recordset(["prerequisite_channel_ids"])
+        target.invalidate_recordset(["prerequisite_channel_ids"])
+
         if target not in source.prerequisite_channel_ids:
             if self._would_create_prerequisite_cycle():
                 raise ValidationError(
