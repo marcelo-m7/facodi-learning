@@ -7,6 +7,9 @@ from ..services.course_mapping_policy import (
 )
 
 
+_PREREQUISITE_GRAPH_LOCK_KEYS = (0x4641434F, 0x50524552)  # FACO / PRER
+
+
 class FacodiLearningCourseMapping(models.Model):
     _name = "facodi.learning.course.mapping"
     _description = "FACODI Course Mapping"
@@ -218,6 +221,18 @@ class FacodiLearningCourseMapping(models.Model):
             )
         return False
 
+    def _lock_prerequisite_graph(self):
+        """Serialize FACODI prerequisite writes for this database transaction."""
+        self.ensure_one()
+        self.env.cr.execute(
+            "SELECT pg_try_advisory_xact_lock(%s, %s)",
+            _PREREQUISITE_GRAPH_LOCK_KEYS,
+        )
+        if not self.env.cr.fetchone()[0]:
+            raise ValidationError(
+                "The FACODI prerequisite graph is currently being updated. Please retry."
+            )
+
     def _apply_native_prerequisite(self, applied_at):
         self.ensure_one()
         if self.mapping_type != "prerequisite":
@@ -228,6 +243,7 @@ class FacodiLearningCourseMapping(models.Model):
         source.check_access("write")
         target.check_access("read")
 
+        self._lock_prerequisite_graph()
         channels = self.env["slide.channel"].browse(sorted({source.id, target.id}))
         locked_channels = channels.try_lock_for_update()
         if len(locked_channels) != len(channels):
