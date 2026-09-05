@@ -48,6 +48,7 @@ def retrieve_course_candidates(source_channel, limit=20):
     if not limit:
         return source_channel.env["slide.channel"]
 
+    Channel = source_channel.env["slide.channel"]
     domain = [
         ("id", "!=", source_channel.id),
         ("active", "=", True),
@@ -60,11 +61,28 @@ def retrieve_course_candidates(source_channel, limit=20):
                 ("website_id", "=", source_channel.website_id.id),
             ]
         )
-    return source_channel.env["slide.channel"].search(
-        domain,
+
+    prioritized = Channel.browse()
+    if source_channel.tag_ids:
+        prioritized = Channel.search(
+            domain + [("tag_ids", "in", source_channel.tag_ids.ids)],
+            order="sequence, id",
+            limit=limit,
+        )
+
+    remaining = limit - len(prioritized)
+    if remaining <= 0:
+        return prioritized
+
+    fallback_domain = list(domain)
+    if prioritized:
+        fallback_domain.append(("id", "not in", prioritized.ids))
+    fallback = Channel.search(
+        fallback_domain,
         order="sequence, id",
-        limit=limit,
+        limit=remaining,
     )
+    return prioritized | fallback
 
 
 def rank_course_pair(source_profile, target_profile):
