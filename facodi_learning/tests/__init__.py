@@ -11,3 +11,4 @@ from . import test_course_mapping_prerequisite
 from . import test_course_mapping_policy
 from . import test_course_mapping_visibility
 from . import test_course_mapping_ui
+from . import test_curriculum_reference
