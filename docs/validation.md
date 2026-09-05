@@ -39,6 +39,37 @@ That GREEN validates the M3.3 functional surface loaded by Odoo, including:
 - distinct Content Mappings and Course Mappings navigation;
 - inherited standard course-page QWeb block for learner-safe related courses.
 
+### Final hardening and release gate
+
+The implementation was hardened after the first functional GREEN rather than
+freezing the earlier test result as release evidence.
+
+Prerequisite application now serializes both participating `slide.channel` rows
+before re-reading the native prerequisite graph, checking for cycles and writing the
+standard field. This makes concurrent FACODI prerequisite approvals fail closed
+instead of allowing two transactions to validate against stale graph state. Exact
+SHA `4497c73b20b3a30b07f21436b5cc1e1f381a0522`, GitHub Actions run
+`33996049568`, passed both clean-install and upgrade gates.
+
+Generated proposal provenance is also server-owned. Direct ORM `create()` accepts
+only manual proposals and rejects forged `origin="analysis"` or `ranking_version`
+values; the deterministic engine uses the private `_create_generated()` boundary.
+Exact SHA `be38c5d00bcbf95647230caf1c438ac0c62647ae`, GitHub Actions run
+`33996472834`, passed both gates.
+
+Bounded retrieval then received a dedicated RED test on exact SHA
+`a6ab7ed17d3587716110ad82c3895ea1ea93ca73`. Run `33996577166` reported
+**1 failure and 0 errors of 100 tests** because a high-sequence course sharing a
+standard course tag with the source was excluded by the previous `sequence,id`
+pre-limit. The implementation now retrieves website-compatible active courses with
+shared standard course tags first, then fills any remaining bounded slots using the
+stable `sequence,id` fallback. Exact SHA
+`c064c968b3338a075064fe26ec61554bfecf0811`, GitHub Actions run `33996912592`,
+passed both the clean-install and same-database upgrade gates.
+
+The final documentation-only release commit is required to pass those same two CI
+gates before the M3.3 pull request is considered merge-ready.
+
 No M3.3 test or implementation introduces AI/embedding calls, vector storage,
 learner-personalized ranking, automatic course publication or a second prerequisite
 graph. Course relations are additive audit records; prerequisite truth remains the
