@@ -8,6 +8,13 @@ from .course_mapping import (
     rank_course_pair,
     retrieve_course_candidates,
 )
+from .course_mapping_policy import (
+    COURSE_MAPPING_POLICY_VERSION,
+    DEFAULT_MIN_CONFIDENCE,
+    SAFE_AUTO_TYPES,
+    get_course_mapping_policy,
+    is_course_mapping_auto_eligible,
+)
 from .course_profile import COURSE_PROFILE_VERSION, build_course_profile
 from .course_selection import (
     EVALUATION_POLICY_VERSION,
