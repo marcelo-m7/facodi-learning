@@ -185,6 +185,8 @@ class FacodiLearningCourseMapping(models.Model):
         }
         if protected & vals.keys():
             raise AccessError("Use the explicit course mapping review actions.")
+        if any(mapping.origin == "analysis" for mapping in self):
+            raise AccessError("Generated course mapping proposals are immutable evidence.")
         if any(mapping.state != "proposed" for mapping in self):
             raise AccessError("Reviewed course mappings are historical evidence.")
         return super().write(vals)
