@@ -49,11 +49,11 @@ re-reading the native prerequisite graph, checking for cycles and writing the
 standard field. Exact SHA `4497c73b20b3a30b07f21436b5cc1e1f381a0522`, GitHub
 Actions run `33996049568`, passed both clean-install and upgrade gates.
 
-Generated proposal provenance is also server-owned. Direct ORM `create()` accepts
-only manual proposals and rejects forged `origin="analysis"` or `ranking_version`
-values; the deterministic engine uses the private `_create_generated()` boundary.
-Exact SHA `be38c5d00bcbf95647230caf1c438ac0c62647ae`, GitHub Actions run
-`33996472834`, passed both gates.
+Generated proposal provenance is server-owned. Direct ORM `create()` accepts only
+manual proposals and rejects forged `origin="analysis"` or `ranking_version` values;
+the deterministic engine uses the private `_create_generated()` boundary. Exact SHA
+`be38c5d00bcbf95647230caf1c438ac0c62647ae`, GitHub Actions run `33996472834`,
+passed both gates.
 
 Bounded retrieval then received a dedicated RED test on exact SHA
 `a6ab7ed17d3587716110ad82c3895ea1ea93ca73`. Run `33996577166` reported
@@ -79,6 +79,19 @@ CI run `33997458255`, passed both clean-install and same-database upgrade gates.
 The advisory lock is only a concurrency guard for FACODI review operations; native
 Odoo prerequisite edits performed outside this path remain ordinary Odoo writes.
 The only prerequisite truth continues to be `slide.channel.prerequisite_channel_ids`.
+
+A later PR integrity review found that server-owned generated proposals could no
+longer be forged at creation time, but their proposed `confidence` or `evidence`
+could still be rewritten through ordinary ORM `write()`. That could falsify ranking
+evidence or influence a later automatic decision. A deliberate RED at exact SHA
+`48c8a4d7bcde4012dc2754ef39a0597afbf4be63`, pull-request CI run `33997693435`,
+reported **1 failure and 0 errors of 102 tests** exclusively because the expected
+`AccessError` was not raised. Ordinary writes now treat every `origin="analysis"`
+proposal as immutable evidence from creation onward; manual proposed mappings remain
+editable, while Manager review and Auto Approve continue through the controlled
+internal write paths. Exact SHA `5d25c83942f45c7235c4241deeaf3dd5d66e601f`,
+pull-request CI run `33997832186`, passed both clean-install and same-database
+upgrade gates.
 
 The final documentation-only release commit is required to pass those same two CI
 gates before the M3.3 pull request is considered merge-ready.
