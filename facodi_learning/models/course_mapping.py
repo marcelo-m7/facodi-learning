@@ -95,8 +95,8 @@ class FacodiLearningCourseMapping(models.Model):
                 "Only eLearning Managers can review FACODI course mappings."
             )
 
-    @api.model_create_multi
-    def create(self, vals_list):
+    @api.model
+    def _prepare_proposal_create_vals(self, vals_list, *, generated):
         protected = (
             "reviewed_by_id",
             "reviewed_at",
@@ -106,11 +106,26 @@ class FacodiLearningCourseMapping(models.Model):
             "native_applied_at",
         )
         identities = set()
-        for vals in vals_list:
+        prepared = []
+        for incoming_vals in vals_list:
+            vals = dict(incoming_vals)
             if vals.get("state", "proposed") != "proposed" or any(
                 vals.get(field_name) for field_name in protected
             ):
                 raise AccessError("Use the explicit course mapping review actions.")
+
+            if generated:
+                vals["origin"] = "analysis"
+            else:
+                if (
+                    vals.get("origin", "manual") != "manual"
+                    or vals.get("ranking_version")
+                ):
+                    raise AccessError(
+                        "Generated course mapping provenance is server-owned."
+                    )
+                vals["origin"] = "manual"
+                vals["ranking_version"] = False
 
             source_id = vals.get("source_channel_id")
             target_id = vals.get("target_channel_id")
@@ -136,7 +151,19 @@ class FacodiLearningCourseMapping(models.Model):
                 native_applied_by_id=False,
                 native_applied_at=False,
             )
-        return super().create(vals_list)
+            prepared.append(vals)
+        return prepared
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        prepared = self._prepare_proposal_create_vals(vals_list, generated=False)
+        return super().create(prepared)
+
+    @api.model
+    def _create_generated(self, vals):
+        """Create one server-generated proposal without an RPC-forgeable context flag."""
+        prepared = self._prepare_proposal_create_vals([vals], generated=True)
+        return super().create(prepared)
 
     def write(self, vals):
         protected = {
