@@ -247,3 +247,40 @@ class TestCourseSelection(TransactionCase):
         self.assertEqual(action.res_model, "facodi.learning.course.candidate")
         self.assertEqual(action.view_mode, "list,form")
         self.env.ref("facodi_learning.menu_facodi_learning_course_candidates")
+
+    def test_terminal_decision_snapshot_does_not_change_with_later_settings(self):
+        params = self.env["ir.config_parameter"].sudo()
+        params.set_param("facodi_learning.course_selection_mode", "auto")
+        candidate = self.env["facodi.learning.course.candidate"].create(
+            self._candidate_values(
+                external_id="snapshot", name="Unique Snapshot Course"
+            )
+        )
+        candidate.action_evaluate()
+        snapshot = dict(candidate.decision_snapshot)
+        params.set_param("facodi_learning.auto_approve_min_relevance", "0.99")
+        candidate.invalidate_recordset()
+        self.assertEqual(candidate.decision_snapshot, snapshot)
+
+    def test_terminal_candidate_metadata_cannot_be_rewritten(self):
+        candidate = self.env["facodi.learning.course.candidate"].create(
+            self._candidate_values(external_id="terminal", name="Terminal Course")
+        )
+        candidate.action_evaluate()
+        candidate.action_resolve_new()
+        with self.assertRaises(AccessError):
+            candidate.write({"description": "Retcon"})
+
+    def test_resolution_refuses_unavailable_row_lock(self):
+        from unittest.mock import patch
+
+        candidate = self.env["facodi.learning.course.candidate"].create(
+            self._candidate_values(external_id="locked", name="Locked Course")
+        )
+        candidate.action_evaluate()
+        CandidateModel = type(candidate)
+        empty = self.env["facodi.learning.course.candidate"]
+        with patch.object(CandidateModel, "try_lock_for_update", return_value=empty):
+            with self.assertRaisesRegex(ValidationError, "being resolved"):
+                candidate.action_resolve_new()
+        self.assertFalse(candidate.resolved_channel_id)
