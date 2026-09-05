@@ -68,6 +68,16 @@ class FacodiLearningMapping(models.Model):
     @api.model_create_multi
     def create(self, vals_list):
         for vals in vals_list:
+            origin = vals.get(
+                "origin", self.env.context.get("default_origin", "manual")
+            )
+            result_id = vals.get(
+                "analysis_result_id", self.env.context.get("default_analysis_result_id")
+            )
+            if origin == "analysis" and not result_id:
+                raise ValidationError("Analysis mappings require result provenance.")
+            if result_id and origin != "analysis":
+                raise ValidationError("Result provenance requires analysis origin.")
             if (
                 vals.get("state", "proposed") != "proposed"
                 or vals.get("reviewed_by_id")

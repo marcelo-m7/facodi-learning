@@ -38,7 +38,7 @@ class TestFacodiLearningMapping(TransactionCase):
                 "source_slide_id": self.source.id,
                 "target_slide_id": self.target.id,
                 "mapping_type": "related",
-                "origin": "analysis",
+                "origin": "manual",
             }
         )
         self.assertEqual(mapping.state, "proposed")
@@ -76,3 +76,13 @@ class TestFacodiLearningMapping(TransactionCase):
                 slide.unlink()
                 self.env.flush_all()
         self.assertTrue(mapping.exists())
+
+    def test_analysis_origin_requires_result_provenance(self):
+        with self.assertRaises(ValidationError):
+            self.env["facodi.learning.mapping"].create(
+                {
+                    "source_slide_id": self.source.id,
+                    "target_slide_id": self.target.id,
+                    "origin": "analysis",
+                }
+            )

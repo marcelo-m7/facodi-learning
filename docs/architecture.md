@@ -102,3 +102,5 @@ removing content cannot silently erase approved relation history. Remove an
 unreviewed manual proposal explicitly where appropriate; archive historical
 content instead of deleting it. Upgrading the addon applies these foreign-key
 changes through the native ORM schema update without a data rewrite.
+
+New analysis-origin mappings require a matching result reference. Legacy rows lacking provenance are preserved on upgrade rather than assigned invented evidence.

@@ -20,20 +20,20 @@
         <field name="arch" type="xml">
             <form>
                 <header>
-                    <button name="action_ingest" type="object" string="Import unpublished article" class="btn-primary" invisible="state == 'imported'"/>
+                    <button name="action_ingest" type="object" string="Ingest content" class="btn-primary" invisible="state == 'imported'"/>
                     <field name="state" widget="statusbar"/>
                 </header>
                 <sheet>
                     <group>
-                        <field name="name"/>
+                        <field name="name" readonly="state == 'imported'"/>
                         <field name="provider" readonly="id"/>
                         <field name="external_id" readonly="id"/>
                         <field name="channel_id" readonly="id"/>
-                        <field name="url"/>
+                        <field name="url" readonly="state == 'imported'"/>
                         <field name="slide_id"/>
                         <field name="imported_at"/>
                         <field name="last_error"/>
-                        <field name="metadata"/>
+                        <field name="metadata" readonly="state == 'imported'"/>
                     </group>
                 </sheet>
             </form>

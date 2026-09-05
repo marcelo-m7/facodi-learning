@@ -5,8 +5,8 @@
 Started from main `4af9212`. Executed with isolated PostgreSQL 16 and Odoo 19.0
 Community (19.0-20260817), without Enterprise addons or network provider SDKs.
 
-- Independent clean install and upgrades pass. Final Learning suite: **24 tests**, zero failures/errors.
-- Clean combined install passed; final combined upgrade: **32 tests**, zero failures/errors.
+- Independent clean install and upgrades pass. Final Learning suite: **25 tests**, zero failures/errors.
+- Clean combined install passed; final combined upgrade: **33 tests**, zero failures/errors.
 - Coverage includes provider validation, errors (including empty exception text), retries and immutable attempts/results, cron batch limits, direct ORM/context review bypass, ownership, public/Portal denial, taxonomy approval/rejection, provenance, duplicate/self mappings, relation deletion protection, source idempotency and failure rollback, and approved student links with native visibility/multiwebsite checks.
 - Two independent database transactions: a locked job is skipped by the second processor; after completion, repeated processing leaves exactly one attempt and result.
 - Upgraded a database installed from old main, preserving editorial content, transcript, historical result and approved mapping. New evidence fields are additive; historical reviewer/timestamps that were never recorded are not invented.
