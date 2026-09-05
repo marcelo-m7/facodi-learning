@@ -97,11 +97,28 @@ class FacodiLearningCourseMapping(models.Model):
             "native_applied_by_id",
             "native_applied_at",
         )
+        identities = set()
         for vals in vals_list:
             if vals.get("state", "proposed") != "proposed" or any(
                 vals.get(field_name) for field_name in protected
             ):
                 raise AccessError("Use the explicit course mapping review actions.")
+
+            source_id = vals.get("source_channel_id")
+            target_id = vals.get("target_channel_id")
+            mapping_type = vals.get("mapping_type", "related")
+            identity = (source_id, target_id, mapping_type)
+            if identity in identities or self.search_count(
+                [
+                    ("source_channel_id", "=", source_id),
+                    ("target_channel_id", "=", target_id),
+                    ("mapping_type", "=", mapping_type),
+                ],
+                limit=1,
+            ):
+                raise ValidationError("This course mapping already exists.")
+            identities.add(identity)
+
             vals.update(
                 state="proposed",
                 reviewed_by_id=False,
