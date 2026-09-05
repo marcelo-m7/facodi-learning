@@ -13,4 +13,35 @@
             </aside>
         </xpath>
     </template>
+
+    <template id="approved_course_relations" inherit_id="website_slides.course_main" name="Reviewed related courses">
+        <xpath expr="//div[@id='home']" position="inside">
+            <t t-set="facodi_related_channels" t-value="channel._facodi_related_channels(website)"/>
+            <section t-if="facodi_related_channels" class="mt-5 pt-4 border-top" aria-label="Related courses">
+                <div class="d-flex align-items-center justify-content-between mb-3">
+                    <div>
+                        <h2 class="h4 mb-1">Related courses</h2>
+                        <p class="text-muted mb-0">Continue exploring reviewed FACODI course connections.</p>
+                    </div>
+                </div>
+                <div class="row g-3">
+                    <div t-foreach="facodi_related_channels" t-as="related_channel" class="col-12 col-lg-6">
+                        <article class="card h-100">
+                            <div class="card-body">
+                                <h3 class="h5 card-title mb-2">
+                                    <a class="stretched-link text-decoration-none"
+                                       t-att-href="'/slides/%s' % slug(related_channel)">
+                                        <span t-field="related_channel.name"/>
+                                    </a>
+                                </h3>
+                                <div t-if="related_channel.description_short"
+                                     class="card-text text-muted"
+                                     t-field="related_channel.description_short"/>
+                            </div>
+                        </article>
+                    </div>
+                </div>
+            </section>
+        </xpath>
+    </template>
 </odoo>
