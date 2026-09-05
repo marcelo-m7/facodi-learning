@@ -159,3 +159,31 @@ class TestCourseMappingPolicy(TransactionCase):
         self.assertEqual(initial["min_confidence"], 0.80)
         self.assertEqual(initial["auto_types"], ["complements", "related"])
         self.assertEqual(initial["policy_version"], "course-mapping-policy-v1")
+
+    def test_manager_generation_applies_auto_approve_policy(self):
+        self._set_auto(types="related", threshold="0.80")
+        group = self.env["slide.channel.tag.group"].create({"name": "Policy Topic"})
+        tag = self.env["slide.channel.tag"].create(
+            {"name": "Policy Shared", "group_id": group.id}
+        )
+        source = self.env["slide.channel"].with_user(self.manager).create(
+            {
+                "name": "Integration Mapping Course",
+                "user_id": self.manager.id,
+                "tag_ids": [Command.link(tag.id)],
+            }
+        )
+        target = self.env["slide.channel"].with_user(self.manager).create(
+            {
+                "name": "Integration Mapping Course Advanced",
+                "tag_ids": [Command.link(tag.id)],
+            }
+        )
+
+        proposals = source.with_user(self.manager)._facodi_propose_course_mappings(limit=20)
+        mapping = proposals.filtered(lambda row: row.target_channel_id == target)
+
+        self.assertTrue(mapping)
+        self.assertEqual(mapping.state, "approved")
+        self.assertFalse(mapping.reviewed_by_id)
+        self.assertEqual(mapping.policy_version, "course-mapping-policy-v1")
