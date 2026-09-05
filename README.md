@@ -1,80 +1,86 @@
 # FACODI Learning
 
-`facodi-learning` provides the Odoo 19 Community addon **`facodi_learning`** for analysis and educational mapping in FACODI.
+`facodi_learning` extends Odoo 19 Community `website_slides` with auditable
+content ingestion and educational enrichment. It works independently of any theme.
 
-The module follows a standard-first rule: Odoo eLearning remains the learning platform. FACODI extends it only where the standard application has no equivalent mechanism.
+## Standard Odoo remains authoritative
 
-## What stays standard Odoo
+Courses (`slide.channel`), content (`slide.slide`), tags (`slide.tag`), membership,
+publication, progress, quizzes, comments, Portal and eLearning Officer/Manager
+roles are reused. There is no FACODI LMS or pathway model.
 
-- `slide.channel` remains the course model.
-- `slide.slide` remains the canonical content/lesson model.
-- `slide.tag` remains the content-tag vocabulary.
-- eLearning Officer and Manager groups remain the authorization roles.
-- Website/eLearning forms, menus, settings and scheduled actions are inherited or extended rather than replaced.
-- The normal Odoo publication, membership, access, completion, quiz and website behavior is untouched.
+## Pipeline
 
-## What this addon adds
+Source → unpublished standard content → queued analysis → historical result →
+Manager review → standard tags and approved educational links.
 
-- Auditable analysis jobs for `slide.slide`.
-- Append-only analysis result history.
-- Optional transcript metadata on standard eLearning content.
-- Suggested standard `slide.tag` values and an explicit action to apply them.
-- Proposed semantic relationships between standard eLearning content records.
-- Human approval/rejection of mappings by an eLearning Manager.
-- A bounded scheduled-action processor using standard `ir.cron`.
-- Settings under the standard eLearning configuration page.
-- An extensible provider registry, with a no-network `local_metadata` provider as the safe default.
+Five small audit models cover provenance, requests, immutable processing attempts,
+immutable normalized results and reviewed relationships. The transcript on the
+standard content record remains editorial; generated transcripts remain in results.
+No automatic result overwrites content or publishes a lesson.
 
-## Installation
+## Install and upgrade
 
-The repository root contains exactly one installable addon directory:
-
-```text
-facodi_learning/
-```
-
-Add the repository root to `addons_path`, update the Apps list and install **FACODI Learning**.
-
-CLI example:
+Put this repository on `addons_path`, then run:
 
 ```bash
-odoo -d facodi -i facodi_learning --stop-after-init
+odoo -d facodi -i facodi_learning --without-demo=True --stop-after-init
+odoo -d facodi -u facodi_learning --stop-after-init
 ```
 
-## Configuration
+Back up the database and matching filestore for an existing deployment. Schema
+changes in 19.0.1.1.0 are additive except audit foreign keys becoming restrictive;
+no data rewrite or post-init migration is required. Old results and reviewed
+mappings remain intact. Old retries retain their existing counter/error; the new
+attempt history starts with the next execution and is not fabricated retroactively.
 
-Open **eLearning → Configuration → Settings → FACODI Analysis**.
+## Manager workflow
 
-The default provider is `local_metadata`. It analyses only metadata already held by Odoo and performs no network request. External AI/video providers should be implemented as separate provider extensions and must not change the FACODI domain models.
+In **eLearning → FACODI Analysis**, manage Sources, Jobs, Results and Mappings.
+Create a source with provider `manual`, a stable external identifier and course;
+**Import unpublished article** creates one draft article. Replaying ingestion
+reuses it, including any editorial changes. The Python `ingest_manual` method
+can associate existing content in the same course. Imported provenance is immutable.
 
-Pending jobs are processed by the standard scheduled action **FACODI: Process learning analysis jobs**. The batch size is configurable and capped in code to protect cron workers from unbounded work.
+On an eLearning content form, **FACODI Analysis → Queue Analysis** creates a
+request. The default `local_metadata` provider uses Odoo data only, without
+network access. The standard scheduled action processes a capped batch. Managers
+can also process jobs; Officers can request/retry jobs in courses they own.
 
-## Provider extension contract
+Managers apply or reject tag suggestions explicitly. Applying reuses standard tags
+and records who reviewed them and when; rejecting changes no content. Mappings
+are proposed first and reviewed separately. Direct ORM writes cannot bypass review.
+Reviewed output is immutable; create a new analysis or relation when meaning changes.
 
-A provider addon inherits `facodi.learning.analysis.job`, calls `super()` in `_get_provider_registry()` and adds a callable. The callable receives one `slide.slide` and returns normalized keys such as `summary`, `detected_language`, `suggested_tag_ids`, `model_name` and `raw_payload`.
+Students see only approved resource links on the standard lesson detail page.
+Publication, current website, native visibility and access rules filter targets.
+Technical fields and all audit models remain unavailable to Public/Portal users.
+The standard fullscreen training player remains unchanged.
 
-Provider-specific request/response code belongs outside the core domain models. Secrets must come from deployment/runtime configuration, never from source code.
+## Provider extensions
 
-## Testing
+Trusted optional addons extend `_get_provider_registry()` on analysis jobs, or
+`_get_ingestion_registry()` on sources, calling `super()` in both cases.
+Analysis adapters receive a `slide.slide`; ingestion adapters receive a source
+and return standard content values. `ingest(values, slide_id=None)` registers by
+provider/external identifier/course and forces new content to remain unpublished.
 
-GitHub Actions starts PostgreSQL 16 and installs the addon in the official `odoo:19.0` image on a clean database, then runs the module tests:
+See [architecture](docs/architecture.md) for normalized output and transaction
+contracts. Runtime secrets belong in the adapter's deployment environment, never
+source records or payloads. No external provider SDK is a core dependency.
 
-```text
---test-tags /facodi_learning
-```
+## Tests
 
-The suite verifies the job lifecycle, retry behavior, history preservation, reuse of standard eLearning tags, mapping constraints and Manager-only review.
+GitHub Actions installs and upgrades against Odoo 19 + PostgreSQL 16, with a
+persistent filestore between runs. Run `--test-tags /facodi_learning` to cover
+request/retry/error isolation, immutable history, provider output, source replay,
+Manager review, ACLs, batch processing and safe learner links.
 
-## Monorepo contract
+The monorepo consumes this repository as a pinned submodule; addon changes do not
+deploy until the consuming repository intentionally updates its pin.
 
-`marcelo-m7/facodi-monorepo` consumes this repository as a Git submodule at:
+LGPL-3.0.
 
-```text
-addons/facodi-learning
-```
+## Validation evidence
 
-The monorepo pins a commit. A change in this repository does not deploy itself until the monorepo intentionally updates that submodule pointer and builds a new image.
-
-## License
-
-LGPL-3.0, aligned with the module manifest.
+See [validation report](docs/validation.md) for the isolated Community install/upgrade matrix, browser checks and remaining deployment boundaries.

@@ -1,46 +1,104 @@
-# FACODI Learning Architecture
+# FACODI Learning architecture
 
-## Standard-first boundary
+Odoo 19 Community owns courses, content, tags and learner behavior. FACODI owns
+only provenance and enrichment. There is no dependency on `theme_facodi`.
 
-FACODI Learning is an extension of Odoo 19 Community eLearning (`website_slides`), not a parallel LMS.
+| Model | Responsibility |
+| --- | --- |
+| `facodi.learning.source` | Stable provider/external ID/course identity, URL, metadata, state, timestamps and canonical content link |
+| `facodi.learning.analysis.job` | Requester, provider, state, attempt count and latest outcome |
+| `facodi.learning.analysis.attempt` | Immutable evidence for each completed or failed execution, including retries |
+| `facodi.learning.analysis.result` | Immutable normalized output; separate human tag review metadata |
+| `facodi.learning.mapping` | Directed related/prerequisite/recommended/supports proposal and Manager review |
 
-```text
-Odoo website_slides
-├── slide.channel       canonical course
-├── slide.slide         canonical lesson/content
-├── slide.tag           canonical content tags
-├── Officer / Manager   canonical back-office roles
-└── ir.cron             canonical scheduler
-          │
-          ▼
-facodi_learning
-├── analysis job        processing/audit state only
-├── analysis result     historical normalized output
-└── learning mapping    proposed relationship between slide.slide records
-```
+Attempts are separate from successful results because failures also require
+history. There is no model for every pipeline stage, no worker queue and no new
+LMS or taxonomy. `slide.channel` and its standard sequence/sections represent
+learning paths; mappings express optional educational relationships, not new
+progression or enrolment rules.
 
-## Analysis flow
+## Ingestion
 
-1. An Officer selects a standard `slide.slide` and queues analysis.
-2. FACODI creates `facodi.learning.analysis.job`; it does not copy the content record.
-3. Standard `ir.cron` processes a bounded pending batch.
-4. The selected provider returns a normalized result.
-5. FACODI appends `facodi.learning.analysis.result` and keeps older results.
-6. Suggested tags point to standard `slide.tag` records and are applied only through an explicit action.
-7. A provider may create proposed mappings; approval is a separate human decision.
+`source.ingest(values, slide_id=None)` serializes initial registration on the
+standard target course row. A SQL uniqueness constraint protects
+`(provider, external_id, channel_id)`; use an explicit version in the external ID
+when a source revision must be imported independently. Identities are immutable.
+Replays return the same source/content and never overwrite editorial edits.
+Manager-only ACLs guard ingestion; target course/content write access is checked.
 
-The baseline `local_metadata` provider is deliberately deterministic and network-free. Its purpose is to establish the stable provider contract and make the core addon independently installable/testable.
+Core `manual` ingestion creates a draft article or associates existing content in
+the same course. Source URLs are provenance only: core does not fetch arbitrary
+URLs. Trusted adapters extend `_get_ingestion_registry()` and return ORM values.
+A savepoint rolls back partial content on failure while retaining a failed source.
+New content always receives the source course and unpublished state. Imported
+provenance cannot be edited; new revisions use new source identities.
 
-## Security
+## Analysis contract
 
-FACODI reuses the standard groups `website_slides.group_website_slides_officer` and `website_slides.group_website_slides_manager`.
+`job._get_provider_registry()` maps provider names to callables receiving one
+standard slide. The default `local_metadata` adapter is deterministic and offline.
+Return a dictionary with any of:
 
-Record rules follow the standard eLearning pattern: Officers can read analysis records broadly but creation/write is limited to content in courses they own; Managers have complete administration. Mapping approval/rejection additionally performs an explicit Manager check in Python so the business transition cannot be bypassed by calling the method directly.
+- `summary`, `transcript`, `detected_language`, `model_name`: text;
+- `suggested_tag_ids`: existing standard tag IDs;
+- `suggested_tags`: proposed names, created/reused only on explicit Manager apply;
+- `proposed_mappings`: dictionaries with `target_slide_id`, `mapping_type` and
+  optional confidence between 0 and 1;
+- `raw_payload`: JSON-serializable metadata without secrets.
 
-## Provider extensions
+The boundary validates types, tag/target existence and access before persisting.
+Any malformed result rolls back its proposals/output and fails only its job.
+Mapping SQL uniqueness prevents duplicate directed triples; self-links and invalid
+confidence/provenance are rejected. Relations do not enforce prerequisite cycles
+or replace standard enrolment/progression.
 
-External AI, transcription or video APIs belong in separate provider addons. They inherit the analysis job model and extend `_get_provider_registry()` after calling `super()`. The core addon consumes only normalized dictionaries and therefore does not embed vendor schemas or credentials.
+## Transactions and cron
 
-## Upgrade discipline
+States are pending → processing → completed/failed; explicit retry returns failed
+to pending while retaining the previous error and immutable attempts. Completed
+jobs cannot be reprocessed. Provider changes are allowed only while pending.
 
-The module version follows Odoo conventions (`19.0.x.y.z`). Schema changes should be additive when practical. Data migrations, when needed, belong under Odoo's module migration directories and must preserve analysis history. Standard Odoo models are never redefined as FACODI-owned canonical copies.
+Odoo `try_lock_for_update()` prevents simultaneous processing or review. A job's
+processing state and terminal outcome are in one transaction: worker death rolls
+back to pending, so no timer-based lease/stale-worker mechanism is necessary.
+Adapters must not commit and must use timeouts and idempotent external requests.
+External services may see a retried request after a crash; this is not a claim of
+exactly-once network execution.
+
+Standard `ir.cron` caps batches at 100, defaults to 10, isolates provider failures
+with savepoints and uses Odoo 19 `_commit_progress()` per job in real cron context.
+The scheduled action is `noupdate` so module upgrades preserve administrator tuning.
+Persisted errors contain exception type and a safe generic explanation; raw
+provider exceptions are not logged because they may contain credentials.
+
+## Security and editorial review
+
+Officers read audit records and request/retry only for their own courses. Managers
+process, ingest and review. Model methods enforce state transitions on create/write,
+not only on buttons. Private server methods create immutable results/attempts;
+client context flags cannot grant access. Standard content technical fields are
+restricted to the eLearning Officer group.
+
+The only elevated operations are configuration-parameter reads and an approved
+relation lookup for learner links. The latter returns ordinary non-sudo slides,
+filtered by published content/course, native visibility/access and current website.
+Students cannot read raw jobs, provenance, transcript drafts or confidence.
+Tag review records approver/rejector and timestamps separately from generated data.
+
+## Source website and portability
+
+The reference `edu-open2.odoo.com` was inspected read-only. It uses Odoo 19 Enterprise
+and `theme_default`; custom addons were absent. Its proposal form posts to a Studio
+model `x_propostas_de_conteud`. That database-specific form/model is not copied to
+Community. Portable contribution pages use standard contact; moving the existing
+proposal backlog requires a separately mapped data migration, not a theme install.
+
+Schema changes preserve old results and approvals; new attempt records begin with
+new executions, without invented historical attempts. Back up database+filestore
+before upgrades. Existing editorial pages are outside this addon’s ownership.
+
+Referenced source/target slides use restrictive foreign keys for mappings, so
+removing content cannot silently erase approved relation history. Remove an
+unreviewed manual proposal explicitly where appropriate; archive historical
+content instead of deleting it. Upgrading the addon applies these foreign-key
+changes through the native ORM schema update without a data rewrite.

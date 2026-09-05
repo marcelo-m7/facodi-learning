@@ -1,3 +1,5 @@
+> Historical baseline. Current implementation and constraints are documented in README.md and docs/architecture.md.
+
 # FACODI Learning — Design
 
 Date: 2026-09-04
