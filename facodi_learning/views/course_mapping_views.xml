@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_facodi_course_mapping_search" model="ir.ui.view">
+        <field name="name">facodi.learning.course.mapping.search</field>
+        <field name="model">facodi.learning.course.mapping</field>
+        <field name="arch" type="xml">
+            <search string="FACODI Course Mappings">
+                <field name="source_channel_id"/>
+                <field name="target_channel_id"/>
+                <field name="mapping_type"/>
+                <field name="origin"/>
+                <field name="state"/>
+                <filter name="proposed" string="Needs Review" domain="[('state', '=', 'proposed')]"/>
+                <filter name="approved" string="Approved" domain="[('state', '=', 'approved')]"/>
+                <filter name="rejected" string="Rejected" domain="[('state', '=', 'rejected')]"/>
+                <separator/>
+                <filter name="prerequisites" string="Prerequisites" domain="[('mapping_type', '=', 'prerequisite')]"/>
+                <filter name="automatic" string="Automatic Decisions" domain="[('policy_version', '!=', False)]"/>
+                <group>
+                    <filter name="group_state" string="Status" context="{'group_by': 'state'}"/>
+                    <filter name="group_mapping_type" string="Relation Type" context="{'group_by': 'mapping_type'}"/>
+                    <filter name="group_origin" string="Origin" context="{'group_by': 'origin'}"/>
+                    <filter name="group_source" string="Source Course" context="{'group_by': 'source_channel_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="view_facodi_course_mapping_list" model="ir.ui.view">
+        <field name="name">facodi.learning.course.mapping.list</field>
+        <field name="model">facodi.learning.course.mapping</field>
+        <field name="arch" type="xml">
+            <list string="Course Mappings"
+                  decoration-info="state == 'proposed'"
+                  decoration-success="state == 'approved'"
+                  decoration-danger="state == 'rejected'">
+                <field name="source_channel_id"/>
+                <field name="target_channel_id"/>
+                <field name="mapping_type"/>
+                <field name="confidence"/>
+                <field name="origin"/>
+                <field name="state"/>
+                <field name="ranking_version" optional="hide"/>
+                <field name="reviewed_by_id" optional="hide"/>
+                <field name="reviewed_at" optional="hide"/>
+                <field name="policy_version" optional="hide"/>
+                <field name="native_applied_at" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_facodi_course_mapping_form" model="ir.ui.view">
+        <field name="name">facodi.learning.course.mapping.form</field>
+        <field name="model">facodi.learning.course.mapping</field>
+        <field name="arch" type="xml">
+            <form string="FACODI Course Mapping">
+                <header>
+                    <button name="action_approve"
+                            type="object"
+                            string="Approve"
+                            class="btn-primary"
+                            groups="website_slides.group_website_slides_manager"
+                            invisible="state != 'proposed'"/>
+                    <button name="action_reject"
+                            type="object"
+                            string="Reject"
+                            groups="website_slides.group_website_slides_manager"
+                            invisible="state != 'proposed'"/>
+                    <field name="state" widget="statusbar" statusbar_visible="proposed,approved,rejected"/>
+                </header>
+                <sheet>
+                    <field name="id" invisible="1"/>
+                    <group string="Course Relation">
+                        <group>
+                            <field name="source_channel_id" readonly="id"/>
+                            <field name="target_channel_id" readonly="id"/>
+                            <field name="mapping_type" readonly="id"/>
+                        </group>
+                        <group>
+                            <field name="origin" readonly="id"/>
+                            <field name="confidence" readonly="state != 'proposed' or origin == 'analysis'"/>
+                            <field name="ranking_version" readonly="1"/>
+                        </group>
+                    </group>
+
+                    <group string="Ranking Evidence" invisible="not evidence and not ranking_version">
+                        <field name="evidence" readonly="origin == 'analysis' or state != 'proposed'" nolabel="1"/>
+                    </group>
+
+                    <group string="Review Evidence" invisible="state == 'proposed'">
+                        <group>
+                            <field name="reviewed_by_id" readonly="1"/>
+                            <field name="reviewed_at" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="policy_version" readonly="1"/>
+                            <field name="decision_snapshot" readonly="1"/>
+                        </group>
+                    </group>
+
+                    <group string="Native Prerequisite Application" invisible="mapping_type != 'prerequisite'">
+                        <group>
+                            <field name="native_applied_by_id" readonly="1"/>
+                            <field name="native_applied_at" readonly="1"/>
+                        </group>
+                        <div class="text-muted">
+                            Approved prerequisites are applied to the standard Odoo course prerequisite field. This FACODI record remains audit evidence only.
+                        </div>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_facodi_course_mappings" model="ir.actions.act_window">
+        <field name="name">Course Mappings</field>
+        <field name="res_model">facodi.learning.course.mapping</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_facodi_course_mapping_search"/>
+        <field name="context">{'search_default_proposed': 1}</field>
+    </record>
+
+    <record id="slide_channel_view_form_facodi_mapping" model="ir.ui.view">
+        <field name="name">slide.channel.view.form.facodi.course.mapping</field>
+        <field name="model">slide.channel</field>
+        <field name="inherit_id" ref="website_slides.view_slide_channel_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//header" position="inside">
+                <button name="action_facodi_generate_course_mappings_ui"
+                        type="object"
+                        string="Find Related Courses"
+                        groups="website_slides.group_website_slides_officer"/>
+            </xpath>
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button name="action_facodi_view_course_mappings"
+                        type="object"
+                        icon="fa-sitemap"
+                        class="oe_stat_button"
+                        groups="website_slides.group_website_slides_officer">
+                    <div class="o_field_widget o_stat_info">
+                        <span class="o_stat_text">FACODI</span>
+                        <span class="o_stat_text">Course Mappings</span>
+                    </div>
+                </button>
+            </xpath>
+        </field>
+    </record>
+
+    <menuitem id="menu_facodi_learning_course_mapping"
+              name="Course Mapping"
+              parent="menu_facodi_learning_root"
+              groups="website_slides.group_website_slides_officer"
+              sequence="3"/>
+    <menuitem id="menu_facodi_course_mappings"
+              name="Course Mappings"
+              parent="menu_facodi_learning_course_mapping"
+              action="action_facodi_course_mappings"
+              sequence="1"/>
+</odoo>

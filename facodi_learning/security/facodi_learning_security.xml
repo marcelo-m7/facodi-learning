@@ -73,6 +73,33 @@
             <field name="domain_force">[(1, '=', 1)]</field>
         </record>
 
+        <record id="rule_facodi_course_mapping_officer_read" model="ir.rule">
+            <field name="name">FACODI course mapping: officer read all</field>
+            <field name="model_id" ref="model_facodi_learning_course_mapping"/>
+            <field name="groups" eval="[(4, ref('website_slides.group_website_slides_officer'))]"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="0"/>
+            <field name="perm_create" eval="0"/>
+            <field name="perm_unlink" eval="0"/>
+        </record>
+        <record id="rule_facodi_course_mapping_officer_write_own" model="ir.rule">
+            <field name="name">FACODI course mapping: officer create/write own source course</field>
+            <field name="model_id" ref="model_facodi_learning_course_mapping"/>
+            <field name="groups" eval="[(4, ref('website_slides.group_website_slides_officer'))]"/>
+            <field name="domain_force">[('source_channel_id.user_id', '=', user.id)]</field>
+            <field name="perm_read" eval="0"/>
+            <field name="perm_write" eval="1"/>
+            <field name="perm_create" eval="1"/>
+            <field name="perm_unlink" eval="0"/>
+        </record>
+        <record id="rule_facodi_course_mapping_manager" model="ir.rule">
+            <field name="name">FACODI course mapping: manager all</field>
+            <field name="model_id" ref="model_facodi_learning_course_mapping"/>
+            <field name="groups" eval="[(4, ref('website_slides.group_website_slides_manager'))]"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+        </record>
+
         <record id="rule_facodi_course_candidate_officer_read" model="ir.rule">
             <field name="name">FACODI course candidate: officer read all</field>
             <field name="model_id" ref="model_facodi_learning_course_candidate"/>
