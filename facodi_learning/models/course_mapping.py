@@ -1,4 +1,4 @@
-from odoo import api, fields, models
+from odoo import Command, api, fields, models
 from odoo.exceptions import AccessError, ValidationError
 
 
@@ -159,6 +159,52 @@ class FacodiLearningCourseMapping(models.Model):
             raise AccessError("Reviewed and generated course mappings are audit history.")
         return super().unlink()
 
+    def _would_create_prerequisite_cycle(self):
+        self.ensure_one()
+        if self.mapping_type != "prerequisite":
+            return False
+
+        source_id = self.source_channel_id.id
+        pending_ids = list(self.target_channel_id.prerequisite_channel_ids.ids)
+        visited = set()
+        while pending_ids:
+            channel_id = pending_ids.pop()
+            if channel_id == source_id:
+                return True
+            if channel_id in visited:
+                continue
+            visited.add(channel_id)
+            channel = self.env["slide.channel"].browse(channel_id)
+            channel.check_access("read")
+            pending_ids.extend(
+                prerequisite_id
+                for prerequisite_id in channel.prerequisite_channel_ids.ids
+                if prerequisite_id not in visited
+            )
+        return False
+
+    def _apply_native_prerequisite(self, applied_at):
+        self.ensure_one()
+        if self.mapping_type != "prerequisite":
+            return {}
+
+        source = self.source_channel_id
+        target = self.target_channel_id
+        source.check_access("write")
+        if target not in source.prerequisite_channel_ids:
+            if self._would_create_prerequisite_cycle():
+                raise ValidationError(
+                    "This prerequisite would create a cycle in the eLearning course graph."
+                )
+            source.write(
+                {"prerequisite_channel_ids": [Command.link(target.id)]}
+            )
+
+        return {
+            "native_applied_by_id": self.env.uid,
+            "native_applied_at": applied_at,
+        }
+
     def _review(self, state):
         if state not in {"approved", "rejected"}:
             raise ValidationError("Unsupported course mapping review state.")
@@ -172,13 +218,18 @@ class FacodiLearningCourseMapping(models.Model):
             raise ValidationError(
                 "Only available proposed course mappings can be reviewed."
             )
-        return super(FacodiLearningCourseMapping, records).write(
-            {
+
+        reviewed_at = fields.Datetime.now()
+        for mapping in records:
+            values = {
                 "state": state,
                 "reviewed_by_id": self.env.uid,
-                "reviewed_at": fields.Datetime.now(),
+                "reviewed_at": reviewed_at,
             }
-        )
+            if state == "approved":
+                values.update(mapping._apply_native_prerequisite(reviewed_at))
+            super(FacodiLearningCourseMapping, mapping).write(values)
+        return True
 
     def action_approve(self):
         return self._review("approved")
