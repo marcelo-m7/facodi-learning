@@ -51,6 +51,37 @@ M3.1 intentionally does not implement external discovery providers, semantic/AI
 ranking, curriculum coverage models or learner progression/credit recognition.
 Those remain separate follow-on milestones.
 
+## Course Profile — M3.2
+
+Every canonical `slide.channel` can expose a deterministic internal profile through
+`channel._facodi_course_profile()`. The profile is computed on demand as
+`course-profile-v1`; M3.2 creates no profile table and persists no duplicate course
+state.
+
+The profile aggregates only existing canonical/evidence data:
+
+```text
+slide.channel
+  -> standard course metadata and descriptions
+  -> standard course tags/groups
+  -> native prerequisite channels
+  -> sections, compact content metadata, types and duration
+  -> standard content tags
+  -> latest safe detected-language evidence from analysis results
+  -> approved content-relation aggregates grouped by counterpart course/type
+```
+
+The builder is deterministic for the same readable database state and performs no
+writes, privilege elevation, network call or AI request. It deliberately excludes
+learner/member/progress data, generated summaries, transcripts and raw provider
+payloads. Both published and unpublished content remain visible to this internal
+profile because M3.2 describes the current canonical editorial course; learner-
+facing visibility remains governed by normal Odoo access/publication rules.
+
+M3.2 is internal infrastructure for later course retrieval/mapping. It does not add
+course-mapping semantics, curriculum coverage, external discovery providers,
+embeddings or learner-facing UI.
+
 ## Content analysis pipeline
 
 Source → unpublished standard content → queued analysis → historical result →
@@ -72,9 +103,10 @@ odoo -d facodi -u facodi_learning --stop-after-init
 ```
 
 Back up the database and matching filestore for an existing deployment. Changes in
-19.0.1.2.0 are additive and require no data rewrite or post-init migration. Existing
-sources, jobs, attempts, results, mappings and standard eLearning content remain
-intact. Older audit history is not retroactively fabricated.
+19.0.1.3.0 are additive and M3.2 introduces no persistent profile schema, so no
+data rewrite or migration is required. Existing sources, jobs, attempts, results,
+mappings, candidates and standard eLearning content remain intact. Older audit
+history is not retroactively fabricated.
 
 ## Manager workflow
 
@@ -113,16 +145,17 @@ Course Discovery M3.1 itself has no external discovery adapter. Provider-specifi
 course discovery belongs to a later optional-addon milestone; the core candidate
 evaluator and policy remain deterministic and offline.
 
-See [architecture](docs/architecture.md) for normalized output, course-selection
-and transaction contracts. Runtime secrets belong in an adapter's deployment
-environment, never source records or payloads. No external provider SDK is a core
-dependency.
+See [architecture](docs/architecture.md) for normalized output, course-selection,
+course-profile and transaction contracts. Runtime secrets belong in an adapter's
+deployment environment, never source records or payloads. No external provider SDK
+is a core dependency.
 
 ## Tests
 
 GitHub Actions installs and upgrades against Odoo 19 + PostgreSQL 16, with a
 persistent filestore between runs. Run `--test-tags /facodi_learning` to cover
-candidate identity/evaluation/modes/resolution, locking and immutable snapshots,
+candidate identity/evaluation/modes/resolution, course-profile schema and
+determinism, safe analysis/relation aggregation, privacy/non-mutation boundaries,
 request/retry/error isolation, immutable history, provider output, source replay,
 Manager review, ACLs, batch processing and safe learner links. Tests explicitly
 assert that both automatic and manual new-course resolution leave the canonical
