@@ -11,15 +11,15 @@ dependency on `theme_facodi`.
 | `facodi.learning.analysis.job` | Requester, provider, state, attempt count and latest outcome |
 | `facodi.learning.analysis.attempt` | Immutable evidence for each completed or failed execution, including retries |
 | `facodi.learning.analysis.result` | Immutable normalized output; separate human tag review metadata |
-| `facodi.learning.mapping` | Directed related/prerequisite/recommended/supports proposal and Manager review |
+| `facodi.learning.mapping` | Directed content-level related/prerequisite/recommended/supports proposal and Manager review |
+| `facodi.learning.course.mapping` | Reviewed course-level semantic relation evidence; native Odoo prerequisites remain canonical |
 
 Attempts are separate from successful results because failures also require
 history. Course candidates are not canonical courses: a resolved new candidate
 creates exactly one standard `slide.channel`, while resolution to an existing
 course links the candidate to that standard channel. There is no model for every
 pipeline stage, no worker queue and no new LMS or taxonomy. `slide.channel` and its
-standard sequence/sections represent learning paths; mappings express optional
-educational relationships, not new progression or enrolment rules.
+standard sequence/sections remain the canonical course structure.
 
 ## M3.1 course selection
 
@@ -79,15 +79,9 @@ unresolved candidates; Managers have model-level access but Python lifecycle gua
 still protect identity and terminal evidence. Terminal resolution/rejection remains
 Manager-only.
 
-M3.1 intentionally stops at course selection. Curriculum reference/coverage,
-external discovery runs/providers, course-profile aggregation, semantic course
-mapping and AI ranking belong to later milestones and must not be inferred from the
-M3.1 candidate schema.
-
 ## M3.2 course profile
 
-M3.2 adds no persistent model. `slide.channel` is extended only with the private
-method:
+M3.2 adds no persistent model. `slide.channel` exposes the private method:
 
 ```python
 profile = channel._facodi_course_profile()
@@ -115,7 +109,7 @@ approved_content_relations
 `channel` contains canonical standard metadata and plain-text descriptions.
 `course_tags` preserves standard Odoo channel-tag grouping/order. Native
 `prerequisite_channel_ids` are copied only as ordered standard course IDs; FACODI
-does not create a duplicate prerequisite relation model.
+does not create a duplicate prerequisite graph.
 
 `structure` contains section/content counts, standard `slide.channel.total_time`
 and fixed category counts for article/document/infographic/quiz/video. Sections
@@ -134,8 +128,8 @@ content are not copied into the baseline profile.
 Content relations contribute only when `facodi.learning.mapping.state ==
 "approved"`. They are collapsed into deterministic course-level counts grouped by
 counterpart `slide.channel` and mapping type. Proposed/rejected mappings and raw
-mapping IDs do not affect the profile. This is evidence for later retrieval, not a
-course-level semantic mapping model; M3.3 owns that later decision layer.
+mapping IDs do not affect the profile. This is evidence for retrieval, not a
+course-level relation decision.
 
 The builder performs no writes, no `sudo()`, no network call and no external AI
 request. It uses the caller's ordinary ORM environment and native access behavior.
@@ -146,8 +140,116 @@ publication/access filtering remains separate and unchanged.
 Learner/member/progress state is outside the schema. Adding/removing a
 `slide.channel.partner` does not change the profile, and no partner identity,
 email, membership count, completion flag or user-specific progress is included.
-M3.2 therefore provides a deterministic internal retrieval input without creating
-a shadow LMS or a privacy-sensitive learner profile.
+
+## M3.3 course mapping
+
+M3.3 creates a reviewed course-relation layer without changing the canonical
+course model. The flow is:
+
+```text
+slide.channel
+  -> course-profile-v1
+  -> bounded deterministic retrieval
+  -> course-mapping-v1 ranking
+  -> facodi.learning.course.mapping proposal
+  -> Manager review / restricted Auto Approve
+  -> approved semantic relation
+       or native slide.channel prerequisite write
+```
+
+### Retrieval and ranking
+
+`services/course_mapping.py` retrieves a bounded set of active target
+`slide.channel` records, excludes the source course and respects a specific source
+website when one is configured. It never consults learner membership, completion or
+progress. The service then builds M3.2 profiles and computes deterministic signals:
+
+- normalized title overlap;
+- standard course-tag Jaccard overlap;
+- detected-language compatibility when language evidence exists;
+- standard total-duration similarity.
+
+The weighted result is versioned as `course-mapping-v1`. Proposed relation
+generation is idempotent by directed `(source_channel_id, target_channel_id,
+mapping_type)` identity. An existing proposal is reused rather than silently
+rewriting its original ranking evidence. The baseline ranker proposes only
+`related`; other relation types are explicit editorial choices or future provider
+outputs.
+
+Retrieval/ranking perform no `sudo()`, network request, AI request, embedding
+lookup, or learner-data access. Officers can generate proposals only through the
+ordinary permissions of the source course and mapping model.
+
+### Course mapping audit model
+
+`facodi.learning.course.mapping` stores two standard course references plus relation
+type, confidence, origin, proposal state, ranking/evidence metadata and review
+history. Source and target must differ and the directed relation triple is unique.
+Supported types are:
+
+- `related`
+- `alternative`
+- `continuation`
+- `complements`
+- `equivalent`
+- `prerequisite`
+
+Reviewed rows are immutable audit history. Review is serialized with
+`try_lock_for_update()` and restricted to eLearning Managers. Direct ORM writes
+cannot forge approved/rejected state or terminal reviewer/policy/native-application
+evidence.
+
+### Native prerequisites
+
+A course mapping with `mapping_type="prerequisite"` is never a second prerequisite
+truth. Its semantics are `source_channel_id` requires `target_channel_id`. Manager
+approval validates the existing native prerequisite graph and then uses
+`Command.link(target.id)` on the source course's standard
+`prerequisite_channel_ids` field.
+
+Before the write, FACODI traverses the native Odoo graph and rejects both direct and
+transitive cycles. Re-approval is idempotent when the native link already exists.
+The mapping row records who/when applied the native link but learner progression
+continues to use Odoo's standard prerequisite implementation.
+
+Content-level `facodi.learning.mapping` prerequisite labels remain optional content
+relationships and do not mutate the native course prerequisite graph.
+
+### Course mapping Auto Approve
+
+Course mapping policy is independent from M3.1 course-selection policy. Settings
+are stored with the normal `res.config.settings` + `config_parameter` pattern:
+
+- `facodi_learning.course_mapping_mode`
+- `facodi_learning.course_mapping_auto_types`
+- `facodi_learning.course_mapping_min_confidence`
+
+The default is Manual. Auto mode is fail-closed: execution must be an actual
+superuser/eLearning Manager context, confidence must meet the configured threshold,
+and the relation type must be in both the administrator configuration and the hard
+safe-type set. The hard safe set permits only `related` and `complements`.
+`prerequisite`, `alternative`, `equivalent` and `continuation` cannot auto-approve
+even if configured accidentally.
+
+Automatic decisions persist a versioned decision snapshot and do not populate a
+human reviewer. Generation applies this policy only to generated
+`origin="analysis"` proposals that remain `proposed`; a coincident manual proposal
+is never converted into an automatic decision.
+
+### Backend and learner surfaces
+
+The standard `slide.channel` form is inherited only to add **Find Related Courses**
+and a FACODI Course Mappings stat button. Review lives under
+**eLearning → FACODI Learning → Course Mapping → Course Mappings**. Content-level
+relations remain separately named **Content Mappings** under Content Analysis.
+
+The public course page remains `website_slides.course_main`. A small inherited QWeb
+block calls `channel._facodi_related_channels(website)` and renders only approved
+non-prerequisite semantic targets. Because Public/Portal users intentionally have no
+ACL on the audit model, the helper uses `sudo()` only to discover approved target
+IDs. It then switches back to the real caller's non-sudo `slide.channel` environment
+and filters `active`, `is_published`, current website and native `is_visible`.
+Confidence, policy snapshots and raw evidence are never exposed to learners.
 
 ## Ingestion
 
@@ -180,9 +282,9 @@ Return a dictionary with any of:
 
 The boundary validates types, tag/target existence and access before persisting.
 Any malformed result rolls back its proposals/output and fails only its job.
-Mapping SQL uniqueness prevents duplicate directed triples; self-links and invalid
-confidence/provenance are rejected. Relations do not enforce prerequisite cycles
-or replace standard enrolment/progression.
+Content-mapping SQL uniqueness prevents duplicate directed triples; self-links and
+invalid confidence/provenance are rejected. Content-level relations do not replace
+standard enrolment, course progression or the native prerequisite graph.
 
 ## Transactions and cron
 
@@ -192,53 +294,51 @@ Completed jobs cannot be reprocessed. Provider changes are allowed only while
 pending.
 
 Odoo `try_lock_for_update()` prevents simultaneous processing/review and is also
-the concurrency primitive for M3.1 course resolution. A job's processing state and
-terminal outcome are in one transaction: worker death rolls back to pending, so no
-timer-based lease/stale-worker mechanism is necessary. Adapters must not commit and
-must use timeouts and idempotent external requests. External services may see a
-retried request after a crash; this is not a claim of exactly-once network execution.
+the concurrency primitive for M3.1 course resolution and M3.3 course-mapping
+review. A job's processing state and terminal outcome are in one transaction:
+worker death rolls back to pending, so no timer-based lease/stale-worker mechanism
+is necessary. Adapters must not commit and must use timeouts and idempotent external
+requests. External services may see a retried request after a crash; this is not a
+claim of exactly-once network execution.
 
-Standard `ir.cron` caps batches at 100, defaults to 10, isolates provider failures
-with savepoints and uses Odoo 19 `_commit_progress()` per job in real cron context.
-The scheduled action is `noupdate` so module upgrades preserve administrator tuning.
-Persisted errors contain exception type and a safe generic explanation; raw
-provider exceptions are not logged because they may contain credentials.
+Standard `ir.cron` caps analysis batches at 100, defaults to 10, isolates provider
+failures with savepoints and uses Odoo 19 `_commit_progress()` per job in real cron
+context. Persisted errors contain exception type and a safe generic explanation;
+raw provider exceptions are not logged because they may contain credentials.
 
 ## Security and editorial review
 
 Officers read audit records and request/retry only for their own courses. Managers
-process, ingest and review. Model methods enforce state transitions on create/write,
-not only on buttons. Private server methods create immutable results/attempts;
-client context flags cannot grant access. Standard content technical fields are
-restricted to the eLearning Officer group.
+process, ingest and perform terminal review. Model methods enforce lifecycle
+transitions on create/write, not only on buttons. Private server methods create
+immutable results/attempts; client context flags cannot grant access. Standard
+content technical fields are restricted to the eLearning Officer group.
 
-The only elevated operations are configuration-parameter reads and an approved
-relation lookup for learner links. The latter returns ordinary non-sudo slides,
-filtered by published content/course, native visibility/access and current website.
-Students cannot read raw jobs, provenance, transcript drafts, course candidates or
-confidence. Tag review records approver/rejector and timestamps separately from
-generated data. M3.2 profile generation itself uses no privilege elevation.
+Elevated learner operations are deliberately narrow: configuration-parameter reads
+and approved content/course relation ID lookups. Learner helpers return ordinary
+non-sudo standard records filtered by publication, native visibility/access and
+current website. Students cannot read raw jobs, provenance, transcript drafts,
+course candidates, mapping confidence/evidence or decision snapshots. M3.2 profile
+generation and M3.3 ranking use no privilege elevation.
 
 ## Source website and portability
 
-The reference `edu-open2.odoo.com` was inspected read-only. It uses Odoo 19 Enterprise
-and `theme_default`; custom addons were absent. Its proposal form posts to a Studio
-model `x_propostas_de_conteud`. That database-specific form/model is not copied to
-Community. Portable contribution pages use standard contact; moving the existing
-proposal backlog requires a separately mapped data migration, not a theme install.
+The reference `edu-open2.odoo.com` was inspected read-only. It uses Odoo 19
+Enterprise and `theme_default`; custom addons were absent. Its proposal form posts
+to a Studio model `x_propostas_de_conteud`. That database-specific form/model is not
+copied to Community. Portable contribution pages use standard contact; moving the
+existing proposal backlog requires a separately mapped data migration, not a theme
+install.
 
 Schema changes preserve old results and approvals; new attempt records begin with
-new executions, without invented historical attempts. M3.1 adds candidate schema
-and backend views without rewriting existing learning/content-analysis data. M3.2
-adds only computed service/model-extension code and therefore requires no database
-profile migration. Back up database+filestore before upgrades. Existing editorial
-pages are outside this addon's ownership.
+new executions, without invented historical attempts. M3.1 adds candidate schema,
+M3.2 adds only computed profile code, and M3.3 adds an additive course-mapping audit
+table/fields/settings/views. No milestone rewrites old audit history. Back up the
+database and matching filestore before upgrades. Existing editorial pages remain
+outside this addon's ownership except for additive inherited QWeb fragments.
 
-Referenced source/target slides use restrictive foreign keys for mappings, so
-removing content cannot silently erase approved relation history. Remove an
-unreviewed manual proposal explicitly where appropriate; archive historical
-content instead of deleting it. Upgrading the addon applies these foreign-key
-changes through the native ORM schema update without a data rewrite.
-
-New analysis-origin mappings require a matching result reference. Legacy rows
-lacking provenance are preserved on upgrade rather than assigned invented evidence.
+Referenced source/target slides use restrictive foreign keys for content mappings,
+so removing content cannot silently erase approved relation history. Archive
+historical content instead of deleting it. Course mappings likewise retain audited
+standard course references and are reviewed as history rather than disposable
+recommendation cache.
