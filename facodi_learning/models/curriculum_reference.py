@@ -49,14 +49,44 @@ class FacodiLearningCurriculumReference(models.Model):
                     )
         return normalized
 
+    @api.model
+    def _identity_exists(self, provider, external_id, exclude_ids=None):
+        domain = [
+            ("provider", "=", provider),
+            ("external_id", "=", external_id),
+        ]
+        if exclude_ids:
+            domain.append(("id", "not in", exclude_ids))
+        return bool(self.search_count(domain, limit=1))
+
     @api.model_create_multi
     def create(self, vals_list):
-        return super().create(
-            [self._normalize_identity_values(vals) for vals in vals_list]
-        )
+        normalized_list = [self._normalize_identity_values(vals) for vals in vals_list]
+        identities = set()
+        for vals in normalized_list:
+            provider = vals.get("provider", "manual").strip()
+            external_id = vals.get("external_id", "").strip()
+            identity = (provider, external_id)
+            if identity in identities or self._identity_exists(provider, external_id):
+                raise ValidationError("This curriculum reference already exists.")
+            identities.add(identity)
+            vals.update(provider=provider, external_id=external_id)
+        return super().create(normalized_list)
 
     def write(self, vals):
-        return super().write(self._normalize_identity_values(vals))
+        normalized = self._normalize_identity_values(vals)
+        if {"provider", "external_id"} & normalized.keys():
+            identities = set()
+            for reference in self:
+                provider = normalized.get("provider", reference.provider)
+                external_id = normalized.get("external_id", reference.external_id)
+                identity = (provider, external_id)
+                if identity in identities or self._identity_exists(
+                    provider, external_id, exclude_ids=self.ids
+                ):
+                    raise ValidationError("This curriculum reference already exists.")
+                identities.add(identity)
+        return super().write(normalized)
 
 
 class FacodiLearningCurriculumUnit(models.Model):
@@ -124,11 +154,51 @@ class FacodiLearningCurriculumUnit(models.Model):
                 raise ValidationError("Curricular unit external code cannot be empty.")
         return normalized
 
+    @api.model
+    def _unit_identity_exists(self, reference_id, external_unit_code, exclude_ids=None):
+        domain = [
+            ("reference_id", "=", reference_id),
+            ("external_unit_code", "=", external_unit_code),
+        ]
+        if exclude_ids:
+            domain.append(("id", "not in", exclude_ids))
+        return bool(self.search_count(domain, limit=1))
+
     @api.model_create_multi
     def create(self, vals_list):
-        return super().create(
-            [self._normalize_unit_values(vals) for vals in vals_list]
-        )
+        normalized_list = [self._normalize_unit_values(vals) for vals in vals_list]
+        identities = set()
+        for vals in normalized_list:
+            reference_id = vals.get("reference_id")
+            external_unit_code = vals.get("external_unit_code", "").strip()
+            identity = (reference_id, external_unit_code)
+            if identity in identities or self._unit_identity_exists(
+                reference_id, external_unit_code
+            ):
+                raise ValidationError(
+                    "This curricular unit already exists in this curriculum reference."
+                )
+            identities.add(identity)
+            vals["external_unit_code"] = external_unit_code
+        return super().create(normalized_list)
 
     def write(self, vals):
-        return super().write(self._normalize_unit_values(vals))
+        normalized = self._normalize_unit_values(vals)
+        if {"reference_id", "external_unit_code"} & normalized.keys():
+            identities = set()
+            for unit in self:
+                reference_id = normalized.get("reference_id", unit.reference_id.id)
+                external_unit_code = normalized.get(
+                    "external_unit_code", unit.external_unit_code
+                )
+                identity = (reference_id, external_unit_code)
+                if identity in identities or self._unit_identity_exists(
+                    reference_id,
+                    external_unit_code,
+                    exclude_ids=self.ids,
+                ):
+                    raise ValidationError(
+                        "This curricular unit already exists in this curriculum reference."
+                    )
+                identities.add(identity)
+        return super().write(normalized)
