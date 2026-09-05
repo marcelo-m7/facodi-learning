@@ -1,5 +1,10 @@
-from odoo import Command, api, fields, models
+from odoo import SUPERUSER_ID, Command, api, fields, models
 from odoo.exceptions import AccessError, ValidationError
+
+from ..services.course_mapping_policy import (
+    get_course_mapping_policy,
+    is_course_mapping_auto_eligible,
+)
 
 
 class FacodiLearningCourseMapping(models.Model):
@@ -79,10 +84,13 @@ class FacodiLearningCourseMapping(models.Model):
             if not 0 <= mapping.confidence <= 1:
                 raise ValidationError("Confidence must be between zero and one.")
 
-    def _check_manager(self):
-        if not self.env.user.has_group(
+    def _is_manager(self):
+        return self.env.uid == SUPERUSER_ID or self.env.user.has_group(
             "website_slides.group_website_slides_manager"
-        ):
+        )
+
+    def _check_manager(self):
+        if not self._is_manager():
             raise AccessError(
                 "Only eLearning Managers can review FACODI course mappings."
             )
@@ -196,14 +204,48 @@ class FacodiLearningCourseMapping(models.Model):
                 raise ValidationError(
                     "This prerequisite would create a cycle in the eLearning course graph."
                 )
-            source.write(
-                {"prerequisite_channel_ids": [Command.link(target.id)]}
-            )
+            source.write({"prerequisite_channel_ids": [Command.link(target.id)]})
 
         return {
             "native_applied_by_id": self.env.uid,
             "native_applied_at": applied_at,
         }
+
+    def _maybe_auto_approve(self):
+        self.ensure_one()
+        policy = get_course_mapping_policy(self.env)
+        if not is_course_mapping_auto_eligible(self, policy):
+            return False
+
+        self.check_access("write")
+        locked = self.try_lock_for_update()
+        if not locked:
+            return False
+        locked.invalidate_recordset()
+        if not is_course_mapping_auto_eligible(locked, policy):
+            return False
+
+        decision_at = fields.Datetime.now()
+        snapshot = {
+            "confidence": locked.confidence,
+            "mapping_type": locked.mapping_type,
+            "ranking_version": locked.ranking_version or False,
+            "min_confidence": policy["min_confidence"],
+            "auto_types": sorted(policy["auto_types"]),
+            "policy_version": policy["policy_version"],
+        }
+        super(FacodiLearningCourseMapping, locked).write(
+            {
+                "state": "approved",
+                "reviewed_by_id": False,
+                "reviewed_at": decision_at,
+                "policy_version": policy["policy_version"],
+                "decision_snapshot": snapshot,
+                "native_applied_by_id": False,
+                "native_applied_at": False,
+            }
+        )
+        return True
 
     def _review(self, state):
         if state not in {"approved", "rejected"}:
