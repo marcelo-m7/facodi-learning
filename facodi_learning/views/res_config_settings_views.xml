@@ -56,6 +56,24 @@
                         </div>
                     </div>
                 </setting>
+                <setting id="facodi_learning_course_mapping_settings" string="FACODI Course Mapping" help="Configure deterministic course relation review independently from course selection. Prerequisites always require Manager review.">
+                    <div class="content-group">
+                        <div class="row mt16">
+                            <label for="facodi_learning_course_mapping_mode" class="col-lg-4 o_light_label"/>
+                            <field name="facodi_learning_course_mapping_mode" class="oe_inline"/>
+                        </div>
+                        <div invisible="facodi_learning_course_mapping_mode != 'auto'">
+                            <div class="row mt16">
+                                <label for="facodi_learning_course_mapping_auto_types" class="col-lg-4 o_light_label"/>
+                                <field name="facodi_learning_course_mapping_auto_types" class="oe_inline"/>
+                            </div>
+                            <div class="row mt16">
+                                <label for="facodi_learning_course_mapping_min_confidence" class="col-lg-4 o_light_label"/>
+                                <field name="facodi_learning_course_mapping_min_confidence" class="oe_inline"/>
+                            </div>
+                        </div>
+                    </div>
+                </setting>
             </xpath>
         </field>
     </record>
