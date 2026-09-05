@@ -1,6 +1,8 @@
 import logging
 
 from odoo import api, fields, models
+from odoo.exceptions import AccessError
+from ..services.analysis import normalize_output
 
 from ..services import analyze_local_metadata
 
@@ -49,80 +51,145 @@ class FacodiLearningAnalysisJob(models.Model):
             "local_metadata": analyze_local_metadata,
         }
 
+    attempt_ids = fields.One2many(
+        "facodi.learning.analysis.attempt", "job_id", readonly=True
+    )
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        allowed = {"slide_id", "provider", "requested_by_id"}
+        for vals in vals_list:
+            if (
+                vals.keys() - allowed
+                or vals.get("requested_by_id", self.env.uid) != self.env.uid
+            ):
+                raise AccessError(
+                    "Only content and provider can be supplied for a new request."
+                )
+            vals.update(
+                requested_by_id=self.env.uid,
+                state="pending",
+                attempt_count=0,
+                result_id=False,
+                started_at=False,
+                completed_at=False,
+                last_error=False,
+                model_name=False,
+                attempt_ids=[],
+            )
+        return super().create(vals_list)
+
+    def write(self, vals):
+        if vals.keys() - {"provider"} or any(job.state != "pending" for job in self):
+            raise AccessError("Use job actions to change processing state.")
+        return super().write(vals)
+
+    def unlink(self):
+        raise AccessError("Analysis jobs are audit history and cannot be deleted.")
+
     def action_process(self):
-        Result = self.env["facodi.learning.analysis.result"]
-        for job in self:
-            if job.state == "completed":
+        if not self.env.su and not self.env.user.has_group(
+            "website_slides.group_website_slides_manager"
+        ):
+            raise AccessError("Only eLearning Managers can run analysis jobs.")
+        self.check_access("write")
+        for job in self.try_lock_for_update():
+            job.invalidate_recordset()
+            if job.state != "pending":
                 continue
-
-            job.write({
-                "state": "processing",
-                "attempt_count": job.attempt_count + 1,
-                "started_at": fields.Datetime.now(),
-                "completed_at": False,
-                "last_error": False,
-            })
+            started = fields.Datetime.now()
+            super(FacodiLearningAnalysisJob, job).write(
+                {
+                    "state": "processing",
+                    "attempt_count": job.attempt_count + 1,
+                    "started_at": started,
+                }
+            )
+            result = self.env["facodi.learning.analysis.result"]
+            error = False
             try:
-                provider = job._get_provider_registry().get(job.provider)
-                if not provider:
-                    raise ValueError(f"Unknown analysis provider: {job.provider}")
-
                 with self.env.cr.savepoint():
-                    normalized = provider(job.slide_id)
-                    result = Result.create({
-                        "job_id": job.id,
-                        "slide_id": job.slide_id.id,
-                        "provider": job.provider,
-                        "model_name": normalized.get("model_name"),
-                        "summary": normalized.get("summary"),
-                        "detected_language": normalized.get("detected_language"),
-                        "suggested_tag_ids": [(6, 0, normalized.get("suggested_tag_ids", []))],
-                        "raw_payload": normalized.get("raw_payload") or {},
-                    })
-                job.write({
-                    "state": "completed",
-                    "completed_at": fields.Datetime.now(),
-                    "model_name": result.model_name,
+                    provider = job._get_provider_registry().get(job.provider)
+                    if not provider:
+                        raise ValueError(f"Unknown analysis provider: {job.provider}")
+                    normalized = normalize_output(provider(job.slide_id), self.env)
+                    result = result._record_output(
+                        dict(
+                            normalized,
+                            job_id=job.id,
+                            slide_id=job.slide_id.id,
+                            provider=job.provider,
+                        )
+                    )
+                    for proposal in normalized["proposed_mappings"]:
+                        domain = [
+                            ("source_slide_id", "=", job.slide_id.id),
+                            ("target_slide_id", "=", proposal["target_slide_id"]),
+                            ("mapping_type", "=", proposal["mapping_type"]),
+                        ]
+                        if not self.env["facodi.learning.mapping"].search_count(domain):
+                            self.env["facodi.learning.mapping"].create(
+                                dict(
+                                    proposal,
+                                    source_slide_id=job.slide_id.id,
+                                    origin="analysis",
+                                    analysis_result_id=result.id,
+                                )
+                            )
+            except Exception as exc:
+                # Provider failures are data; the savepoint discards all partial output.
+                _logger.warning(
+                    "FACODI analysis job %s failed (%s)", job.id, type(exc).__name__
+                )
+                error = f"{type(exc).__name__}: operation failed; inspect the provider configuration."
+                result = self.env["facodi.learning.analysis.result"]
+            completed = fields.Datetime.now()
+            values = {
+                "state": "failed" if error else "completed",
+                "completed_at": completed,
+                "last_error": error,
+                "result_id": result.id,
+                "model_name": result.model_name if result else False,
+            }
+            super(FacodiLearningAnalysisJob, job).write(values)
+            self.env["facodi.learning.analysis.attempt"]._record_attempt(
+                {
+                    "job_id": job.id,
+                    "provider": job.provider,
+                    "number": job.attempt_count,
+                    "started_at": started,
+                    "completed_at": completed,
+                    "state": values["state"],
+                    "error": error,
                     "result_id": result.id,
-                })
-            except Exception as exc:  # provider boundary: preserve content and job history
-                _logger.exception("FACODI analysis job %s failed", job.id)
-                job.write({
-                    "state": "failed",
-                    "completed_at": fields.Datetime.now(),
-                    "last_error": str(exc)[:2000],
-                })
+                }
+            )
         return True
 
     def action_retry(self):
-        for job in self:
+        self.check_access("write")
+        for job in self.try_lock_for_update():
+            job.invalidate_recordset()
             if job.state == "failed":
-                job.write({
-                    "state": "pending",
-                    "started_at": False,
-                    "completed_at": False,
-                    "last_error": False,
-                    "result_id": False,
-                })
+                super(FacodiLearningAnalysisJob, job).write({"state": "pending"})
         return True
 
     @api.model
     def _cron_process_pending_jobs(self):
-        parameter = self.env["ir.config_parameter"].sudo().get_param(
-            "facodi_learning.analysis_batch_size", "10"
+        parameter = (
+            self.env["ir.config_parameter"]
+            .sudo()
+            .get_param("facodi_learning.analysis_batch_size", "10")
         )
         try:
             batch_size = max(1, min(int(parameter), 100))
         except (TypeError, ValueError):
             batch_size = 10
-
         jobs = self.search([("state", "=", "pending")], limit=batch_size, order="id")
-        jobs.action_process()
-
-        # Odoo 19's native cron progress API is used when this method executes
-        # inside a scheduled-action worker.  Direct calls (tests/manual RPC) do
-        # not need to manufacture cron context.
-        if self.env.context.get("cron_id"):
-            remaining = self.search_count([("state", "=", "pending")])
-            self.env["ir.cron"]._commit_progress(len(jobs), remaining=remaining)
+        for job in jobs:
+            job.action_process()
+            if self.env.context.get("cron_id"):
+                remaining = self.search_count([("state", "=", "pending")])
+                if not self.env["ir.cron"]._commit_progress(1, remaining=remaining):
+                    break
         return True

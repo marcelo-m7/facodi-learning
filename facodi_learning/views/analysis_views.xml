@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" ?>
 <odoo>
     <record id="view_facodi_analysis_job_search" model="ir.ui.view">
         <field name="name">facodi.learning.analysis.job.search</field>
@@ -17,7 +17,6 @@
             </search>
         </field>
     </record>
-
     <record id="view_facodi_analysis_job_list" model="ir.ui.view">
         <field name="name">facodi.learning.analysis.job.list</field>
         <field name="model">facodi.learning.analysis.job</field>
@@ -33,14 +32,13 @@
             </list>
         </field>
     </record>
-
     <record id="view_facodi_analysis_job_form" model="ir.ui.view">
         <field name="name">facodi.learning.analysis.job.form</field>
         <field name="model">facodi.learning.analysis.job</field>
         <field name="arch" type="xml">
             <form string="FACODI Analysis Job" create="0">
                 <header>
-                    <button name="action_process" type="object" string="Process" class="btn-primary" invisible="state not in ('pending', 'failed')" groups="website_slides.group_website_slides_manager"/>
+                    <button name="action_process" type="object" string="Process" class="btn-primary" invisible="state != 'pending'" groups="website_slides.group_website_slides_manager"/>
                     <button name="action_retry" type="object" string="Retry" invisible="state != 'failed'" groups="website_slides.group_website_slides_officer"/>
                     <field name="state" widget="statusbar" statusbar_visible="pending,processing,completed,failed"/>
                 </header>
@@ -59,6 +57,17 @@
                             <field name="result_id"/>
                         </group>
                     </group>
+                    <field name="attempt_ids" readonly="1">
+                        <list>
+                            <field name="number"/>
+                            <field name="provider"/>
+                            <field name="state"/>
+                            <field name="started_at"/>
+                            <field name="completed_at"/>
+                            <field name="error"/>
+                            <field name="result_id"/>
+                        </list>
+                    </field>
                     <group invisible="not last_error">
                         <field name="last_error" readonly="1"/>
                     </group>
@@ -66,7 +75,6 @@
             </form>
         </field>
     </record>
-
     <record id="view_facodi_analysis_result_list" model="ir.ui.view">
         <field name="name">facodi.learning.analysis.result.list</field>
         <field name="model">facodi.learning.analysis.result</field>
@@ -81,14 +89,15 @@
             </list>
         </field>
     </record>
-
     <record id="view_facodi_analysis_result_form" model="ir.ui.view">
         <field name="name">facodi.learning.analysis.result.form</field>
         <field name="model">facodi.learning.analysis.result</field>
         <field name="arch" type="xml">
             <form string="FACODI Analysis Result" create="0" delete="0">
                 <header>
-                    <button name="action_apply_suggested_tags" type="object" string="Apply Suggested Tags" class="btn-primary" groups="website_slides.group_website_slides_officer"/>
+                    <button name="action_apply_suggested_tags" type="object" string="Apply Suggested Tags" class="btn-primary" groups="website_slides.group_website_slides_manager" invisible="tags_review_state != 'pending'"/>
+                    <button name="action_reject_suggested_tags" type="object" string="Reject Tags" groups="website_slides.group_website_slides_manager" invisible="tags_review_state != 'pending'"/>
+                    <field name="tags_review_state" widget="statusbar"/>
                 </header>
                 <sheet>
                     <group>
@@ -106,12 +115,19 @@
                     </group>
                     <group>
                         <field name="summary"/>
+                        <field name="transcript"/>
+                        <field name="suggested_tags"/>
+                        <field name="proposed_mappings"/>
+                        <field name="tags_applied_by_id"/>
+                        <field name="tags_applied_at"/>
+                        <field name="tags_reviewed_by_id"/>
+                        <field name="tags_reviewed_at"/>
+                        <field name="raw_payload" groups="website_slides.group_website_slides_manager"/>
                     </group>
                 </sheet>
             </form>
         </field>
     </record>
-
     <record id="view_facodi_learning_mapping_list" model="ir.ui.view">
         <field name="name">facodi.learning.mapping.list</field>
         <field name="model">facodi.learning.mapping</field>
@@ -127,7 +143,6 @@
             </list>
         </field>
     </record>
-
     <record id="view_facodi_learning_mapping_form" model="ir.ui.view">
         <field name="name">facodi.learning.mapping.form</field>
         <field name="model">facodi.learning.mapping</field>
@@ -157,44 +172,24 @@
             </form>
         </field>
     </record>
-
     <record id="action_facodi_analysis_jobs" model="ir.actions.act_window">
         <field name="name">Analysis Jobs</field>
         <field name="res_model">facodi.learning.analysis.job</field>
         <field name="view_mode">list,form</field>
         <field name="search_view_id" ref="view_facodi_analysis_job_search"/>
     </record>
-
     <record id="action_facodi_analysis_results" model="ir.actions.act_window">
         <field name="name">Analysis Results</field>
         <field name="res_model">facodi.learning.analysis.result</field>
         <field name="view_mode">list,form</field>
     </record>
-
     <record id="action_facodi_learning_mappings" model="ir.actions.act_window">
         <field name="name">Learning Mappings</field>
         <field name="res_model">facodi.learning.mapping</field>
         <field name="view_mode">list,form</field>
     </record>
-
-    <menuitem id="menu_facodi_learning_analysis"
-        name="FACODI Analysis"
-        parent="website_slides.website_slides_menu_root"
-        groups="website_slides.group_website_slides_officer"
-        sequence="8"/>
-    <menuitem id="menu_facodi_learning_jobs"
-        name="Jobs"
-        parent="menu_facodi_learning_analysis"
-        action="action_facodi_analysis_jobs"
-        sequence="1"/>
-    <menuitem id="menu_facodi_learning_results"
-        name="Results"
-        parent="menu_facodi_learning_analysis"
-        action="action_facodi_analysis_results"
-        sequence="2"/>
-    <menuitem id="menu_facodi_learning_mappings"
-        name="Mappings"
-        parent="menu_facodi_learning_analysis"
-        action="action_facodi_learning_mappings"
-        sequence="3"/>
+    <menuitem id="menu_facodi_learning_analysis" name="FACODI Analysis" parent="website_slides.website_slides_menu_root" groups="website_slides.group_website_slides_officer" sequence="8"/>
+    <menuitem id="menu_facodi_learning_jobs" name="Jobs" parent="menu_facodi_learning_analysis" action="action_facodi_analysis_jobs" sequence="1"/>
+    <menuitem id="menu_facodi_learning_results" name="Results" parent="menu_facodi_learning_analysis" action="action_facodi_analysis_results" sequence="2"/>
+    <menuitem id="menu_facodi_learning_mappings" name="Mappings" parent="menu_facodi_learning_analysis" action="action_facodi_learning_mappings" sequence="3"/>
 </odoo>

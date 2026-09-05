@@ -6,13 +6,15 @@ class TestFacodiLearningAnalysis(TransactionCase):
     def setUpClass(cls):
         super().setUpClass()
         cls.channel = cls.env["slide.channel"].create({"name": "FACODI Test Course"})
-        cls.slide = cls.env["slide.slide"].create({
-            "name": "Open learning introduction",
-            "channel_id": cls.channel.id,
-            "slide_category": "article",
-            "description": "An introduction to open learning, digital education, and community knowledge.",
-            "tag_ids": [(0, 0, {"name": "Open Learning"})],
-        })
+        cls.slide = cls.env["slide.slide"].create(
+            {
+                "name": "Open learning introduction",
+                "channel_id": cls.channel.id,
+                "slide_category": "article",
+                "description": "An introduction to open learning, digital education, and community knowledge.",
+                "tag_ids": [(0, 0, {"name": "Open Learning"})],
+            }
+        )
 
     def test_analysis_uses_standard_slide_and_preserves_history(self):
         first_job = self.slide.action_facodi_request_analysis()
@@ -22,7 +24,9 @@ class TestFacodiLearningAnalysis(TransactionCase):
         self.assertEqual(first_job.state, "completed")
         self.assertEqual(first_job.result_id.slide_id, self.slide)
         self.assertEqual(first_job.result_id.provider, "local_metadata")
-        self.assertIn("Open Learning", first_job.result_id.suggested_tag_ids.mapped("name"))
+        self.assertIn(
+            "Open Learning", first_job.result_id.suggested_tag_ids.mapped("name")
+        )
 
         second_job = self.slide.action_facodi_request_analysis()
         second_job.action_process()

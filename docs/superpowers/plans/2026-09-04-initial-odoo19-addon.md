@@ -1,3 +1,5 @@
+> Historical baseline. Current implementation and constraints are documented in README.md and docs/architecture.md.
+
 # FACODI Learning Initial Odoo 19 Addon Implementation Plan
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
