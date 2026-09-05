@@ -133,3 +133,31 @@ class TestCourseSelection(TransactionCase):
         self.assertEqual(candidate.evaluation_policy_version, "course-evaluation-v1")
         self.assertEqual(candidate.coverage_score, 1.0)
         self.assertEqual(candidate.state, "evaluated")
+
+    def test_selection_policy_defaults_to_manual(self):
+        from odoo.addons.facodi_learning.services.course_selection import (
+            get_course_selection_policy,
+        )
+
+        policy = get_course_selection_policy(self.env)
+        self.assertEqual(policy["mode"], "manual")
+        self.assertIn("manual", policy["trusted_providers"])
+
+    def test_auto_policy_is_fail_closed_on_duplicate_risk(self):
+        from odoo.addons.facodi_learning.services.course_selection import (
+            candidate_is_auto_approve_eligible,
+            get_course_selection_policy,
+        )
+
+        self.env["ir.config_parameter"].sudo().set_param(
+            "facodi_learning.course_selection_mode", "auto"
+        )
+        candidate = self.env["facodi.learning.course.candidate"].create(
+            self._candidate_values(name="Python Basics", external_id="policy-dup")
+        )
+        candidate.action_evaluate()
+        eligible, reasons = candidate_is_auto_approve_eligible(
+            candidate, get_course_selection_policy(self.env)
+        )
+        self.assertFalse(eligible)
+        self.assertTrue(any("duplicate" in reason.lower() for reason in reasons))
