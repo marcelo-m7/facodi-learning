@@ -72,5 +72,32 @@
             <field name="groups" eval="[(4, ref('website_slides.group_website_slides_manager'))]"/>
             <field name="domain_force">[(1, '=', 1)]</field>
         </record>
+
+        <record id="rule_facodi_course_candidate_officer_read" model="ir.rule">
+            <field name="name">FACODI course candidate: officer read all</field>
+            <field name="model_id" ref="model_facodi_learning_course_candidate"/>
+            <field name="groups" eval="[(4, ref('website_slides.group_website_slides_officer'))]"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="0"/>
+            <field name="perm_create" eval="0"/>
+            <field name="perm_unlink" eval="0"/>
+        </record>
+        <record id="rule_facodi_course_candidate_officer_write_own" model="ir.rule">
+            <field name="name">FACODI course candidate: officer create/write own</field>
+            <field name="model_id" ref="model_facodi_learning_course_candidate"/>
+            <field name="groups" eval="[(4, ref('website_slides.group_website_slides_officer'))]"/>
+            <field name="domain_force">[('requested_by_id', '=', user.id)]</field>
+            <field name="perm_read" eval="0"/>
+            <field name="perm_write" eval="1"/>
+            <field name="perm_create" eval="1"/>
+            <field name="perm_unlink" eval="0"/>
+        </record>
+        <record id="rule_facodi_course_candidate_manager" model="ir.rule">
+            <field name="name">FACODI course candidate: manager all</field>
+            <field name="model_id" ref="model_facodi_learning_course_candidate"/>
+            <field name="groups" eval="[(4, ref('website_slides.group_website_slides_manager'))]"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+        </record>
     </data>
 </odoo>
