@@ -32,6 +32,25 @@ class TestCourseProfile(TransactionCase):
         )
         return channel._facodi_course_profile()
 
+    def _record_analysis_result(self, slide, detected_language):
+        job = self.env["facodi.learning.analysis.job"].create(
+            {"slide_id": slide.id, "provider": "local_metadata"}
+        )
+        return self.env["facodi.learning.analysis.result"]._record_output(
+            {
+                "job_id": job.id,
+                "slide_id": slide.id,
+                "provider": "local_metadata",
+                "model_name": "profile-test",
+                "summary": "Internal generated summary",
+                "detected_language": detected_language,
+                "transcript": "Internal transcript",
+                "raw_payload": {"secret_like_field": "must-not-escape"},
+                "suggested_tags": [],
+                "proposed_mappings": [],
+            }
+        )
+
     def test_empty_course_profile_has_stable_schema(self):
         channel = self.ProfileChannel.create({"name": "Empty Course"})
 
@@ -158,4 +177,135 @@ class TestCourseProfile(TransactionCase):
         self.assertEqual(initial, repeated)
         self.assertEqual(
             [item["id"] for item in initial["contents"]], [first.id, second.id]
+        )
+
+    def test_profile_uses_latest_language_signal_without_raw_analysis_output(self):
+        channel = self.ProfileChannel.create({"name": "Languages"})
+        analyzed = self.ProfileSlide.create(
+            {
+                "name": "Analyzed",
+                "channel_id": channel.id,
+                "slide_category": "article",
+                "slide_type": "article",
+            }
+        )
+        self.ProfileSlide.create(
+            {
+                "name": "Not analyzed",
+                "channel_id": channel.id,
+                "slide_category": "article",
+                "slide_type": "article",
+            }
+        )
+        self._record_analysis_result(analyzed, "en")
+        self._record_analysis_result(analyzed, "pt")
+
+        profile = self._profile(channel)
+
+        self.assertEqual(profile["analysis"]["analyzed_content_count"], 1)
+        self.assertEqual(profile["analysis"]["detected_languages"], ["pt"])
+        serialized = repr(profile)
+        self.assertNotIn("Internal generated summary", serialized)
+        self.assertNotIn("Internal transcript", serialized)
+        self.assertNotIn("secret_like_field", serialized)
+
+    def test_profile_aggregates_only_approved_content_relations(self):
+        source_channel = self.ProfileChannel.create({"name": "Source"})
+        target_channel = self.ProfileChannel.create({"name": "Target"})
+        incoming_channel = self.ProfileChannel.create({"name": "Incoming"})
+        source = self.ProfileSlide.create(
+            {
+                "name": "Source Content",
+                "channel_id": source_channel.id,
+                "slide_category": "article",
+                "slide_type": "article",
+            }
+        )
+        approved_target = self.ProfileSlide.create(
+            {
+                "name": "Approved Target",
+                "channel_id": target_channel.id,
+                "slide_category": "article",
+                "slide_type": "article",
+            }
+        )
+        proposed_target = self.ProfileSlide.create(
+            {
+                "name": "Proposed Target",
+                "channel_id": target_channel.id,
+                "slide_category": "article",
+                "slide_type": "article",
+            }
+        )
+        rejected_target = self.ProfileSlide.create(
+            {
+                "name": "Rejected Target",
+                "channel_id": target_channel.id,
+                "slide_category": "article",
+                "slide_type": "article",
+            }
+        )
+        incoming_source = self.ProfileSlide.create(
+            {
+                "name": "Incoming Source",
+                "channel_id": incoming_channel.id,
+                "slide_category": "article",
+                "slide_type": "article",
+            }
+        )
+
+        Mapping = self.env["facodi.learning.mapping"].with_user(self.manager)
+        approved = Mapping.create(
+            {
+                "source_slide_id": source.id,
+                "target_slide_id": approved_target.id,
+                "mapping_type": "related",
+            }
+        )
+        approved.action_approve()
+        Mapping.create(
+            {
+                "source_slide_id": source.id,
+                "target_slide_id": proposed_target.id,
+                "mapping_type": "recommended",
+            }
+        )
+        rejected = Mapping.create(
+            {
+                "source_slide_id": source.id,
+                "target_slide_id": rejected_target.id,
+                "mapping_type": "supports",
+            }
+        )
+        rejected.action_reject()
+        incoming = Mapping.create(
+            {
+                "source_slide_id": incoming_source.id,
+                "target_slide_id": source.id,
+                "mapping_type": "supports",
+            }
+        )
+        incoming.action_approve()
+
+        profile = self._profile(source_channel)
+
+        self.assertEqual(
+            profile["approved_content_relations"]["outgoing"],
+            [
+                {
+                    "target_channel_id": target_channel.id,
+                    "mapping_type": "related",
+                    "count": 1,
+                }
+            ],
+        )
+        self.assertEqual(
+            profile["approved_content_relations"]["incoming"],
+            [
+                {
+                    "source_channel_id": incoming_channel.id,
+                    "mapping_type": "supports",
+                    "count": 1,
+                }
+            ],
         )
