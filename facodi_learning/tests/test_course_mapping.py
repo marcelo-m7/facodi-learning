@@ -115,6 +115,20 @@ class TestCourseMapping(TransactionCase):
             with self.assertRaises(AccessError), self.env.cr.savepoint():
                 Mapping.create(self._values(**forged))
 
+    def test_direct_generated_provenance_is_rejected_on_create(self):
+        Mapping = self.env["facodi.learning.course.mapping"].with_user(self.officer)
+        for forged in (
+            {"origin": "analysis"},
+            {"ranking_version": "forged-ranking"},
+            {
+                "origin": "analysis",
+                "ranking_version": "forged-ranking",
+                "evidence": {"signals": {"title_overlap": 1.0}},
+            },
+        ):
+            with self.assertRaises(AccessError), self.env.cr.savepoint():
+                Mapping.create(self._values(**forged))
+
     def test_manager_can_approve_semantic_relation(self):
         mapping = self.env["facodi.learning.course.mapping"].create(self._values())
         self.assertTrue(hasattr(mapping, "action_approve"))
@@ -138,6 +152,8 @@ class TestCourseMapping(TransactionCase):
         except AccessError as error:
             self.fail(f"Officer should be able to create an owned proposal: {error}")
         self.assertEqual(mapping.state, "proposed")
+        self.assertEqual(mapping.origin, "manual")
+        self.assertFalse(mapping.ranking_version)
 
     def test_public_and_portal_cannot_read_course_mapping(self):
         Mapping = self.env["facodi.learning.course.mapping"]
