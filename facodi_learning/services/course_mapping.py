@@ -142,13 +142,12 @@ def propose_course_mappings(source_channel, limit=20):
         ]
         mapping = Mapping.search(domain, limit=1)
         if not mapping:
-            mapping = Mapping.create(
+            mapping = Mapping._create_generated(
                 {
                     "source_channel_id": source_channel.id,
                     "target_channel_id": candidate["target_channel_id"],
                     "mapping_type": candidate["mapping_type"],
                     "confidence": candidate["confidence"],
-                    "origin": "analysis",
                     "evidence": {
                         "signals": candidate["signals"],
                         "reasons": candidate["reasons"],
