@@ -70,3 +70,24 @@ class ResConfigSettings(models.TransientModel):
         config_parameter="facodi_learning.auto_approve_trusted_providers",
         help="Comma-separated provider identifiers that are eligible for Auto Approve. Other providers always require review.",
     )
+
+    facodi_learning_course_mapping_mode = fields.Selection(
+        [("manual", "Manual"), ("assisted", "Assisted"), ("auto", "Auto Approve")],
+        string="FACODI course mapping mode",
+        required=True,
+        default="manual",
+        config_parameter="facodi_learning.course_mapping_mode",
+        help="Controls review automation for course-to-course semantic relations independently from course selection.",
+    )
+    facodi_learning_course_mapping_auto_types = fields.Char(
+        string="Course mapping Auto Approve types",
+        default="related",
+        config_parameter="facodi_learning.course_mapping_auto_types",
+        help="Comma-separated low-risk relation types eligible for Auto Approve. Only related and complements are accepted by the policy.",
+    )
+    facodi_learning_course_mapping_min_confidence = fields.Float(
+        string="Course mapping minimum confidence",
+        default=0.85,
+        config_parameter="facodi_learning.course_mapping_min_confidence",
+        help="Normalized 0..1 confidence threshold required for automatic approval of eligible semantic course relations.",
+    )
