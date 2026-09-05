@@ -15,6 +15,7 @@ class TestCourseSelection(TransactionCase):
                         6,
                         0,
                         [
+                            cls.env.ref("base.group_user").id,
                             cls.env.ref(
                                 "website_slides.group_website_slides_manager"
                             ).id,
@@ -32,6 +33,7 @@ class TestCourseSelection(TransactionCase):
                         6,
                         0,
                         [
+                            cls.env.ref("base.group_user").id,
                             cls.env.ref(
                                 "website_slides.group_website_slides_officer"
                             ).id,
