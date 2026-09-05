@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_facodi_course_candidate_search" model="ir.ui.view">
+        <field name="name">facodi.learning.course.candidate.search</field>
+        <field name="model">facodi.learning.course.candidate</field>
+        <field name="arch" type="xml">
+            <search string="FACODI Course Candidates">
+                <field name="name"/>
+                <field name="provider"/>
+                <field name="institution"/>
+                <field name="language"/>
+                <field name="state"/>
+                <field name="recommendation"/>
+                <field name="matched_channel_id"/>
+                <field name="resolved_channel_id"/>
+                <filter name="discovered" string="Discovered" domain="[('state', '=', 'discovered')]"/>
+                <filter name="needs_review" string="Needs Review" domain="[('state', 'in', ('evaluated', 'shortlisted'))]"/>
+                <filter name="resolved" string="Resolved" domain="[('state', '=', 'resolved')]"/>
+                <filter name="rejected" string="Rejected" domain="[('state', '=', 'rejected')]"/>
+                <filter name="automatic" string="Automatic Decisions" domain="[('decision_origin', '=', 'automatic')]"/>
+                <group>
+                    <filter name="group_state" string="Status" context="{'group_by': 'state'}"/>
+                    <filter name="group_provider" string="Provider" context="{'group_by': 'provider'}"/>
+                    <filter name="group_language" string="Language" context="{'group_by': 'language'}"/>
+                    <filter name="group_decision_origin" string="Decision Origin" context="{'group_by': 'decision_origin'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="view_facodi_course_candidate_list" model="ir.ui.view">
+        <field name="name">facodi.learning.course.candidate.list</field>
+        <field name="model">facodi.learning.course.candidate</field>
+        <field name="arch" type="xml">
+            <list string="FACODI Course Candidates"
+                  decoration-info="state == 'shortlisted'"
+                  decoration-success="state == 'resolved'"
+                  decoration-danger="state == 'rejected'">
+                <field name="name"/>
+                <field name="provider"/>
+                <field name="institution" optional="show"/>
+                <field name="language"/>
+                <field name="state"/>
+                <field name="recommendation"/>
+                <field name="relevance_score" optional="hide"/>
+                <field name="duplication_risk" optional="show"/>
+                <field name="matched_channel_id" optional="show"/>
+                <field name="resolved_channel_id" optional="show"/>
+                <field name="decision_origin" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_facodi_course_candidate_form" model="ir.ui.view">
+        <field name="name">facodi.learning.course.candidate.form</field>
+        <field name="model">facodi.learning.course.candidate</field>
+        <field name="arch" type="xml">
+            <form string="FACODI Course Candidate">
+                <header>
+                    <button name="action_evaluate"
+                            type="object"
+                            string="Evaluate"
+                            class="btn-primary"
+                            groups="website_slides.group_website_slides_officer"
+                            invisible="state in ('approved', 'rejected', 'resolved')"/>
+                    <button name="action_shortlist"
+                            type="object"
+                            string="Shortlist"
+                            groups="website_slides.group_website_slides_officer"
+                            invisible="state != 'evaluated'"/>
+                    <button name="action_resolve_existing"
+                            type="object"
+                            string="Resolve Existing"
+                            groups="website_slides.group_website_slides_manager"
+                            invisible="state not in ('evaluated', 'shortlisted') or not matched_channel_id"/>
+                    <button name="action_resolve_new"
+                            type="object"
+                            string="Create Draft Course"
+                            class="btn-primary"
+                            groups="website_slides.group_website_slides_manager"
+                            invisible="state not in ('evaluated', 'shortlisted')"/>
+                    <button name="action_reject"
+                            type="object"
+                            string="Reject"
+                            groups="website_slides.group_website_slides_manager"
+                            invisible="state not in ('evaluated', 'shortlisted')"/>
+                    <field name="state" widget="statusbar" statusbar_visible="discovered,evaluated,shortlisted,resolved,rejected"/>
+                </header>
+                <sheet>
+                    <group string="Source Metadata">
+                        <group>
+                            <field name="name"/>
+                            <field name="provider" readonly="1"/>
+                            <field name="external_id" readonly="1"/>
+                            <field name="source_url" widget="url"/>
+                            <field name="institution"/>
+                            <field name="requested_by_id" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="language"/>
+                            <field name="level"/>
+                            <field name="duration_minutes"/>
+                            <field name="license_name"/>
+                            <field name="description"/>
+                            <field name="metadata"/>
+                        </group>
+                    </group>
+
+                    <group string="Evaluation Evidence">
+                        <group>
+                            <field name="relevance_score" readonly="1"/>
+                            <field name="metadata_quality_score" readonly="1"/>
+                            <field name="language_fit_score" readonly="1"/>
+                            <field name="coverage_score" readonly="1"/>
+                            <field name="duplication_risk" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="recommendation" readonly="1"/>
+                            <field name="evaluation_policy_version" readonly="1"/>
+                            <field name="evaluated_at" readonly="1"/>
+                            <field name="evaluation_reasons" readonly="1"/>
+                            <field name="last_error" readonly="1" invisible="not last_error"/>
+                        </group>
+                    </group>
+
+                    <group string="Course Match">
+                        <field name="matched_channel_id"
+                               readonly="state in ('approved', 'rejected', 'resolved')"/>
+                    </group>
+
+                    <group string="Resolution Evidence" invisible="not decision_origin and not resolved_channel_id">
+                        <group>
+                            <field name="resolved_channel_id" readonly="1"/>
+                            <field name="resolution_type" readonly="1"/>
+                            <field name="decision_origin" readonly="1"/>
+                            <field name="decision_policy_version" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="decision_at" readonly="1"/>
+                            <field name="reviewed_by_id" readonly="1"/>
+                            <field name="decision_snapshot" readonly="1"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_facodi_course_candidates" model="ir.actions.act_window">
+        <field name="name">Course Candidates</field>
+        <field name="res_model">facodi.learning.course.candidate</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_facodi_course_candidate_search"/>
+    </record>
+
+    <menuitem id="menu_facodi_learning_course_discovery"
+              name="Course Discovery"
+              parent="menu_facodi_learning_root"
+              groups="website_slides.group_website_slides_officer"
+              sequence="1"/>
+    <menuitem id="menu_facodi_learning_course_candidates"
+              name="Candidates"
+              parent="menu_facodi_learning_course_discovery"
+              action="action_facodi_course_candidates"
+              sequence="1"/>
+</odoo>
