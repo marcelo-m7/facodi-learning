@@ -87,11 +87,12 @@
                     <field name="state" widget="statusbar" statusbar_visible="discovered,evaluated,shortlisted,resolved,rejected"/>
                 </header>
                 <sheet>
+                    <field name="id" invisible="1"/>
                     <group string="Source Metadata">
                         <group>
                             <field name="name"/>
-                            <field name="provider" readonly="1"/>
-                            <field name="external_id" readonly="1"/>
+                            <field name="provider" readonly="id"/>
+                            <field name="external_id" readonly="id"/>
                             <field name="source_url" widget="url"/>
                             <field name="institution"/>
                             <field name="requested_by_id" readonly="1"/>
