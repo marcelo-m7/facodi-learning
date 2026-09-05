@@ -157,5 +157,8 @@ def propose_course_mappings(source_channel, limit=20):
                     "ranking_version": candidate["ranking_version"],
                 }
             )
+        if mapping.origin == "analysis" and mapping.state == "proposed":
+            mapping._maybe_auto_approve()
+            mapping.invalidate_recordset()
         proposals |= mapping
     return proposals
