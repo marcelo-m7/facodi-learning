@@ -150,6 +150,42 @@ class TestCourseMappingPrerequisite(TransactionCase):
         self.assertEqual(mapping.state, "proposed")
         self.assertNotIn(target, source.prerequisite_channel_ids)
 
+    def test_prerequisite_serializes_graph_before_course_row_locks(self):
+        source = self._channel("Graph Lock Source")
+        target = self._channel("Graph Lock Target")
+        mapping = self._mapping(source, target).with_user(self.manager)
+
+        self.assertTrue(
+            hasattr(mapping, "_lock_prerequisite_graph"),
+            "Prerequisite review must serialize the graph before validating cycles.",
+        )
+        call_order = []
+
+        def graph_lock(records):
+            call_order.append("graph")
+
+        def row_lock(records):
+            call_order.append("rows")
+            return records
+
+        with (
+            patch.object(
+                type(mapping),
+                "_lock_prerequisite_graph",
+                autospec=True,
+                side_effect=graph_lock,
+            ),
+            patch.object(
+                type(source),
+                "try_lock_for_update",
+                autospec=True,
+                side_effect=row_lock,
+            ),
+        ):
+            mapping.action_approve()
+
+        self.assertEqual(call_order[:2], ["graph", "rows"])
+
     def test_officer_cannot_apply_native_prerequisite(self):
         source = self._channel("Officer Source", user_id=self.officer.id)
         target = self._channel("Officer Target")
