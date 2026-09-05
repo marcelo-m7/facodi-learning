@@ -134,6 +134,33 @@ class TestCourseSelection(TransactionCase):
         self.assertEqual(candidate.coverage_score, 1.0)
         self.assertEqual(candidate.state, "evaluated")
 
+    def test_manual_mode_never_auto_shortlists_or_resolves(self):
+        candidate = self.env["facodi.learning.course.candidate"].with_user(
+            self.manager
+        ).create(
+            self._candidate_values(
+                external_id="manual-mode", name="Unique Manual Course"
+            )
+        )
+        candidate.action_evaluate()
+        self.assertEqual(candidate.state, "evaluated")
+        self.assertFalse(candidate.resolved_channel_id)
+
+    def test_assisted_mode_shortlists_without_resolution(self):
+        self.env["ir.config_parameter"].sudo().set_param(
+            "facodi_learning.course_selection_mode", "assisted"
+        )
+        candidate = self.env["facodi.learning.course.candidate"].with_user(
+            self.manager
+        ).create(
+            self._candidate_values(
+                external_id="assisted", name="Unique Assisted Course"
+            )
+        )
+        candidate.action_evaluate()
+        self.assertEqual(candidate.state, "shortlisted")
+        self.assertFalse(candidate.resolved_channel_id)
+
     def test_selection_policy_defaults_to_manual(self):
         from odoo.addons.facodi_learning.services.course_selection import (
             get_course_selection_policy,
@@ -152,7 +179,9 @@ class TestCourseSelection(TransactionCase):
         self.env["ir.config_parameter"].sudo().set_param(
             "facodi_learning.course_selection_mode", "auto"
         )
-        candidate = self.env["facodi.learning.course.candidate"].create(
+        candidate = self.env["facodi.learning.course.candidate"].with_user(
+            self.manager
+        ).create(
             self._candidate_values(name="Python Basics", external_id="policy-dup")
         )
         candidate.action_evaluate()
@@ -166,7 +195,9 @@ class TestCourseSelection(TransactionCase):
         self.env["ir.config_parameter"].sudo().set_param(
             "facodi_learning.course_selection_mode", "auto"
         )
-        candidate = self.env["facodi.learning.course.candidate"].create(
+        candidate = self.env["facodi.learning.course.candidate"].with_user(
+            self.manager
+        ).create(
             self._candidate_values(
                 external_id="auto-new",
                 name="Applied Cryptography Foundations",
@@ -185,7 +216,9 @@ class TestCourseSelection(TransactionCase):
         self.env["ir.config_parameter"].sudo().set_param(
             "facodi_learning.course_selection_mode", "auto"
         )
-        candidate = self.env["facodi.learning.course.candidate"].create(
+        candidate = self.env["facodi.learning.course.candidate"].with_user(
+            self.manager
+        ).create(
             self._candidate_values(external_id="auto-dup", name="Python Basics")
         )
         candidate.action_evaluate()
@@ -194,7 +227,9 @@ class TestCourseSelection(TransactionCase):
 
     def test_manual_existing_resolution_creates_no_new_course(self):
         before = self.env["slide.channel"].search_count([])
-        candidate = self.env["facodi.learning.course.candidate"].create(
+        candidate = self.env["facodi.learning.course.candidate"].with_user(
+            self.manager
+        ).create(
             self._candidate_values(
                 external_id="manual-existing", name="Existing Choice"
             )
@@ -206,11 +241,13 @@ class TestCourseSelection(TransactionCase):
         self.assertEqual(candidate.resolved_channel_id, self.channel)
         self.assertEqual(candidate.resolution_type, "existing")
         self.assertEqual(candidate.decision_origin, "manual")
-        self.assertEqual(candidate.reviewed_by_id, self.env.user)
+        self.assertEqual(candidate.reviewed_by_id, self.manager)
         self.assertEqual(self.env["slide.channel"].search_count([]), before)
 
     def test_manual_new_resolution_is_idempotent_and_unpublished(self):
-        candidate = self.env["facodi.learning.course.candidate"].create(
+        candidate = self.env["facodi.learning.course.candidate"].with_user(
+            self.manager
+        ).create(
             self._candidate_values(
                 external_id="idempotent-new", name="Unique Security Course"
             )
@@ -222,44 +259,12 @@ class TestCourseSelection(TransactionCase):
         self.assertEqual(candidate.resolved_channel_id, channel)
         self.assertFalse(channel.website_published)
 
-    def test_manager_can_resolve_new_candidate_without_superuser_bypass(self):
-        Candidate = self.env["facodi.learning.course.candidate"].with_user(self.manager)
-        candidate = Candidate.create(
-            self._candidate_values(
-                external_id="manager-manual-resolution",
-                name="Manager Manual Resolution",
-            )
-        )
-        candidate.action_evaluate()
-        channel = candidate.action_resolve_new()
-        self.assertEqual(candidate.requested_by_id, self.manager)
-        self.assertEqual(candidate.state, "resolved")
-        self.assertEqual(candidate.reviewed_by_id, self.manager)
-        self.assertEqual(candidate.resolved_channel_id, channel)
-        self.assertFalse(channel.website_published)
-
-    def test_manager_auto_approve_needs_no_superuser_bypass(self):
-        self.env["ir.config_parameter"].sudo().set_param(
-            "facodi_learning.course_selection_mode", "auto"
-        )
-        Candidate = self.env["facodi.learning.course.candidate"].with_user(self.manager)
-        candidate = Candidate.create(
-            self._candidate_values(
-                external_id="manager-auto-resolution",
-                name="Manager Automatic Resolution",
-            )
-        )
-        candidate.action_evaluate()
-        self.assertEqual(candidate.requested_by_id, self.manager)
-        self.assertEqual(candidate.state, "resolved")
-        self.assertEqual(candidate.decision_origin, "automatic")
-        self.assertFalse(candidate.reviewed_by_id)
-        self.assertFalse(candidate.resolved_channel_id.website_published)
-
     def test_resolution_failure_does_not_leave_partial_course(self):
         from unittest.mock import patch
 
-        candidate = self.env["facodi.learning.course.candidate"].create(
+        candidate = self.env["facodi.learning.course.candidate"].with_user(
+            self.manager
+        ).create(
             self._candidate_values(external_id="failure", name="Failure Course")
         )
         candidate.action_evaluate()
@@ -292,7 +297,9 @@ class TestCourseSelection(TransactionCase):
     def test_terminal_decision_snapshot_does_not_change_with_later_settings(self):
         params = self.env["ir.config_parameter"].sudo()
         params.set_param("facodi_learning.course_selection_mode", "auto")
-        candidate = self.env["facodi.learning.course.candidate"].create(
+        candidate = self.env["facodi.learning.course.candidate"].with_user(
+            self.manager
+        ).create(
             self._candidate_values(
                 external_id="snapshot", name="Unique Snapshot Course"
             )
@@ -304,7 +311,9 @@ class TestCourseSelection(TransactionCase):
         self.assertEqual(candidate.decision_snapshot, snapshot)
 
     def test_terminal_candidate_metadata_cannot_be_rewritten(self):
-        candidate = self.env["facodi.learning.course.candidate"].create(
+        candidate = self.env["facodi.learning.course.candidate"].with_user(
+            self.manager
+        ).create(
             self._candidate_values(external_id="terminal", name="Terminal Course")
         )
         candidate.action_evaluate()
@@ -315,7 +324,9 @@ class TestCourseSelection(TransactionCase):
     def test_resolution_refuses_unavailable_row_lock(self):
         from unittest.mock import patch
 
-        candidate = self.env["facodi.learning.course.candidate"].create(
+        candidate = self.env["facodi.learning.course.candidate"].with_user(
+            self.manager
+        ).create(
             self._candidate_values(external_id="locked", name="Locked Course")
         )
         candidate.action_evaluate()
