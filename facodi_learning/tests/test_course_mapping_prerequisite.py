@@ -1,3 +1,5 @@
+from unittest.mock import patch
+
 from odoo import Command
 from odoo.exceptions import AccessError, ValidationError
 from odoo.tests import TransactionCase
@@ -129,6 +131,24 @@ class TestCourseMappingPrerequisite(TransactionCase):
         self.assertEqual(source.prerequisite_channel_ids.ids.count(target.id), 1)
         self.assertEqual(mapping.state, "approved")
         self.assertEqual(mapping.native_applied_by_id, self.manager)
+
+    def test_prerequisite_refuses_unavailable_course_row_lock(self):
+        source = self._channel("Concurrent Source")
+        target = self._channel("Concurrent Target")
+        mapping = self._mapping(source, target).with_user(self.manager)
+
+        with patch.object(
+            type(source),
+            "try_lock_for_update",
+            return_value=self.env["slide.channel"],
+        ):
+            with self.assertRaises(ValidationError):
+                mapping.action_approve()
+
+        mapping.invalidate_recordset()
+        source.invalidate_recordset(["prerequisite_channel_ids"])
+        self.assertEqual(mapping.state, "proposed")
+        self.assertNotIn(target, source.prerequisite_channel_ids)
 
     def test_officer_cannot_apply_native_prerequisite(self):
         source = self._channel("Officer Source", user_id=self.officer.id)
