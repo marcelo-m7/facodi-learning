@@ -129,6 +129,27 @@ class TestCourseMapping(TransactionCase):
             with self.assertRaises(AccessError), self.env.cr.savepoint():
                 Mapping.create(self._values(**forged))
 
+    def test_generated_proposal_ranking_evidence_is_immutable(self):
+        mapping = self.env["facodi.learning.course.mapping"]._create_generated(
+            self._values(
+                confidence=0.81,
+                ranking_version="course-mapping-v1",
+                evidence={"signals": {"title_overlap": 0.7}},
+            )
+        )
+
+        for user in (self.officer, self.manager):
+            for values in (
+                {"confidence": 0.99},
+                {"evidence": {"signals": {"title_overlap": 1.0}}},
+            ):
+                with self.assertRaises(AccessError):
+                    mapping.with_user(user).write(values)
+
+        mapping.invalidate_recordset()
+        self.assertEqual(mapping.confidence, 0.81)
+        self.assertEqual(mapping.evidence, {"signals": {"title_overlap": 0.7}})
+
     def test_manager_can_approve_semantic_relation(self):
         mapping = self.env["facodi.learning.course.mapping"].create(self._values())
         self.assertTrue(hasattr(mapping, "action_approve"))
