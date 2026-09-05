@@ -93,8 +93,40 @@ internal write paths. Exact SHA `5d25c83942f45c7235c4241deeaf3dd5d66e601f`,
 pull-request CI run `33997832186`, passed both clean-install and same-database
 upgrade gates.
 
-The final documentation-only release commit is required to pass those same two CI
-gates before the M3.3 pull request is considered merge-ready.
+PR #6 was subsequently merged to `main` as merge commit
+`43909fe915fc7ff11b54f33fb8aae9e4e7ae9f08`. One review finding remained for a
+follow-up patch: proposal generation still used a non-atomic `search -> create`
+boundary. Two requests for the same source course could both observe no row and
+compete on the unique directed-triple constraint, causing the losing transaction to
+fail and potentially roll back proposals created earlier in that request.
+
+### Post-merge concurrency patch — 19.0.1.4.1
+
+A dedicated RED was added on exact SHA
+`c180d9bc9befb50d9da16da66d3dd2c660b57d20`. GitHub Actions run `33998870904`
+reported **1 failure and 0 errors of 103 tests**: while another PostgreSQL session
+held the expected per-source transaction advisory lock, mapping generation did not
+raise the required retryable `ValidationError` and therefore was not serialized.
+
+The implementation now acquires `pg_try_advisory_xact_lock` for the source course
+immediately after normal read/write access checks and before profile retrieval,
+proposal searches or inserts. The lock is scoped by source course, so unrelated
+courses remain parallel. If the same course is already being generated in another
+transaction, FACODI fails closed before creating any proposal and instructs the
+caller to retry. This deliberately avoids waiting and then relying on a same-
+transaction re-fetch under PostgreSQL/Odoo `REPEATABLE READ`. A later retry uses the
+normal idempotent search path and reuses existing relations.
+
+Exact SHA `f9e7823e5abeb0cafe3bc8d5cda0754e9179eef0`, GitHub Actions run
+`33999011617`, passed both gates:
+
+- clean install with the full FACODI addon tests: success;
+- same-database addon upgrade/regression suite: success.
+
+The patch is schema-neutral and is released as `19.0.1.4.1`; it requires no data
+migration or historical rewrite. The final version/documentation head is required
+to pass the same two gates before the follow-up pull request is considered
+merge-ready.
 
 No M3.3 test or implementation introduces AI/embedding calls, vector storage,
 learner-personalized ranking, automatic course publication or a second prerequisite

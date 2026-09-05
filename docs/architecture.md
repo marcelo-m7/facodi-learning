@@ -172,9 +172,14 @@ progress. The service then builds M3.2 profiles and computes deterministic signa
 The weighted result is versioned as `course-mapping-v1`. Proposed relation
 generation is idempotent by directed `(source_channel_id, target_channel_id,
 mapping_type)` identity. An existing proposal is reused rather than silently
-rewriting its original ranking evidence. The baseline ranker proposes only
-`related`; other relation types are explicit editorial choices or future provider
-outputs.
+rewriting its original ranking evidence. Generation additionally acquires a
+transaction-scoped advisory try-lock keyed by the source course before profiling,
+searching or inserting proposals. A competing request for the same source fails
+closed with a retryable validation error before any proposal is created; different
+source courses remain parallel. The SQL unique directed triple remains the data
+integrity backstop, while the per-source lock closes the concurrent `search ->
+create` race. The baseline ranker proposes only `related`; other relation types are
+explicit editorial choices or future provider outputs.
 
 Retrieval/ranking perform no `sudo()`, network request, AI request, embedding
 lookup, or learner-data access. Officers can generate proposals only through the
@@ -295,11 +300,19 @@ pending.
 
 Odoo `try_lock_for_update()` prevents simultaneous processing/review and is also
 the concurrency primitive for M3.1 course resolution and M3.3 course-mapping
-review. A job's processing state and terminal outcome are in one transaction:
-worker death rolls back to pending, so no timer-based lease/stale-worker mechanism
-is necessary. Adapters must not commit and must use timeouts and idempotent external
-requests. External services may see a retried request after a crash; this is not a
-claim of exactly-once network execution.
+review. M3.3 proposal generation uses a separate transaction advisory try-lock per
+source course because proposal identity spans a check-then-insert boundary and a
+wait/re-fetch strategy is not relied on inside the transaction's PostgreSQL snapshot.
+Prerequisite review also uses its own transaction advisory lock to serialize FACODI
+mutations of the native prerequisite graph before row locks and cycle validation.
+These locks are operational guards only; standard Odoo records and SQL constraints
+remain authoritative.
+
+A job's processing state and terminal outcome are in one transaction: worker death
+rolls back to pending, so no timer-based lease/stale-worker mechanism is necessary.
+Adapters must not commit and must use timeouts and idempotent external requests.
+External services may see a retried request after a crash; this is not a claim of
+exactly-once network execution.
 
 Standard `ir.cron` caps analysis batches at 100, defaults to 10, isolates provider
 failures with savepoints and uses Odoo 19 `_commit_progress()` per job in real cron

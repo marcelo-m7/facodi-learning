@@ -92,6 +92,9 @@ course-tag overlap, language compatibility and duration similarity. Retrieval an
 ranking do not use learner membership/progress, external AI, embeddings, network
 calls or privilege elevation. Re-running generation reuses an existing directed
 `(source, target, relation type)` proposal instead of rewriting its audit evidence.
+Generation is serialized per source course with a fail-closed transaction advisory
+lock, so overlapping requests cannot both pass the search/create boundary; a
+concurrent request is asked to retry before any proposal is created.
 
 Course-level semantic relations are stored in `facodi.learning.course.mapping` with
 source/target standard courses, relation type, confidence, origin, ranking evidence,
@@ -144,7 +147,9 @@ Back up the database and matching filestore for an existing deployment. Version
 the normal Odoo module upgrade. The change is additive and performs no historical
 data rewrite: existing sources, jobs, attempts, results, content mappings,
 candidates and standard eLearning records remain intact, and old course relations
-are not fabricated retroactively.
+are not fabricated retroactively. Version `19.0.1.4.1` is a schema-neutral M3.3
+concurrency hardening patch that serializes proposal generation per source course;
+it requires no data migration or historical rewrite.
 
 ## Manager workflow
 

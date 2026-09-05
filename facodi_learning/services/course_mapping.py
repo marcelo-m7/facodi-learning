@@ -1,9 +1,12 @@
+from odoo.exceptions import ValidationError
+
 from ..services.course_profile import COURSE_PROFILE_VERSION
 from ..services.course_selection import course_title_similarity
 
 
 COURSE_MAPPING_RANKING_VERSION = "course-mapping-v1"
 PROPOSAL_MIN_CONFIDENCE = 0.50
+_COURSE_MAPPING_GENERATION_LOCK_NAMESPACE = 0x4641434F  # FACO
 
 
 def _jaccard(left, right):
@@ -143,10 +146,24 @@ def course_mapping_candidates(source_channel, limit=20):
     )
 
 
+def _lock_course_mapping_generation(source_channel):
+    """Serialize proposal generation per source course for this transaction."""
+    source_channel.ensure_one()
+    source_channel.env.cr.execute(
+        "SELECT pg_try_advisory_xact_lock(%s, %s)",
+        (_COURSE_MAPPING_GENERATION_LOCK_NAMESPACE, source_channel.id),
+    )
+    if not source_channel.env.cr.fetchone()[0]:
+        raise ValidationError(
+            "Course mapping generation is already running for this course. Please retry."
+        )
+
+
 def propose_course_mappings(source_channel, limit=20):
     source_channel.ensure_one()
     source_channel.check_access("read")
     source_channel.check_access("write")
+    _lock_course_mapping_generation(source_channel)
     Mapping = source_channel.env["facodi.learning.course.mapping"]
     proposals = Mapping.browse()
 
