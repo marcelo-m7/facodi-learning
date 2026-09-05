@@ -2,11 +2,11 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Add an auditable, deterministic course-candidate selection pipeline with Manual, Assisted and fail-closed Auto Approve modes that resolves external candidates into canonical unpublished/existing Odoo `slide.channel` records.
+**Goal:** Add an auditable deterministic course-candidate selection pipeline with Manual, Assisted and fail-closed Auto Approve modes that resolves candidates into canonical unpublished/existing Odoo `slide.channel` records.
 
-**Architecture:** Add one domain model, `facodi.learning.course.candidate`, and one focused pure/deterministic selection service. Candidate evaluation produces independent signals and a recommendation; policy application may shortlist or resolve only through the candidate model’s guarded methods. Manual and automatic resolution converge on `_resolve()`, use row locking, never auto-publish, and never create a parallel course model.
+**Architecture:** Add one domain model, `facodi.learning.course.candidate`, and one focused selection service. Candidate evaluation produces independent normalized signals and a recommendation; policy application may shortlist or resolve only through guarded candidate model methods. Manual and automatic resolution converge on `_resolve()`, use row locking, never auto-publish, and never create a parallel course model.
 
-**Tech Stack:** Odoo 19 Community, `website_slides`, Python/Odoo ORM, QWeb/XML backend views, `ir.config_parameter`, PostgreSQL 16, existing Docker-based GitHub Actions.
+**Tech Stack:** Odoo 19 Community, `website_slides`, Python/Odoo ORM, XML backend views, `ir.config_parameter`, PostgreSQL 16, existing Docker-based GitHub Actions.
 
 **Spec:** `docs/superpowers/specs/2026-09-05-facodi-learning-course-selection-mapping-design.md`
 
@@ -21,7 +21,7 @@
 - Manual and automatic candidate resolution MUST use the same `_resolve()` domain path.
 - Core MUST have no external provider SDK, AI, embedding or network dependency.
 - Candidate identity MUST be unique on `(provider, external_id)`.
-- Semantic/heuristic duplicate matching MUST never auto-link an existing course in M3.1; high duplicate risk routes to review.
+- Heuristic duplicate matching MUST never auto-link an existing course in M3.1; high duplicate risk routes to review.
 - Public and Portal users MUST NOT read candidate/evaluation records.
 - Officers may create/reevaluate their own manual candidates; only eLearning Managers or trusted automation may perform terminal resolution.
 - Existing content analysis, content mappings and ingestion behavior MUST remain unchanged.
@@ -33,51 +33,50 @@
 
 ### New files
 
-- `facodi_learning/models/course_candidate.py` — candidate lifecycle, guarded state transitions, evaluation orchestration and canonical resolution.
-- `facodi_learning/services/course_selection.py` — deterministic title normalization/similarity, candidate scoring, policy parsing and Auto Approve eligibility.
+- `facodi_learning/models/course_candidate.py` — candidate lifecycle, guarded transitions, evaluation orchestration and canonical resolution.
+- `facodi_learning/services/course_selection.py` — deterministic title similarity, candidate scoring, policy parsing and Auto Approve eligibility.
 - `facodi_learning/views/course_candidate_views.xml` — candidate search/list/form actions and Course Discovery menus.
-- `facodi_learning/tests/test_course_selection.py` — candidate identity, evaluation, modes, resolution, concurrency/idempotency and unpublished-course regressions.
+- `facodi_learning/tests/test_course_selection.py` — identity, evaluation, modes, resolution, concurrency/idempotency and unpublished-course regressions.
 
 ### Modified files
 
-- `facodi_learning/models/__init__.py` — import the candidate model.
-- `facodi_learning/services/__init__.py` — export selection helpers used by the model/tests.
-- `facodi_learning/models/res_config_settings.py` — selection mode, thresholds, accepted languages and trusted-provider configuration.
-- `facodi_learning/views/res_config_settings_views.xml` — Manager-facing Course Selection settings.
-- `facodi_learning/views/analysis_views.xml` — move the existing technical analysis menu beneath `FACODI Learning > Content Analysis` without changing its actions.
-- `facodi_learning/security/ir.model.access.csv` — Officer/Manager candidate ACLs.
-- `facodi_learning/security/facodi_learning_security.xml` — Officer-own mutation and Manager-all candidate record rules.
-- `facodi_learning/tests/__init__.py` — load course-selection tests.
-- `facodi_learning/tests/test_security.py` — Public/Portal denial and Officer/Manager boundary regressions.
-- `facodi_learning/__manifest__.py` — load the new views and bump the additive addon version from `19.0.1.1.0` to `19.0.1.2.0`.
-- `README.md` — document Course Discovery and Manual/Assisted/Auto modes.
-- `docs/architecture.md` — document M3.1 identity, evaluation, policy and resolution invariants.
+- `facodi_learning/models/__init__.py`
+- `facodi_learning/services/__init__.py`
+- `facodi_learning/models/res_config_settings.py`
+- `facodi_learning/views/res_config_settings_views.xml`
+- `facodi_learning/views/analysis_views.xml`
+- `facodi_learning/security/ir.model.access.csv`
+- `facodi_learning/security/facodi_learning_security.xml`
+- `facodi_learning/tests/__init__.py`
+- `facodi_learning/tests/test_security.py`
+- `facodi_learning/__manifest__.py`
+- `README.md`
+- `docs/architecture.md`
 
 ---
 
-### Task 1: Add the candidate model and immutable identity/lifecycle guards
+### Task 1: Candidate model, identity and lifecycle guards
 
 **Files:**
 - Create: `facodi_learning/models/course_candidate.py`
 - Modify: `facodi_learning/models/__init__.py`
-- Test: `facodi_learning/tests/test_course_selection.py`
+- Create: `facodi_learning/tests/test_course_selection.py`
 - Modify: `facodi_learning/tests/__init__.py`
 
 **Interfaces:**
-- Produces model: `facodi.learning.course.candidate`.
-- Produces public actions used later: `action_evaluate()`, `action_shortlist()`, `action_reject()`, `action_resolve_new()`, `action_resolve_existing()`.
-- Produces private transition primitive used later: `_resolve(resolution_type, channel=None, decision_origin="manual", policy_version=None, decision_snapshot=None)`.
-- Does not yet implement evaluation or resolution internals beyond explicit `NotImplementedError`-free guarded state behavior required by the tests in this task.
+- Produces model `facodi.learning.course.candidate`.
+- Public actions reserved for later tasks: `action_evaluate()`, `action_shortlist()`, `action_reject()`, `action_resolve_new()`, `action_resolve_existing()`.
+- Private transition primitive reserved for later tasks: `_resolve(resolution_type, channel=None, decision_origin="manual", policy_version=None, decision_snapshot=None)`.
 
-- [ ] **Step 1: Register the new test module and write failing identity/lifecycle tests**
+- [ ] **Step 1: Register the test module and write RED identity/lifecycle tests**
 
-Add to `facodi_learning/tests/__init__.py`:
+Append to `facodi_learning/tests/__init__.py`:
 
 ```python
 from . import test_course_selection
 ```
 
-Create `facodi_learning/tests/test_course_selection.py` with a `TransactionCase` fixture containing one Manager, one Officer and two standard channels. Start with these tests:
+Create `facodi_learning/tests/test_course_selection.py`:
 
 ```python
 from odoo.exceptions import AccessError, ValidationError
@@ -122,7 +121,7 @@ class TestCourseSelection(TransactionCase):
     def test_candidate_identity_is_unique(self):
         Candidate = self.env["facodi.learning.course.candidate"]
         Candidate.create(self._candidate_values())
-        with self.assertRaises(Exception), self.env.cr.savepoint():
+        with self.assertRaises(ValidationError), self.env.cr.savepoint():
             Candidate.create(self._candidate_values())
 
     def test_candidate_cannot_forge_terminal_state_or_decision(self):
@@ -153,9 +152,7 @@ class TestCourseSelection(TransactionCase):
         self.assertEqual(candidate.metadata, {"v": 2})
 ```
 
-- [ ] **Step 2: Run the focused tests and verify RED**
-
-Run using the repository’s Odoo 19/PostgreSQL 16 test harness equivalent:
+- [ ] **Step 2: Run the focused test and verify RED**
 
 ```bash
 odoo -d facodi_learning_test \
@@ -166,11 +163,11 @@ odoo -d facodi_learning_test \
   --stop-after-init
 ```
 
-Expected: module/test import fails because `facodi.learning.course.candidate` does not exist.
+Expected: test setup fails because `facodi.learning.course.candidate` does not exist.
 
-- [ ] **Step 3: Implement the minimal candidate schema and guards**
+- [ ] **Step 3: Implement the model schema and direct-write guards**
 
-Create `facodi_learning/models/course_candidate.py` with these fields and exact selections:
+Create `facodi_learning/models/course_candidate.py` beginning with:
 
 ```python
 from odoo import api, fields, models
@@ -222,7 +219,9 @@ class FacodiLearningCourseCandidate(models.Model):
     evaluated_at = fields.Datetime(readonly=True)
 
     matched_channel_id = fields.Many2one("slide.channel", ondelete="set null")
-    resolved_channel_id = fields.Many2one("slide.channel", readonly=True, ondelete="restrict")
+    resolved_channel_id = fields.Many2one(
+        "slide.channel", readonly=True, ondelete="restrict"
+    )
     resolution_type = fields.Selection([
         ("existing", "Existing Course"),
         ("new", "New Draft Course"),
@@ -243,30 +242,69 @@ class FacodiLearningCourseCandidate(models.Model):
     )
 ```
 
-Add constraints requiring non-blank `provider`, `external_id`, `name`, non-negative `duration_minutes`, and all persisted scores to be in `0..1`.
+Add constraints:
 
-Override `create()` so clients may only supply source/normalized metadata fields plus `requested_by_id=self.env.uid`; reject forged state/evaluation/decision fields and always initialize the lifecycle/evidence fields explicitly.
+```python
+@api.constrains("provider", "external_id", "name")
+def _check_required_text(self):
+    if any(
+        not (record.provider or "").strip()
+        or not (record.external_id or "").strip()
+        or not (record.name or "").strip()
+        for record in self
+    ):
+        raise ValidationError("Provider, external identity and name must not be blank.")
 
-Override `write()` so:
+@api.constrains("duration_minutes")
+def _check_duration(self):
+    if any(record.duration_minutes < 0 for record in self):
+        raise ValidationError("Course duration cannot be negative.")
 
-- `provider`, `external_id`, `requested_by_id`, all evaluation evidence and all terminal decision fields cannot be directly written;
-- `matched_channel_id` can be manually changed only by an eLearning Manager while the candidate is unresolved;
-- normalized metadata may be refreshed only while state is `discovered`, `evaluated` or `shortlisted`;
-- terminal candidates permit no editorial metadata rewrite.
+@api.constrains(
+    "relevance_score",
+    "metadata_quality_score",
+    "language_fit_score",
+    "coverage_score",
+    "duplication_risk",
+)
+def _check_scores(self):
+    for record in self:
+        for value in (
+            record.relevance_score,
+            record.metadata_quality_score,
+            record.language_fit_score,
+            record.coverage_score,
+            record.duplication_risk,
+        ):
+            if not 0 <= value <= 1:
+                raise ValidationError("Course-selection scores must be between zero and one.")
+```
 
-Override `unlink()` so only Managers may remove unresolved candidates; `rejected`, `approved` or `resolved` records are audit history and cannot be deleted.
+Implement `create()` with an allowlist of normalized-source fields. `requested_by_id`, when supplied, must equal `self.env.uid`. Reject any client-supplied state/evaluation/decision evidence and explicitly initialize lifecycle/evidence fields.
 
-Add placeholder-free action method bodies that raise a clear `ValidationError("Evaluate the candidate before this action.")` where later behavior is not implemented yet; do not use `pass` or `NotImplementedError`.
+Implement `write()` so `provider`, `external_id`, `requested_by_id`, evaluation evidence and terminal decision fields are never direct-writable. Permit `matched_channel_id` direct write only for an eLearning Manager while unresolved. Permit normalized metadata refresh only in `discovered`, `evaluated`, `shortlisted`.
 
-Register the model in `facodi_learning/models/__init__.py`:
+Implement `unlink()` so only Managers can remove unresolved records; terminal records are audit history.
+
+For the five future action methods, use explicit bodies that raise:
+
+```python
+raise ValidationError("Evaluate the candidate before this action.")
+```
+
+Do not use context bypass flags, `pass`, or `NotImplementedError`.
+
+Register:
 
 ```python
 from . import course_candidate
 ```
 
-- [ ] **Step 4: Run the focused tests and verify GREEN**
+in `models/__init__.py`.
 
-Run the same `TestCourseSelection` command. Expected: the four tests pass.
+- [ ] **Step 4: Run the focused test and verify GREEN**
+
+Expected: Task 1 tests pass.
 
 - [ ] **Step 5: Commit**
 
@@ -280,23 +318,21 @@ git commit -m "feat: add auditable course candidates"
 
 ---
 
-### Task 2: Implement deterministic candidate evaluation and duplicate matching
+### Task 2: Deterministic evaluation and duplicate matching
 
 **Files:**
 - Create: `facodi_learning/services/course_selection.py`
 - Modify: `facodi_learning/services/__init__.py`
 - Modify: `facodi_learning/models/course_candidate.py`
-- Test: `facodi_learning/tests/test_course_selection.py`
+- Modify: `facodi_learning/tests/test_course_selection.py`
 
 **Interfaces:**
-- Produces `normalize_course_title(value: str) -> str`.
-- Produces `course_title_similarity(left: str, right: str) -> float` in `0..1`.
-- Produces `evaluate_course_candidate(candidate, existing_channels, accepted_languages) -> dict` with keys `relevance_score`, `metadata_quality_score`, `language_fit_score`, `coverage_score`, `duplication_risk`, `matched_channel_id`, `recommendation`, `reasons`, `policy_version`.
-- Candidate `action_evaluate()` consumes this service and persists evidence through `super().write()`, never direct client-writable fields.
+- `normalize_course_title(value: str) -> str`
+- `course_title_similarity(left: str, right: str) -> float`
+- `evaluate_course_candidate(candidate, existing_channels, accepted_languages) -> dict`
+- Candidate `action_evaluate()` persists the returned evidence.
 
-- [ ] **Step 1: Add failing deterministic evaluation tests**
-
-Append tests covering exact-title duplicates, non-overlapping titles, language fit and deterministic output:
+- [ ] **Step 1: Add RED deterministic evaluation tests**
 
 ```python
 def test_title_duplicate_is_detected_deterministically(self):
@@ -311,7 +347,7 @@ def test_title_duplicate_is_detected_deterministically(self):
 
 def test_manual_candidate_has_deterministic_local_scores(self):
     candidate = self.env["facodi.learning.course.candidate"].create(
-        self._candidate_values(external_id="scores")
+        self._candidate_values(external_id="scores", name="Unique Python Foundations")
     )
     candidate.action_evaluate()
     first = (
@@ -338,19 +374,20 @@ def test_manual_candidate_has_deterministic_local_scores(self):
     self.assertEqual(candidate.coverage_score, 1.0)
 ```
 
-- [ ] **Step 2: Run focused tests and verify RED**
+- [ ] **Step 2: Run and verify RED**
 
 Expected: `action_evaluate()` still raises the Task 1 validation error.
 
-- [ ] **Step 3: Implement the selection service**
+- [ ] **Step 3: Implement deterministic helpers**
 
-Create `facodi_learning/services/course_selection.py` with these rules:
+Create `services/course_selection.py`:
 
 ```python
 import re
 import unicodedata
 
 EVALUATION_POLICY_VERSION = "course-evaluation-v1"
+SELECTION_POLICY_VERSION = "course-selection-v1"
 
 
 def normalize_course_title(value):
@@ -369,35 +406,46 @@ def course_title_similarity(left, right):
     return len(left_tokens & right_tokens) / len(left_tokens | right_tokens)
 ```
 
-Implement `evaluate_course_candidate()` using this exact baseline semantics:
+Implement `evaluate_course_candidate()` with exactly these baseline semantics:
 
-- `metadata_quality_score`: fraction of present values among `name`, `description`, `institution`, `language`, `level`, `duration_minutes` (six equally weighted checks).
-- `relevance_score`: `1.0` for provider `manual`; otherwise `0.5 * metadata_quality_score + 0.5 * bool(description)` until later curriculum/semantic evaluators replace the baseline.
-- `language_fit_score`: `1.0` when `candidate.language.lower()` is in accepted languages; `0.5` when language is missing; `0.0` otherwise.
-- `coverage_score`: `1.0` in M3.1, explicitly meaning “no curriculum coverage constraint is active yet”; M3.4 will replace/extend this signal.
-- `duplication_risk`: highest `course_title_similarity(candidate.name, channel.name)` across existing `slide.channel` records; set `matched_channel_id` to the best channel when risk is at least `0.50`, else false.
-- Recommendation: `review_existing_match` for duplication risk `>= 0.80`; `ignore` for relevance `< 0.40`; `shortlist` for relevance `>= 0.70` and language fit `>= 0.70`; otherwise `review`.
-- Reasons: stable ordered strings describing manual relevance, metadata completeness, language compatibility and duplicate-match result. Do not interpolate private learner data.
+- metadata quality = fraction present among `name`, `description`, `institution`, `language`, `level`, `duration_minutes`;
+- relevance = `1.0` for provider `manual`; for other providers `0.5 * metadata_quality + 0.5 * bool(description)`;
+- language fit = `1.0` when supplied language is accepted, `0.5` when absent, `0.0` otherwise;
+- coverage = `1.0` in M3.1 and means “no curriculum coverage constraint active”; M3.4 will replace/extend it;
+- duplication risk = maximum title similarity to existing channels;
+- `matched_channel_id` = best match only when risk `>= 0.50`;
+- recommendation = `review_existing_match` when duplicate risk `>= 0.80`; `ignore` when relevance `< 0.40`; `shortlist` when relevance `>= 0.70` and language fit `>= 0.70`; otherwise `review`;
+- reasons = stable ordered safe strings explaining source relevance, metadata completeness, language fit and duplicate result;
+- policy version = `course-evaluation-v1`.
 
-Export the helpers in `facodi_learning/services/__init__.py`.
+Export the three service helpers from `services/__init__.py`.
 
-- [ ] **Step 4: Wire `action_evaluate()` to the service**
+- [ ] **Step 4: Implement `action_evaluate()`**
 
-In `course_candidate.py`, `action_evaluate()` must:
+For each unresolved candidate:
 
-1. check read/write access;
-2. refuse terminal `rejected`, `approved`, `resolved` candidates;
-3. parse accepted languages from `facodi_learning.course_selection_languages`, defaulting to `pt,en`;
-4. call `evaluate_course_candidate(self, self.env["slide.channel"].search([]), accepted_languages)`;
-5. persist evidence with `super(FacodiLearningCourseCandidate, candidate).write(...)`;
-6. set `state="evaluated"`, `evaluated_at=fields.Datetime.now()`;
-7. remain deterministic on repeated calls with unchanged inputs.
+```python
+accepted_languages = {
+    value.strip().lower()
+    for value in (
+        self.env["ir.config_parameter"]
+        .sudo()
+        .get_param("facodi_learning.course_selection_languages", "pt,en")
+    ).split(",")
+    if value.strip()
+}
+result = evaluate_course_candidate(
+    candidate,
+    self.env["slide.channel"].search([]),
+    accepted_languages,
+)
+```
 
-Do not apply Manual/Assisted/Auto policy in this task.
+Persist result evidence through `super(FacodiLearningCourseCandidate, candidate).write(...)`, set `state="evaluated"` and `evaluated_at=fields.Datetime.now()`. Do not apply selection mode yet.
 
-- [ ] **Step 5: Run focused tests and verify GREEN**
+- [ ] **Step 5: Run and verify GREEN**
 
-Expected: evaluation and duplicate tests pass, existing Task 1 tests remain green.
+Expected: deterministic score/duplicate tests pass and Task 1 remains green.
 
 - [ ] **Step 6: Commit**
 
@@ -411,22 +459,19 @@ git commit -m "feat: evaluate course candidates deterministically"
 
 ---
 
-### Task 3: Add selection settings and fail-closed policy parsing
+### Task 3: Selection configuration and fail-closed policy
 
 **Files:**
 - Modify: `facodi_learning/models/res_config_settings.py`
 - Modify: `facodi_learning/views/res_config_settings_views.xml`
 - Modify: `facodi_learning/services/course_selection.py`
-- Test: `facodi_learning/tests/test_course_selection.py`
+- Modify: `facodi_learning/tests/test_course_selection.py`
 
 **Interfaces:**
-- Produces `get_course_selection_policy(env) -> dict`.
-- Produces `candidate_is_auto_approve_eligible(candidate, policy) -> (bool, list[str])`.
-- Configuration parameters are the sole runtime source for mode/thresholds; historical decisions later store their own snapshot/version.
+- `get_course_selection_policy(env) -> dict`
+- `candidate_is_auto_approve_eligible(candidate, policy) -> tuple[bool, list[str]]`
 
-- [ ] **Step 1: Write failing policy parsing and eligibility tests**
-
-Add tests that set `ir.config_parameter` values and assert exact behavior:
+- [ ] **Step 1: Add RED policy tests**
 
 ```python
 def test_selection_policy_defaults_to_manual(self):
@@ -457,13 +502,13 @@ def test_auto_policy_is_fail_closed_on_duplicate_risk(self):
     self.assertTrue(any("duplicate" in reason.lower() for reason in reasons))
 ```
 
-- [ ] **Step 2: Run tests and verify RED**
+- [ ] **Step 2: Run and verify RED**
 
 Expected: policy helper imports fail.
 
-- [ ] **Step 3: Add exact `res.config.settings` fields**
+- [ ] **Step 3: Add settings fields**
 
-Append these fields to `res_config_settings.py`:
+Add to `res_config_settings.py`:
 
 ```python
 facodi_learning_course_selection_mode = fields.Selection(
@@ -503,42 +548,49 @@ facodi_learning_auto_approve_trusted_providers = fields.Char(
 )
 ```
 
-All threshold help text must state values are normalized `0..1`.
+- [ ] **Step 4: Add the exact settings UI block**
 
-- [ ] **Step 4: Render settings beneath the existing FACODI Analysis setting**
+Inside the existing Website/eLearning settings block, after the FACODI Analysis setting, add:
 
-In `res_config_settings_views.xml`, add a separate setting named `FACODI Course Selection` containing the mode, accepted-language CSV, trusted-provider CSV and five thresholds. Hide threshold rows only when the mode is `manual`; keep languages/trusted providers visible so configuration can be prepared before changing mode.
+```xml
+<setting id="facodi_learning_course_selection_settings"
+         string="FACODI Course Selection"
+         help="Configure deterministic course candidate review and Auto Approve guardrails.">
+    <div class="content-group">
+        <div class="row mt16">
+            <label for="facodi_learning_course_selection_mode" class="col-lg-4 o_light_label"/>
+            <field name="facodi_learning_course_selection_mode" class="oe_inline"/>
+        </div>
+        <div class="row mt16">
+            <label for="facodi_learning_course_selection_languages" class="col-lg-4 o_light_label"/>
+            <field name="facodi_learning_course_selection_languages" class="oe_inline"/>
+        </div>
+        <div class="row mt16">
+            <label for="facodi_learning_auto_approve_trusted_providers" class="col-lg-4 o_light_label"/>
+            <field name="facodi_learning_auto_approve_trusted_providers" class="oe_inline"/>
+        </div>
+        <div invisible="facodi_learning_course_selection_mode == 'manual'">
+            <field name="facodi_learning_auto_approve_min_relevance"/>
+            <field name="facodi_learning_auto_approve_min_metadata_quality"/>
+            <field name="facodi_learning_auto_approve_min_language_fit"/>
+            <field name="facodi_learning_auto_approve_min_coverage"/>
+            <field name="facodi_learning_auto_approve_max_duplication_risk"/>
+        </div>
+    </div>
+</setting>
+```
+
+Add field help strings explaining that thresholds are normalized `0..1` and trusted providers/languages are comma-separated identifiers.
 
 - [ ] **Step 5: Implement robust policy parsing**
 
-In `course_selection.py` add:
+`get_course_selection_policy(env)` must read `ir.config_parameter` with `sudo()`, accept only `manual|assisted|auto`, parse/clamp each threshold to `0..1`, fall back to the defaults above on invalid input, parse languages/trusted providers into lower-case non-empty sets, and return `policy_version="course-selection-v1"`.
 
-```python
-SELECTION_POLICY_VERSION = "course-selection-v1"
-```
+`candidate_is_auto_approve_eligible()` returns false unless mode is auto, provider is trusted, every positive score meets minimum, duplicate risk is at/below maximum, candidate is unresolved, and recommendation is neither `review_existing_match` nor `ignore`. Return a stable reason for every failed guardrail.
 
-`get_course_selection_policy(env)` must:
+- [ ] **Step 6: Run and verify GREEN**
 
-- read `ir.config_parameter` with `sudo()`;
-- accept only modes `manual`, `assisted`, `auto`; invalid values become `manual`;
-- parse every numeric threshold, clamp to `0..1`, and fall back to the defaults above on invalid input;
-- parse languages/trusted providers as lower-case stripped comma-separated sets, removing blanks;
-- always return `policy_version="course-selection-v1"`.
-
-`candidate_is_auto_approve_eligible(candidate, policy)` returns false unless:
-
-- policy mode is `auto`;
-- candidate provider is trusted;
-- every positive score meets its minimum;
-- duplication risk is at or below its maximum;
-- candidate has no terminal state;
-- candidate recommendation is not `review_existing_match` or `ignore`.
-
-Return stable human-readable guardrail reasons for each failure.
-
-- [ ] **Step 6: Run focused tests and verify GREEN**
-
-Expected: default mode is manual, invalid configuration fails closed, duplicate candidate is not eligible.
+Expected: defaults, invalid values and duplicate-risk tests are green.
 
 - [ ] **Step 7: Commit**
 
@@ -552,27 +604,24 @@ git commit -m "feat: configure course selection policies"
 
 ---
 
-### Task 4: Implement Manual, Assisted and Auto Approve resolution
+### Task 4: Manual, Assisted and Auto Approve resolution
 
 **Files:**
 - Modify: `facodi_learning/models/course_candidate.py`
 - Modify: `facodi_learning/services/course_selection.py`
-- Test: `facodi_learning/tests/test_course_selection.py`
+- Modify: `facodi_learning/tests/test_course_selection.py`
 
 **Interfaces:**
-- Candidate `action_evaluate()` now evaluates then applies the configured selection mode.
-- `_apply_selection_policy()` returns `True` after applying mode-specific state/resolution behavior.
-- `_resolve()` is the only method allowed to set approved/resolved decision fields.
-- `action_resolve_new()` and `action_resolve_existing()` are Manager-only wrappers around `_resolve()`.
+- `action_evaluate()` evaluates then calls `_apply_selection_policy()`.
+- `_apply_selection_policy()` applies Manual/Assisted/Auto behavior without privilege escalation.
+- `_resolve()` is the only path that sets approval/resolution evidence.
 
-- [ ] **Step 1: Add failing mode/resolution tests**
-
-Add these exact behavioral cases:
+- [ ] **Step 1: Add RED mode tests**
 
 ```python
 def test_manual_mode_never_auto_shortlists_or_resolves(self):
     candidate = self.env["facodi.learning.course.candidate"].create(
-        self._candidate_values(external_id="manual-mode")
+        self._candidate_values(external_id="manual-mode", name="Unique Manual Course")
     )
     candidate.action_evaluate()
     self.assertEqual(candidate.state, "evaluated")
@@ -584,7 +633,7 @@ def test_assisted_mode_shortlists_without_resolution(self):
         "facodi_learning.course_selection_mode", "assisted"
     )
     candidate = self.env["facodi.learning.course.candidate"].create(
-        self._candidate_values(external_id="assisted")
+        self._candidate_values(external_id="assisted", name="Unique Assisted Course")
     )
     candidate.action_evaluate()
     self.assertEqual(candidate.state, "shortlisted")
@@ -592,8 +641,9 @@ def test_assisted_mode_shortlists_without_resolution(self):
 
 
 def test_auto_mode_creates_exactly_one_unpublished_course(self):
-    params = self.env["ir.config_parameter"].sudo()
-    params.set_param("facodi_learning.course_selection_mode", "auto")
+    self.env["ir.config_parameter"].sudo().set_param(
+        "facodi_learning.course_selection_mode", "auto"
+    )
     candidate = self.env["facodi.learning.course.candidate"].with_user(self.manager).create(
         self._candidate_values(external_id="auto-new", name="Unique Cloud Course")
     )
@@ -619,81 +669,23 @@ def test_auto_mode_never_auto_links_semantic_duplicate(self):
     self.assertFalse(candidate.resolved_channel_id)
 ```
 
-Add manual action tests:
+- [ ] **Step 2: Add RED manual resolution tests**
 
 ```python
 def test_manager_can_resolve_existing_without_creating_course(self):
     before = self.env["slide.channel"].search_count([])
     candidate = self.env["facodi.learning.course.candidate"].with_user(self.manager).create(
-        self._candidate_values(external_id="manual-existing")
+        self._candidate_values(external_id="manual-existing", name="Existing Choice")
     )
+    candidate.action_evaluate()
     candidate.with_user(self.manager).write({"matched_channel_id": self.channel.id})
-    candidate.with_user(self.manager).action_evaluate()
     candidate.with_user(self.manager).action_resolve_existing()
     self.assertEqual(candidate.resolved_channel_id, self.channel)
     self.assertEqual(candidate.decision_origin, "manual")
     self.assertEqual(candidate.reviewed_by_id, self.manager)
     self.assertEqual(self.env["slide.channel"].search_count([]), before)
-```
 
-- [ ] **Step 2: Run tests and verify RED**
 
-Expected: evaluation does not yet apply modes and resolution actions are not implemented.
-
-- [ ] **Step 3: Implement mode application**
-
-In `action_evaluate()`, after persisting the evaluation, call `_apply_selection_policy()`.
-
-Implement `_apply_selection_policy()` with exact behavior:
-
-- `manual`: leave state `evaluated`;
-- `assisted`: if recommendation is `shortlist` or `review_existing_match`, set state `shortlisted`; otherwise remain `evaluated`;
-- `auto`: call `candidate_is_auto_approve_eligible()`; if false, set `shortlisted` for review-worthy/review-existing results and otherwise leave `evaluated`; if true, automatic resolution may proceed only if current user is superuser or eLearning Manager, otherwise set `shortlisted` instead of elevating privileges;
-- M3.1 automatic resolution always uses `resolution_type="new"`; never automatically link `matched_channel_id`.
-
-- [ ] **Step 4: Implement the single guarded `_resolve()` path**
-
-`_resolve()` must:
-
-1. require exactly one candidate;
-2. permit manual resolution only for `website_slides.group_website_slides_manager`;
-3. permit automatic resolution only for superuser or Manager and only after `candidate_is_auto_approve_eligible()` rechecks current persisted evidence/configuration;
-4. lock using `try_lock_for_update()`, invalidate and return idempotently when already `resolved` with the same resolution;
-5. reject conflicting second resolutions;
-6. require evaluation before resolution;
-7. run canonical creation/linking inside the current ORM transaction/savepoint;
-8. for `existing`, require `channel`/`matched_channel_id` to exist and be writable by the resolving Manager;
-9. for `new`, create exactly one `slide.channel` with:
-
-```python
-{
-    "name": candidate.name,
-    "description": candidate.description or False,
-    "description_short": candidate.description or False,
-    "user_id": candidate.requested_by_id.id or self.env.uid,
-    "website_published": False,
-}
-```
-
-10. set `state="approved"` only within the same transaction immediately before canonical resolution and finish with `state="resolved"`;
-11. write `resolution_type`, `resolved_channel_id`, `decision_origin`, `decision_at`, `reviewed_by_id` only for manual decisions, `decision_policy_version` only for automatic decisions, and a JSON `decision_snapshot` containing all five scores, recommendation, evaluation policy version and selection policy thresholds used;
-12. clear `last_error` on success;
-13. on failure, roll back partial canonical creation via savepoint and preserve the unresolved candidate with a safe `last_error`, without marking it approved/resolved.
-
-Use `super(FacodiLearningCourseCandidate, candidate).write()` for protected internal fields; do not add context flags that clients could forge.
-
-- [ ] **Step 5: Implement action wrappers**
-
-- `action_shortlist()`: Officer or Manager, only unresolved evaluated candidate, writes `shortlisted` internally.
-- `action_reject()`: Manager only, locks candidate, requires unresolved, sets `rejected`, `decision_origin="manual"`, `reviewed_by_id`, `decision_at`, snapshot of current evaluation.
-- `action_resolve_new()`: Manager-only `_resolve("new", decision_origin="manual")`.
-- `action_resolve_existing()`: Manager-only `_resolve("existing", channel=matched_channel_id, decision_origin="manual")`.
-
-- [ ] **Step 6: Add idempotency/failure tests**
-
-Add:
-
-```python
 def test_manual_new_resolution_is_idempotent(self):
     candidate = self.env["facodi.learning.course.candidate"].with_user(self.manager).create(
         self._candidate_values(external_id="idempotent-new", name="Unique Security Course")
@@ -704,31 +696,88 @@ def test_manual_new_resolution_is_idempotent(self):
     candidate.with_user(self.manager).action_resolve_new()
     self.assertEqual(candidate.resolved_channel_id, channel)
     self.assertFalse(channel.website_published)
+```
 
+- [ ] **Step 3: Run and verify RED**
 
+Expected: mode application/resolution actions are not implemented.
+
+- [ ] **Step 4: Implement `_apply_selection_policy()`**
+
+Exact behavior:
+
+- manual: state remains `evaluated`;
+- assisted: recommendations `shortlist` and `review_existing_match` become `shortlisted`; other results remain `evaluated`;
+- auto: call `candidate_is_auto_approve_eligible()`; failures that need review become `shortlisted`, otherwise remain `evaluated`;
+- auto eligibility may call `_resolve("new", decision_origin="automatic", policy_version=...)` only when current user is superuser or eLearning Manager; an Officer action never escalates and instead leaves the candidate shortlisted;
+- M3.1 never auto-links `matched_channel_id`.
+
+- [ ] **Step 5: Implement `_resolve()` as the single guarded path**
+
+For one candidate, `_resolve()` must:
+
+1. validate manual resolution requires eLearning Manager;
+2. validate automatic resolution requires superuser or Manager and re-check current policy eligibility;
+3. call `try_lock_for_update()` and raise `ValidationError("This candidate is being resolved; retry shortly.")` if the lock is unavailable;
+4. invalidate and re-check state after locking;
+5. return the already resolved channel on an idempotent same-resolution replay;
+6. reject conflicting second resolution;
+7. require current evaluation evidence;
+8. use a savepoint for canonical create/link;
+9. for existing resolution, require a real writable `slide.channel` selected by the Manager;
+10. for new resolution, create exactly one standard channel:
+
+```python
+channel = self.env["slide.channel"].create({
+    "name": candidate.name,
+    "description": candidate.description or False,
+    "description_short": candidate.description or False,
+    "user_id": candidate.requested_by_id.id or self.env.uid,
+    "website_published": False,
+})
+```
+
+11. persist state/resolution/decision evidence through `super(...).write()` only;
+12. manual decision: `reviewed_by_id=self.env.uid`, no policy version;
+13. automatic decision: `reviewed_by_id=False`, `decision_policy_version="course-selection-v1"`;
+14. `decision_snapshot` contains all five scores, recommendation, evaluation policy version and the selection thresholds/trusted-provider evidence used;
+15. clear `last_error` on success;
+16. on exception, roll back the savepoint, keep candidate unresolved and persist only safe text: `<ExceptionType>: operation failed; inspect course selection configuration.`.
+
+- [ ] **Step 6: Implement action wrappers**
+
+- `action_shortlist()`: Officer/Manager, evaluated unresolved candidate only.
+- `action_reject()`: Manager only, lock, terminal manual decision + snapshot.
+- `action_resolve_new()`: Manager wrapper for `_resolve("new", decision_origin="manual")`.
+- `action_resolve_existing()`: Manager wrapper for `_resolve("existing", channel=matched_channel_id, decision_origin="manual")`.
+
+- [ ] **Step 7: Add rollback test**
+
+```python
 def test_resolution_failure_does_not_leave_partial_course(self):
     from unittest.mock import patch
-    CandidateModel = type(self.env["facodi.learning.course.candidate"])
+
     candidate = self.env["facodi.learning.course.candidate"].with_user(self.manager).create(
         self._candidate_values(external_id="failure", name="Failure Course")
     )
     candidate.action_evaluate()
     before = self.env["slide.channel"].search_count([])
-    with patch.object(type(self.env["slide.channel"]), "create", side_effect=RuntimeError("boom")):
+    ChannelModel = type(self.env["slide.channel"])
+    with patch.object(ChannelModel, "create", side_effect=RuntimeError("secret detail")):
         candidate.with_user(self.manager).action_resolve_new()
+    candidate.invalidate_recordset()
     self.assertNotEqual(candidate.state, "resolved")
     self.assertFalse(candidate.resolved_channel_id)
     self.assertEqual(self.env["slide.channel"].search_count([]), before)
-    self.assertTrue(candidate.last_error)
+    self.assertIn("RuntimeError: operation failed", candidate.last_error)
+    self.assertNotIn("secret detail", candidate.last_error)
 ```
 
-Persist only safe error text such as `RuntimeError: operation failed; inspect course selection configuration.`; never persist raw exception messages.
+- [ ] **Step 8: Run and verify GREEN**
 
-- [ ] **Step 7: Run focused tests and verify GREEN**
+Expected: all mode/resolution/idempotency/rollback tests pass.
 
-Expected: Manual, Assisted, Auto Approve, manual existing/new resolution, idempotency and rollback tests pass.
-
-- [ ] **Step 8: Commit**
+- [ ] **Step 9: Commit**
 
 ```bash
 git add facodi_learning/models/course_candidate.py \
@@ -739,34 +788,29 @@ git commit -m "feat: resolve course candidates with auto approve"
 
 ---
 
-### Task 5: Enforce Officer/Manager/Public security boundaries
+### Task 5: Security boundaries
 
 **Files:**
 - Modify: `facodi_learning/security/ir.model.access.csv`
 - Modify: `facodi_learning/security/facodi_learning_security.xml`
 - Modify: `facodi_learning/tests/test_security.py`
-- Test: `facodi_learning/tests/test_course_selection.py`
 
 **Interfaces:**
-- Officers: read candidates globally following the existing FACODI audit pattern, create/write only records where `requested_by_id=user.id`, no unlink.
-- Managers: full candidate read/write/create; model methods still protect terminal history and unlink semantics.
-- Public/Portal: no model access.
+- Officer: read all candidate audit records, create/write only own requested candidates, no unlink.
+- Manager: model ACL full; Python guards still protect terminal evidence/unlink semantics.
+- Public/Portal: no candidate ACL.
 
-- [ ] **Step 1: Write failing security tests**
-
-Add to `test_security.py`:
+- [ ] **Step 1: Add RED security tests**
 
 ```python
 def test_course_candidate_public_and_portal_denied(self):
     Candidate = self.env["facodi.learning.course.candidate"]
-    for user in (
-        self.env.ref("base.public_user"),
-        self.env["res.users"].create({
-            "name": "Course Candidate Portal",
-            "login": "course-candidate-portal",
-            "group_ids": [(6, 0, [self.env.ref("base.group_portal").id])],
-        }),
-    ):
+    portal = self.env["res.users"].create({
+        "name": "Course Candidate Portal",
+        "login": "course-candidate-portal",
+        "group_ids": [(6, 0, [self.env.ref("base.group_portal").id])],
+    })
+    for user in (self.env.ref("base.public_user"), portal):
         with self.assertRaises(AccessError):
             Candidate.with_user(user).create({
                 "provider": "manual",
@@ -786,82 +830,85 @@ def test_officer_cannot_terminally_resolve_course_candidate(self):
     candidate.with_user(self.officer).action_evaluate()
     with self.assertRaises(AccessError):
         candidate.with_user(self.officer).action_resolve_new()
-
-
-def test_officer_cannot_edit_another_officers_candidate(self):
-    other = self.env["res.users"].create({
-        "name": "Other Officer",
-        "login": "other-course-officer",
-        "group_ids": [(6, 0, [
-            self.env.ref("website_slides.group_website_slides_officer").id,
-        ])],
-    })
-    candidate = self.env["facodi.learning.course.candidate"].with_user(self.officer).create({
-        "provider": "manual",
-        "external_id": "owned-candidate",
-        "name": "Owned Candidate",
-    })
-    with self.assertRaises(AccessError):
-        candidate.with_user(other).write({"description": "Forged"})
 ```
 
-- [ ] **Step 2: Run focused security tests and verify RED**
+Add a second Officer and prove that Officer cannot edit a candidate whose `requested_by_id` belongs to the first Officer.
 
-Expected: Officer candidate create/read is denied because ACL/rules do not exist yet.
+- [ ] **Step 2: Run and verify RED**
 
-- [ ] **Step 3: Add ACL rows**
+Expected: Officer access is missing until ACL/rules are added.
 
-Append exactly:
+- [ ] **Step 3: Add ACLs**
 
 ```csv
 access_facodi_course_candidate_officer,FACODI course candidates - Officer,model_facodi_learning_course_candidate,website_slides.group_website_slides_officer,1,1,1,0
 access_facodi_course_candidate_manager,FACODI course candidates - Manager,model_facodi_learning_course_candidate,website_slides.group_website_slides_manager,1,1,1,1
 ```
 
-Do not add Public/Portal ACLs.
+- [ ] **Step 4: Add record rules**
 
-- [ ] **Step 4: Add record rules matching the existing audit pattern**
+Add three rules following the existing audit pattern:
 
-In `facodi_learning_security.xml` add:
+```xml
+<record id="rule_facodi_course_candidate_officer_read" model="ir.rule">
+    <field name="name">FACODI course candidate: officer read all</field>
+    <field name="model_id" ref="model_facodi_learning_course_candidate"/>
+    <field name="groups" eval="[(4, ref('website_slides.group_website_slides_officer'))]"/>
+    <field name="domain_force">[(1, '=', 1)]</field>
+    <field name="perm_read" eval="1"/>
+    <field name="perm_write" eval="0"/>
+    <field name="perm_create" eval="0"/>
+    <field name="perm_unlink" eval="0"/>
+</record>
+<record id="rule_facodi_course_candidate_officer_write_own" model="ir.rule">
+    <field name="name">FACODI course candidate: officer create/write own</field>
+    <field name="model_id" ref="model_facodi_learning_course_candidate"/>
+    <field name="groups" eval="[(4, ref('website_slides.group_website_slides_officer'))]"/>
+    <field name="domain_force">[('requested_by_id', '=', user.id)]</field>
+    <field name="perm_read" eval="0"/>
+    <field name="perm_write" eval="1"/>
+    <field name="perm_create" eval="1"/>
+    <field name="perm_unlink" eval="0"/>
+</record>
+<record id="rule_facodi_course_candidate_manager" model="ir.rule">
+    <field name="name">FACODI course candidate: manager all</field>
+    <field name="model_id" ref="model_facodi_learning_course_candidate"/>
+    <field name="groups" eval="[(4, ref('website_slides.group_website_slides_manager'))]"/>
+    <field name="domain_force">[(1, '=', 1)]</field>
+</record>
+```
 
-- Officer read-all rule: domain `[(1, '=', 1)]`, read only.
-- Officer create/write-own rule: domain `[('requested_by_id', '=', user.id)]`, write/create only.
-- Manager all rule: domain `[(1, '=', 1)]`.
+- [ ] **Step 5: Run and verify GREEN**
 
-Keep terminal-state and resolution protection in Python methods in addition to ACL/rules.
-
-- [ ] **Step 5: Run security + course-selection tests and verify GREEN**
-
-Expected: Officers can create/reevaluate their own records, cannot edit another Officer’s record or terminally resolve; Managers can resolve; Public/Portal have no access.
+Expected: Public/Portal denied; Officer own create/reevaluate works; cross-Officer mutation and terminal resolution denied; Manager resolution works.
 
 - [ ] **Step 6: Commit**
 
 ```bash
 git add facodi_learning/security/ir.model.access.csv \
         facodi_learning/security/facodi_learning_security.xml \
-        facodi_learning/tests/test_security.py \
-        facodi_learning/tests/test_course_selection.py
+        facodi_learning/tests/test_security.py
 git commit -m "security: protect course selection workflow"
 ```
 
 ---
 
-### Task 6: Add Manager-facing Course Discovery UX and reorganize FACODI menus
+### Task 6: Course Discovery backend UX and menu structure
 
 **Files:**
 - Create: `facodi_learning/views/course_candidate_views.xml`
 - Modify: `facodi_learning/views/analysis_views.xml`
 - Modify: `facodi_learning/__manifest__.py`
-- Test: `facodi_learning/tests/test_course_selection.py`
+- Modify: `facodi_learning/tests/test_course_selection.py`
 
 **Interfaces:**
-- Adds backend action `action_facodi_course_candidates`.
-- Adds menu hierarchy `eLearning > FACODI Learning > Course Discovery > Candidates`.
-- Existing Jobs/Results/Content Mappings remain available under `FACODI Learning > Content Analysis`.
+- `action_facodi_course_candidates`
+- `menu_facodi_learning_root`
+- `menu_facodi_learning_course_discovery`
+- `menu_facodi_learning_course_candidates`
+- Existing Jobs/Results/Mappings remain under `Content Analysis` with the same action XML IDs.
 
-- [ ] **Step 1: Add a failing view/action smoke test**
-
-Add:
+- [ ] **Step 1: Add RED XML-ID smoke test**
 
 ```python
 def test_course_candidate_action_and_views_are_loaded(self):
@@ -871,54 +918,63 @@ def test_course_candidate_action_and_views_are_loaded(self):
     self.env.ref("facodi_learning.menu_facodi_learning_course_candidates")
 ```
 
-- [ ] **Step 2: Run test and verify RED**
+- [ ] **Step 2: Run and verify RED**
 
 Expected: XML IDs do not exist.
 
-- [ ] **Step 3: Create candidate search/list/form views**
+- [ ] **Step 3: Create search/list/form/action XML**
 
-`course_candidate_views.xml` must include:
+The search view must expose `name`, `provider`, `institution`, `language`, `state`, `recommendation`, `matched_channel_id`, `resolved_channel_id`, filters for discovered/needs-review/resolved/rejected/automatic decisions, and group-by state/provider/language/decision origin.
 
-Search fields: `name`, `provider`, `institution`, `language`, `state`, `recommendation`, `matched_channel_id`, `resolved_channel_id`.
+The list view columns must be:
 
-Filters: Discovered, Needs Review (`evaluated`/`shortlisted`), Resolved, Rejected, Automatic Decisions; group by state/provider/language/decision origin.
+```xml
+<field name="name"/>
+<field name="provider"/>
+<field name="institution" optional="show"/>
+<field name="language"/>
+<field name="state"/>
+<field name="recommendation"/>
+<field name="relevance_score" optional="hide"/>
+<field name="duplication_risk" optional="show"/>
+<field name="matched_channel_id" optional="show"/>
+<field name="resolved_channel_id" optional="show"/>
+<field name="decision_origin" optional="hide"/>
+```
 
-List columns: `name`, `provider`, `institution`, `language`, `state`, `recommendation`, `relevance_score`, `duplication_risk`, `matched_channel_id`, `resolved_channel_id`, `decision_origin`.
+The form header must use object buttons for `action_evaluate`, `action_shortlist`, `action_reject`, `action_resolve_existing`, `action_resolve_new`, with Manager group restrictions on terminal actions and state-based `invisible` expressions. Form body separates source metadata, evaluation evidence, match choice and terminal resolution evidence; evaluation/decision fields are readonly.
 
-Form header actions:
+Create the window action with `view_mode="list,form"`.
 
-- `action_evaluate` visible for unresolved states;
-- `action_shortlist` visible for evaluated state to Officer/Manager;
-- `action_reject` Manager-only unresolved;
-- `action_resolve_existing` Manager-only when `matched_channel_id` exists and unresolved;
-- `action_resolve_new` Manager-only after evaluation and unresolved;
-- state statusbar.
+- [ ] **Step 4: Reorganize existing menus**
 
-Form body groups normalized source metadata, evaluation evidence, possible match, and terminal resolution/audit evidence. Evaluation and decision fields are readonly. Do not expose provider secrets because they do not exist on this model.
+In `analysis_views.xml` create:
 
-- [ ] **Step 4: Reorganize the existing menu without changing current actions**
+```xml
+<menuitem id="menu_facodi_learning_root"
+          name="FACODI Learning"
+          parent="website_slides.website_slides_menu_root"
+          groups="website_slides.group_website_slides_officer"
+          sequence="8"/>
+```
 
-In `analysis_views.xml`:
+Change the existing `menu_facodi_learning_analysis` to `name="Content Analysis"` and `parent="menu_facodi_learning_root"`. Preserve its existing child menu/action XML IDs.
 
-- create `menu_facodi_learning_root` under `website_slides.website_slides_menu_root` named `FACODI Learning`;
-- change the current `menu_facodi_learning_analysis` name to `Content Analysis` and parent it to `menu_facodi_learning_root`;
-- preserve existing Jobs/Results/Mappings child actions and XML IDs.
-
-In `course_candidate_views.xml` add `menu_facodi_learning_course_discovery` and `menu_facodi_learning_course_candidates` under the new root.
+In `course_candidate_views.xml` add Course Discovery/Candidates menus beneath `menu_facodi_learning_root`.
 
 - [ ] **Step 5: Update manifest/version**
 
-Bump:
+Change:
 
 ```python
 "version": "19.0.1.2.0",
 ```
 
-Load `views/course_candidate_views.xml` after `analysis_views.xml` so the root menu XML ID already exists.
+and add `views/course_candidate_views.xml` after `views/analysis_views.xml` in `data`.
 
-- [ ] **Step 6: Run install tests and verify GREEN**
+- [ ] **Step 6: Run clean-install tests and verify GREEN**
 
-Run the full addon test tag on a clean database. Expected: all XML views load and the previous analysis menus/actions still resolve.
+Expected: views load, candidate action exists, old analysis actions still resolve.
 
 - [ ] **Step 7: Commit**
 
@@ -932,20 +988,17 @@ git commit -m "feat: add course discovery manager workflow"
 
 ---
 
-### Task 7: Add concurrency, snapshot and regression coverage
+### Task 7: Locking, snapshots and terminal audit hardening
 
 **Files:**
 - Modify: `facodi_learning/tests/test_course_selection.py`
 - Modify: `facodi_learning/models/course_candidate.py`
-- Modify: `facodi_learning/services/course_selection.py`
 
 **Interfaces:**
 - No new public API.
-- Strengthens `_resolve()` and `decision_snapshot` guarantees before documentation/release.
+- `_resolve()` must explicitly handle unavailable row locks and preserve terminal snapshot evidence.
 
-- [ ] **Step 1: Add exact terminal-evidence tests**
-
-Add tests proving:
+- [ ] **Step 1: Add RED snapshot tests**
 
 ```python
 def test_terminal_decision_snapshot_does_not_change_with_later_settings(self):
@@ -971,75 +1024,78 @@ def test_terminal_candidate_metadata_cannot_be_rewritten(self):
         candidate.with_user(self.manager).write({"description": "Retcon"})
 ```
 
-Add a row-lock regression using two cursors/environments if supported by the existing Odoo `TransactionCase` harness; otherwise create a deterministic lock-conflict unit around `try_lock_for_update()` with `unittest.mock` that proves a second unavailable lock raises `ValidationError("This candidate is being resolved; retry shortly.")` rather than creating a second channel.
+- [ ] **Step 2: Add one deterministic lock-unavailable test**
 
-- [ ] **Step 2: Run and verify RED where protection is incomplete**
+Use the exact existing Odoo locking primitive and mock only lock availability:
 
-Expected: any missing decision-snapshot immutability or lock-unavailable handling fails.
+```python
+def test_resolution_refuses_unavailable_row_lock(self):
+    from unittest.mock import patch
 
-- [ ] **Step 3: Tighten `_resolve()` without broad refactors**
+    candidate = self.env["facodi.learning.course.candidate"].with_user(self.manager).create(
+        self._candidate_values(external_id="locked", name="Locked Course")
+    )
+    candidate.action_evaluate()
+    CandidateModel = type(candidate)
+    empty = self.env["facodi.learning.course.candidate"]
+    with patch.object(CandidateModel, "try_lock_for_update", return_value=empty):
+        with self.assertRaisesRegex(ValidationError, "being resolved"):
+            candidate.with_user(self.manager).action_resolve_new()
+    self.assertFalse(candidate.resolved_channel_id)
+```
 
-Required exact behavior:
+Do not replace this with a second ad-hoc concurrency mechanism; production behavior remains Odoo `try_lock_for_update()`.
 
-- capture the policy/evaluation snapshot before canonical write and persist the copied JSON structure;
-- treat `try_lock_for_update()` returning an unavailable record as a retryable `ValidationError`;
-- after lock, invalidate and re-check terminal state;
-- never recompute or overwrite a terminal snapshot;
-- return the existing resolved channel on same-resolution idempotent replay.
+- [ ] **Step 3: Run and verify RED where needed**
 
-- [ ] **Step 4: Run full M3.1 test module and verify GREEN**
+Expected: any missing lock-unavailable or snapshot immutability handling fails.
 
-Expected: candidate identity, policy, modes, security, rollback, snapshot and concurrency cases all pass.
+- [ ] **Step 4: Tighten `_resolve()`**
 
-- [ ] **Step 5: Commit**
+Ensure it captures a copied JSON snapshot before the canonical write, never recomputes/overwrites a terminal snapshot, raises the exact retryable validation on unavailable lock, invalidates and rechecks state after locking, and returns the same canonical channel on idempotent same-resolution replay.
+
+- [ ] **Step 5: Run the full M3.1 test class and verify GREEN**
+
+Expected: identity, evaluation, modes, security, rollback, snapshot and locking cases pass.
+
+- [ ] **Step 6: Commit**
 
 ```bash
 git add facodi_learning/tests/test_course_selection.py \
-        facodi_learning/models/course_candidate.py \
-        facodi_learning/services/course_selection.py
+        facodi_learning/models/course_candidate.py
 git commit -m "test: harden course selection concurrency and audit"
 ```
 
 ---
 
-### Task 8: Document M3.1 and pass clean-install/upgrade release gates
+### Task 8: Documentation and release gates
 
 **Files:**
 - Modify: `README.md`
 - Modify: `docs/architecture.md`
-- Verify: `.github/workflows/ci.yml` (no change expected unless the existing gate fails for a real M3.1 reason)
+- Verify: `.github/workflows/ci.yml` (no change expected unless a genuine M3.1 gate failure requires it)
 
 **Interfaces:**
 - No runtime API changes.
-- Documentation becomes the operator/developer contract for M3.1.
 
-- [ ] **Step 1: Update README with the actual Manager workflow**
+- [ ] **Step 1: Document only implemented M3.1 behavior in README**
 
-Document:
+Document Course Discovery > Candidates, manual identity, deterministic local evaluation, all three selection modes, trusted providers, duplicate review, link-existing/create-new-draft resolution, and the explicit invariant “Auto Approve never publishes a course”. Do not describe M3.2+ as implemented.
 
-- `Course Discovery > Candidates`;
-- manual candidate identity (`provider + external_id`);
-- deterministic local evaluation;
-- Manual/Assisted/Auto modes;
-- trusted provider rule;
-- Auto Approve fail-closed behavior;
-- high duplicate risk routing to manual review;
-- link-existing versus create-new-draft resolution;
-- explicit statement that Auto Approve never publishes a course.
+- [ ] **Step 2: Document architecture invariants**
 
-Do not document M3.2/M3.3/M3.4 features as implemented.
+Add an M3.1 section to `docs/architecture.md` covering candidate identity, evaluation service, policy parsing/versioning, state transitions, shared `_resolve()`, locking/idempotency, decision snapshots and canonical `slide.channel` ownership.
 
-- [ ] **Step 2: Update architecture invariants**
-
-Add an M3.1 section to `docs/architecture.md` describing exact model/service responsibilities, state machine, selection policy version, snapshot evidence, locking/idempotency and why `slide.channel` remains canonical.
-
-- [ ] **Step 3: Run clean install with the repository CI command**
-
-Use the exact clean-install command from `.github/workflows/ci.yml` against PostgreSQL 16:
+- [ ] **Step 3: Run clean install using the CI-equivalent environment**
 
 ```bash
-docker run --rm \
-  --network facodi-learning-ci \
+docker network create facodi-learning-ci || true
+docker run -d --name facodi-learning-db --network facodi-learning-ci \
+  -e POSTGRES_USER=odoo -e POSTGRES_PASSWORD=odoo \
+  -e POSTGRES_DB=facodi_learning_ci postgres:16 || true
+until docker exec facodi-learning-db pg_isready -U odoo -d facodi_learning_ci; do sleep 2; done
+
+docker run --rm --network facodi-learning-ci \
   -e HOST=facodi-learning-db -e PORT=5432 \
   -e USER=odoo -e PASSWORD=odoo \
   -v "$PWD:/mnt/extra-addons:ro" \
@@ -1056,8 +1112,7 @@ Expected: exit 0 and all pre-M3 + M3.1 tests pass.
 - [ ] **Step 4: Run upgrade regression gate**
 
 ```bash
-docker run --rm \
-  --network facodi-learning-ci \
+docker run --rm --network facodi-learning-ci \
   -e HOST=facodi-learning-db -e USER=odoo -e PASSWORD=odoo \
   -v "$PWD:/mnt/extra-addons:ro" \
   -v facodi-learning-data:/var/lib/odoo \
@@ -1068,32 +1123,32 @@ docker run --rm \
   --test-tags /facodi_learning --stop-after-init
 ```
 
-Expected: exit 0; existing `facodi.learning.source`, analysis jobs/results/attempts and content mappings remain valid; no data migration is required because M3.1 is additive.
+Expected: exit 0. Existing sources/jobs/attempts/results/content mappings remain intact; M3.1 requires no data rewrite because its schema is additive.
 
-- [ ] **Step 5: Verify no automatic publication regression**
+- [ ] **Step 5: Verify unpublished invariant explicitly**
 
-Run a focused database assertion or Odoo shell check that every channel created from a candidate in tests has `website_published=False`. Any Auto Approve-created public channel is a release blocker.
+Run Odoo shell/database assertion over candidates with `resolution_type="new"` and fail release if any `resolved_channel_id.website_published` is true.
 
-- [ ] **Step 6: Commit documentation**
+- [ ] **Step 6: Commit docs**
 
 ```bash
 git add README.md docs/architecture.md
 git commit -m "docs: document M3.1 course selection"
 ```
 
-- [ ] **Step 7: Push branch and require GitHub Actions success before review**
+- [ ] **Step 7: Push and verify exact-head GitHub Actions**
 
-Push the implementation branch and confirm the exact-head GitHub Actions run passes both install and upgrade steps. Do not merge on a stale green SHA.
+Require successful clean-install and upgrade checks on the exact implementation SHA. Never accept a stale green run.
 
 ---
 
 ## M3.1 Completion Checklist
 
-M3.1 is complete only when all of the following are demonstrated on the exact implementation head:
+M3.1 is complete only when the exact implementation head proves all of the following:
 
 - one `(provider, external_id)` produces one candidate;
-- unresolved metadata refresh is permitted and terminal evidence is immutable;
-- deterministic local evaluation works with no network access;
+- unresolved metadata refresh is allowed and terminal evidence is immutable;
+- deterministic local evaluation works without network access;
 - Manual mode never auto-resolves;
 - Assisted mode shortlists without resolution;
 - Auto Approve resolves only a trusted, fully eligible, low-duplicate candidate;
@@ -1101,19 +1156,19 @@ M3.1 is complete only when all of the following are demonstrated on the exact im
 - manual Manager link-existing and create-new workflows both work;
 - automatic and manual resolution use the same `_resolve()` path;
 - a new canonical course is exactly one standard `slide.channel` and remains unpublished;
-- concurrent/replayed resolution is safe and idempotent;
-- Public/Portal cannot access candidate records;
+- locking/replay is safe and idempotent;
+- Public/Portal cannot access candidates;
 - Officers cannot terminally resolve candidates;
-- historical policy/evaluation snapshots survive later configuration changes;
-- existing content-analysis/ingestion/mapping tests remain green;
+- historical snapshots survive later configuration changes;
+- existing content-analysis/ingestion/mapping regressions remain green;
 - clean install and upgrade on Odoo 19/PostgreSQL 16 are green.
 
 ## Follow-on Plan Boundaries
 
-Do not implement these inside the M3.1 branch. Each receives its own plan after M3.1 interfaces are merged and re-read from `main`:
+Do not implement these inside the M3.1 branch. Each receives its own implementation plan after M3.1 is merged and its interfaces are re-read from `main`:
 
-1. `M3.2 Course Profile` — deterministic `slide.channel` profile aggregation only.
-2. `M3.3 Course Mapping Engine` — retrieval/ranking, semantic `course.mapping`, native Odoo prerequisite application and learner-safe relations.
-3. `M3.4 Curriculum Reference & Coverage` — versioned programme/unit/coverage models with LESTI-shaped fixtures and no learner progression/credit recognition.
-4. `M3.5 External Discovery Providers` — `discovery.run`, provider registry/cron and optional YouTube/OER/institutional addons.
-5. `M3.6 Semantic/AI Ranking` — optional semantic evaluators/rankers after deterministic boundaries and audit policies are proven.
+1. **M3.2 Course Profile** — deterministic `slide.channel` profile aggregation only.
+2. **M3.3 Course Mapping Engine** — retrieval/ranking, semantic `course.mapping`, native Odoo prerequisite application and learner-safe relations.
+3. **M3.4 Curriculum Reference & Coverage** — versioned programme/unit/coverage models with LESTI-shaped fixtures and no learner progression/credit recognition.
+4. **M3.5 External Discovery Providers** — `discovery.run`, provider registry/cron and optional YouTube/OER/institutional addons.
+5. **M3.6 Semantic/AI Ranking** — optional semantic evaluators/rankers after deterministic audit/policy boundaries are proven.
