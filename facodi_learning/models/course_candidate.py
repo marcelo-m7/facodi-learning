@@ -1,6 +1,8 @@
 from odoo import api, fields, models
 from odoo.exceptions import AccessError, ValidationError
 
+from ..services.course_selection import evaluate_course_candidate
+
 
 class FacodiLearningCourseCandidate(models.Model):
     _name = "facodi.learning.course.candidate"
@@ -253,7 +255,37 @@ class FacodiLearningCourseCandidate(models.Model):
         return super().unlink()
 
     def action_evaluate(self):
-        raise ValidationError("Evaluate the candidate before this action.")
+        accepted = (
+            self.env["ir.config_parameter"]
+            .sudo()
+            .get_param("facodi_learning.course_selection_languages", "pt,en")
+        )
+        accepted_languages = {
+            value.strip().lower() for value in accepted.split(",") if value.strip()
+        }
+        existing_channels = self.env["slide.channel"].search([])
+        for candidate in self:
+            if candidate.state in {"approved", "rejected", "resolved"}:
+                raise ValidationError("Reviewed course candidates cannot be reevaluated.")
+            result = evaluate_course_candidate(
+                candidate, existing_channels, accepted_languages
+            )
+            super(FacodiLearningCourseCandidate, candidate).write(
+                {
+                    "state": "evaluated",
+                    "relevance_score": result["relevance_score"],
+                    "metadata_quality_score": result["metadata_quality_score"],
+                    "language_fit_score": result["language_fit_score"],
+                    "coverage_score": result["coverage_score"],
+                    "duplication_risk": result["duplication_risk"],
+                    "recommendation": result["recommendation"],
+                    "evaluation_reasons": result["reasons"],
+                    "evaluation_policy_version": result["policy_version"],
+                    "evaluated_at": fields.Datetime.now(),
+                    "matched_channel_id": result["matched_channel_id"] or False,
+                }
+            )
+        return True
 
     def action_shortlist(self):
         raise ValidationError("Evaluate the candidate before this action.")
