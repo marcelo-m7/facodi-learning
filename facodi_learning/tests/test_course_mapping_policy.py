@@ -62,15 +62,18 @@ class TestCourseMappingPolicy(TransactionCase):
 
     def _mapping(self, mapping_type="related", confidence=0.90, user=None):
         user = user or self.manager
-        return self.env["facodi.learning.course.mapping"].with_user(user).create(
-            {
-                "source_channel_id": self.source.id,
-                "target_channel_id": self.target.id,
-                "mapping_type": mapping_type,
-                "confidence": confidence,
-                "origin": "analysis",
-                "ranking_version": "course-mapping-v1",
-            }
+        return (
+            self.env["facodi.learning.course.mapping"]
+            .with_user(user)
+            ._create_generated(
+                {
+                    "source_channel_id": self.source.id,
+                    "target_channel_id": self.target.id,
+                    "mapping_type": mapping_type,
+                    "confidence": confidence,
+                    "ranking_version": "course-mapping-v1",
+                }
+            )
         )
 
     def _set_auto(self, types="related", threshold="0.85"):
