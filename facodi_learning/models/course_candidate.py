@@ -165,6 +165,7 @@ class FacodiLearningCourseCandidate(models.Model):
 
     @api.model_create_multi
     def create(self, vals_list):
+        identities = set()
         for vals in vals_list:
             if vals.keys() - self._source_fields:
                 raise AccessError(
@@ -172,7 +173,22 @@ class FacodiLearningCourseCandidate(models.Model):
                 )
             if vals.get("requested_by_id", self.env.uid) != self.env.uid:
                 raise AccessError("The candidate requester cannot be forged.")
+
+            provider = (vals.get("provider") or "manual").strip()
+            external_id = (vals.get("external_id") or "").strip()
+            identity = (provider, external_id)
+            if identity in identities or self.search_count(
+                [("provider", "=", provider), ("external_id", "=", external_id)],
+                limit=1,
+            ):
+                raise ValidationError(
+                    "This external course candidate is already registered."
+                )
+            identities.add(identity)
+
             vals.update(
+                provider=provider,
+                external_id=external_id,
                 requested_by_id=self.env.uid,
                 state="discovered",
                 relevance_score=0.0,
@@ -210,7 +226,10 @@ class FacodiLearningCourseCandidate(models.Model):
                 "website_slides.group_website_slides_manager"
             ):
                 raise AccessError("Only eLearning Managers can choose course matches.")
-            if any(record.state not in {"discovered", "evaluated", "shortlisted"} for record in self):
+            if any(
+                record.state not in {"discovered", "evaluated", "shortlisted"}
+                for record in self
+            ):
                 raise AccessError("Resolved course matches are audit history.")
 
         if self._metadata_fields & vals.keys() and any(
@@ -227,7 +246,9 @@ class FacodiLearningCourseCandidate(models.Model):
     def unlink(self):
         if not self.env.user.has_group("website_slides.group_website_slides_manager"):
             raise AccessError("Only eLearning Managers can remove course candidates.")
-        if any(record.state in {"approved", "rejected", "resolved"} for record in self):
+        if any(
+            record.state in {"approved", "rejected", "resolved"} for record in self
+        ):
             raise AccessError("Reviewed course candidates are audit history.")
         return super().unlink()
 
