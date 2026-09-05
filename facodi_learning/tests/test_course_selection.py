@@ -222,6 +222,40 @@ class TestCourseSelection(TransactionCase):
         self.assertEqual(candidate.resolved_channel_id, channel)
         self.assertFalse(channel.website_published)
 
+    def test_manager_can_resolve_new_candidate_without_superuser_bypass(self):
+        Candidate = self.env["facodi.learning.course.candidate"].with_user(self.manager)
+        candidate = Candidate.create(
+            self._candidate_values(
+                external_id="manager-manual-resolution",
+                name="Manager Manual Resolution",
+            )
+        )
+        candidate.action_evaluate()
+        channel = candidate.action_resolve_new()
+        self.assertEqual(candidate.requested_by_id, self.manager)
+        self.assertEqual(candidate.state, "resolved")
+        self.assertEqual(candidate.reviewed_by_id, self.manager)
+        self.assertEqual(candidate.resolved_channel_id, channel)
+        self.assertFalse(channel.website_published)
+
+    def test_manager_auto_approve_needs_no_superuser_bypass(self):
+        self.env["ir.config_parameter"].sudo().set_param(
+            "facodi_learning.course_selection_mode", "auto"
+        )
+        Candidate = self.env["facodi.learning.course.candidate"].with_user(self.manager)
+        candidate = Candidate.create(
+            self._candidate_values(
+                external_id="manager-auto-resolution",
+                name="Manager Automatic Resolution",
+            )
+        )
+        candidate.action_evaluate()
+        self.assertEqual(candidate.requested_by_id, self.manager)
+        self.assertEqual(candidate.state, "resolved")
+        self.assertEqual(candidate.decision_origin, "automatic")
+        self.assertFalse(candidate.reviewed_by_id)
+        self.assertFalse(candidate.resolved_channel_id.website_published)
+
     def test_resolution_failure_does_not_leave_partial_course(self):
         from unittest.mock import patch
 
