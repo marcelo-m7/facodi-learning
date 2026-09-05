@@ -19,6 +19,31 @@ class SlideChannel(models.Model):
         self.ensure_one()
         return propose_course_mappings(self, limit=limit)
 
+    def action_facodi_view_course_mappings(self):
+        self.ensure_one()
+        self.check_access("read")
+        action = self.env["ir.actions.actions"]._for_xml_id(
+            "facodi_learning.action_facodi_course_mappings"
+        )
+        action.update(
+            {
+                "domain": [
+                    "|",
+                    ("source_channel_id", "=", self.id),
+                    ("target_channel_id", "=", self.id),
+                ],
+                "context": {"default_source_channel_id": self.id},
+            }
+        )
+        return action
+
+    def action_facodi_generate_course_mappings_ui(self):
+        self.ensure_one()
+        mappings = self._facodi_propose_course_mappings()
+        action = self.action_facodi_view_course_mappings()
+        action["domain"] = [("id", "in", mappings.ids)]
+        return action
+
     def _facodi_related_channels(self, website=None):
         """Return only approved semantic relations visible to the current learner.
 
