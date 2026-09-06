@@ -1,5 +1,28 @@
 from odoo import api, fields, models
-from odoo.exceptions import ValidationError
+from odoo.exceptions import AccessError, ValidationError
+
+
+_TERMINAL_COVERAGE_STATES = ("approved", "rejected")
+_REFERENCE_IDENTITY_FIELDS = {"provider", "external_id"}
+_REFERENCE_REVIEWED_FACT_FIELDS = {
+    "institution",
+    "programme_name",
+    "external_programme_code",
+    "academic_year",
+    "source_url",
+    "metadata",
+}
+_UNIT_IDENTITY_FIELDS = {"reference_id", "external_unit_code"}
+_UNIT_REVIEWED_FACT_FIELDS = {
+    "name",
+    "credits",
+    "curricular_year",
+    "period",
+    "classification",
+    "option_group",
+    "sequence",
+    "metadata",
+}
 
 
 class FacodiLearningCurriculumReference(models.Model):
@@ -59,6 +82,19 @@ class FacodiLearningCurriculumReference(models.Model):
             domain.append(("id", "not in", exclude_ids))
         return bool(self.search_count(domain, limit=1))
 
+    def _has_terminal_coverage(self):
+        if not self:
+            return False
+        return bool(
+            self.env["facodi.learning.curriculum.coverage"].search_count(
+                [
+                    ("curriculum_unit_id.reference_id", "in", self.ids),
+                    ("state", "in", _TERMINAL_COVERAGE_STATES),
+                ],
+                limit=1,
+            )
+        )
+
     @api.model_create_multi
     def create(self, vals_list):
         normalized_list = [self._normalize_identity_values(vals) for vals in vals_list]
@@ -75,17 +111,17 @@ class FacodiLearningCurriculumReference(models.Model):
 
     def write(self, vals):
         normalized = self._normalize_identity_values(vals)
-        if {"provider", "external_id"} & normalized.keys():
-            identities = set()
-            for reference in self:
-                provider = normalized.get("provider", reference.provider)
-                external_id = normalized.get("external_id", reference.external_id)
-                identity = (provider, external_id)
-                if identity in identities or self._identity_exists(
-                    provider, external_id, exclude_ids=self.ids
-                ):
-                    raise ValidationError("This curriculum reference already exists.")
-                identities.add(identity)
+        if _REFERENCE_IDENTITY_FIELDS & normalized.keys():
+            raise AccessError(
+                "Curriculum reference identity is immutable; create a new versioned reference."
+            )
+        if (
+            _REFERENCE_REVIEWED_FACT_FIELDS & normalized.keys()
+            and self._has_terminal_coverage()
+        ):
+            raise AccessError(
+                "Reviewed curriculum reference facts are immutable; create a new versioned reference."
+            )
         return super().write(normalized)
 
     def _facodi_coverage_summary(self):
@@ -170,6 +206,19 @@ class FacodiLearningCurriculumUnit(models.Model):
             domain.append(("id", "not in", exclude_ids))
         return bool(self.search_count(domain, limit=1))
 
+    def _has_terminal_coverage(self):
+        if not self:
+            return False
+        return bool(
+            self.env["facodi.learning.curriculum.coverage"].search_count(
+                [
+                    ("curriculum_unit_id", "in", self.ids),
+                    ("state", "in", _TERMINAL_COVERAGE_STATES),
+                ],
+                limit=1,
+            )
+        )
+
     @api.model_create_multi
     def create(self, vals_list):
         normalized_list = [self._normalize_unit_values(vals) for vals in vals_list]
@@ -190,23 +239,14 @@ class FacodiLearningCurriculumUnit(models.Model):
 
     def write(self, vals):
         normalized = self._normalize_unit_values(vals)
-        if {"reference_id", "external_unit_code"} & normalized.keys():
-            identities = set()
-            for unit in self:
-                reference_id = normalized.get("reference_id", unit.reference_id.id)
-                external_unit_code = normalized.get(
-                    "external_unit_code", unit.external_unit_code
-                )
-                identity = (reference_id, external_unit_code)
-                if identity in identities or self._unit_identity_exists(
-                    reference_id,
-                    external_unit_code,
-                    exclude_ids=self.ids,
-                ):
-                    raise ValidationError(
-                        "This curricular unit already exists in this curriculum reference."
-                    )
-                identities.add(identity)
+        if _UNIT_IDENTITY_FIELDS & normalized.keys():
+            raise AccessError(
+                "Curriculum unit identity is immutable; create a new versioned unit/reference."
+            )
+        if _UNIT_REVIEWED_FACT_FIELDS & normalized.keys() and self._has_terminal_coverage():
+            raise AccessError(
+                "Reviewed curriculum unit facts are immutable; create a new versioned curriculum reference."
+            )
         return super().write(normalized)
 
     def _facodi_coverage_summary(self):
