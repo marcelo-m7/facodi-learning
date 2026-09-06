@@ -62,8 +62,26 @@ GitHub Actions run `34027153404` then passed every gate on that exact head:
 5. independent clean install of the M3.4 tree with the full addon tests — **success**;
 6. same-database re-upgrade/regression suite on the M3.4 tree — **success**.
 
+## Reviewed source-fact immutability
+
+Release review found that an approved/rejected coverage row could retain its own audit fields while the external curriculum facts it referred to were still editable. That would allow later edits to change the meaning of historical reviewed evidence without creating a new curriculum version.
+
+A deliberate RED was committed at exact SHA `86180e3efba90646c7ebccff6c01642bcfe44f8b`, GitHub Actions run `34027404469`. The historical main-to-M3.4 upgrade path still passed, while the current-tree test suite reported **2 failures and 0 errors** exclusively because reference/unit identity and terminal reviewed source facts were not yet immutable.
+
+The ORM boundary now enforces:
+
+- curriculum reference identity `(provider, external_id)` is immutable after creation;
+- curriculum unit identity `(reference_id, external_unit_code)` is immutable after creation;
+- source facts may be corrected while no terminal coverage exists;
+- once any coverage for a unit is `approved` or `rejected`, that unit's substantive source facts are immutable;
+- once any unit under a reference has terminal coverage, the reference's substantive programme/source facts are immutable;
+- `validated_at` remains editable because it records operational revalidation rather than changing the referenced curriculum facts;
+- a materially new external curriculum revision must use a new stable/versioned external identity instead of rewriting reviewed history.
+
+The GREEN is exact SHA `0f5e132086d744cb64e5111a449da26830f919bb`, GitHub Actions run `34027594414`. On that head every strengthened gate passed: baseline/main install, persisted sentinel seed, real `19.0.1.4.1 → 19.0.1.5.0` upgrade, preservation verification, independent M3.4 clean install/tests, and same-tree re-upgrade/regression.
+
 ## Release boundary
 
 M3.4 remains a curriculum **reference and coverage** layer only. The upgrade does not create official academic equivalence, award ECTS, infer university prerequisites, enroll learners in an external programme, or create a second learning-path/progression engine. `slide.channel` remains the canonical course and native Odoo prerequisites remain authoritative.
 
-The commit that adds this report must itself pass the same strengthened CI before the M3.4 pull request is considered merge-ready.
+The final documentation/release head must itself pass the same strengthened CI before the M3.4 pull request is considered merge-ready.
