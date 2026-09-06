@@ -1,3 +1,80 @@
+# Validation — 2026-09-06
+
+## M3.4 Curriculum Reference & Coverage
+
+M3.4 was implemented on top of merged M3.3 `main` commit
+`1ff81c0585728037dfb24b3310d5905ce38c6fc7` and validated with the repository's
+Odoo 19 Community + PostgreSQL 16 clean-install and same-database upgrade gates.
+The milestone is additive and backend-only: it introduces external curriculum
+reference/unit records, reviewed coverage evidence, read-only gap analysis and an
+Odoo-native editorial workspace. It does not create a learner pathway, transcript,
+credit-recognition workflow or second course/prerequisite model.
+
+### TDD evidence
+
+- **Task 1 — Curriculum Reference + Unit.** The deliberately loaded contract at
+  exact SHA `b69654d39c61fe3106871a936d0bd447c4cc15f4` produced the expected RED in
+  GitHub Actions run `33999840726`. The final Task 1 exact head
+  `6daeecebf1ab204c5390ca560723986aaadf0092` passed clean install and upgrade in
+  run `34000111793`. Stable provider/external identity and per-reference unit code
+  identity are guarded by deterministic ORM validation plus SQL uniqueness.
+- **Task 2 — Curriculum Coverage lifecycle.** The loaded lifecycle contract at
+  exact SHA `4a5d7f02688e65fdec4ddfe6b579c6e044e16469` produced the expected RED in
+  run `34000253501`. The final Task 2 exact head
+  `78c46673f7a2133ef177ff2e266816f79adf635f` passed both gates in run
+  `34000464481`. Coverage supports many-to-many course/unit evidence, Officer
+  ownership, Manager-only review, immutable generated/reviewed evidence and
+  Public/Portal denial.
+- **Task 3 — Gap Analysis.** Exact RED SHA
+  `d5da642f33bdbdb9cbadf2c09ea4b05a22353556`, run `34000597036`, reported the
+  nine expected failures for the not-yet-implemented summary methods. Exact GREEN
+  SHA `4ed73c2c17a3c045bb1445134153cce82d40f159`, run `34000718909`, passed clean
+  install and upgrade. Gap analysis is deterministic, read-only, approved-only and
+  independent of learner membership/progress.
+- **Task 4 — Backend workspace.** Exact RED SHA
+  `e823849d67def9ad8f869e411d43a9b0fd5f66b2`, run `34001460362`, failed only on
+  the missing curriculum actions/views/menu and course action contract. Exact GREEN
+  SHA `b3343c07ff8dda6bc02e1c8188c225fb6f748ca4`, run `34001613367`, passed both
+  gates with the Odoo-native References / Curricular Units / Coverage workspace,
+  Manager review buttons and standard `slide.channel` stat action. No public
+  curriculum QWeb route was added.
+- **Task 5 — LESTI/UAlg acceptance shape.** Exact head
+  `0b1c11553511f20a96a32e027ec2fa56206061eb`, run `34001753018`, passed clean
+  install and upgrade with no UAlg-specific production code. The fixture validates
+  programme `1941`, representative units Programação (`19411000`, 5 ECTS), Base de
+  Dados II (`19411017`, 5 ECTS) and the final Estágio (`19411035`, 30 ECTS) / Projeto
+  (`19411036`, 30 ECTS) option group as external source facts. It explicitly proves
+  that year/semester/option-group data does not infer native prerequisites or
+  official equivalence/credit recognition.
+- **Release invariants.** Exact head
+  `327d57838c8c11a19de6b82bc219a48ddf73b498`, run `34002182578`, passed clean
+  install and upgrade while asserting that M3.4 ships no curriculum seed records
+  and that read-only summary/workspace operations do not mutate existing standard
+  course prerequisite state.
+
+### M3.4 boundaries validated
+
+- `slide.channel` remains the only canonical FACODI course model.
+- `facodi.learning.curriculum.reference` and `.unit` retain versioned external
+  source facts; source ECTS values are descriptive facts, not awarded credits.
+- `facodi.learning.curriculum.coverage` is reviewed internal evidence with
+  `covers`, `partial`, `supports` or `equivalent` labels. `equivalent` does not
+  grant institutional/academic equivalence.
+- Gap summaries consider only approved evidence and classify units as `covered`,
+  `partial` or `gap`; proposed/rejected rows do not affect results.
+- Curriculum year, period, sequence and option group never write
+  `slide.channel.prerequisite_channel_ids`.
+- Public/Portal cannot read curriculum audit models and M3.4 adds no public website
+  curriculum route.
+- No external curriculum fetcher, scraper, scheduled sync, AI matcher or UAlg seed
+  is bundled in M3.4. Provider ingestion remains a later milestone.
+
+Release version: `19.0.1.5.0`. The final exact-head CI for the version/documentation
+head must pass the same clean-install and upgrade gates before the pull request is
+considered merge-ready.
+
+---
+
 # Validation — 2026-09-05
 
 ## M3.3 Course Mapping Engine
