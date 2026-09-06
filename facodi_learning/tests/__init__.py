@@ -11,3 +11,9 @@ from . import test_course_mapping_prerequisite
 from . import test_course_mapping_policy
 from . import test_course_mapping_visibility
 from . import test_course_mapping_ui
+from . import test_curriculum_reference
+from . import test_curriculum_coverage
+from . import test_curriculum_gap_analysis
+from . import test_curriculum_ui
+from . import test_curriculum_lesti_case
+from . import test_curriculum_release_invariants
