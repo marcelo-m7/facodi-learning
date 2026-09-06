@@ -44,6 +44,16 @@ class SlideChannel(models.Model):
         action["domain"] = [("id", "in", mappings.ids)]
         return action
 
+    def action_facodi_view_curriculum_coverage(self):
+        self.ensure_one()
+        self.check_access("read")
+        action = self.env["ir.actions.actions"]._for_xml_id(
+            "facodi_learning.action_facodi_curriculum_coverage"
+        )
+        action["domain"] = [("channel_id", "=", self.id)]
+        action["context"] = {"default_channel_id": self.id}
+        return action
+
     def _facodi_related_channels(self, website=None):
         """Return only approved semantic relations visible to the current learner.
 
