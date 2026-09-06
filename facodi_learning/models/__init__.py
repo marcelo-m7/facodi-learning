@@ -10,3 +10,4 @@ from . import analysis_attempt
 from . import learning_source
 from . import course_candidate
 from . import curriculum_reference
+from . import curriculum_coverage
