@@ -13,6 +13,8 @@ jobs:
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Start PostgreSQL 16
         run: |
@@ -30,6 +32,80 @@ jobs:
             sleep 2
           done
           exit 1
+
+      - name: Install merge-base addon for real upgrade test
+        run: |
+          BASE_SHA="$(git merge-base origin/main HEAD)"
+          echo "FACODI_UPGRADE_BASE_SHA=$BASE_SHA" >> "$GITHUB_ENV"
+          git worktree add --detach /tmp/facodi-learning-baseline "$BASE_SHA"
+          docker exec facodi-learning-db createdb -U odoo facodi_learning_upgrade_ci
+          docker run --rm \
+            --network facodi-learning-ci \
+            -e HOST=facodi-learning-db \
+            -e PORT=5432 \
+            -e USER=odoo \
+            -e PASSWORD=odoo \
+            -v /tmp/facodi-learning-baseline:/mnt/extra-addons:ro \
+            -v facodi-learning-upgrade-data:/var/lib/odoo \
+            odoo:19.0 \
+            --addons-path=/usr/lib/python3/dist-packages/odoo/addons,/mnt/extra-addons \
+            --workers=0 \
+            --without-demo=True \
+            -d facodi_learning_upgrade_ci \
+            -i facodi_learning \
+            --stop-after-init
+
+      - name: Seed pre-M3.4 upgrade sentinels
+        run: |
+          docker run --rm -i \
+            --network facodi-learning-ci \
+            -e HOST=facodi-learning-db \
+            -e PORT=5432 \
+            -e USER=odoo \
+            -e PASSWORD=odoo \
+            -v /tmp/facodi-learning-baseline:/mnt/extra-addons:ro \
+            -v facodi-learning-upgrade-data:/var/lib/odoo \
+            odoo:19.0 \
+            shell \
+            --addons-path=/usr/lib/python3/dist-packages/odoo/addons,/mnt/extra-addons \
+            --workers=0 \
+            -d facodi_learning_upgrade_ci \
+            < scripts/ci_seed_pre_m34.py
+
+      - name: Upgrade merge-base database to current addon
+        run: |
+          docker run --rm \
+            --network facodi-learning-ci \
+            -e HOST=facodi-learning-db \
+            -e PORT=5432 \
+            -e USER=odoo \
+            -e PASSWORD=odoo \
+            -v "$GITHUB_WORKSPACE:/mnt/extra-addons:ro" \
+            -v facodi-learning-upgrade-data:/var/lib/odoo \
+            odoo:19.0 \
+            --addons-path=/usr/lib/python3/dist-packages/odoo/addons,/mnt/extra-addons \
+            --workers=0 \
+            --without-demo=True \
+            -d facodi_learning_upgrade_ci \
+            -u facodi_learning \
+            --stop-after-init
+
+      - name: Verify preserved pre-M3.4 records after real upgrade
+        run: |
+          docker run --rm -i \
+            --network facodi-learning-ci \
+            -e HOST=facodi-learning-db \
+            -e PORT=5432 \
+            -e USER=odoo \
+            -e PASSWORD=odoo \
+            -v "$GITHUB_WORKSPACE:/mnt/extra-addons:ro" \
+            -v facodi-learning-upgrade-data:/var/lib/odoo \
+            odoo:19.0 \
+            shell \
+            --addons-path=/usr/lib/python3/dist-packages/odoo/addons,/mnt/extra-addons \
+            --workers=0 \
+            -d facodi_learning_upgrade_ci \
+            < scripts/ci_verify_post_m34.py
 
       - name: Install addon and run Odoo tests
         run: |
