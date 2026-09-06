@@ -15,6 +15,7 @@
         "views/analysis_views.xml",
         "views/course_candidate_views.xml",
         "views/course_mapping_views.xml",
+        "views/curriculum_views.xml",
         "views/source_views.xml",
         "views/website_slides.xml",
         "views/res_config_settings_views.xml",
