@@ -156,6 +156,107 @@ class TestCurriculumReference(TransactionCase):
             with self.assertRaises(ValidationError), self.env.cr.savepoint():
                 Unit.create(self._unit_vals(reference, **values))
 
+    def test_reference_and_unit_identity_are_immutable(self):
+        reference = self.env["facodi.learning.curriculum.reference"].create(
+            self._reference_vals()
+        )
+        unit = self.env["facodi.learning.curriculum.unit"].create(
+            self._unit_vals(reference)
+        )
+        second_reference = self.env["facodi.learning.curriculum.reference"].create(
+            self._reference_vals(
+                academic_year="2025/26",
+                external_id="ualg-1941-2025-26",
+            )
+        )
+
+        for values in (
+            {"provider": "other-provider"},
+            {"external_id": "rewritten-reference"},
+        ):
+            with self.assertRaises(AccessError):
+                reference.write(values)
+
+        for values in (
+            {"reference_id": second_reference.id},
+            {"external_unit_code": "rewritten-unit"},
+        ):
+            with self.assertRaises(AccessError):
+                unit.write(values)
+
+    def test_unreviewed_curriculum_facts_can_be_corrected(self):
+        reference = self.env["facodi.learning.curriculum.reference"].create(
+            self._reference_vals()
+        )
+        unit = self.env["facodi.learning.curriculum.unit"].create(
+            self._unit_vals(reference)
+        )
+
+        reference.write(
+            {
+                "programme_name": "Engenharia de Sistemas e Tecnologias Informáticas — revisto",
+                "academic_year": "2026/2027",
+                "metadata": {"source_kind": "official_study_plan", "corrected": True},
+            }
+        )
+        unit.write(
+            {
+                "name": "Bases de Dados II",
+                "credits": 6.0,
+                "period": "annual",
+                "metadata": {"corrected": True},
+            }
+        )
+
+        self.assertEqual(reference.academic_year, "2026/2027")
+        self.assertEqual(unit.credits, 6.0)
+        self.assertEqual(unit.period, "annual")
+
+    def test_terminal_coverage_freezes_reference_and_unit_facts(self):
+        reference = self.env["facodi.learning.curriculum.reference"].create(
+            self._reference_vals(metadata={"source_kind": "official_study_plan"})
+        )
+        unit = self.env["facodi.learning.curriculum.unit"].create(
+            self._unit_vals(reference, metadata={"source_row": 17})
+        )
+        course = self.env["slide.channel"].create({"name": "Database Systems"})
+        coverage = self.env["facodi.learning.curriculum.coverage"].create(
+            {
+                "channel_id": course.id,
+                "curriculum_unit_id": unit.id,
+                "coverage_type": "covers",
+                "confidence": 0.9,
+            }
+        )
+        coverage.action_approve()
+
+        for values in (
+            {"institution": "Rewritten Institution"},
+            {"programme_name": "Rewritten Programme"},
+            {"external_programme_code": "9999"},
+            {"academic_year": "2099/00"},
+            {"source_url": "https://example.invalid/rewritten"},
+            {"metadata": {"rewritten": True}},
+        ):
+            with self.assertRaises(AccessError):
+                reference.write(values)
+
+        for values in (
+            {"name": "Rewritten Unit"},
+            {"credits": 99.0},
+            {"curricular_year": 9},
+            {"period": "annual"},
+            {"classification": "optional"},
+            {"option_group": "Rewritten Option"},
+            {"sequence": 999},
+            {"metadata": {"rewritten": True}},
+        ):
+            with self.assertRaises(AccessError):
+                unit.write(values)
+
+        reference.write({"validated_at": "2026-09-06 10:00:00"})
+        self.assertTrue(reference.validated_at)
+
     def test_officer_can_read_reference_and_unit(self):
         reference = self.env["facodi.learning.curriculum.reference"].create(
             self._reference_vals()
