@@ -88,6 +88,12 @@ class FacodiLearningCurriculumReference(models.Model):
                 identities.add(identity)
         return super().write(normalized)
 
+    def _facodi_coverage_summary(self):
+        self.ensure_one()
+        from ..services.curriculum_coverage import build_curriculum_reference_coverage
+
+        return build_curriculum_reference_coverage(self)
+
 
 class FacodiLearningCurriculumUnit(models.Model):
     _name = "facodi.learning.curriculum.unit"
@@ -202,3 +208,9 @@ class FacodiLearningCurriculumUnit(models.Model):
                     )
                 identities.add(identity)
         return super().write(normalized)
+
+    def _facodi_coverage_summary(self):
+        self.ensure_one()
+        from ..services.curriculum_coverage import build_curriculum_unit_coverage
+
+        return build_curriculum_unit_coverage(self)
