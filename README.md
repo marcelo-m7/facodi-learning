@@ -12,6 +12,8 @@ roles are reused. There is no FACODI LMS, parallel course model or pathway model
 FACODI course candidates are temporary/audit records; every approved new course
 becomes one standard `slide.channel`. FACODI course mappings are reviewed semantic
 evidence; native Odoo course prerequisites remain the canonical prerequisite graph.
+External curriculum references added by M3.4 are comparison/audit data only and do
+not replace Odoo courses or learner progression.
 
 ## Course Discovery — M3.1
 
@@ -122,16 +124,54 @@ semantic related-course block because Odoo owns prerequisite behavior.
 M3.3 intentionally does not add learner-personalized recommendations, curriculum
 credit recognition, vector storage, embeddings or AI-based course mapping.
 
+## Curriculum Reference & Coverage — M3.4
+
+M3.4 provides an internal editorial workspace for comparing canonical FACODI
+courses with a versioned external curriculum reference. It does **not** create a
+FACODI degree/pathway model and it does not alter Odoo learner progression.
+
+The backend lives in **eLearning → FACODI Learning → Curriculum Coverage** with
+separate **References**, **Curricular Units** and **Coverage** actions. A reference
+stores institution/programme/version/source identity. Its curricular units retain
+source-shaped facts such as external unit code, source credit value, curricular
+year, period, classification, option group and sequence.
+
+`facodi.learning.curriculum.coverage` relates a standard `slide.channel` to an
+external curricular unit using reviewed evidence types `covers`, `partial`,
+`supports` or `equivalent`. One course may support several units and one unit may
+have several approved FACODI courses. The `equivalent` label is internal coverage
+evidence only: **it does not grant official academic equivalence, ECTS recognition,
+credit award, enrolment or transcript status.** Source ECTS values are descriptive
+facts from the external plan, not FACODI-awarded credits.
+
+Gap analysis is deterministic and read-only. It considers only approved coverage
+and classifies each curricular unit as `covered`, `partial` or `gap`; proposals and
+rejections do not affect results. It does not inspect learner membership, progress
+or completion. Curriculum year, semester/period, sequence and option-group data do
+not infer Odoo prerequisites. Native `slide.channel.prerequisite_channel_ids`
+continues to be managed only by the standard Odoo/M3.3 prerequisite flow.
+
+Public and Portal users have no access to curriculum audit records and M3.4 adds no
+public curriculum QWeb route. Officers can inspect the workspace and work on manual
+coverage for courses they own; Manager review remains terminal and auditable.
+
+The Universidade do Algarve LESTI 2026/27 plan is included only as a regression-test
+shape: programme code `1941`, representative units such as Programação and Base de
+Dados II, and the final Estágio/Projeto option group validate the generic data
+model. No UAlg-specific production seed, scraper, provider, partnership assumption,
+credit decision or automatic syllabus match is shipped. External discovery/import
+of curricula belongs to a later provider milestone.
+
 ## Content analysis pipeline
 
 Source → unpublished standard content → queued analysis → historical result →
 Manager review → standard tags and approved educational links.
 
 Audit/provenance models cover course candidates, source provenance, analysis
-requests, immutable processing attempts/results, content relationships and reviewed
-course relationships. The transcript on the standard content record remains
-editorial; generated transcripts remain in results. No automatic result overwrites
-content or publishes a lesson.
+requests, immutable processing attempts/results, content relationships, reviewed
+course relationships and reviewed curriculum coverage. The transcript on the
+standard content record remains editorial; generated transcripts remain in results.
+No automatic result overwrites content or publishes a lesson.
 
 ## Install and upgrade
 
@@ -143,13 +183,12 @@ odoo -d facodi -u facodi_learning --stop-after-init
 ```
 
 Back up the database and matching filestore for an existing deployment. Version
-`19.0.1.4.0` adds the M3.3 course-mapping audit schema, settings and views through
-the normal Odoo module upgrade. The change is additive and performs no historical
-data rewrite: existing sources, jobs, attempts, results, content mappings,
-candidates and standard eLearning records remain intact, and old course relations
-are not fabricated retroactively. Version `19.0.1.4.1` is a schema-neutral M3.3
-concurrency hardening patch that serializes proposal generation per source course;
-it requires no data migration or historical rewrite.
+`19.0.1.4.0` added the M3.3 course-mapping audit schema, settings and views through
+the normal Odoo module upgrade. Version `19.0.1.4.1` is a schema-neutral M3.3
+concurrency hardening patch. Version `19.0.1.5.0` adds the M3.4 external curriculum
+reference/unit and reviewed coverage schema plus backend-only workspace and read-only
+gap analysis. The M3.4 upgrade is additive: it performs no historical rewrite and
+does not fabricate curriculum references or coverage for existing courses.
 
 ## Manager workflow
 
@@ -178,11 +217,19 @@ review proposed semantic relations there. Approving a prerequisite updates the
 standard Odoo prerequisite field after cycle validation; approving other semantic
 relations changes no course publication, enrollment or progression state.
 
+For curriculum comparison, open **FACODI Learning → Curriculum Coverage**. Managers
+maintain versioned external references/units and review coverage proposals; Officers
+can inspect them and create manual evidence for their own FACODI courses. The
+standard course form's **Curriculum Coverage** stat button opens only evidence for
+that canonical course. Review does not change publication, membership, learner
+progress or native prerequisite state.
+
 Students see only approved resource links on the standard lesson detail page and
-approved learner-safe related courses on the standard course page. Publication,
-current website and native visibility/access rules filter targets. Technical fields
-and all FACODI audit models remain unavailable to Public/Portal users. The standard
-fullscreen training player remains unchanged.
+approved learner-safe related courses on the standard course page. Curriculum
+references/coverage remain backend-only. Publication, current website and native
+visibility/access rules filter learner targets. Technical fields and all FACODI
+audit models remain unavailable to Public/Portal users. The standard fullscreen
+training player remains unchanged.
 
 ## Provider extensions
 
@@ -195,11 +242,14 @@ provider/external identifier/course and forces new content to remain unpublished
 Course Discovery M3.1 itself has no external discovery adapter. Provider-specific
 course discovery belongs to a later optional-addon milestone; the core candidate
 evaluator, course profile and M3.3 mapping ranker remain deterministic and offline.
+M3.4 likewise includes no external curriculum fetcher: references can be curated
+manually today, while a future provider may populate the same generic reference/unit
+models without changing their editorial meaning.
 
 See [architecture](docs/architecture.md) for normalized output, course-selection,
-course-profile, course-mapping and transaction contracts. Runtime secrets belong in
-an adapter's deployment environment, never source records or payloads. No external
-provider SDK is a core dependency.
+course-profile, course-mapping, curriculum-coverage and transaction contracts.
+Runtime secrets belong in an adapter's deployment environment, never source records
+or payloads. No external provider SDK is a core dependency.
 
 ## Tests
 
@@ -208,10 +258,13 @@ persistent filestore between runs. Run `--test-tags /facodi_learning` to cover
 candidate identity/evaluation/modes/resolution, course-profile schema and
 determinism, deterministic course retrieval/ranking, idempotent course proposals,
 native prerequisite application and cycle prevention, independent course-mapping
-Auto Approve policy, learner-safe course visibility, backend/QWeb integration,
-content analysis/history, ACLs and safe learner links. Tests explicitly assert that
-automatic course-selection resolution never publishes a new course and that course
-mapping never bypasses standard Odoo prerequisite/publication/access mechanics.
+Auto Approve policy, learner-safe course visibility, curriculum identity/lifecycle,
+approved-only gap analysis, LESTI-shaped many-to-many coverage, backend/QWeb
+boundaries, content analysis/history, ACLs and safe learner links. Tests explicitly
+assert that automatic course-selection resolution never publishes a new course,
+course mapping never bypasses standard Odoo prerequisite/publication/access
+mechanics, and M3.4 does not infer official credit/equivalence/prerequisites from an
+external curriculum.
 
 The monorepo consumes this repository as a pinned submodule; addon changes do not
 deploy until the consuming repository intentionally updates its pin.
@@ -220,4 +273,4 @@ LGPL-3.0.
 
 ## Validation evidence
 
-See [validation report](docs/validation.md) for the isolated Community install/upgrade matrix, browser checks and remaining deployment boundaries.
+See [validation report](docs/validation.md) for the isolated Community install/upgrade matrix, curriculum validation case, browser checks and remaining deployment boundaries.
