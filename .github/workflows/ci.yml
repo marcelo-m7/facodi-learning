@@ -7,6 +7,11 @@ on:
 permissions:
   contents: read
 
+env:
+  # Stable M3.3 patch baseline. The real-upgrade fixture intentionally starts
+  # before M3.4 so post-M3.4 fixes remain testable even if main itself needs repair.
+  FACODI_PRE_M34_BASE_SHA: 1ff81c0585728037dfb24b3310d5905ce38c6fc7
+
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -61,11 +66,12 @@ jobs:
           done
           exit 1
 
-      - name: Install merge-base addon for real upgrade test
+      - name: Install pre-M3.4 addon for real upgrade test
         run: |
-          BASE_SHA="$(git merge-base origin/main HEAD)"
-          echo "FACODI_UPGRADE_BASE_SHA=$BASE_SHA" >> "$GITHUB_ENV"
-          git worktree add --detach /tmp/facodi-learning-baseline "$BASE_SHA"
+          git cat-file -e "${FACODI_PRE_M34_BASE_SHA}^{commit}"
+          git merge-base --is-ancestor "$FACODI_PRE_M34_BASE_SHA" HEAD
+          echo "FACODI_UPGRADE_BASE_SHA=$FACODI_PRE_M34_BASE_SHA" >> "$GITHUB_ENV"
+          git worktree add --detach /tmp/facodi-learning-baseline "$FACODI_PRE_M34_BASE_SHA"
           docker exec facodi-learning-db createdb -U odoo facodi_learning_upgrade_ci
           docker run --rm \
             --network facodi-learning-ci \
@@ -100,7 +106,7 @@ jobs:
             -d facodi_learning_upgrade_ci \
             < scripts/ci_seed_pre_m34.py
 
-      - name: Upgrade merge-base database to current addon
+      - name: Upgrade pre-M3.4 database to current addon
         run: |
           docker run --rm \
             --network facodi-learning-ci \
