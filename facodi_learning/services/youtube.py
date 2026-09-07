@@ -268,11 +268,10 @@ def build_youtube_slide_values(source):
     if not video_url and source.external_id:
         video_url = _watch_url(source.external_id)
     description = metadata.get("description") or source.name or ""
-    html_content = f"<p>{html.escape(description)}</p>" if description else False
     return {
         "name": source.name,
         "slide_category": "video",
         "slide_type": "youtube_video",
         "url": video_url,
-        "html_content": html_content,
+        "description": description or False,
     }
