@@ -11,7 +11,7 @@ FACODI Learning keeps the core discovery pipeline provider-neutral and offline-c
 
 ## Video URLs are not API integration
 
-Odoo eLearning may store ordinary public video/source URLs as standard content or provenance. The built-in YouTube provider may enumerate configured public channel/playlist pages and read public metadata, but it does not fetch transcripts, download media, call the YouTube Data API, or store an API credential.
+Odoo eLearning may store ordinary public video/source URLs as standard content or provenance. The built-in YouTube provider may enumerate configured public channel/playlist pages and read public metadata, but it does not fetch transcripts, download media, call a credentialed provider endpoint, or store an API credential.
 
 ## CI invariant
 
