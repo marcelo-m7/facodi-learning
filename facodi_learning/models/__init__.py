@@ -12,3 +12,4 @@ from . import analysis_attempt
 from . import learning_source
 from . import course_candidate
 from . import discovery_run
+from . import course_candidate_discovery
