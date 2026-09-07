@@ -126,5 +126,66 @@
             <field name="groups" eval="[(4, ref('website_slides.group_website_slides_manager'))]"/>
             <field name="domain_force">[(1, '=', 1)]</field>
         </record>
+
+        <record id="rule_facodi_curriculum_reference_officer_read" model="ir.rule">
+            <field name="name">FACODI curriculum reference: officer read all</field>
+            <field name="model_id" ref="model_facodi_learning_curriculum_reference"/>
+            <field name="groups" eval="[(4, ref('website_slides.group_website_slides_officer'))]"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="0"/>
+            <field name="perm_create" eval="0"/>
+            <field name="perm_unlink" eval="0"/>
+        </record>
+        <record id="rule_facodi_curriculum_reference_manager" model="ir.rule">
+            <field name="name">FACODI curriculum reference: manager all</field>
+            <field name="model_id" ref="model_facodi_learning_curriculum_reference"/>
+            <field name="groups" eval="[(4, ref('website_slides.group_website_slides_manager'))]"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+        </record>
+
+        <record id="rule_facodi_curriculum_unit_officer_read" model="ir.rule">
+            <field name="name">FACODI curriculum unit: officer read all</field>
+            <field name="model_id" ref="model_facodi_learning_curriculum_unit"/>
+            <field name="groups" eval="[(4, ref('website_slides.group_website_slides_officer'))]"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="0"/>
+            <field name="perm_create" eval="0"/>
+            <field name="perm_unlink" eval="0"/>
+        </record>
+        <record id="rule_facodi_curriculum_unit_manager" model="ir.rule">
+            <field name="name">FACODI curriculum unit: manager all</field>
+            <field name="model_id" ref="model_facodi_learning_curriculum_unit"/>
+            <field name="groups" eval="[(4, ref('website_slides.group_website_slides_manager'))]"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+        </record>
+
+        <record id="rule_facodi_curriculum_coverage_officer_read" model="ir.rule">
+            <field name="name">FACODI curriculum coverage: officer read all</field>
+            <field name="model_id" ref="model_facodi_learning_curriculum_coverage"/>
+            <field name="groups" eval="[(4, ref('website_slides.group_website_slides_officer'))]"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="0"/>
+            <field name="perm_create" eval="0"/>
+            <field name="perm_unlink" eval="0"/>
+        </record>
+        <record id="rule_facodi_curriculum_coverage_officer_write_own" model="ir.rule">
+            <field name="name">FACODI curriculum coverage: officer create/write own course</field>
+            <field name="model_id" ref="model_facodi_learning_curriculum_coverage"/>
+            <field name="groups" eval="[(4, ref('website_slides.group_website_slides_officer'))]"/>
+            <field name="domain_force">[('channel_id.user_id', '=', user.id)]</field>
+            <field name="perm_read" eval="0"/>
+            <field name="perm_write" eval="1"/>
+            <field name="perm_create" eval="1"/>
+            <field name="perm_unlink" eval="0"/>
+        </record>
+        <record id="rule_facodi_curriculum_coverage_manager" model="ir.rule">
+            <field name="name">FACODI curriculum coverage: manager all</field>
+            <field name="model_id" ref="model_facodi_learning_curriculum_coverage"/>
+            <field name="groups" eval="[(4, ref('website_slides.group_website_slides_manager'))]"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+        </record>
     </data>
 </odoo>

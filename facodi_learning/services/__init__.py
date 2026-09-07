@@ -25,3 +25,8 @@ from .course_selection import (
     get_course_selection_policy,
     normalize_course_title,
 )
+from .curriculum_coverage import (
+    CURRICULUM_COVERAGE_VERSION,
+    build_curriculum_reference_coverage,
+    build_curriculum_unit_coverage,
+)

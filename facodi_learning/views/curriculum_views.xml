@@ -1,0 +1,324 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- External curriculum references -->
+    <record id="view_facodi_curriculum_reference_search" model="ir.ui.view">
+        <field name="name">facodi.learning.curriculum.reference.search</field>
+        <field name="model">facodi.learning.curriculum.reference</field>
+        <field name="arch" type="xml">
+            <search string="Curriculum References">
+                <field name="institution"/>
+                <field name="programme_name"/>
+                <field name="external_programme_code"/>
+                <field name="academic_year"/>
+                <field name="provider"/>
+                <field name="external_id"/>
+                <group>
+                    <filter name="group_institution" string="Institution" context="{'group_by': 'institution'}"/>
+                    <filter name="group_programme" string="Programme" context="{'group_by': 'programme_name'}"/>
+                    <filter name="group_academic_year" string="Academic Year" context="{'group_by': 'academic_year'}"/>
+                    <filter name="group_provider" string="Provider" context="{'group_by': 'provider'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="view_facodi_curriculum_reference_list" model="ir.ui.view">
+        <field name="name">facodi.learning.curriculum.reference.list</field>
+        <field name="model">facodi.learning.curriculum.reference</field>
+        <field name="arch" type="xml">
+            <list string="Curriculum References">
+                <field name="institution"/>
+                <field name="programme_name"/>
+                <field name="external_programme_code" optional="show"/>
+                <field name="academic_year"/>
+                <field name="provider" optional="show"/>
+                <field name="external_id" optional="hide"/>
+                <field name="source_url" optional="hide"/>
+                <field name="imported_at" optional="hide"/>
+                <field name="validated_at" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_facodi_curriculum_reference_form" model="ir.ui.view">
+        <field name="name">facodi.learning.curriculum.reference.form</field>
+        <field name="model">facodi.learning.curriculum.reference</field>
+        <field name="arch" type="xml">
+            <form string="Curriculum Reference">
+                <sheet>
+                    <div class="oe_title">
+                        <label for="programme_name"/>
+                        <h1><field name="programme_name"/></h1>
+                    </div>
+                    <group>
+                        <group string="Official Source Facts">
+                            <field name="institution"/>
+                            <field name="external_programme_code"/>
+                            <field name="academic_year"/>
+                            <field name="source_url" widget="url"/>
+                        </group>
+                        <group string="Reference Identity">
+                            <field name="provider"/>
+                            <field name="external_id"/>
+                            <field name="imported_at" readonly="1"/>
+                            <field name="validated_at"/>
+                        </group>
+                    </group>
+                    <group string="Source Metadata">
+                        <field name="metadata" nolabel="1"/>
+                    </group>
+                    <notebook>
+                        <page string="Curricular Units" name="curricular_units">
+                            <field name="unit_ids" context="{'default_reference_id': id}">
+                                <list editable="bottom">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="external_unit_code"/>
+                                    <field name="name"/>
+                                    <field name="credits"/>
+                                    <field name="curricular_year"/>
+                                    <field name="period"/>
+                                    <field name="classification"/>
+                                    <field name="option_group" optional="show"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_facodi_curriculum_references" model="ir.actions.act_window">
+        <field name="name">References</field>
+        <field name="res_model">facodi.learning.curriculum.reference</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_facodi_curriculum_reference_search"/>
+    </record>
+
+    <!-- Curricular units -->
+    <record id="view_facodi_curriculum_unit_search" model="ir.ui.view">
+        <field name="name">facodi.learning.curriculum.unit.search</field>
+        <field name="model">facodi.learning.curriculum.unit</field>
+        <field name="arch" type="xml">
+            <search string="Curricular Units">
+                <field name="reference_id"/>
+                <field name="external_unit_code"/>
+                <field name="name"/>
+                <field name="curricular_year"/>
+                <field name="period"/>
+                <field name="classification"/>
+                <field name="option_group"/>
+                <group>
+                    <filter name="group_reference" string="Reference" context="{'group_by': 'reference_id'}"/>
+                    <filter name="group_year" string="Curricular Year" context="{'group_by': 'curricular_year'}"/>
+                    <filter name="group_period" string="Period" context="{'group_by': 'period'}"/>
+                    <filter name="group_classification" string="Classification" context="{'group_by': 'classification'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="view_facodi_curriculum_unit_list" model="ir.ui.view">
+        <field name="name">facodi.learning.curriculum.unit.list</field>
+        <field name="model">facodi.learning.curriculum.unit</field>
+        <field name="arch" type="xml">
+            <list string="Curricular Units" default_order="reference_id, sequence, id">
+                <field name="reference_id"/>
+                <field name="external_unit_code"/>
+                <field name="name"/>
+                <field name="credits"/>
+                <field name="curricular_year"/>
+                <field name="period"/>
+                <field name="classification"/>
+                <field name="option_group" optional="show"/>
+                <field name="sequence" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_facodi_curriculum_unit_form" model="ir.ui.view">
+        <field name="name">facodi.learning.curriculum.unit.form</field>
+        <field name="model">facodi.learning.curriculum.unit</field>
+        <field name="arch" type="xml">
+            <form string="Curricular Unit">
+                <sheet>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name"/></h1>
+                    </div>
+                    <group>
+                        <group string="Reference Facts">
+                            <field name="reference_id"/>
+                            <field name="external_unit_code"/>
+                            <field name="credits"/>
+                        </group>
+                        <group string="Curricular Position">
+                            <field name="curricular_year"/>
+                            <field name="period"/>
+                            <field name="classification"/>
+                            <field name="option_group"/>
+                            <field name="sequence"/>
+                        </group>
+                    </group>
+                    <group string="Source Metadata">
+                        <field name="metadata" nolabel="1"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_facodi_curriculum_units" model="ir.actions.act_window">
+        <field name="name">Curricular Units</field>
+        <field name="res_model">facodi.learning.curriculum.unit</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_facodi_curriculum_unit_search"/>
+    </record>
+
+    <!-- Reviewed FACODI coverage evidence -->
+    <record id="view_facodi_curriculum_coverage_search" model="ir.ui.view">
+        <field name="name">facodi.learning.curriculum.coverage.search</field>
+        <field name="model">facodi.learning.curriculum.coverage</field>
+        <field name="arch" type="xml">
+            <search string="Curriculum Coverage">
+                <field name="channel_id"/>
+                <field name="curriculum_unit_id"/>
+                <field name="coverage_type"/>
+                <field name="origin"/>
+                <field name="state"/>
+                <filter name="proposed" string="Needs Review" domain="[('state', '=', 'proposed')]"/>
+                <filter name="approved" string="Approved" domain="[('state', '=', 'approved')]"/>
+                <filter name="rejected" string="Rejected" domain="[('state', '=', 'rejected')]"/>
+                <group>
+                    <filter name="group_course" string="FACODI Course" context="{'group_by': 'channel_id'}"/>
+                    <filter name="group_unit" string="Curricular Unit" context="{'group_by': 'curriculum_unit_id'}"/>
+                    <filter name="group_type" string="Coverage Type" context="{'group_by': 'coverage_type'}"/>
+                    <filter name="group_state" string="Status" context="{'group_by': 'state'}"/>
+                    <filter name="group_origin" string="Origin" context="{'group_by': 'origin'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="view_facodi_curriculum_coverage_list" model="ir.ui.view">
+        <field name="name">facodi.learning.curriculum.coverage.list</field>
+        <field name="model">facodi.learning.curriculum.coverage</field>
+        <field name="arch" type="xml">
+            <list string="Curriculum Coverage"
+                  decoration-info="state == 'proposed'"
+                  decoration-success="state == 'approved'"
+                  decoration-danger="state == 'rejected'">
+                <field name="channel_id"/>
+                <field name="curriculum_unit_id"/>
+                <field name="coverage_type"/>
+                <field name="confidence"/>
+                <field name="origin"/>
+                <field name="state"/>
+                <field name="evaluation_version" optional="hide"/>
+                <field name="reviewed_by_id" optional="hide"/>
+                <field name="reviewed_at" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_facodi_curriculum_coverage_form" model="ir.ui.view">
+        <field name="name">facodi.learning.curriculum.coverage.form</field>
+        <field name="model">facodi.learning.curriculum.coverage</field>
+        <field name="arch" type="xml">
+            <form string="FACODI Curriculum Coverage">
+                <header>
+                    <button name="action_approve"
+                            type="object"
+                            string="Approve"
+                            class="btn-primary"
+                            groups="website_slides.group_website_slides_manager"
+                            invisible="state != 'proposed'"/>
+                    <button name="action_reject"
+                            type="object"
+                            string="Reject"
+                            groups="website_slides.group_website_slides_manager"
+                            invisible="state != 'proposed'"/>
+                    <field name="state" widget="statusbar" statusbar_visible="proposed,approved,rejected"/>
+                </header>
+                <sheet>
+                    <field name="id" invisible="1"/>
+                    <group string="Coverage Evidence">
+                        <group>
+                            <field name="channel_id" readonly="id"/>
+                            <field name="curriculum_unit_id" readonly="id"/>
+                            <field name="coverage_type" readonly="id"/>
+                        </group>
+                        <group>
+                            <field name="confidence" readonly="state != 'proposed' or origin == 'analysis'"/>
+                            <field name="origin" readonly="1"/>
+                            <field name="evaluation_version" readonly="1"/>
+                        </group>
+                    </group>
+                    <group string="Evidence">
+                        <field name="evidence" readonly="state != 'proposed' or origin == 'analysis'" nolabel="1"/>
+                    </group>
+                    <group string="Review" invisible="state == 'proposed'">
+                        <field name="reviewed_by_id" readonly="1"/>
+                        <field name="reviewed_at" readonly="1"/>
+                    </group>
+                    <div class="alert alert-info" role="alert">
+                        FACODI curriculum coverage is internal evidence only. It does not grant university credit, enrolment, transcript status, official academic equivalence, or official prerequisite meaning.
+                    </div>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_facodi_curriculum_coverage" model="ir.actions.act_window">
+        <field name="name">Coverage</field>
+        <field name="res_model">facodi.learning.curriculum.coverage</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_facodi_curriculum_coverage_search"/>
+        <field name="context">{'search_default_proposed': 1}</field>
+    </record>
+
+    <!-- Keep curriculum navigation separate from Course Mapping. -->
+    <menuitem id="menu_facodi_learning_curriculum_coverage"
+              name="Curriculum Coverage"
+              parent="menu_facodi_learning_root"
+              groups="website_slides.group_website_slides_officer"
+              sequence="4"/>
+    <menuitem id="menu_facodi_curriculum_references"
+              name="References"
+              parent="menu_facodi_learning_curriculum_coverage"
+              action="action_facodi_curriculum_references"
+              groups="website_slides.group_website_slides_officer"
+              sequence="1"/>
+    <menuitem id="menu_facodi_curriculum_units"
+              name="Curricular Units"
+              parent="menu_facodi_learning_curriculum_coverage"
+              action="action_facodi_curriculum_units"
+              groups="website_slides.group_website_slides_officer"
+              sequence="2"/>
+    <menuitem id="menu_facodi_curriculum_coverage"
+              name="Coverage"
+              parent="menu_facodi_learning_curriculum_coverage"
+              action="action_facodi_curriculum_coverage"
+              groups="website_slides.group_website_slides_officer"
+              sequence="3"/>
+
+    <record id="slide_channel_view_form_facodi_curriculum" model="ir.ui.view">
+        <field name="name">slide.channel.view.form.facodi.curriculum.coverage</field>
+        <field name="model">slide.channel</field>
+        <field name="inherit_id" ref="website_slides.view_slide_channel_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button name="action_facodi_view_curriculum_coverage"
+                        type="object"
+                        icon="fa-graduation-cap"
+                        class="oe_stat_button"
+                        groups="website_slides.group_website_slides_officer">
+                    <div class="o_field_widget o_stat_info">
+                        <span class="o_stat_text">Curriculum</span>
+                        <span class="o_stat_text">Coverage</span>
+                    </div>
+                </button>
+            </xpath>
+        </field>
+    </record>
+</odoo>

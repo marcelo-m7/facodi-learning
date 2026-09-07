@@ -13,6 +13,9 @@ dependency on `theme_facodi`.
 | `facodi.learning.analysis.result` | Immutable normalized output; separate human tag review metadata |
 | `facodi.learning.mapping` | Directed content-level related/prerequisite/recommended/supports proposal and Manager review |
 | `facodi.learning.course.mapping` | Reviewed course-level semantic relation evidence; native Odoo prerequisites remain canonical |
+| `facodi.learning.curriculum.reference` | Versioned external programme/study-plan identity and source facts |
+| `facodi.learning.curriculum.unit` | External curricular-unit facts belonging to one versioned reference |
+| `facodi.learning.curriculum.coverage` | Reviewed evidence linking a canonical FACODI course to an external curricular unit |
 
 Attempts are separate from successful results because failures also require
 history. Course candidates are not canonical courses: a resolved new candidate
@@ -256,6 +259,53 @@ IDs. It then switches back to the real caller's non-sudo `slide.channel` environ
 and filters `active`, `is_published`, current website and native `is_visible`.
 Confidence, policy snapshots and raw evidence are never exposed to learners.
 
+## M3.4 curriculum reference and coverage
+
+M3.4 is a backend editorial/audit layer for comparing canonical FACODI courses with
+an external curriculum reference. It is not a learner pathway, degree model,
+enrolment system, transcript, recognition workflow or university-credit engine.
+
+`facodi.learning.curriculum.reference` stores a versioned external programme
+identity and source provenance. `facodi.learning.curriculum.unit` stores facts
+transcribed from that source, including external unit code, source credit value,
+curricular year, period, classification, option group and sequence. Those fields are
+source facts only. In particular, year/period/sequence do not infer an Odoo native
+prerequisite and option-group membership does not imply equivalence between units.
+
+`facodi.learning.curriculum.coverage` is a reviewed many-to-many evidence edge from
+one standard `slide.channel` to one external curricular unit. Types are `covers`,
+`partial`, `supports` and `equivalent`. The label `equivalent` means FACODI's
+internal content-coverage assessment only; it does not grant official academic
+equivalence, ECTS recognition, enrolment, transcript status or credit award.
+
+Coverage follows the same audit discipline as other reviewed evidence: proposals
+are `manual` or server-generated `analysis`, Manager review is explicit and
+serialized, reviewed/generated evidence is immutable and Public/Portal have no
+model access. Officers can read the curriculum workspace and create/write manual
+coverage only for standard courses they own; Managers have global review authority.
+
+Gap analysis is read-only and approved-only. `_facodi_coverage_summary()` computes
+per-unit `covered`, `partial` or `gap` status from approved coverage evidence and
+returns deterministic unit/status counts plus ordered unit summaries. Source credit
+values remain available on each `facodi.learning.curriculum.unit` as descriptive
+reference facts; the versioned coverage-summary payload does not publish or infer
+aggregate credit totals or any academic-recognition decision. Proposed/rejected
+relations do not alter the summary. No learner membership, progress or completion
+record is consulted, and the method performs no write, `sudo()`, network call or AI
+request.
+
+The backend workspace lives under **eLearning → FACODI Learning → Curriculum
+Coverage** with separate References, Curricular Units and Coverage actions. The
+standard course form exposes a small stat button that opens only coverage records for
+that canonical course. There is deliberately no public/Portal curriculum QWeb route
+in M3.4.
+
+The official Universidade do Algarve LESTI 2026/27 plan is used only as a test-shaped
+reference case. Its programme code, curricular-unit codes/ECTS and final Estágio /
+Projeto option group validate the generic schema; no UAlg-specific production rule,
+seed, scraper or institutional equivalence is shipped. External fetching/import is
+deferred to a later provider milestone.
+
 ## Ingestion
 
 `source.ingest(values, slide_id=None)` serializes initial registration on the
@@ -331,8 +381,9 @@ Elevated learner operations are deliberately narrow: configuration-parameter rea
 and approved content/course relation ID lookups. Learner helpers return ordinary
 non-sudo standard records filtered by publication, native visibility/access and
 current website. Students cannot read raw jobs, provenance, transcript drafts,
-course candidates, mapping confidence/evidence or decision snapshots. M3.2 profile
-generation and M3.3 ranking use no privilege elevation.
+course candidates, mapping confidence/evidence, curriculum audit records or
+decision snapshots. M3.2 profile generation, M3.3 ranking and M3.4 gap summaries
+use no privilege elevation.
 
 ## Source website and portability
 
@@ -345,13 +396,14 @@ install.
 
 Schema changes preserve old results and approvals; new attempt records begin with
 new executions, without invented historical attempts. M3.1 adds candidate schema,
-M3.2 adds only computed profile code, and M3.3 adds an additive course-mapping audit
-table/fields/settings/views. No milestone rewrites old audit history. Back up the
-database and matching filestore before upgrades. Existing editorial pages remain
-outside this addon's ownership except for additive inherited QWeb fragments.
+M3.2 adds only computed profile code, M3.3 adds an additive course-mapping audit
+table/fields/settings/views, and M3.4 adds external curriculum reference/unit/
+coverage audit tables. No milestone rewrites old audit history. Back up the database
+and matching filestore before upgrades. Existing editorial pages remain outside this
+addon's ownership except for additive inherited QWeb fragments.
 
 Referenced source/target slides use restrictive foreign keys for content mappings,
 so removing content cannot silently erase approved relation history. Archive
-historical content instead of deleting it. Course mappings likewise retain audited
-standard course references and are reviewed as history rather than disposable
-recommendation cache.
+historical content instead of deleting it. Course mappings and curriculum coverage
+likewise retain audited standard/reference links and are reviewed as history rather
+than disposable recommendation cache.
