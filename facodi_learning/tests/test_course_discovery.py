@@ -50,10 +50,22 @@ class TestCourseDiscoveryCoreContract(TransactionCase):
         self.assertIn("facodi.learning.discovery.run", self.env.registry.models)
         registry = self.env["facodi.learning.discovery.run"]._get_course_discovery_registry()
         self.assertIn("manual", registry)
+        self.assertIn("youtube", registry)
         self.assertEqual(
             list(registry["manual"](self.env["facodi.learning.discovery.run"], 10)),
             [],
         )
+
+    def test_youtube_provider_requires_seed_url(self):
+        run = self.env["facodi.learning.discovery.run"].create(
+            {"provider": "youtube", "channel_id": self.env["slide.channel"].search([], limit=1).id, "seed_url": "https://www.youtube.com/@Matemateca/videos"}
+        )
+        with patch(
+            "odoo.addons.facodi_learning.models.discovery_run.discover_youtube_items",
+            return_value=[],
+        ):
+            run.action_process()
+        self.assertEqual(run.state, "completed")
 
     def test_normalizer_strips_secret_metadata_recursively(self):
         service = self._discovery_service()

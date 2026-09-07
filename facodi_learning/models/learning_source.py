@@ -1,6 +1,8 @@
 from odoo import api, fields, models
 from odoo.exceptions import AccessError, ValidationError
 
+from ..services.youtube import build_youtube_slide_values
+
 
 class LearningSource(models.Model):
     _name = "facodi.learning.source"
@@ -148,5 +150,6 @@ class LearningSource(models.Model):
     def _get_ingestion_registry(self):
         """Trusted provider addons extend this mapping with normalized slide values."""
         return {
-            "manual": lambda source: {"name": source.name, "slide_category": "article"}
+            "manual": lambda source: {"name": source.name, "slide_category": "article"},
+            "youtube": build_youtube_slide_values,
         }

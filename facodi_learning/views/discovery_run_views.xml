@@ -6,6 +6,8 @@
         <field name="arch" type="xml">
             <search string="FACODI Discovery Runs">
                 <field name="provider"/>
+                <field name="channel_id"/>
+                <field name="seed_url"/>
                 <field name="state"/>
                 <field name="requested_by_id"/>
                 <filter name="pending" string="Pending" domain="[('state', '=', 'pending')]"/>
@@ -28,6 +30,8 @@
                   decoration-success="state == 'completed'"
                   decoration-danger="state == 'failed'">
                 <field name="provider"/>
+                <field name="channel_id" optional="show"/>
+                <field name="seed_url" optional="show"/>
                 <field name="state"/>
                 <field name="requested_by_id"/>
                 <field name="started_at"/>
@@ -58,6 +62,8 @@
                     <group>
                         <group>
                             <field name="provider" readonly="state != 'pending'"/>
+                            <field name="channel_id" readonly="state != 'pending'"/>
+                            <field name="seed_url" readonly="state != 'pending'"/>
                             <field name="requested_by_id" readonly="1"/>
                         </group>
                         <group>

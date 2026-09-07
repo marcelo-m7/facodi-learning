@@ -4,6 +4,7 @@ from odoo import SUPERUSER_ID, api, fields, models
 from odoo.exceptions import AccessError, ValidationError
 
 from ..services.course_discovery import normalize_discovery_item
+from ..services.youtube import discover_youtube_items
 
 
 _DISCOVERY_LOCK_NAMESPACE = 0x46414344  # FACD
@@ -15,6 +16,16 @@ class FacodiLearningDiscoveryRun(models.Model):
     _order = "create_date desc, id desc"
 
     provider = fields.Char(required=True, index=True)
+    channel_id = fields.Many2one(
+        "slide.channel",
+        string="Target Course",
+        ondelete="restrict",
+        index=True,
+    )
+    seed_url = fields.Char(
+        string="Discovery Seed URL",
+        help="Canonical public URL used to discover candidate content.",
+    )
     state = fields.Selection(
         [
             ("pending", "Pending"),
@@ -58,8 +69,17 @@ class FacodiLearningDiscoveryRun(models.Model):
         return []
 
     @api.model
+    def _youtube_discovery_provider(self, run, limit):
+        if not run.seed_url:
+            raise ValidationError("YouTube discovery requires a seed URL.")
+        return discover_youtube_items(run.seed_url, limit=limit)
+
+    @api.model
     def _get_course_discovery_registry(self):
-        return {"manual": self._manual_discovery_provider}
+        return {
+            "manual": self._manual_discovery_provider,
+            "youtube": self._youtube_discovery_provider,
+        }
 
     def _is_manager(self):
         return self.env.uid == SUPERUSER_ID or self.env.user.has_group(
@@ -132,8 +152,18 @@ class FacodiLearningDiscoveryRun(models.Model):
             provider = vals.get("provider")
             if not isinstance(provider, str) or not provider.strip():
                 raise ValidationError("Discovery provider is required.")
+            seed_url = vals.get("seed_url")
+            if seed_url not in (None, False, "") and not isinstance(seed_url, str):
+                raise ValidationError("Discovery seed URL must be text when supplied.")
+            if provider.strip() == "youtube":
+                if not isinstance(seed_url, str) or not seed_url.strip():
+                    raise ValidationError("YouTube discovery requires a seed URL.")
+                if not vals.get("channel_id"):
+                    raise ValidationError("YouTube discovery requires a target course.")
             vals.update(
                 provider=provider.strip(),
+                channel_id=vals.get("channel_id") or False,
+                seed_url=seed_url.strip() if isinstance(seed_url, str) else False,
                 state="pending",
                 requested_by_id=self.env.uid,
                 started_at=False,
@@ -150,6 +180,18 @@ class FacodiLearningDiscoveryRun(models.Model):
     def write(self, vals):
         if self._AUDIT_FIELDS & vals.keys():
             raise AccessError("Discovery run execution evidence is server-owned.")
+        if {"channel_id", "seed_url"} & vals.keys() and any(
+            run.state != "pending" for run in self
+        ):
+            raise AccessError("Only pending discovery runs can change seed data.")
+        if "seed_url" in vals:
+            seed_url = vals.get("seed_url")
+            if seed_url in (None, False, ""):
+                vals = dict(vals, seed_url=False)
+            elif not isinstance(seed_url, str):
+                raise ValidationError("Discovery seed URL must be text when supplied.")
+            else:
+                vals = dict(vals, seed_url=seed_url.strip())
         if "provider" in vals:
             provider = vals.get("provider")
             if not isinstance(provider, str) or not provider.strip():
@@ -157,6 +199,8 @@ class FacodiLearningDiscoveryRun(models.Model):
             if any(run.state != "pending" for run in self):
                 raise AccessError("Only pending discovery runs can change provider.")
             vals = dict(vals, provider=provider.strip())
+            if provider.strip() == "youtube" and not vals.get("channel_id"):
+                raise ValidationError("YouTube discovery requires a target course.")
         return super().write(vals)
 
     def unlink(self):

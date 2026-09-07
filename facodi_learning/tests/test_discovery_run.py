@@ -1,6 +1,7 @@
 from odoo import Command
 from odoo.exceptions import AccessError
 from odoo.tests import TransactionCase
+from unittest.mock import patch
 
 
 class TestDiscoveryRun(TransactionCase):
@@ -48,7 +49,24 @@ class TestDiscoveryRun(TransactionCase):
         Run = self.env["facodi.learning.discovery.run"]
         registry = Run._get_course_discovery_registry()
         self.assertIn("manual", registry)
+        self.assertIn("youtube", registry)
         self.assertTrue(callable(registry["manual"]))
+
+    def test_youtube_provider_requires_seed_data(self):
+        channel = self.env["slide.channel"].create({"name": "YouTube Target"})
+        run = self.env["facodi.learning.discovery.run"].with_user(self.manager).create(
+            {
+                "provider": "youtube",
+                "channel_id": channel.id,
+                "seed_url": "https://www.youtube.com/@Matemateca/videos",
+            }
+        )
+        with patch(
+            "odoo.addons.facodi_learning.models.discovery_run.discover_youtube_items",
+            return_value=[],
+        ):
+            run.action_process()
+        self.assertEqual(run.state, "completed")
 
     def test_manual_provider_completes_empty_run(self):
         run = self.env["facodi.learning.discovery.run"].with_user(self.manager).create(
