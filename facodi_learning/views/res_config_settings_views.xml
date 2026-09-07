@@ -86,6 +86,10 @@
                                 <field name="facodi_learning_discovery_enabled_providers" class="oe_inline"/>
                             </div>
                             <div class="row mt16">
+                                <label for="facodi_learning_discovery_youtube_seeds" class="col-lg-4 o_light_label"/>
+                                <field name="facodi_learning_discovery_youtube_seeds" class="oe_inline"/>
+                            </div>
+                            <div class="row mt16">
                                 <label for="facodi_learning_discovery_batch_size" class="col-lg-4 o_light_label"/>
                                 <field name="facodi_learning_discovery_batch_size" class="oe_inline"/>
                             </div>

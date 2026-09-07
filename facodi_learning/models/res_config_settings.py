@@ -104,6 +104,12 @@ class ResConfigSettings(models.TransientModel):
         config_parameter="facodi_learning.discovery_enabled_providers",
         help="Comma-separated discovery provider identifiers. Providers are opt-in and unavailable providers fail independently.",
     )
+    facodi_learning_discovery_youtube_seeds = fields.Char(
+        string="YouTube discovery seeds",
+        default="",
+        config_parameter="facodi_learning.discovery_youtube_seeds",
+        help="Comma-separated public YouTube channel or playlist URLs used by scheduled YouTube discovery.",
+    )
     facodi_learning_discovery_batch_size = fields.Integer(
         string="Discovery batch size",
         required=True,

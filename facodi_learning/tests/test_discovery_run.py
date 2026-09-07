@@ -68,6 +68,14 @@ class TestDiscoveryRun(TransactionCase):
             run.action_process()
         self.assertEqual(run.state, "completed")
 
+    def test_youtube_run_can_be_created_before_seed_validation(self):
+        run = self.env["facodi.learning.discovery.run"].with_user(self.manager).create(
+            {"provider": "youtube"}
+        )
+        run.action_process()
+        self.assertEqual(run.state, "failed")
+        self.assertTrue(run.last_error)
+
     def test_manual_provider_completes_empty_run(self):
         run = self.env["facodi.learning.discovery.run"].with_user(self.manager).create(
             {"provider": "manual"}

@@ -4,14 +4,14 @@ FACODI Learning keeps the core discovery pipeline provider-neutral and offline-c
 
 ## Network-provider boundary
 
-- `facodi_learning` does not ship a YouTube API client, YouTube API credential, Google/YouTube SDK, or provider that depends on that API.
+- `facodi_learning` does not ship a YouTube API client, YouTube API credential, Google/YouTube SDK, or provider that depends on that API. Its built-in YouTube provider reads only public channel, oEmbed and watch-page metadata endpoints.
 - Future discovery integrations must be separately reviewed before they introduce any network client, credential or quota dependency.
 - The existing `manual` discovery workflow remains the baseline and requires no network service.
 - Generic provider adapters must return normalized candidate metadata through the existing discovery registry; they may never create or publish `slide.channel` directly.
 
 ## Video URLs are not API integration
 
-Odoo eLearning may store ordinary public video/source URLs as standard content or provenance. A manually supplied YouTube URL is treated only as a URL handled by Odoo's existing mechanisms; it does not authorize FACODI to call a YouTube API, enumerate channels/playlists, fetch transcripts, or store an API credential.
+Odoo eLearning may store ordinary public video/source URLs as standard content or provenance. The built-in YouTube provider may enumerate configured public channel/playlist pages and read public metadata, but it does not fetch transcripts, download media, call the YouTube Data API, or store an API credential.
 
 ## CI invariant
 

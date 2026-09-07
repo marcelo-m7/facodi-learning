@@ -155,11 +155,6 @@ class FacodiLearningDiscoveryRun(models.Model):
             seed_url = vals.get("seed_url")
             if seed_url not in (None, False, "") and not isinstance(seed_url, str):
                 raise ValidationError("Discovery seed URL must be text when supplied.")
-            if provider.strip() == "youtube":
-                if not isinstance(seed_url, str) or not seed_url.strip():
-                    raise ValidationError("YouTube discovery requires a seed URL.")
-                if not vals.get("channel_id"):
-                    raise ValidationError("YouTube discovery requires a target course.")
             vals.update(
                 provider=provider.strip(),
                 channel_id=vals.get("channel_id") or False,
@@ -199,8 +194,6 @@ class FacodiLearningDiscoveryRun(models.Model):
             if any(run.state != "pending" for run in self):
                 raise AccessError("Only pending discovery runs can change provider.")
             vals = dict(vals, provider=provider.strip())
-            if provider.strip() == "youtube" and not vals.get("channel_id"):
-                raise ValidationError("YouTube discovery requires a target course.")
         return super().write(vals)
 
     def unlink(self):
@@ -302,8 +295,26 @@ class FacodiLearningDiscoveryRun(models.Model):
             return True
 
         providers = self._enabled_discovery_providers()
-        for index, provider in enumerate(providers):
-            run = self.create({"provider": provider})
+        runs = []
+        for provider in providers:
+            seeds = [False]
+            if provider == "youtube":
+                raw_seeds = (
+                    self.env["ir.config_parameter"]
+                    .sudo()
+                    .get_param("facodi_learning.discovery_youtube_seeds", "")
+                )
+                seeds = tuple(
+                    dict.fromkeys(
+                        seed.strip()
+                        for seed in str(raw_seeds or "").split(",")
+                        if seed.strip()
+                    )
+                ) or (False,)
+            runs.extend({"provider": provider, "seed_url": seed} for seed in seeds)
+
+        for index, values in enumerate(runs):
+            run = self.create(values)
             try:
                 with self.env.cr.savepoint():
                     run.action_process()
@@ -322,7 +333,7 @@ class FacodiLearningDiscoveryRun(models.Model):
                 )
 
             if self.env.context.get("cron_id"):
-                remaining = max(0, len(providers) - index - 1)
+                remaining = max(0, len(runs) - index - 1)
                 if not self.env["ir.cron"]._commit_progress(1, remaining=remaining):
                     break
         return True

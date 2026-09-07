@@ -46,13 +46,20 @@ store a decision snapshot with the scores, evaluator version and selection polic
 that were effective at decision time. Later setting changes do not rewrite that
 history.
 
+The built-in `youtube` discovery provider accepts a public channel or playlist
+seed URL, extracts public video metadata, and writes only normalized candidates.
+Configure `youtube` in the enabled discovery providers and add comma-separated
+seeds under **YouTube discovery seeds**. A Manager must resolve a candidate before
+**Ingest Source** can register its provenance and create an unpublished native
+`slide.slide` with `slide_type="youtube_video"` and its canonical public URL.
+
 **Auto Approve never publishes a course.** Every new course created by M3.1 is
 explicitly `website_published=False`; normal Odoo editorial review/publication
 remains authoritative.
 
-M3.1 intentionally does not implement external discovery providers, semantic/AI
-ranking, curriculum coverage models or learner progression/credit recognition.
-Those remain separate follow-on milestones.
+M3.1 does not perform semantic/AI ranking, curriculum coverage or learner
+progression/credit recognition. YouTube discovery remains bounded, provider
+metadata only, and fail-closed through the existing candidate and review stages.
 
 ## Course Profile — M3.2
 
@@ -194,11 +201,11 @@ does not fabricate curriculum references or coverage for existing courses.
 
 In **eLearning → FACODI Learning → Content Analysis**, manage Jobs, Results and
 **Content Mappings** using the existing actions. Sources remain the provenance entry
-point for content ingestion. Create a source with provider `manual`, a stable
-external identifier and course; **Import unpublished article** creates one draft
-article. Replaying ingestion reuses it, including any editorial changes. The Python
-`ingest_manual` method can associate existing content in the same course. Imported
-provenance is immutable.
+point for content ingestion. Create a source with provider `manual`, or resolve a
+discovered `youtube` candidate and use **Ingest Source**. Both paths use a stable
+external identifier and course; new content remains unpublished. Replaying ingestion
+reuses it, including any editorial changes. The Python `ingest_manual` method can
+associate existing content in the same course. Imported provenance is immutable.
 
 On an eLearning content form, **FACODI Analysis → Queue Analysis** creates a
 request. The default `local_metadata` provider uses Odoo data only, without
@@ -239,12 +246,12 @@ Analysis adapters receive a `slide.slide`; ingestion adapters receive a source
 and return standard content values. `ingest(values, slide_id=None)` registers by
 provider/external identifier/course and forces new content to remain unpublished.
 
-Course Discovery M3.1 itself has no external discovery adapter. Provider-specific
-course discovery belongs to a later optional-addon milestone; the core candidate
-evaluator, course profile and M3.3 mapping ranker remain deterministic and offline.
-M3.4 likewise includes no external curriculum fetcher: references can be curated
-manually today, while a future provider may populate the same generic reference/unit
-models without changing their editorial meaning.
+The built-in YouTube adapter uses public channel pages, oEmbed and watch-page
+metadata only. It does not use an API key, download media, fetch transcripts or
+create courses directly. The core candidate evaluator, course profile and M3.3
+mapping ranker remain deterministic and offline. M3.4 likewise includes no external
+curriculum fetcher: references can be curated manually without changing their
+editorial meaning.
 
 See [architecture](docs/architecture.md) for normalized output, course-selection,
 course-profile, course-mapping, curriculum-coverage and transaction contracts.
