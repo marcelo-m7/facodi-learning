@@ -91,3 +91,23 @@ class ResConfigSettings(models.TransientModel):
         config_parameter="facodi_learning.course_mapping_min_confidence",
         help="Normalized 0..1 confidence threshold required for automatic approval of eligible semantic course relations.",
     )
+
+    facodi_learning_discovery_enabled = fields.Boolean(
+        string="Enable scheduled course discovery",
+        default=False,
+        config_parameter="facodi_learning.discovery_enabled",
+        help="When enabled, the FACODI scheduled action creates bounded discovery runs for explicitly enabled providers.",
+    )
+    facodi_learning_discovery_enabled_providers = fields.Char(
+        string="Enabled discovery providers",
+        default="",
+        config_parameter="facodi_learning.discovery_enabled_providers",
+        help="Comma-separated discovery provider identifiers. Providers are opt-in and unavailable providers fail independently.",
+    )
+    facodi_learning_discovery_batch_size = fields.Integer(
+        string="Discovery batch size",
+        required=True,
+        default=20,
+        config_parameter="facodi_learning.discovery_batch_size",
+        help="Maximum number of source items one discovery run asks a provider to return; values are clamped to 1..100 at execution time.",
+    )
