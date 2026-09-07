@@ -4,9 +4,11 @@ import math
 import re
 import urllib.parse
 import urllib.request
+from concurrent.futures import ThreadPoolExecutor
 
 
 YOUTUBE_BASE_URL = "https://www.youtube.com"
+_YOUTUBE_ALLOWED_HOSTS = {"youtube.com", "www.youtube.com", "m.youtube.com"}
 _YOUTUBE_USER_AGENT = (
     "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 "
     "(KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36"
@@ -14,20 +16,57 @@ _YOUTUBE_USER_AGENT = (
 _INITIAL_DATA_MARKERS = ("var ytInitialData =", 'window["ytInitialData"] =')
 _VIDEO_ID_RE = re.compile(r'"videoId":"([A-Za-z0-9_-]{11})"')
 _BROWSE_ID_RE = re.compile(r'"browseId":"(UC[A-Za-z0-9_-]+)"')
-_CANONICAL_BASE_URL_RE = re.compile(r'"canonicalBaseUrl":"([^"]+)"')
-_HTML_LANG_RE = re.compile(r'<html[^>]*\blang="([^"]+)"', re.I)
+_CANONICAL_BASE_URL_RE = re.compile(r'"canonicalBaseUrl":"([^\"]+)"')
+_HTML_LANG_RE = re.compile(r'<html[^>]*\blang="([^\"]+)"', re.I)
 _TITLE_RE = re.compile(r'<title>(.*?)</title>', re.I | re.S)
-_OG_TITLE_RE = re.compile(r'<meta property="og:title" content="([^"]*)"', re.I)
-_META_DESCRIPTION_RE = re.compile(r'<meta name="description" content="([^"]*)"', re.I)
-_META_SHORT_DESCRIPTION_RE = re.compile(r'"shortDescription":"([^"]*)"', re.I)
+_OG_TITLE_RE = re.compile(r'<meta property="og:title" content="([^\"]*)"', re.I)
+_META_DESCRIPTION_RE = re.compile(r'<meta name="description" content="([^\"]*)"', re.I)
+_META_SHORT_DESCRIPTION_RE = re.compile(r'"shortDescription":"([^\"]*)"', re.I)
 _LENGTH_SECONDS_RE = re.compile(r'"lengthSeconds":"(\d+)"')
-_PUBLISH_DATE_RE = re.compile(r'"publishDate":"([^"]+)"')
-_UPLOAD_DATE_RE = re.compile(r'"uploadDate":"([^"]+)"')
+_PUBLISH_DATE_RE = re.compile(r'"publishDate":"([^\"]+)"')
+_UPLOAD_DATE_RE = re.compile(r'"uploadDate":"([^\"]+)"')
+
+
+def _validated_youtube_url(url, *, kind="generic"):
+    value = (url or "").strip()
+    if not value:
+        raise ValueError("A YouTube URL is required.")
+    parsed = urllib.parse.urlsplit(value)
+    if parsed.scheme.lower() != "https":
+        raise ValueError("YouTube URLs must use HTTPS.")
+    if parsed.username or parsed.password:
+        raise ValueError("YouTube URLs must not contain user credentials.")
+    host = (parsed.hostname or "").lower().rstrip(".")
+    if host not in _YOUTUBE_ALLOWED_HOSTS:
+        raise ValueError("Only official YouTube hosts are allowed.")
+    if parsed.port not in (None, 443):
+        raise ValueError("YouTube URLs must use the standard HTTPS port.")
+
+    path = parsed.path or "/"
+    if kind == "channel":
+        allowed = (
+            path.startswith("/@")
+            or path.startswith("/channel/")
+            or path.startswith("/c/")
+            or path.startswith("/user/")
+        )
+        if not allowed:
+            raise ValueError("A YouTube channel URL is required.")
+    elif kind == "watch" and path != "/watch":
+        raise ValueError("A YouTube watch URL is required.")
+
+    return urllib.parse.urlunsplit(
+        ("https", host, path, parsed.query, parsed.fragment)
+    )
 
 
 def fetch_url(url):
+    url = _validated_youtube_url(url)
     request = urllib.request.Request(url, headers={"User-Agent": _YOUTUBE_USER_AGENT})
     with urllib.request.urlopen(request, timeout=30) as response:
+        final_url = _validated_youtube_url(response.geturl())
+        if final_url != response.geturl():
+            _validated_youtube_url(final_url)
         return response.read().decode("utf-8", "replace")
 
 
@@ -164,6 +203,7 @@ def _watch_url(video_id):
 
 
 def _oembed_video_metadata(video_url):
+    video_url = _validated_youtube_url(video_url, kind="watch")
     query_url = (
         f"{YOUTUBE_BASE_URL}/oembed?url="
         f"{urllib.parse.quote(video_url, safe='')}"
@@ -173,17 +213,18 @@ def _oembed_video_metadata(video_url):
         urllib.request.Request(query_url, headers={"User-Agent": _YOUTUBE_USER_AGENT}),
         timeout=30,
     ) as response:
+        _validated_youtube_url(response.geturl())
         return json.loads(response.read().decode("utf-8", "replace"))
 
 
 def fetch_youtube_video_metadata(video_url):
-    watch_url = video_url.split("&", 1)[0]
-    if "watch?v=" not in watch_url:
-        parsed = urllib.parse.urlparse(video_url)
-        video_id = urllib.parse.parse_qs(parsed.query).get("v", [False])[0]
-        if not video_id:
-            raise ValueError("A YouTube watch URL is required.")
-        watch_url = _watch_url(video_id)
+    video_url = _validated_youtube_url(video_url, kind="watch")
+    parsed = urllib.parse.urlsplit(video_url)
+    video_id = urllib.parse.parse_qs(parsed.query).get("v", [False])[0]
+    if not video_id or not re.fullmatch(r"[A-Za-z0-9_-]{11}", video_id):
+        raise ValueError("A valid YouTube watch URL is required.")
+    watch_url = _watch_url(video_id)
+
     html_text = fetch_url(watch_url)
     oembed = _oembed_video_metadata(watch_url)
     title = _normalized_first_match(_OG_TITLE_RE, html_text) or _normalize_text(
@@ -214,9 +255,7 @@ def fetch_youtube_video_metadata(video_url):
 
 
 def discover_youtube_items(seed_url, limit=20):
-    seed_url = (seed_url or "").strip()
-    if not seed_url:
-        raise ValueError("A YouTube seed URL is required.")
+    seed_url = _validated_youtube_url(seed_url, kind="channel")
     limit = max(0, int(limit or 0))
     if not limit:
         return []
@@ -224,12 +263,18 @@ def discover_youtube_items(seed_url, limit=20):
     html_text = fetch_url(seed_url)
     initial_data = _load_initial_data(html_text)
     channel = _channel_context(seed_url, html_text, initial_data)
+    video_ids = _unique_video_ids(html_text)[:limit]
+    watch_urls = [_watch_url(video_id) for video_id in video_ids]
+
+    if video_ids:
+        workers = min(4, len(video_ids))
+        with ThreadPoolExecutor(max_workers=workers) as executor:
+            videos = list(executor.map(fetch_youtube_video_metadata, watch_urls))
+    else:
+        videos = []
+
     items = []
-    for video_id in _unique_video_ids(html_text):
-        if len(items) >= limit:
-            break
-        watch_url = _watch_url(video_id)
-        video = fetch_youtube_video_metadata(watch_url)
+    for video_id, video in zip(video_ids, videos):
         items.append(
             {
                 "provider": "youtube",
