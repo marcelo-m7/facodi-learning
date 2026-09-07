@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_facodi_course_candidate_list_discovery" model="ir.ui.view">
+        <field name="name">facodi.learning.course.candidate.list.discovery</field>
+        <field name="model">facodi.learning.course.candidate</field>
+        <field name="inherit_id" ref="view_facodi_course_candidate_list"/>
+        <field name="arch" type="xml">
+            <field name="provider" position="after">
+                <field name="last_discovery_run_id" optional="hide"/>
+                <field name="last_discovered_at" optional="hide"/>
+            </field>
+        </field>
+    </record>
+
+    <record id="view_facodi_course_candidate_form_discovery" model="ir.ui.view">
+        <field name="name">facodi.learning.course.candidate.form.discovery</field>
+        <field name="model">facodi.learning.course.candidate</field>
+        <field name="inherit_id" ref="view_facodi_course_candidate_form"/>
+        <field name="arch" type="xml">
+            <field name="requested_by_id" position="after">
+                <field name="discovered_at" readonly="1"/>
+                <field name="last_discovered_at" readonly="1"/>
+                <field name="last_discovery_run_id" readonly="1"/>
+            </field>
+        </field>
+    </record>
+</odoo>

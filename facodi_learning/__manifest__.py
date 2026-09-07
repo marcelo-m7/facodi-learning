@@ -14,6 +14,7 @@
         "views/slide_slide_views.xml",
         "views/analysis_views.xml",
         "views/course_candidate_views.xml",
+        "views/course_candidate_discovery_views.xml",
         "views/discovery_run_views.xml",
         "views/course_mapping_views.xml",
         "views/curriculum_views.xml",
