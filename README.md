@@ -12,6 +12,8 @@ roles are reused. There is no FACODI LMS, parallel course model or pathway model
 FACODI course candidates are temporary/audit records; every approved new course
 becomes one standard `slide.channel`. FACODI course mappings are reviewed semantic
 evidence; native Odoo course prerequisites remain the canonical prerequisite graph.
+External curricula are reference/coverage evidence only and never become learner
+registrations, transcripts, official credits or a second progression engine.
 
 ## Course Discovery — M3.1
 
@@ -24,9 +26,9 @@ resolution is Manager-only.
 
 `action_evaluate()` uses the deterministic local evaluator. It requires no network
 or external AI provider and stores relevance, metadata quality, language fit,
-coverage baseline, duplicate risk, recommendation, reasons and evaluator version.
-Title matching is normalized and deterministic. A likely existing-course match is
-a review signal only: M3.1 never silently auto-links a semantic duplicate.
+coverage, duplicate risk, recommendation, reasons and evaluator version. Title
+matching is normalized and deterministic. A likely existing-course match is a
+review signal only: M3.1 never silently auto-links a semantic duplicate.
 
 Course selection is configured in eLearning settings with three modes:
 
@@ -47,10 +49,6 @@ history.
 **Auto Approve never publishes a course.** Every new course created by M3.1 is
 explicitly `website_published=False`; normal Odoo editorial review/publication
 remains authoritative.
-
-M3.1 intentionally does not implement external discovery providers, semantic/AI
-ranking, curriculum coverage models or learner progression/credit recognition.
-Those remain separate follow-on milestones.
 
 ## Course Profile — M3.2
 
@@ -105,33 +103,65 @@ special reviewed proposal: on Manager approval FACODI writes only the native
 evidence and never becomes a second prerequisite truth. Direct and transitive
 prerequisite cycles are rejected before the native write.
 
-Course-mapping Auto Approve is configured independently from M3.1 course selection.
-It defaults to **Manual**, is fail-closed, requires an authorized Manager context
-and a configured minimum confidence, and can only act on a strict allowlist of
-low-risk semantic types. `prerequisite`, `alternative`, `equivalent` and
-`continuation` are never auto-approved. Automatic decisions store the effective
-policy snapshot/version and do not pretend a human reviewer approved them.
+Course-mapping Auto Approve is configured independently from course selection. It
+defaults to **Manual**, is fail-closed, requires an authorized Manager context and
+a configured minimum confidence, and can only act on a strict allowlist of low-risk
+semantic types. `prerequisite`, `alternative`, `equivalent` and `continuation` are
+never auto-approved. Automatic decisions store the effective policy snapshot/version
+and do not pretend a human reviewer approved them.
 
 Approved semantic relations can appear as **Related courses** inside the standard
 Odoo course page. Public/Portal users still cannot read the FACODI audit model: the
-server elevates only the approved-relation ID lookup, then returns ordinary
-non-sudo `slide.channel` records filtered by standard publication, current website
-and native `is_visible` rules. Prerequisite relations are not rendered by this
-semantic related-course block because Odoo owns prerequisite behavior.
+server elevates only the approved-relation ID lookup, then returns ordinary non-sudo
+`slide.channel` records filtered by standard publication, current website and
+native `is_visible` rules. Prerequisite relations are not rendered by this semantic
+related-course block because Odoo owns prerequisite behavior.
 
-M3.3 intentionally does not add learner-personalized recommendations, curriculum
-credit recognition, vector storage, embeddings or AI-based course mapping.
+## Curriculum Reference & Coverage — M3.4
+
+M3.4 keeps external academic structures outside the canonical Odoo course model.
+Managers maintain external programme versions and units under **eLearning → FACODI
+Learning → Curriculum Coverage**, using three audit/reference models:
+
+- `facodi.learning.curriculum.reference` for institution, programme, academic-year
+  version, source URL/provider and the explicit **Used for Selection** switch;
+- `facodi.learning.curriculum.unit` for source unit code/name, credits, curricular
+  year, period, mandatory/optional classification, option group and source order;
+- `facodi.learning.curriculum.coverage` for reviewed FACODI-course → curriculum-unit
+  evidence (`covers`, `partial`, `supports`, `equivalent`).
+
+Public and Portal users have no access to these models. Officers may read reference
+facts and propose manual coverage for courses they own; Managers own reference
+editing and terminal coverage review. Proposed/rejected coverage does not affect
+selection. Approved coverage contributes a deterministic strength based on relation
+type and confidence.
+
+When one or more curriculum references have `selection_enabled=True`, course
+candidate evaluation first finds the curriculum unit most closely matching the
+candidate title, then scores the remaining uncovered gap for that unit. The
+resulting `coverage_score` and a safe `coverage_evidence` snapshot identify the
+reference/version/unit used. Fully approved coverage can therefore reduce discovery
+priority and can make an otherwise eligible Auto Approve candidate fail the normal
+`min_coverage` threshold. With no enabled curriculum, the existing M3.1 baseline
+remains exactly `coverage_score=1.0`.
+
+The LESTI / Universidade do Algarve study plan (course code 1941) is used only as a
+validation/test example for versioned academic year, curricular year, semester,
+unit code/name and ECTS structure. M3.4 does **not** install or synchronize UAlg
+data, does not assert a FACODI/UAlg partnership, and does not infer official
+prerequisites, credit recognition or university enrolment from those public pages.
+Curriculum evidence never writes native Odoo prerequisites or learner state.
 
 ## Content analysis pipeline
 
 Source → unpublished standard content → queued analysis → historical result →
 Manager review → standard tags and approved educational links.
 
-Audit/provenance models cover course candidates, source provenance, analysis
-requests, immutable processing attempts/results, content relationships and reviewed
-course relationships. The transcript on the standard content record remains
-editorial; generated transcripts remain in results. No automatic result overwrites
-content or publishes a lesson.
+Audit/provenance models cover course candidates, curriculum references/coverage,
+source provenance, analysis requests, immutable processing attempts/results,
+content relationships and reviewed course relationships. The transcript on the
+standard content record remains editorial; generated transcripts remain in results.
+No automatic result overwrites content or publishes a lesson.
 
 ## Install and upgrade
 
@@ -143,13 +173,11 @@ odoo -d facodi -u facodi_learning --stop-after-init
 ```
 
 Back up the database and matching filestore for an existing deployment. Version
-`19.0.1.4.0` adds the M3.3 course-mapping audit schema, settings and views through
-the normal Odoo module upgrade. The change is additive and performs no historical
-data rewrite: existing sources, jobs, attempts, results, content mappings,
-candidates and standard eLearning records remain intact, and old course relations
-are not fabricated retroactively. Version `19.0.1.4.1` is a schema-neutral M3.3
-concurrency hardening patch that serializes proposal generation per source course;
-it requires no data migration or historical rewrite.
+`19.0.1.5.0` adds the M3.4 curriculum reference/unit/coverage schema and backend
+workspace through the normal Odoo module upgrade. The change is additive: existing
+sources, jobs, attempts, results, content/course mappings, candidates and standard
+eLearning records are not rewritten. No curriculum fixture is installed during the
+upgrade; Managers add or import external references explicitly.
 
 ## Manager workflow
 
@@ -162,56 +190,61 @@ article. Replaying ingestion reuses it, including any editorial changes. The Pyt
 provenance is immutable.
 
 On an eLearning content form, **FACODI Analysis → Queue Analysis** creates a
-request. The default `local_metadata` provider uses Odoo data only, without
-network access. The standard scheduled action processes a capped batch. Managers
-can also process jobs; Officers can request/retry jobs in courses they own.
+request. The default `local_metadata` provider uses Odoo data only, without network
+access. The standard scheduled action processes a capped batch. Managers can also
+process jobs; Officers can request/retry jobs in courses they own.
 
 Managers apply or reject tag suggestions explicitly. Applying reuses standard tags
 and records who reviewed them and when; rejecting changes no content. Content
 mappings are proposed first and reviewed separately. Direct ORM writes cannot
-bypass review. Reviewed output is immutable; create a new analysis or relation when
-meaning changes.
+bypass review. Reviewed output is immutable; create new evidence when meaning
+changes.
 
 For course relationships, open a standard eLearning course and use **Find Related
 Courses**, or open **FACODI Learning → Course Mapping → Course Mappings**. Managers
 review proposed semantic relations there. Approving a prerequisite updates the
 standard Odoo prerequisite field after cycle validation; approving other semantic
-relations changes no course publication, enrollment or progression state.
+relations changes no course publication, enrolment or progression state.
+
+For curriculum benchmarking, Managers create/reference programme versions under
+**FACODI Learning → Curriculum Coverage → References**, maintain their units, and
+review course/unit coverage proposals under **Coverage**. Enabling a reference for
+selection changes only future candidate evaluation evidence; it does not mutate
+existing courses, learners or prior terminal decision snapshots.
 
 Students see only approved resource links on the standard lesson detail page and
-approved learner-safe related courses on the standard course page. Publication,
-current website and native visibility/access rules filter targets. Technical fields
-and all FACODI audit models remain unavailable to Public/Portal users. The standard
-fullscreen training player remains unchanged.
+approved learner-safe related courses on the standard course page. Curriculum
+reference/coverage records, scores and provenance are never a learner-facing API.
 
 ## Provider extensions
 
 Trusted optional addons extend `_get_provider_registry()` on analysis jobs, or
-`_get_ingestion_registry()` on sources, calling `super()` in both cases.
-Analysis adapters receive a `slide.slide`; ingestion adapters receive a source
-and return standard content values. `ingest(values, slide_id=None)` registers by
+`_get_ingestion_registry()` on sources, calling `super()` in both cases. Analysis
+adapters receive a `slide.slide`; ingestion adapters receive a source and return
+standard content values. `ingest(values, slide_id=None)` registers by
 provider/external identifier/course and forces new content to remain unpublished.
 
-Course Discovery M3.1 itself has no external discovery adapter. Provider-specific
-course discovery belongs to a later optional-addon milestone; the core candidate
-evaluator, course profile and M3.3 mapping ranker remain deterministic and offline.
+Provider-specific course discovery remains a later optional-addon milestone; the
+core candidate evaluator, curriculum-gap service, course profile and deterministic
+mapping ranker remain offline and provider-neutral.
 
 See [architecture](docs/architecture.md) for normalized output, course-selection,
-course-profile, course-mapping and transaction contracts. Runtime secrets belong in
-an adapter's deployment environment, never source records or payloads. No external
-provider SDK is a core dependency.
+curriculum-coverage, course-profile, course-mapping and transaction contracts.
+Runtime secrets belong in an adapter's deployment environment, never audit payloads.
+No external provider SDK is a core dependency.
 
 ## Tests
 
 GitHub Actions installs and upgrades against Odoo 19 + PostgreSQL 16, with a
 persistent filestore between runs. Run `--test-tags /facodi_learning` to cover
-candidate identity/evaluation/modes/resolution, course-profile schema and
-determinism, deterministic course retrieval/ranking, idempotent course proposals,
-native prerequisite application and cycle prevention, independent course-mapping
-Auto Approve policy, learner-safe course visibility, backend/QWeb integration,
-content analysis/history, ACLs and safe learner links. Tests explicitly assert that
-automatic course-selection resolution never publishes a new course and that course
-mapping never bypasses standard Odoo prerequisite/publication/access mechanics.
+candidate identity/evaluation/modes/resolution, curriculum reference/version/unit
+constraints and ACLs, coverage review, curriculum-gap scoring and snapshotting,
+course-profile schema/determinism, deterministic course retrieval/ranking,
+idempotent course proposals, native prerequisite application/cycle prevention,
+learner-safe visibility, backend/QWeb integration, content analysis/history and safe
+learner links. Tests explicitly assert that course-selection Auto Approve never
+publishes a new course and that curriculum coverage never becomes academic credit,
+learner progression or a second prerequisite mechanism.
 
 The monorepo consumes this repository as a pinned submodule; addon changes do not
 deploy until the consuming repository intentionally updates its pin.
@@ -220,4 +253,4 @@ LGPL-3.0.
 
 ## Validation evidence
 
-See [validation report](docs/validation.md) for the isolated Community install/upgrade matrix, browser checks and remaining deployment boundaries.
+See [validation report](docs/validation.md) for the isolated Community install/upgrade matrix, regression evidence and remaining deployment boundaries.
