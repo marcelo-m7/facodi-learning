@@ -67,6 +67,12 @@ class FacodiLearningCourseCandidate(models.Model):
     resolved_channel_id = fields.Many2one(
         "slide.channel", readonly=True, ondelete="restrict"
     )
+    source_ids = fields.One2many(
+        "facodi.learning.source",
+        "candidate_id",
+        string="Imported Sources",
+        readonly=True,
+    )
     resolution_type = fields.Selection(
         [("existing", "Existing Course"), ("new", "New Draft Course")],
         readonly=True,
@@ -441,6 +447,27 @@ class FacodiLearningCourseCandidate(models.Model):
             if channel:
                 channels |= channel
         return channels
+
+    def action_ingest_source(self):
+        if not self._is_manager():
+            raise AccessError("Only eLearning Managers can ingest candidate sources.")
+        sources = self.env["facodi.learning.source"]
+        for candidate in self:
+            if candidate.state != "resolved" or not candidate.resolved_channel_id:
+                raise ValidationError("Resolve the candidate to a course before ingestion.")
+            source = self.env["facodi.learning.source"].ingest(
+                {
+                    "name": candidate.name,
+                    "provider": candidate.provider,
+                    "external_id": candidate.external_id,
+                    "url": candidate.source_url,
+                    "channel_id": candidate.resolved_channel_id.id,
+                    "candidate_id": candidate.id,
+                    "metadata": candidate.metadata or {},
+                }
+            )
+            sources |= source
+        return sources
 
     def _resolve(
         self,

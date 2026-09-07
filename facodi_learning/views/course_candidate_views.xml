@@ -80,6 +80,11 @@
                             class="btn-primary"
                             groups="website_slides.group_website_slides_manager"
                             invisible="state not in ('evaluated', 'shortlisted')"/>
+                            <button name="action_ingest_source"
+                                type="object"
+                                string="Ingest Source"
+                                groups="website_slides.group_website_slides_manager"
+                                invisible="state != 'resolved'"/>
                     <button name="action_reject"
                             type="object"
                             string="Reject"
@@ -126,6 +131,16 @@
                     </group>
                     <group string="Curriculum Coverage Evidence" invisible="not coverage_evidence">
                         <field name="coverage_evidence" readonly="1" nolabel="1"/>
+                    </group>
+                    <group string="Imported Sources">
+                        <field name="source_ids" readonly="1">
+                            <list>
+                                <field name="name"/>
+                                <field name="provider"/>
+                                <field name="state"/>
+                                <field name="slide_id"/>
+                            </list>
+                        </field>
                     </group>
 
                     <group string="Course Match">

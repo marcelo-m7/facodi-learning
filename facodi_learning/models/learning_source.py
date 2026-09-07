@@ -14,6 +14,12 @@ class LearningSource(models.Model):
     external_id = fields.Char(required=True)
     url = fields.Char(help="Provenance only; core never fetches this URL.")
     channel_id = fields.Many2one("slide.channel", required=True, ondelete="restrict")
+    candidate_id = fields.Many2one(
+        "facodi.learning.course.candidate",
+        readonly=True,
+        ondelete="restrict",
+        index=True,
+    )
     slide_id = fields.Many2one("slide.slide", ondelete="restrict", readonly=True)
     state = fields.Selection(
         [("pending", "Pending"), ("imported", "Imported"), ("failed", "Failed")],
@@ -51,6 +57,7 @@ class LearningSource(models.Model):
             "provider",
             "external_id",
             "channel_id",
+            "candidate_id",
         } & vals.keys():
             raise AccessError(
                 "Source identity and ingestion evidence cannot be changed."
