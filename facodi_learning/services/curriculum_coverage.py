@@ -62,7 +62,7 @@ def build_curriculum_selection_context(env):
 
 
 def score_candidate_curriculum_gap(candidate_name, context):
-    """Score how strongly a candidate addresses an enabled curriculum gap."""
+    """Score the uncovered gap of the curriculum unit most related to a candidate."""
     if not context or context.get("mode") != "curriculum-gap" or not context.get("units"):
         return {
             "score": 1.0,
@@ -73,7 +73,7 @@ def score_candidate_curriculum_gap(candidate_name, context):
         }
 
     best = None
-    best_need = -1.0
+    best_key = None
     for unit in context["units"]:
         title_similarity = course_title_similarity(candidate_name or "", unit["name"] or "")
         coverage_strength = max(
@@ -82,23 +82,23 @@ def score_candidate_curriculum_gap(candidate_name, context):
         )
         uncovered_gap = 1.0 - coverage_strength
         need = title_similarity * uncovered_gap
-        ranking_key = (need, title_similarity, -unit["unit_id"])
-        current_key = (
-            best_need,
-            best["title_similarity"] if best else -1.0,
-            -best["unit"]["unit_id"] if best else float("-inf"),
-        )
-        if best is None or ranking_key > current_key:
-            best_need = need
+        # Relevance to the curriculum unit is primary. Coverage is considered only
+        # after selecting the strongest semantic/title match, so an unrelated gap
+        # cannot outrank a fully covered exact match. For equal matches across
+        # references, prioritize the larger remaining gap deterministically.
+        ranking_key = (title_similarity, need, -unit["unit_id"])
+        if best is None or ranking_key > best_key:
+            best_key = ranking_key
             best = {
                 "unit": unit,
                 "title_similarity": title_similarity,
                 "coverage_strength": coverage_strength,
                 "uncovered_gap": uncovered_gap,
+                "need": need,
             }
 
     unit = best["unit"]
-    score = round(max(0.0, min(best_need, 1.0)), 4)
+    score = round(max(0.0, min(best["need"], 1.0)), 4)
     evidence = {
         "mode": "curriculum-gap",
         "reference_ids": list(context.get("reference_ids", [])),
