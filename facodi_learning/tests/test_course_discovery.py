@@ -1,5 +1,6 @@
 import importlib
 import importlib.util
+from unittest.mock import patch
 
 from odoo.tests import TransactionCase
 
@@ -12,6 +13,30 @@ class TestCourseDiscoveryCoreContract(TransactionCase):
         if spec is None:
             return None
         return importlib.import_module(module_name)
+
+    def _process_with_provider(self, items, provider="fixture"):
+        Run = self.env["facodi.learning.discovery.run"]
+        run = Run.create({"provider": provider})
+
+        def fixture_provider(_run, limit):
+            if callable(items):
+                return items(_run, limit)
+            return list(items)[:limit]
+
+        with patch.object(
+            type(Run),
+            "_get_course_discovery_registry",
+            lambda records: {provider: fixture_provider, "manual": lambda _r, _l: []},
+        ):
+            run.action_process()
+        run.invalidate_recordset()
+        return run
+
+    def setUp(self):
+        super().setUp()
+        self.env["ir.config_parameter"].sudo().set_param(
+            "facodi_learning.course_selection_mode", "manual"
+        )
 
     def test_discovery_run_model_is_registered(self):
         self.assertIn("facodi.learning.discovery.run", self.env.registry.models)
@@ -78,3 +103,118 @@ class TestCourseDiscoveryCoreContract(TransactionCase):
                     "last_error": "forged",
                 }
             )
+
+    def test_process_creates_and_evaluates_candidate_without_creating_course(self):
+        before_channels = self.env["slide.channel"].search_count([])
+        run = self._process_with_provider(
+            [
+                {
+                    "external_id": "course:db1",
+                    "name": "Database Systems",
+                    "description": "Relational database foundations",
+                    "institution": "Example University",
+                    "language": "en",
+                    "duration_minutes": 180,
+                    "metadata": {"catalogue_id": "db1"},
+                }
+            ]
+        )
+        candidate = self.env["facodi.learning.course.candidate"].search(
+            [("provider", "=", "fixture"), ("external_id", "=", "course:db1")]
+        )
+        self.assertEqual(len(candidate), 1)
+        self.assertEqual(candidate.state, "evaluated")
+        self.assertTrue(candidate.evaluated_at)
+        self.assertTrue(candidate.discovered_at)
+        self.assertTrue(candidate.last_discovered_at)
+        self.assertEqual(candidate.last_discovery_run_id, run)
+        self.assertEqual(run.state, "completed")
+        self.assertEqual(run.items_seen, 1)
+        self.assertEqual(run.candidates_created, 1)
+        self.assertEqual(run.candidates_refreshed, 0)
+        self.assertEqual(run.candidates_ignored, 0)
+        self.assertEqual(self.env["slide.channel"].search_count([]), before_channels)
+
+    def test_replay_refreshes_same_candidate_and_reevaluates(self):
+        first = self._process_with_provider(
+            [{"external_id": "course:refresh", "name": "Old Course"}]
+        )
+        candidate = self.env["facodi.learning.course.candidate"].search(
+            [("provider", "=", "fixture"), ("external_id", "=", "course:refresh")]
+        )
+        candidate_id = candidate.id
+        discovered_at = candidate.discovered_at
+        self.assertEqual(first.candidates_created, 1)
+
+        second = self._process_with_provider(
+            [
+                {
+                    "external_id": "course:refresh",
+                    "name": "Updated Course",
+                    "description": "Now with richer metadata",
+                    "institution": "Example University",
+                }
+            ]
+        )
+        candidate.invalidate_recordset()
+        self.assertEqual(candidate.id, candidate_id)
+        self.assertEqual(candidate.name, "Updated Course")
+        self.assertEqual(candidate.state, "evaluated")
+        self.assertTrue(candidate.evaluated_at)
+        self.assertEqual(candidate.discovered_at, discovered_at)
+        self.assertEqual(candidate.last_discovery_run_id, second)
+        self.assertEqual(second.candidates_created, 0)
+        self.assertEqual(second.candidates_refreshed, 1)
+        self.assertEqual(
+            self.env["facodi.learning.course.candidate"].search_count(
+                [("provider", "=", "fixture"), ("external_id", "=", "course:refresh")]
+            ),
+            1,
+        )
+
+    def test_terminal_candidate_is_ignored_without_metadata_rewrite(self):
+        first = self._process_with_provider(
+            [{"external_id": "course:terminal", "name": "Reviewed Course"}]
+        )
+        candidate = self.env["facodi.learning.course.candidate"].search(
+            [("provider", "=", "fixture"), ("external_id", "=", "course:terminal")]
+        )
+        self.assertEqual(first.candidates_created, 1)
+        candidate.action_reject()
+
+        second = self._process_with_provider(
+            [{"external_id": "course:terminal", "name": "Silently Rewritten"}]
+        )
+        candidate.invalidate_recordset()
+        self.assertEqual(candidate.state, "rejected")
+        self.assertEqual(candidate.name, "Reviewed Course")
+        self.assertEqual(second.candidates_created, 0)
+        self.assertEqual(second.candidates_refreshed, 0)
+        self.assertEqual(second.candidates_ignored, 1)
+
+    def test_invalid_item_is_ignored_without_blocking_valid_item(self):
+        run = self._process_with_provider(
+            [
+                {"external_id": "", "name": "Invalid"},
+                {"external_id": "course:valid", "name": "Valid Course"},
+            ]
+        )
+        self.assertEqual(run.state, "completed")
+        self.assertEqual(run.items_seen, 2)
+        self.assertEqual(run.candidates_created, 1)
+        self.assertEqual(run.candidates_ignored, 1)
+
+    def test_provider_failure_rolls_back_candidate_mutations_and_sanitizes_error(self):
+        def failing_provider(_run, _limit):
+            yield {"external_id": "course:partial", "name": "Partial Course"}
+            raise RuntimeError("Authorization token=super-secret")
+
+        run = self._process_with_provider(failing_provider)
+        self.assertEqual(run.state, "failed")
+        self.assertFalse(
+            self.env["facodi.learning.course.candidate"].search(
+                [("provider", "=", "fixture"), ("external_id", "=", "course:partial")]
+            )
+        )
+        self.assertNotIn("super-secret", run.last_error or "")
+        self.assertNotIn("Authorization", run.last_error or "")
