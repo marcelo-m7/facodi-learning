@@ -74,6 +74,24 @@
                         </div>
                     </div>
                 </setting>
+                <setting id="facodi_learning_discovery_settings" string="FACODI Course Discovery" help="Configure opt-in scheduled execution of registered external course-discovery providers.">
+                    <div class="content-group">
+                        <div class="row mt16">
+                            <label for="facodi_learning_discovery_enabled" class="col-lg-4 o_light_label"/>
+                            <field name="facodi_learning_discovery_enabled" class="oe_inline"/>
+                        </div>
+                        <div invisible="not facodi_learning_discovery_enabled">
+                            <div class="row mt16">
+                                <label for="facodi_learning_discovery_enabled_providers" class="col-lg-4 o_light_label"/>
+                                <field name="facodi_learning_discovery_enabled_providers" class="oe_inline"/>
+                            </div>
+                            <div class="row mt16">
+                                <label for="facodi_learning_discovery_batch_size" class="col-lg-4 o_light_label"/>
+                                <field name="facodi_learning_discovery_batch_size" class="oe_inline"/>
+                            </div>
+                        </div>
+                    </div>
+                </setting>
             </xpath>
         </field>
     </record>
