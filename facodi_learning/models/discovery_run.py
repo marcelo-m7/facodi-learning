@@ -1,7 +1,12 @@
+import zlib
+
 from odoo import SUPERUSER_ID, api, fields, models
 from odoo.exceptions import AccessError, ValidationError
 
 from ..services.course_discovery import normalize_discovery_item
+
+
+_DISCOVERY_LOCK_NAMESPACE = 0x46414344  # FACD
 
 
 class FacodiLearningDiscoveryRun(models.Model):
@@ -81,6 +86,42 @@ class FacodiLearningDiscoveryRun(models.Model):
         except (TypeError, ValueError):
             return 20
 
+    @api.model
+    def _discovery_enabled(self):
+        raw = (
+            self.env["ir.config_parameter"]
+            .sudo()
+            .get_param("facodi_learning.discovery_enabled", "False")
+        )
+        return str(raw).strip().lower() in {"1", "true", "yes", "on"}
+
+    @api.model
+    def _enabled_discovery_providers(self):
+        raw = (
+            self.env["ir.config_parameter"]
+            .sudo()
+            .get_param("facodi_learning.discovery_enabled_providers", "")
+        )
+        return tuple(
+            dict.fromkeys(
+                provider.strip()
+                for provider in str(raw or "").split(",")
+                if provider.strip()
+            )
+        )
+
+    def _lock_provider(self):
+        self.ensure_one()
+        provider_key = zlib.crc32(self.provider.encode("utf-8")) & 0x7FFFFFFF
+        self.env.cr.execute(
+            "SELECT pg_try_advisory_xact_lock(%s, %s)",
+            (_DISCOVERY_LOCK_NAMESPACE, provider_key),
+        )
+        if not self.env.cr.fetchone()[0]:
+            raise ValidationError(
+                "This discovery provider is already running. Please retry."
+            )
+
     @api.model_create_multi
     def create(self, vals_list):
         prepared = []
@@ -135,6 +176,7 @@ class FacodiLearningDiscoveryRun(models.Model):
             locked.invalidate_recordset()
             if locked.state != "pending":
                 raise ValidationError("Only pending discovery runs can be processed.")
+            locked._lock_provider()
 
             started_at = fields.Datetime.now()
             locked._write_execution(
@@ -208,4 +250,35 @@ class FacodiLearningDiscoveryRun(models.Model):
                     "last_error": False,
                 }
             )
+        return True
+
+    @api.model
+    def _cron_discover_courses(self):
+        if not self._discovery_enabled():
+            return True
+
+        providers = self._enabled_discovery_providers()
+        for index, provider in enumerate(providers):
+            run = self.create({"provider": provider})
+            try:
+                with self.env.cr.savepoint():
+                    run.action_process()
+            except Exception as error:
+                run.invalidate_recordset()
+                run._write_execution(
+                    {
+                        "state": "failed",
+                        "started_at": run.started_at or fields.Datetime.now(),
+                        "completed_at": fields.Datetime.now(),
+                        "last_error": (
+                            f"{type(error).__name__}: discovery run failed; "
+                            "inspect provider configuration."
+                        ),
+                    }
+                )
+
+            if self.env.context.get("cron_id"):
+                remaining = max(0, len(providers) - index - 1)
+                if not self.env["ir.cron"]._commit_progress(1, remaining=remaining):
+                    break
         return True
