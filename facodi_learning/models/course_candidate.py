@@ -6,6 +6,7 @@ from ..services.course_selection import (
     evaluate_course_candidate,
     get_course_selection_policy,
 )
+from ..services.curriculum_coverage import build_curriculum_selection_context
 
 
 class FacodiLearningCourseCandidate(models.Model):
@@ -47,6 +48,7 @@ class FacodiLearningCourseCandidate(models.Model):
     metadata_quality_score = fields.Float(digits=(5, 4), readonly=True)
     language_fit_score = fields.Float(digits=(5, 4), readonly=True)
     coverage_score = fields.Float(digits=(5, 4), readonly=True)
+    coverage_evidence = fields.Json(readonly=True)
     duplication_risk = fields.Float(digits=(5, 4), readonly=True)
     recommendation = fields.Selection(
         [
@@ -113,6 +115,7 @@ class FacodiLearningCourseCandidate(models.Model):
         "metadata_quality_score",
         "language_fit_score",
         "coverage_score",
+        "coverage_evidence",
         "duplication_risk",
         "recommendation",
         "evaluation_reasons",
@@ -201,6 +204,7 @@ class FacodiLearningCourseCandidate(models.Model):
                 metadata_quality_score=0.0,
                 language_fit_score=0.0,
                 coverage_score=0.0,
+                coverage_evidence=False,
                 duplication_risk=0.0,
                 recommendation=False,
                 evaluation_reasons=False,
@@ -276,6 +280,8 @@ class FacodiLearningCourseCandidate(models.Model):
             "metadata_quality_score": self.metadata_quality_score,
             "language_fit_score": self.language_fit_score,
             "coverage_score": self.coverage_score,
+            "coverage_evidence": self.coverage_evidence
+            or {"mode": "baseline", "reference_ids": []},
             "duplication_risk": self.duplication_risk,
             "recommendation": self.recommendation or False,
             "evaluation_policy_version": self.evaluation_policy_version or False,
@@ -295,11 +301,15 @@ class FacodiLearningCourseCandidate(models.Model):
     def action_evaluate(self):
         policy = get_course_selection_policy(self.env)
         existing_channels = self.env["slide.channel"].search([])
+        curriculum_context = build_curriculum_selection_context(self.env)
         for candidate in self:
             if candidate.state in {"approved", "rejected", "resolved"}:
                 raise ValidationError("Reviewed course candidates cannot be reevaluated.")
             result = evaluate_course_candidate(
-                candidate, existing_channels, policy["languages"]
+                candidate,
+                existing_channels,
+                policy["languages"],
+                curriculum_context=curriculum_context,
             )
             super(FacodiLearningCourseCandidate, candidate).write(
                 {
@@ -308,6 +318,7 @@ class FacodiLearningCourseCandidate(models.Model):
                     "metadata_quality_score": result["metadata_quality_score"],
                     "language_fit_score": result["language_fit_score"],
                     "coverage_score": result["coverage_score"],
+                    "coverage_evidence": result["coverage_evidence"],
                     "duplication_risk": result["duplication_risk"],
                     "recommendation": result["recommendation"],
                     "evaluation_reasons": result["reasons"],
