@@ -14,3 +14,4 @@ from . import test_course_mapping_ui
 from . import test_curriculum_reference
 from . import test_curriculum_coverage
 from . import test_curriculum_gap
+from . import test_curriculum_candidate_selection
