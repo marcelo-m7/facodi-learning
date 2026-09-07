@@ -16,6 +16,34 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Enforce provider-neutral discovery policy
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          forbidden = [
+              "FACODI_" + "YOUTUBE" + "_API_KEY",
+              "youtube." + "googleapis.com",
+              "playlists." + "list",
+              "YouTube Data " + "API",
+          ]
+          violations = []
+          for path in Path(".").rglob("*"):
+              if not path.is_file() or ".git" in path.parts:
+                  continue
+              try:
+                  text = path.read_text(encoding="utf-8")
+              except UnicodeDecodeError:
+                  continue
+              for token in forbidden:
+                  if token in text:
+                      violations.append((str(path), token))
+          if violations:
+              for path, token in violations:
+                  print(f"Forbidden provider-specific API integration reference: {path}: {token}")
+              raise SystemExit(1)
+          PY
+
       - name: Start PostgreSQL 16
         run: |
           docker network create facodi-learning-ci
