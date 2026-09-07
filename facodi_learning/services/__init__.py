@@ -25,3 +25,10 @@ from .course_selection import (
     get_course_selection_policy,
     normalize_course_title,
 )
+from . import curriculum_coverage
+from .curriculum_coverage import (
+    COVERAGE_STRENGTH,
+    build_curriculum_selection_context,
+    coverage_strength_for_unit,
+    score_candidate_curriculum_gap,
+)
