@@ -1,3 +1,6 @@
+import ast
+import inspect
+
 from odoo.tests import TransactionCase
 
 
@@ -89,6 +92,40 @@ class TestCurriculumGap(TransactionCase):
 
         return curriculum_coverage
 
+    def test_service_has_single_public_gap_api_definition(self):
+        service = self._service()
+        tree = ast.parse(inspect.getsource(service))
+        counts = {}
+        for node in tree.body:
+            if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
+                counts[node.name] = counts.get(node.name, 0) + 1
+        for name in (
+            "coverage_strength_for_unit",
+            "build_curriculum_selection_context",
+            "score_candidate_curriculum_gap",
+        ):
+            self.assertEqual(counts.get(name), 1, f"duplicate service definition: {name}")
+
+    def test_selection_context_has_stable_versioned_shape(self):
+        service = self._service()
+        context = service.build_curriculum_selection_context(self.env)
+        self.assertEqual(context["schema_version"], "curriculum-coverage-v1")
+        self.assertEqual(context["mode"], "curriculum-gap")
+        self.assertEqual(context["reference_ids"], [self.reference.id])
+        self.assertTrue(context["units"])
+        self.assertTrue(
+            {
+                "reference_id",
+                "programme_name",
+                "academic_year",
+                "unit_id",
+                "unit_code",
+                "unit_name",
+                "approved_coverage_strength",
+            }
+            <= set(context["units"][0])
+        )
+
     def test_uncovered_matching_lesti_unit_has_high_need(self):
         service = self._service()
         context = service.build_curriculum_selection_context(self.env)
@@ -144,6 +181,8 @@ class TestCurriculumGap(TransactionCase):
         self.reference.selection_enabled = False
         context = service.build_curriculum_selection_context(self.env)
         result = service.score_candidate_curriculum_gap("Anything", context)
+        self.assertEqual(context["schema_version"], "curriculum-coverage-v1")
+        self.assertEqual(context["mode"], "baseline")
         self.assertEqual(result["score"], 1.0)
         self.assertEqual(result["evidence"]["mode"], "baseline")
 
