@@ -13,9 +13,9 @@ dependency on `theme_facodi`.
 | `facodi.learning.analysis.result` | Immutable normalized output; separate human tag review metadata |
 | `facodi.learning.mapping` | Directed content-level related/prerequisite/recommended/supports proposal and Manager review |
 | `facodi.learning.course.mapping` | Reviewed course-level semantic relation evidence; native Odoo prerequisites remain canonical |
-| `facodi.learning.curriculum.reference` | Versioned identity and provenance for an external curriculum reference |
-| `facodi.learning.curriculum.unit` | Source-shaped curricular-unit facts such as code, credits, year, period and option group |
-| `facodi.learning.curriculum.coverage` | Reviewed FACODI evidence relating a standard course to an external curricular unit |
+| `facodi.learning.curriculum.reference` | Versioned external programme/study-plan identity and source facts |
+| `facodi.learning.curriculum.unit` | External curricular-unit facts belonging to one versioned reference |
+| `facodi.learning.curriculum.coverage` | Reviewed evidence linking a canonical FACODI course to an external curricular unit |
 
 Attempts are separate from successful results because failures also require
 history. Course candidates are not canonical courses: a resolved new candidate
@@ -286,7 +286,10 @@ coverage only for standard courses they own; Managers have global review authori
 
 Gap analysis is read-only and approved-only. `_facodi_coverage_summary()` computes
 per-unit `covered`, `partial` or `gap` status from approved coverage evidence and
-returns deterministic aggregate counts and source-credit totals. Proposed/rejected
+returns deterministic unit/status counts plus ordered unit summaries. Source credit
+values remain available on each `facodi.learning.curriculum.unit` as descriptive
+reference facts; the versioned coverage-summary payload does not publish or infer
+aggregate credit totals or any academic-recognition decision. Proposed/rejected
 relations do not alter the summary. No learner membership, progress or completion
 record is consulted, and the method performs no write, `sudo()`, network call or AI
 request.
@@ -346,14 +349,14 @@ Completed jobs cannot be reprocessed. Provider changes are allowed only while
 pending.
 
 Odoo `try_lock_for_update()` prevents simultaneous processing/review and is also
-the concurrency primitive for M3.1 course resolution, M3.3 course-mapping review
-and M3.4 curriculum-coverage review. M3.3 proposal generation uses a separate
-transaction advisory try-lock per source course because proposal identity spans a
-check-then-insert boundary and a wait/re-fetch strategy is not relied on inside the
-transaction's PostgreSQL snapshot. Prerequisite review also uses its own transaction
-advisory lock to serialize FACODI mutations of the native prerequisite graph before
-row locks and cycle validation. These locks are operational guards only; standard
-Odoo records and SQL constraints remain authoritative.
+the concurrency primitive for M3.1 course resolution and M3.3 course-mapping
+review. M3.3 proposal generation uses a separate transaction advisory try-lock per
+source course because proposal identity spans a check-then-insert boundary and a
+wait/re-fetch strategy is not relied on inside the transaction's PostgreSQL snapshot.
+Prerequisite review also uses its own transaction advisory lock to serialize FACODI
+mutations of the native prerequisite graph before row locks and cycle validation.
+These locks are operational guards only; standard Odoo records and SQL constraints
+remain authoritative.
 
 A job's processing state and terminal outcome are in one transaction: worker death
 rolls back to pending, so no timer-based lease/stale-worker mechanism is necessary.
@@ -378,9 +381,9 @@ Elevated learner operations are deliberately narrow: configuration-parameter rea
 and approved content/course relation ID lookups. Learner helpers return ordinary
 non-sudo standard records filtered by publication, native visibility/access and
 current website. Students cannot read raw jobs, provenance, transcript drafts,
-course candidates, mapping confidence/evidence, decision snapshots or curriculum
-reference/coverage audit models. M3.2 profile generation, M3.3 ranking and M3.4 gap
-analysis use no privilege elevation.
+course candidates, mapping confidence/evidence, curriculum audit records or
+decision snapshots. M3.2 profile generation, M3.3 ranking and M3.4 gap summaries
+use no privilege elevation.
 
 ## Source website and portability
 
@@ -394,16 +397,13 @@ install.
 Schema changes preserve old results and approvals; new attempt records begin with
 new executions, without invented historical attempts. M3.1 adds candidate schema,
 M3.2 adds only computed profile code, M3.3 adds an additive course-mapping audit
-table/fields/settings/views, and M3.4 adds only external curriculum-reference/unit
-and reviewed coverage schema plus backend views/read-only summary methods. No
-milestone rewrites old audit history. Back up the database and matching filestore
-before upgrades. Existing editorial pages remain outside this addon's ownership
-except for additive inherited QWeb fragments.
+table/fields/settings/views, and M3.4 adds external curriculum reference/unit/
+coverage audit tables. No milestone rewrites old audit history. Back up the database
+and matching filestore before upgrades. Existing editorial pages remain outside this
+addon's ownership except for additive inherited QWeb fragments.
 
 Referenced source/target slides use restrictive foreign keys for content mappings,
 so removing content cannot silently erase approved relation history. Archive
-historical content instead of deleting it. Course mappings likewise retain audited
-standard course references and are reviewed as history rather than disposable
-recommendation cache. Curriculum references/units and reviewed coverage are also
-audit records; archive or supersede source versions rather than rewriting external
-history.
+historical content instead of deleting it. Course mappings and curriculum coverage
+likewise retain audited standard/reference links and are reviewed as history rather
+than disposable recommendation cache.

@@ -18,3 +18,4 @@ from . import test_curriculum_ui
 from . import test_curriculum_lesti_case
 from . import test_curriculum_release_invariants
 from . import test_discovery_run
+from . import test_course_discovery
