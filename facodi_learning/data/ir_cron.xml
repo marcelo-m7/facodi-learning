@@ -9,4 +9,14 @@
         <field name="interval_type">minutes</field>
         <field name="active" eval="True"/>
     </record>
+
+    <record id="ir_cron_discover_facodi_learning_courses" model="ir.cron">
+        <field name="name">FACODI: Discover external courses</field>
+        <field name="model_id" ref="model_facodi_learning_discovery_run"/>
+        <field name="state">code</field>
+        <field name="code">model._cron_discover_courses()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="active" eval="True"/>
+    </record>
 </odoo>
