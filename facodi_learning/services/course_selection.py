@@ -140,7 +140,12 @@ def candidate_is_auto_approve_eligible(candidate, policy):
     return not reasons, reasons
 
 
-def evaluate_course_candidate(candidate, existing_channels, accepted_languages):
+def evaluate_course_candidate(
+    candidate,
+    existing_channels,
+    accepted_languages,
+    curriculum_context=None,
+):
     accepted_languages = {
         str(language).strip().lower()
         for language in (accepted_languages or ())
@@ -174,9 +179,22 @@ def evaluate_course_candidate(candidate, existing_channels, accepted_languages):
         else 0.0
     )
 
-    # M3.1 has no external curriculum reference yet. M3.4 will replace this
-    # neutral/full local baseline with curriculum-aware evidence.
-    coverage = 1.0
+    if curriculum_context is None:
+        coverage_result = {
+            "score": 1.0,
+            "evidence": {"mode": "baseline", "reference_ids": []},
+        }
+    else:
+        # Local import avoids making course_title_similarity depend on the
+        # curriculum service that itself reuses this deterministic primitive.
+        from .curriculum_coverage import score_candidate_curriculum_gap
+
+        coverage_result = score_candidate_curriculum_gap(
+            candidate.name,
+            curriculum_context,
+        )
+    coverage = coverage_result["score"]
+    coverage_evidence = coverage_result["evidence"]
 
     best_channel = None
     duplication_risk = 0.0
@@ -209,8 +227,18 @@ def evaluate_course_candidate(candidate, existing_channels, accepted_languages):
             if not language
             else f"Language {language} is outside the currently accepted set."
         ),
-        "No curriculum reference is active in M3.1; coverage uses the local baseline.",
     ]
+    if coverage_evidence.get("mode") == "curriculum-gap":
+        reasons.append(
+            "Curriculum gap evaluated against "
+            f"{coverage_evidence.get('best_programme') or 'the active reference'} / "
+            f"{coverage_evidence.get('best_unit_name') or 'matched unit'} "
+            f"({coverage:.4f} uncovered-need score)."
+        )
+    else:
+        reasons.append(
+            "No curriculum reference is active; coverage uses the M3.1 local baseline."
+        )
     if best_channel and duplication_risk >= 0.5:
         reasons.append(
             f"Possible existing course match: {best_channel.name} "
@@ -224,6 +252,7 @@ def evaluate_course_candidate(candidate, existing_channels, accepted_languages):
         "metadata_quality_score": round(float(metadata_quality), 4),
         "language_fit_score": round(float(language_fit), 4),
         "coverage_score": round(float(coverage), 4),
+        "coverage_evidence": coverage_evidence,
         "duplication_risk": round(float(duplication_risk), 4),
         "matched_channel_id": matched_channel_id,
         "recommendation": recommendation,
