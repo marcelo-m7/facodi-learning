@@ -31,6 +31,7 @@ class TestCurriculumCandidateSelection(TransactionCase):
                 "academic_year": "2026/27",
                 "source_url": "https://www.ualg.pt/curso/1941/plano",
                 "provider": "ualg-public-plan",
+                "external_id": "ualg-1941-2026-27-selection",
                 "selection_enabled": True,
             }
         )
