@@ -3,6 +3,7 @@ from . import analysis_result
 from . import learning_mapping
 from . import course_mapping
 from . import curriculum_reference
+from . import curriculum_selection
 from . import curriculum_coverage
 from . import res_config_settings
 from . import slide_slide

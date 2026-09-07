@@ -143,6 +143,7 @@ jobs:
 
       - name: Install addon and run Odoo tests
         run: |
+          set -o pipefail
           docker run --rm \
             --network facodi-learning-ci \
             -e HOST=facodi-learning-db \
@@ -158,7 +159,17 @@ jobs:
             -d facodi_learning_ci \
             -i facodi_learning \
             --test-tags /facodi_learning \
-            --stop-after-init
+            --stop-after-init \
+            2>&1 | tee /tmp/facodi-current-install.log
+
+      - name: Upload current install test log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: facodi-current-install-log
+          path: /tmp/facodi-current-install.log
+          if-no-files-found: warn
+          retention-days: 7
 
       - name: Upgrade addon and run regression tests
         run: |
