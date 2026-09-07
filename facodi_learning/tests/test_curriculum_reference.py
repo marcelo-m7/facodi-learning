@@ -43,6 +43,16 @@ class TestCurriculumReference(TransactionCase):
             with self.assertRaises(ValidationError), self.env.cr.savepoint():
                 Unit.create({"reference_id": reference.id, "external_unit_code": "invalid-%s" % vals["credits"], "name": "Invalid Unit", **vals})
 
+    def test_blank_reference_and_unit_names_are_rejected(self):
+        Reference = self.env["facodi.learning.curriculum.reference"].with_user(self.manager)
+        Unit = self.env["facodi.learning.curriculum.unit"].with_user(self.manager)
+        for field_name in ("institution", "programme_name", "academic_year", "provider", "source_url"):
+            with self.assertRaises(ValidationError), self.env.cr.savepoint():
+                Reference.create(self._reference_values(**{field_name: "   "}))
+        reference = Reference.create(self._reference_values())
+        with self.assertRaises(ValidationError), self.env.cr.savepoint():
+            Unit.create({"reference_id": reference.id, "name": "   ", "credits": 5.0})
+
     def test_officer_can_read_but_not_manage_reference_facts(self):
         reference = self.env["facodi.learning.curriculum.reference"].with_user(self.manager).create(self._reference_values())
         reference.with_user(self.officer).read(["programme_name"])
