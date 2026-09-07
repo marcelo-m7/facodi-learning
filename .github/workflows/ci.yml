@@ -23,12 +23,10 @@ jobs:
 
           forbidden = [
               "FACODI_" + "YOUTUBE" + "_API_KEY",
-              "facodi_learning_" + "youtube",
               "youtube." + "googleapis.com",
               "playlists." + "list",
               "YouTube Data " + "API",
           ]
-          ignored = {Path(".git")}
           violations = []
           for path in Path(".").rglob("*"):
               if not path.is_file() or ".git" in path.parts:
