@@ -43,6 +43,7 @@
                 <field name="state"/>
                 <field name="recommendation"/>
                 <field name="relevance_score" optional="hide"/>
+                <field name="coverage_score" optional="hide"/>
                 <field name="duplication_risk" optional="show"/>
                 <field name="matched_channel_id" optional="show"/>
                 <field name="resolved_channel_id" optional="show"/>
@@ -122,6 +123,9 @@
                             <field name="evaluation_reasons" readonly="1"/>
                             <field name="last_error" readonly="1" invisible="not last_error"/>
                         </group>
+                    </group>
+                    <group string="Curriculum Coverage Evidence" invisible="not coverage_evidence">
+                        <field name="coverage_evidence" readonly="1" nolabel="1"/>
                     </group>
 
                     <group string="Course Match">
