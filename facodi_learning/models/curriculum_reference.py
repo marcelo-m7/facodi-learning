@@ -1,3 +1,5 @@
+from urllib.parse import quote
+
 from odoo import api, fields, models
 from odoo.exceptions import AccessError, ValidationError
 
@@ -155,26 +157,153 @@ class FacodiLearningCurriculumReference(models.Model):
             grouped.append((year, units))
         return grouped
 
-    def _facodi_public_coverage_links(self):
+    def _facodi_public_coverage_map(self, website=None):
+        """Return reviewed curriculum coverage limited to learner-visible courses.
+
+        ACL elevation is restricted to the audit relation lookup. Course records are
+        re-read without sudo so native Odoo publication, visibility and website rules
+        remain authoritative for learner-facing pages.
+        """
         self.ensure_one()
         if not self._facodi_is_public():
-            return []
+            return {}
+
         coverages = self.env["facodi.learning.curriculum.coverage"].sudo().search(
             [
                 ("curriculum_unit_id.reference_id", "=", self.id),
                 ("state", "=", "approved"),
-                ("channel_id.is_published", "=", True),
             ],
-            order="curriculum_unit_id, channel_id",
+            order="curriculum_unit_id, channel_id, id",
         )
-        return [
-            {
-                "unit": coverage.curriculum_unit_id,
-                "channel": coverage.channel_id,
-                "coverage_type": coverage.coverage_type,
-            }
-            for coverage in coverages
+        if not coverages:
+            return {}
+
+        channel_ids = coverages.mapped("channel_id").ids
+        channel_model = self.env["slide.channel"].sudo(False)
+        domain = [
+            ("id", "in", channel_ids),
+            ("active", "=", True),
+            ("is_published", "=", True),
+            ("is_visible", "=", True),
         ]
+        if website:
+            domain.append(("website_id", "in", [False, website.id]))
+
+        visible_channels = channel_model.search(domain, order="sequence, id")
+        channel_by_id = {channel.id: channel for channel in visible_channels}
+        if not channel_by_id:
+            return {}
+
+        strength = {
+            "supports": 1,
+            "partial": 2,
+            "covers": 3,
+            "equivalent": 4,
+        }
+        labels = {
+            "supports": "Suporte complementar",
+            "partial": "Cobertura parcial",
+            "covers": "Cobertura curricular",
+            "equivalent": "Correspondência de conteúdo — não equivalência académica",
+        }
+        grouped = {}
+        by_unit_channel = {}
+        for coverage in coverages:
+            channel = channel_by_id.get(coverage.channel_id.id)
+            if not channel:
+                continue
+            key = (coverage.curriculum_unit_id.id, channel.id)
+            existing = by_unit_channel.get(key)
+            if existing and strength[existing.coverage_type] >= strength[coverage.coverage_type]:
+                continue
+            by_unit_channel[key] = coverage
+
+        for (unit_id, channel_id), coverage in by_unit_channel.items():
+            coverage_status = (
+                "covered"
+                if coverage.coverage_type in {"covers", "equivalent"}
+                else "partial"
+            )
+            grouped.setdefault(unit_id, []).append(
+                {
+                    "channel": channel_by_id[channel_id],
+                    "coverage_type": coverage.coverage_type,
+                    "coverage_label": labels[coverage.coverage_type],
+                    "coverage_status": coverage_status,
+                }
+            )
+
+        for rows in grouped.values():
+            rows.sort(key=lambda row: (row["channel"].sequence, row["channel"].id))
+        return grouped
+
+    def _facodi_public_unit_matrix(self, website=None):
+        self.ensure_one()
+        if not self._facodi_is_public():
+            return []
+
+        coverage_map = self._facodi_public_coverage_map(website=website)
+        matrix = []
+        for unit in self.unit_ids.sorted(key=lambda item: (item.sequence, item.id)):
+            rows = coverage_map.get(unit.id, [])
+            if any(row["coverage_status"] == "covered" for row in rows):
+                coverage_status = "covered"
+            elif rows:
+                coverage_status = "partial"
+            else:
+                coverage_status = "gap"
+            matrix.append(
+                {
+                    "unit": unit,
+                    "unit_url": unit._facodi_public_path(),
+                    "coverage_status": coverage_status,
+                    "published_course_count": len(rows),
+                    "coverage_rows": rows,
+                }
+            )
+        return matrix
+
+    def _facodi_public_unit_matrix_grouped(self, website=None):
+        self.ensure_one()
+        grouped = []
+        matrix = self._facodi_public_unit_matrix(website=website)
+        for year in sorted({entry["unit"].curricular_year for entry in matrix}):
+            grouped.append(
+                (
+                    year,
+                    [
+                        entry
+                        for entry in matrix
+                        if entry["unit"].curricular_year == year
+                    ],
+                )
+            )
+        return grouped
+
+    def _facodi_public_coverage_links(self, website=None):
+        self.ensure_one()
+        links = []
+        for unit_id, rows in self._facodi_public_coverage_map(website=website).items():
+            unit = self.env["facodi.learning.curriculum.unit"].browse(unit_id)
+            for row in rows:
+                links.append(
+                    {
+                        "unit": unit,
+                        "unit_url": unit._facodi_public_path(),
+                        "channel": row["channel"],
+                        "coverage_type": row["coverage_type"],
+                        "coverage_label": row["coverage_label"],
+                    }
+                )
+        links.sort(
+            key=lambda link: (
+                link["unit"].sequence,
+                link["unit"].id,
+                link["channel"].sequence,
+                link["channel"].id,
+            )
+        )
+        return links
 
 
 class FacodiLearningCurriculumUnit(models.Model):
@@ -300,3 +429,29 @@ class FacodiLearningCurriculumUnit(models.Model):
         from ..services.curriculum_coverage import build_curriculum_unit_coverage
 
         return build_curriculum_unit_coverage(self)
+
+    def _facodi_public_path(self):
+        self.ensure_one()
+        if not self.reference_id._facodi_is_public():
+            return False
+        return "/curriculos/%s/unidades/%s" % (
+            self.reference_id.id,
+            quote(self.external_unit_code or "", safe=""),
+        )
+
+    def _facodi_public_coverage_rows(self, website=None):
+        self.ensure_one()
+        if not self.reference_id._facodi_is_public():
+            return []
+        return self.reference_id._facodi_public_coverage_map(website=website).get(
+            self.id, []
+        )
+
+    def _facodi_public_coverage_status(self, website=None):
+        self.ensure_one()
+        rows = self._facodi_public_coverage_rows(website=website)
+        if any(row["coverage_status"] == "covered" for row in rows):
+            return "covered"
+        if rows:
+            return "partial"
+        return "gap"
