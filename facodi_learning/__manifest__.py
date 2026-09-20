@@ -11,7 +11,6 @@
         "security/ir.model.access.csv",
         "security/facodi_learning_security.xml",
         "data/ir_cron.xml",
-        "data/lesti_2026_27.xml",
         "views/slide_slide_views.xml",
         "views/analysis_views.xml",
         "views/course_candidate_views.xml",
@@ -24,6 +23,7 @@
         "views/website_slides.xml",
         "views/res_config_settings_views.xml",
     ],
+    "post_init_hook": "post_init_hook",
     "installable": True,
     "application": False,
 }
