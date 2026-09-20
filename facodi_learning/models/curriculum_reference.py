@@ -163,7 +163,7 @@ class FacodiLearningCurriculumReference(models.Model):
             [
                 ("curriculum_unit_id.reference_id", "=", self.id),
                 ("state", "=", "approved"),
-                ("channel_id.website_published", "=", True),
+                ("channel_id.is_published", "=", True),
             ],
             order="curriculum_unit_id, channel_id",
         )
