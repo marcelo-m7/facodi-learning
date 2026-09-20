@@ -1,0 +1,444 @@
+{
+  "reference": {
+    "institution": "Universidade do Algarve",
+    "programme_name": "Engenharia de Sistemas e Tecnologias Informáticas",
+    "external_programme_code": "1941",
+    "academic_year": "2026/27",
+    "source_url": "https://www.ualg.pt/curso/1941/plano",
+    "source_title": "Engenharia de Sistemas e Tecnologias Informáticas — Plano de estudos",
+    "provider": "ualg",
+    "external_id": "ualg-1941-2026-27",
+    "website_published": true,
+    "metadata": {
+      "source_kind": "official_study_plan",
+      "curation_note": "Curated from the official UAlg study-plan page; ambiguous repeated period occurrences are preserved in unit metadata.",
+      "source_verified_on": "2026-09-20",
+      "provenance_note": "No byte-level source snapshot hash is claimed; the curated fixture records the official source URL and verification date."
+    }
+  },
+  "units": [
+    {
+      "code": "19411003",
+      "name": "ÁLGEBRA LINEAR E GEOMETRIA ANALÍTICA",
+      "credits": 5,
+      "year": 1,
+      "period": "other",
+      "classification": "mandatory",
+      "sequence": 10,
+      "metadata": {
+        "source_occurrences": [
+          "semester_1",
+          "semester_2"
+        ]
+      }
+    },
+    {
+      "code": "19411002",
+      "name": "ANÁLISE MATEMÁTICA I",
+      "credits": 5,
+      "year": 1,
+      "period": "other",
+      "classification": "mandatory",
+      "sequence": 20,
+      "metadata": {
+        "source_occurrences": [
+          "semester_1",
+          "semester_2"
+        ]
+      }
+    },
+    {
+      "code": "19411008",
+      "name": "ANÁLISE MATEMÁTICA II",
+      "credits": 7,
+      "year": 1,
+      "period": "other",
+      "classification": "mandatory",
+      "sequence": 30,
+      "metadata": {
+        "source_occurrences": [
+          "semester_1",
+          "semester_2"
+        ]
+      }
+    },
+    {
+      "code": "19411005",
+      "name": "ARQUITETURA DE COMPUTADORES",
+      "credits": 5,
+      "year": 1,
+      "period": "semester_1",
+      "classification": "mandatory",
+      "sequence": 40
+    },
+    {
+      "code": "19411004",
+      "name": "FÍSICA",
+      "credits": 5,
+      "year": 1,
+      "period": "semester_1",
+      "classification": "mandatory",
+      "sequence": 50
+    },
+    {
+      "code": "19411000",
+      "name": "PROGRAMAÇÃO",
+      "credits": 5,
+      "year": 1,
+      "period": "semester_1",
+      "classification": "mandatory",
+      "sequence": 60
+    },
+    {
+      "code": "19411009",
+      "name": "SISTEMAS OPERATIVOS",
+      "credits": 5,
+      "year": 1,
+      "period": "semester_1",
+      "classification": "mandatory",
+      "sequence": 70
+    },
+    {
+      "code": "19411001",
+      "name": "AMBIENTES DE DESENVOLVIMENTO COLABORATIVO",
+      "credits": 5,
+      "year": 1,
+      "period": "semester_2",
+      "classification": "mandatory",
+      "sequence": 80
+    },
+    {
+      "code": "19411010",
+      "name": "GESTÃO",
+      "credits": 5,
+      "year": 1,
+      "period": "semester_2",
+      "classification": "mandatory",
+      "sequence": 90
+    },
+    {
+      "code": "19411006",
+      "name": "PROGRAMAÇÃO ORIENTADA A OBJETOS",
+      "credits": 5,
+      "year": 1,
+      "period": "semester_2",
+      "classification": "mandatory",
+      "sequence": 100
+    },
+    {
+      "code": "19411007",
+      "name": "TECNOLOGIAS WEB",
+      "credits": 5,
+      "year": 1,
+      "period": "semester_2",
+      "classification": "mandatory",
+      "sequence": 110
+    },
+    {
+      "code": "19411037",
+      "name": "OUTRA (OPÇÃO I - A ESCOLHER DENTRO DA UALG/ ISE)",
+      "credits": 3,
+      "year": 1,
+      "period": "semester_2",
+      "classification": "optional",
+      "option_group": "OPÇÃO I (LLE,CI,QAC)",
+      "sequence": 120
+    },
+    {
+      "code": "19411023",
+      "name": "TÉCNICAS DE COMUNICAÇÃO",
+      "credits": 3,
+      "year": 1,
+      "period": "semester_2",
+      "classification": "optional",
+      "option_group": "OPÇÃO I (LLE,CI,QAC)",
+      "sequence": 130
+    },
+    {
+      "code": "19411011",
+      "name": "ALGORITMOS E ESTRUTURAS DE DADOS",
+      "credits": 5,
+      "year": 2,
+      "period": "semester_1",
+      "classification": "mandatory",
+      "sequence": 210
+    },
+    {
+      "code": "19411013",
+      "name": "APRENDIZAGEM AUTOMÁTICA",
+      "credits": 5,
+      "year": 2,
+      "period": "semester_1",
+      "classification": "mandatory",
+      "sequence": 220
+    },
+    {
+      "code": "19411012",
+      "name": "BASE DE DADOS I",
+      "credits": 5,
+      "year": 2,
+      "period": "semester_1",
+      "classification": "mandatory",
+      "sequence": 230
+    },
+    {
+      "code": "19411015",
+      "name": "COMPUTAÇÃO VISUAL",
+      "credits": 5,
+      "year": 2,
+      "period": "semester_1",
+      "classification": "mandatory",
+      "sequence": 240
+    },
+    {
+      "code": "19411014",
+      "name": "REDES DE COMPUTADORES",
+      "credits": 5,
+      "year": 2,
+      "period": "semester_1",
+      "classification": "mandatory",
+      "sequence": 250
+    },
+    {
+      "code": "19411059",
+      "name": "DESENVOLVIMENTO DE JOGOS DIGITAIS",
+      "credits": 5,
+      "year": 2,
+      "period": "semester_1",
+      "classification": "optional",
+      "option_group": "OPÇÃO II (EE,CI,QAC)",
+      "sequence": 260
+    },
+    {
+      "code": "19411025",
+      "name": "MICROPROCESSADORES",
+      "credits": 5,
+      "year": 2,
+      "period": "semester_1",
+      "classification": "optional",
+      "option_group": "OPÇÃO II (EE,CI,QAC)",
+      "sequence": 270
+    },
+    {
+      "code": "19411038",
+      "name": "OUTRA (OPÇÃO II - A ESCOLHER DENTRO DA UALG/ ISE)",
+      "credits": 5,
+      "year": 2,
+      "period": "semester_1",
+      "classification": "optional",
+      "option_group": "OPÇÃO II (EE,CI,QAC)",
+      "sequence": 280
+    },
+    {
+      "code": "19411017",
+      "name": "BASE DE DADOS II",
+      "credits": 5,
+      "year": 2,
+      "period": "semester_2",
+      "classification": "mandatory",
+      "sequence": 310
+    },
+    {
+      "code": "19411019",
+      "name": "COMPUTAÇÃO MÓVEL",
+      "credits": 5,
+      "year": 2,
+      "period": "semester_2",
+      "classification": "mandatory",
+      "sequence": 320
+    },
+    {
+      "code": "19411016",
+      "name": "ENGENHARIA DE SOFTWARE",
+      "credits": 5,
+      "year": 2,
+      "period": "semester_2",
+      "classification": "mandatory",
+      "sequence": 330
+    },
+    {
+      "code": "19411018",
+      "name": "PROBABILIDADES E ESTATÍSTICA",
+      "credits": 5,
+      "year": 2,
+      "period": "semester_2",
+      "classification": "mandatory",
+      "sequence": 340
+    },
+    {
+      "code": "19411028",
+      "name": "COMPUTAÇÃO RECONFIGURÁVEL",
+      "credits": 5,
+      "year": 2,
+      "period": "semester_2",
+      "classification": "optional",
+      "option_group": "OPÇÃO III (EE)",
+      "sequence": 350
+    },
+    {
+      "code": "19411039",
+      "name": "OUTRA (OPÇÃO III - A ESCOLHER DENTRO DA UALG/ ISE)",
+      "credits": 5,
+      "year": 2,
+      "period": "semester_2",
+      "classification": "optional",
+      "option_group": "OPÇÃO III (EE)",
+      "sequence": 360
+    },
+    {
+      "code": "19411029",
+      "name": "COMPUTAÇÃO EM NUVEM",
+      "credits": 5,
+      "year": 2,
+      "period": "semester_2",
+      "classification": "optional",
+      "option_group": "OPÇÃO IV (CI, QAC)",
+      "sequence": 370
+    },
+    {
+      "code": "19411040",
+      "name": "OUTRA (OPÇÃO IV - A ESCOLHER DENTRO DA UALG/ ISE)",
+      "credits": 5,
+      "year": 2,
+      "period": "semester_2",
+      "classification": "optional",
+      "option_group": "OPÇÃO IV (CI, QAC)",
+      "sequence": 380
+    },
+    {
+      "code": "19411030",
+      "name": "PROJETO NA EMPRESA III",
+      "credits": 5,
+      "year": 2,
+      "period": "semester_2",
+      "classification": "unspecified",
+      "sequence": 390
+    },
+    {
+      "code": "19411020",
+      "name": "ANÁLISE DE DADOS E VISUALIZAÇÃO DA INFORMAÇÃO",
+      "credits": 5,
+      "year": 3,
+      "period": "semester_1",
+      "classification": "mandatory",
+      "sequence": 410
+    },
+    {
+      "code": "19411021",
+      "name": "DESENVOLVIMENTO DE APLICAÇÕES WEB",
+      "credits": 5,
+      "year": 3,
+      "period": "semester_1",
+      "classification": "mandatory",
+      "sequence": 420
+    },
+    {
+      "code": "19411022",
+      "name": "INTELIGÊNCIA ARTIFICIAL",
+      "credits": 5,
+      "year": 3,
+      "period": "semester_1",
+      "classification": "mandatory",
+      "sequence": 430
+    },
+    {
+      "code": "19411031",
+      "name": "LABORATÓRIO IoT",
+      "credits": 5,
+      "year": 3,
+      "period": "semester_1",
+      "classification": "optional",
+      "option_group": "OPÇÃO V (EE)",
+      "sequence": 440
+    },
+    {
+      "code": "19411041",
+      "name": "OUTRA (OPÇÃO V - A ESCOLHER DENTRO DA UALG/ ISE)",
+      "credits": 5,
+      "year": 3,
+      "period": "semester_1",
+      "classification": "optional",
+      "option_group": "OPÇÃO V (EE)",
+      "sequence": 450
+    },
+    {
+      "code": "19411049",
+      "name": "CIBERSEGURANÇA",
+      "credits": 5,
+      "year": 3,
+      "period": "semester_1",
+      "classification": "optional",
+      "option_group": "OPÇÃO VI (CI)",
+      "sequence": 460
+    },
+    {
+      "code": "19411042",
+      "name": "OUTRA (OPÇÃO VI - A ESCOLHER DENTRO DA UALG/ ISE)",
+      "credits": 5,
+      "year": 3,
+      "period": "semester_1",
+      "classification": "optional",
+      "option_group": "OPÇÃO VI (CI)",
+      "sequence": 470
+    },
+    {
+      "code": "15241279",
+      "name": "AUTOMAÇÃO E ROBÓTICA",
+      "credits": 5,
+      "year": 3,
+      "period": "semester_1",
+      "classification": "optional",
+      "option_group": "OPÇÃO VII (EE,CI,QAC)",
+      "sequence": 480
+    },
+    {
+      "code": "19411050",
+      "name": "DESENVOLVIMENTO DE APLICAÇÕES COM LOW-CODE",
+      "credits": 5,
+      "year": 3,
+      "period": "semester_1",
+      "classification": "optional",
+      "option_group": "OPÇÃO VII (EE,CI,QAC)",
+      "sequence": 490
+    },
+    {
+      "code": "19411043",
+      "name": "OUTRA (OPÇÃO VII - A ESCOLHER DENTRO DA UALG/ ISE)",
+      "credits": 5,
+      "year": 3,
+      "period": "semester_1",
+      "classification": "optional",
+      "option_group": "OPÇÃO VII (EE,CI,QAC)",
+      "sequence": 500
+    },
+    {
+      "code": "19411034",
+      "name": "PROJETO NA EMPRESA IV",
+      "credits": 5,
+      "year": 3,
+      "period": "semester_1",
+      "classification": "unspecified",
+      "sequence": 510
+    },
+    {
+      "code": "19411035",
+      "name": "ESTÁGIO",
+      "credits": 30,
+      "year": 3,
+      "period": "semester_2",
+      "classification": "optional",
+      "option_group": "OPÇÃO VIII (CI)",
+      "sequence": 610
+    },
+    {
+      "code": "19411036",
+      "name": "PROJETO",
+      "credits": 30,
+      "year": 3,
+      "period": "semester_2",
+      "classification": "optional",
+      "option_group": "OPÇÃO VIII (CI)",
+      "sequence": 620
+    }
+  ]
+}

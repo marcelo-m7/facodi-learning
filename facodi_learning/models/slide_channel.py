@@ -92,3 +92,38 @@ class SlideChannel(models.Model):
             domain.append(("website_id", "in", [False, website.id]))
 
         return channel.search(domain, order="sequence, id", limit=8)
+
+
+    def _facodi_public_curriculum_links(self, website=None):
+        """Return approved links from this published course to public official curricula."""
+        self.ensure_one()
+        channel = self.sudo(False)
+        channel.check_access("read")
+        domain = [
+            ("channel_id", "=", channel.id),
+            ("state", "=", "approved"),
+            ("curriculum_unit_id.reference_id.website_published", "=", True),
+            ("curriculum_unit_id.reference_id.validated_at", "!=", False),
+        ]
+        coverages = self.env["facodi.learning.curriculum.coverage"].sudo().search(
+            domain, order="curriculum_unit_id, id"
+        )
+        links = []
+        seen = set()
+        for coverage in coverages:
+            reference = coverage.curriculum_unit_id.reference_id
+            key = (reference.id, coverage.curriculum_unit_id.id)
+            if key in seen:
+                continue
+            seen.add(key)
+            links.append(
+                {
+                    "reference_id": reference.id,
+                    "programme_name": reference.programme_name,
+                    "academic_year": reference.academic_year,
+                    "unit_name": coverage.curriculum_unit_id.name,
+                    "unit_code": coverage.curriculum_unit_id.external_unit_code,
+                    "coverage_type": coverage.coverage_type,
+                }
+            )
+        return links

@@ -83,5 +83,39 @@ for model_name in (
 ):
     if model_name not in env.registry.models:
         raise AssertionError(f"M3.4 model was not installed: {model_name}")
-    if env[model_name].search_count([]):
-        raise AssertionError(f"M3.4 fabricated curriculum rows during upgrade: {model_name}")
+
+lesti = env["facodi.learning.curriculum.reference"].search(
+    [
+        ("provider", "=", "ualg"),
+        ("external_id", "=", "ualg-1941-2026-27"),
+    ]
+)
+if len(lesti) != 1:
+    raise AssertionError(
+        f"Expected exactly one curated UAlg LESTI reference after upgrade, got {len(lesti)}."
+    )
+if (
+    lesti.external_programme_code != "1941"
+    or lesti.academic_year != "2026/27"
+    or not lesti.validated_at
+    or not lesti.website_published
+):
+    raise AssertionError("Curated UAlg LESTI reference has an invalid public identity/state.")
+
+units = env["facodi.learning.curriculum.unit"].search(
+    [("reference_id", "=", lesti.id)]
+)
+if len(units) != 43 or len(set(units.mapped("external_unit_code"))) != 43:
+    raise AssertionError(
+        f"Expected 43 distinct curated LESTI curricular units after upgrade, got {len(units)}."
+    )
+if env["facodi.learning.curriculum.reference"].search_count(
+    [("id", "!=", lesti.id)]
+):
+    raise AssertionError("Upgrade created an unexpected curriculum reference.")
+if env["facodi.learning.curriculum.unit"].search_count(
+    [("reference_id", "!=", lesti.id)]
+):
+    raise AssertionError("Upgrade created curricular units outside the curated LESTI reference.")
+if env["facodi.learning.curriculum.coverage"].search_count([]):
+    raise AssertionError("Upgrade must not fabricate curriculum coverage decisions.")

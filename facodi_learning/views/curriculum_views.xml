@@ -34,6 +34,8 @@
                 <field name="provider" optional="show"/>
                 <field name="external_id" optional="hide"/>
                 <field name="source_url" optional="hide"/>
+                <field name="website_published" optional="show"/>
+                <field name="source_hash" optional="hide"/>
                 <field name="imported_at" optional="hide"/>
                 <field name="validated_at" optional="hide"/>
             </list>
@@ -56,12 +58,16 @@
                             <field name="external_programme_code"/>
                             <field name="academic_year"/>
                             <field name="source_url" widget="url"/>
+                            <field name="source_title"/>
+                            <field name="source_hash"/>
+                            <field name="source_retrieved_at"/>
                         </group>
                         <group string="Reference Identity">
                             <field name="provider"/>
                             <field name="external_id"/>
                             <field name="imported_at" readonly="1"/>
                             <field name="validated_at"/>
+                            <field name="website_published"/>
                         </group>
                     </group>
                     <group string="Source Metadata">

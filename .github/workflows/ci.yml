@@ -49,6 +49,9 @@ jobs:
               raise SystemExit(1)
           PY
 
+      - name: Validate curated curriculum fixture
+        run: python scripts/validate_curriculum_fixture.py
+
       - name: Start PostgreSQL 16
         run: |
           docker network create facodi-learning-ci
