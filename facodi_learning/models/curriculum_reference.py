@@ -13,7 +13,6 @@ _REFERENCE_REVIEWED_FACT_FIELDS = {
     "source_title",
     "source_hash",
     "source_retrieved_at",
-    "website_published",
     "metadata",
 }
 _UNIT_IDENTITY_FIELDS = {"reference_id", "external_unit_code"}
