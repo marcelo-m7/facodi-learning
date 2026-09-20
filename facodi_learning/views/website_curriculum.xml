@@ -107,7 +107,7 @@
                                 <div class="list-group">
                                     <a t-foreach="coverage_links"
                                        t-as="link"
-                                       t-att-href="'/slides/%s' % slug(link['channel'])"
+                                       t-att-href="link['channel'].website_url"
                                        class="list-group-item list-group-item-action">
                                         <strong t-esc="link['unit'].name"/>
                                         <span class="text-muted"> — </span>
