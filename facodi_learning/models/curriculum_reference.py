@@ -10,6 +10,10 @@ _REFERENCE_REVIEWED_FACT_FIELDS = {
     "external_programme_code",
     "academic_year",
     "source_url",
+    "source_title",
+    "source_hash",
+    "source_retrieved_at",
+    "website_published",
     "metadata",
 }
 _UNIT_IDENTITY_FIELDS = {"reference_id", "external_unit_code"}
@@ -36,6 +40,14 @@ class FacodiLearningCurriculumReference(models.Model):
     external_programme_code = fields.Char(index=True)
     academic_year = fields.Char(required=True, index=True)
     source_url = fields.Char()
+    source_title = fields.Char()
+    source_hash = fields.Char(index=True)
+    source_retrieved_at = fields.Datetime()
+    website_published = fields.Boolean(
+        default=False,
+        index=True,
+        help="Expose this validated external curriculum reference on the public FACODI website.",
+    )
     provider = fields.Char(required=True, default="manual", index=True)
     external_id = fields.Char(required=True, index=True)
     metadata = fields.Json()
@@ -129,6 +141,41 @@ class FacodiLearningCurriculumReference(models.Model):
         from ..services.curriculum_coverage import build_curriculum_reference_coverage
 
         return build_curriculum_reference_coverage(self)
+
+    def _facodi_is_public(self):
+        self.ensure_one()
+        return bool(self.website_published and self.validated_at)
+
+    def _facodi_public_units_grouped(self):
+        self.ensure_one()
+        grouped = []
+        for year in sorted(set(self.unit_ids.mapped("curricular_year"))):
+            units = self.unit_ids.filtered(lambda unit: unit.curricular_year == year).sorted(
+                key=lambda unit: (unit.sequence, unit.id)
+            )
+            grouped.append((year, units))
+        return grouped
+
+    def _facodi_public_coverage_links(self):
+        self.ensure_one()
+        if not self._facodi_is_public():
+            return []
+        coverages = self.env["facodi.learning.curriculum.coverage"].sudo().search(
+            [
+                ("curriculum_unit_id.reference_id", "=", self.id),
+                ("state", "=", "approved"),
+                ("channel_id.website_published", "=", True),
+            ],
+            order="curriculum_unit_id, channel_id",
+        )
+        return [
+            {
+                "unit": coverage.curriculum_unit_id,
+                "channel": coverage.channel_id,
+                "coverage_type": coverage.coverage_type,
+            }
+            for coverage in coverages
+        ]
 
 
 class FacodiLearningCurriculumUnit(models.Model):
