@@ -36,6 +36,9 @@ def ensure_lesti_2026_27(env):
     """
     payload = _load_fixture()
     reference_values = dict(payload["reference"])
+    # Validation is an operational human-curation state. Timestamp it at the
+    # installation/reconciliation event instead of fabricating a source-fetch time.
+    reference_values["validated_at"] = fields.Datetime.now()
     Reference = env["facodi.learning.curriculum.reference"].sudo()
     Unit = env["facodi.learning.curriculum.unit"].sudo()
 
@@ -60,9 +63,7 @@ def ensure_lesti_2026_27(env):
         if identity_matches:
             operational = {"website_published": True}
             if not reference.validated_at:
-                operational["validated_at"] = fields.Datetime.to_datetime(
-                    reference_values["validated_at"]
-                )
+                operational["validated_at"] = fields.Datetime.now()
             reference.write(operational)
 
             if not reference._has_terminal_coverage():
