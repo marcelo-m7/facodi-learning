@@ -1,3 +1,28 @@
+# Validation — 2026-09-20
+
+## 19.0.1.7.0 — Public curriculum golden path
+
+The release intentionally changes one earlier M3.4 invariant: instead of shipping
+zero curriculum rows forever, installation/upgrade now reconciles exactly one reviewed
+external reference — UAlg LESTI 2026/27 — from the versioned fixture
+`facodi_learning/data/lesti_2026_27.json`.
+
+The release gate requires:
+- exactly one `ualg / ualg-1941-2026-27` reference;
+- programme code `1941`, academic year `2026/27`, validated/public state;
+- 43 distinct curricular-unit codes from the official study-plan source;
+- zero automatically-created `facodi.learning.curriculum.coverage` decisions;
+- preservation of pre-M3.4 standard courses, content, prerequisites, analysis history,
+  approved content mappings and approved course mappings;
+- public curriculum routes expose only validated and explicitly published references;
+- approved curriculum links on course pages require Manager-reviewed coverage.
+
+This is a deliberate product milestone and not a claim of UAlg academic equivalence,
+credit recognition or automatic syllabus matching. `slide.channel` remains the only
+canonical FACODI course.
+
+---
+
 # Validation — 2026-09-06
 
 ## M3.4 Curriculum Reference & Coverage
@@ -46,11 +71,12 @@ credit-recognition workflow or second course/prerequisite model.
   (`19411036`, 30 ECTS) option group as external source facts. It explicitly proves
   that year/semester/option-group data does not infer native prerequisites or
   official equivalence/credit recognition.
-- **Release invariants.** Exact head
+- **Historical M3.4 release invariant.** Exact head
   `327d57838c8c11a19de6b82bc219a48ddf73b498`, run `34002182578`, passed clean
-  install and upgrade while asserting that M3.4 ships no curriculum seed records
-  and that read-only summary/workspace operations do not mutate existing standard
-  course prerequisite state.
+  install and upgrade under the original backend-only contract. Version 19.0.1.7.0
+  intentionally supersedes only the zero-seed portion by bootstrapping the single
+  curated LESTI reference; non-mutation of standard course/prerequisite state remains
+  required.
 
 ### M3.4 boundaries validated
 
@@ -64,10 +90,10 @@ credit-recognition workflow or second course/prerequisite model.
   `partial` or `gap`; proposed/rejected rows do not affect results.
 - Curriculum year, period, sequence and option group never write
   `slide.channel.prerequisite_channel_ids`.
-- Public/Portal cannot read curriculum audit models and M3.4 adds no public website
-  curriculum route.
-- No external curriculum fetcher, scraper, scheduled sync, AI matcher or UAlg seed
-  is bundled in M3.4. Provider ingestion remains a later milestone.
+- Public/Portal still cannot read curriculum audit models directly; version 19.0.1.7.0
+  adds a narrow public route for validated, explicitly published references only.
+- No live curriculum scraper, scheduled sync or AI matcher is bundled. The LESTI
+  fixture is curated source evidence and creates no automatic coverage decisions.
 
 Release version: `19.0.1.5.0`. The final exact-head CI for the version/documentation
 head must pass the same clean-install and upgrade gates before the pull request is
