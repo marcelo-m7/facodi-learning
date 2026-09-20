@@ -86,13 +86,20 @@ class TestCurriculumUI(TransactionCase):
             action["context"]["default_channel_id"], self.course.id
         )
 
-    def test_no_public_curriculum_qweb_route_is_added(self):
-        qweb_views = self.env["ir.ui.view"].search(
-            [
-                ("type", "=", "qweb"),
-                "|",
-                ("key", "ilike", "facodi_learning%curriculum%"),
-                ("name", "ilike", "FACODI%Curriculum%"),
-            ]
+    def test_public_curriculum_qweb_views_are_explicit_and_standard_first(self):
+        index = self.env.ref("facodi_learning.curriculum_public_index")
+        detail = self.env.ref("facodi_learning.curriculum_public_detail")
+        course_link = self.env.ref(
+            "facodi_learning.approved_course_curriculum_links"
         )
-        self.assertFalse(qweb_views)
+
+        self.assertEqual(index.type, "qweb")
+        self.assertEqual(detail.type, "qweb")
+        self.assertEqual(course_link.type, "qweb")
+        self.assertIn("website.layout", index.arch_db)
+        self.assertIn("website.layout", detail.arch_db)
+        self.assertIn("source_url", detail.arch_db)
+        self.assertIn("coverage_links", detail.arch_db)
+        self.assertEqual(course_link.inherit_id.key, "website_slides.course_main")
+        self.assertNotIn("slide.slide", detail.arch_db)
+        self.assertNotIn("facodi.learning.curriculum.coverage", detail.arch_db)
