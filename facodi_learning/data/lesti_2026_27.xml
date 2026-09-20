@@ -1,0 +1,469 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <record id="curriculum_lesti_2026_27" model="facodi.learning.curriculum.reference">
+        <field name="institution">Universidade do Algarve</field>
+        <field name="programme_name">Engenharia de Sistemas e Tecnologias Informáticas</field>
+        <field name="external_programme_code">1941</field>
+        <field name="academic_year">2026/27</field>
+        <field name="source_url">https://www.ualg.pt/curso/1941/plano</field>
+        <field name="source_title">Engenharia de Sistemas e Tecnologias Informáticas — Plano de estudos</field>
+        <field name="source_hash">1dce2c46045ea47e93911ddfd26c3de0fcd4a6d2ec48d056d52ff6443ea10269</field>
+        <field name="source_retrieved_at">2026-09-20 20:00:00</field>
+        <field name="provider">ualg</field>
+        <field name="external_id">ualg-1941-2026-27</field>
+        <field name="validated_at">2026-09-20 20:00:00</field>
+        <field name="website_published" eval="True"/>
+        <field name="metadata" eval="{'source_kind': 'official_study_plan', 'curation_note': 'Curated from the official UAlg study-plan page; ambiguous repeated period occurrences are preserved in unit metadata.'}"/>
+    </record>
+    <record id="curriculum_lesti_2026_27_unit_19411003" model="facodi.learning.curriculum.unit">
+        <field name="reference_id" ref="curriculum_lesti_2026_27"/>
+        <field name="external_unit_code">19411003</field>
+        <field name="name">ÁLGEBRA LINEAR E GEOMETRIA ANALÍTICA</field>
+        <field name="credits">5</field>
+        <field name="curricular_year">1</field>
+        <field name="period">other</field>
+        <field name="classification">mandatory</field>
+        <field name="sequence">10</field>
+        <field name="metadata" eval="{'source_occurrences': ['semester_1', 'semester_2']}"/>
+    </record>
+    <record id="curriculum_lesti_2026_27_unit_19411002" model="facodi.learning.curriculum.unit">
+        <field name="reference_id" ref="curriculum_lesti_2026_27"/>
+        <field name="external_unit_code">19411002</field>
+        <field name="name">ANÁLISE MATEMÁTICA I</field>
+        <field name="credits">5</field>
+        <field name="curricular_year">1</field>
+        <field name="period">other</field>
+        <field name="classification">mandatory</field>
+        <field name="sequence">20</field>
+        <field name="metadata" eval="{'source_occurrences': ['semester_1', 'semester_2']}"/>
+    </record>
+    <record id="curriculum_lesti_2026_27_unit_19411008" model="facodi.learning.curriculum.unit">
+        <field name="reference_id" ref="curriculum_lesti_2026_27"/>
+        <field name="external_unit_code">19411008</field>
+        <field name="name">ANÁLISE MATEMÁTICA II</field>
+        <field name="credits">7</field>
+        <field name="curricular_year">1</field>
+        <field name="period">other</field>
+        <field name="classification">mandatory</field>
+        <field name="sequence">30</field>
+        <field name="metadata" eval="{'source_occurrences': ['semester_1', 'semester_2']}"/>
+    </record>
+    <record id="curriculum_lesti_2026_27_unit_19411005" model="facodi.learning.curriculum.unit">
+        <field name="reference_id" ref="curriculum_lesti_2026_27"/>
+        <field name="external_unit_code">19411005</field>
+        <field name="name">ARQUITETURA DE COMPUTADORES</field>
+        <field name="credits">5</field>
+        <field name="curricular_year">1</field>
+        <field name="period">semester_1</field>
+        <field name="classification">mandatory</field>
+        <field name="sequence">40</field>
+    </record>
+    <record id="curriculum_lesti_2026_27_unit_19411004" model="facodi.learning.curriculum.unit">
+        <field name="reference_id" ref="curriculum_lesti_2026_27"/>
+        <field name="external_unit_code">19411004</field>
+        <field name="name">FÍSICA</field>
+        <field name="credits">5</field>
+        <field name="curricular_year">1</field>
+        <field name="period">semester_1</field>
+        <field name="classification">mandatory</field>
+        <field name="sequence">50</field>
+    </record>
+    <record id="curriculum_lesti_2026_27_unit_19411000" model="facodi.learning.curriculum.unit">
+        <field name="reference_id" ref="curriculum_lesti_2026_27"/>
+        <field name="external_unit_code">19411000</field>
+        <field name="name">PROGRAMAÇÃO</field>
+        <field name="credits">5</field>
+        <field name="curricular_year">1</field>
+        <field name="period">semester_1</field>
+        <field name="classification">mandatory</field>
+        <field name="sequence">60</field>
+    </record>
+    <record id="curriculum_lesti_2026_27_unit_19411009" model="facodi.learning.curriculum.unit">
+        <field name="reference_id" ref="curriculum_lesti_2026_27"/>
+        <field name="external_unit_code">19411009</field>
+        <field name="name">SISTEMAS OPERATIVOS</field>
+        <field name="credits">5</field>
+        <field name="curricular_year">1</field>
+        <field name="period">semester_1</field>
+        <field name="classification">mandatory</field>
+        <field name="sequence">70</field>
+    </record>
+    <record id="curriculum_lesti_2026_27_unit_19411001" model="facodi.learning.curriculum.unit">
+        <field name="reference_id" ref="curriculum_lesti_2026_27"/>
+        <field name="external_unit_code">19411001</field>
+        <field name="name">AMBIENTES DE DESENVOLVIMENTO COLABORATIVO</field>
+        <field name="credits">5</field>
+        <field name="curricular_year">1</field>
+        <field name="period">semester_2</field>
+        <field name="classification">mandatory</field>
+        <field name="sequence">80</field>
+    </record>
+    <record id="curriculum_lesti_2026_27_unit_19411010" model="facodi.learning.curriculum.unit">
+        <field name="reference_id" ref="curriculum_lesti_2026_27"/>
+        <field name="external_unit_code">19411010</field>
+        <field name="name">GESTÃO</field>
+        <field name="credits">5</field>
+        <field name="curricular_year">1</field>
+        <field name="period">semester_2</field>
+        <field name="classification">mandatory</field>
+        <field name="sequence">90</field>
+    </record>
+    <record id="curriculum_lesti_2026_27_unit_19411006" model="facodi.learning.curriculum.unit">
+        <field name="reference_id" ref="curriculum_lesti_2026_27"/>
+        <field name="external_unit_code">19411006</field>
+        <field name="name">PROGRAMAÇÃO ORIENTADA A OBJETOS</field>
+        <field name="credits">5</field>
+        <field name="curricular_year">1</field>
+        <field name="period">semester_2</field>
+        <field name="classification">mandatory</field>
+        <field name="sequence">100</field>
+    </record>
+    <record id="curriculum_lesti_2026_27_unit_19411007" model="facodi.learning.curriculum.unit">
+        <field name="reference_id" ref="curriculum_lesti_2026_27"/>
+        <field name="external_unit_code">19411007</field>
+        <field name="name">TECNOLOGIAS WEB</field>
+        <field name="credits">5</field>
+        <field name="curricular_year">1</field>
+        <field name="period">semester_2</field>
+        <field name="classification">mandatory</field>
+        <field name="sequence">110</field>
+    </record>
+    <record id="curriculum_lesti_2026_27_unit_19411037" model="facodi.learning.curriculum.unit">
+        <field name="reference_id" ref="curriculum_lesti_2026_27"/>
+        <field name="external_unit_code">19411037</field>
+        <field name="name">OUTRA (OPÇÃO I - A ESCOLHER DENTRO DA UALG/ ISE)</field>
+        <field name="credits">3</field>
+        <field name="curricular_year">1</field>
+        <field name="period">semester_2</field>
+        <field name="classification">optional</field>
+        <field name="option_group">OPÇÃO I (LLE,CI,QAC)</field>
+        <field name="sequence">120</field>
+    </record>
+    <record id="curriculum_lesti_2026_27_unit_19411023" model="facodi.learning.curriculum.unit">
+        <field name="reference_id" ref="curriculum_lesti_2026_27"/>
+        <field name="external_unit_code">19411023</field>
+        <field name="name">TÉCNICAS DE COMUNICAÇÃO</field>
+        <field name="credits">3</field>
+        <field name="curricular_year">1</field>
+        <field name="period">semester_2</field>
+        <field name="classification">optional</field>
+        <field name="option_group">OPÇÃO I (LLE,CI,QAC)</field>
+        <field name="sequence">130</field>
+    </record>
+    <record id="curriculum_lesti_2026_27_unit_19411011" model="facodi.learning.curriculum.unit">
+        <field name="reference_id" ref="curriculum_lesti_2026_27"/>
+        <field name="external_unit_code">19411011</field>
+        <field name="name">ALGORITMOS E ESTRUTURAS DE DADOS</field>
+        <field name="credits">5</field>
+        <field name="curricular_year">2</field>
+        <field name="period">semester_1</field>
+        <field name="classification">mandatory</field>
+        <field name="sequence">210</field>
+    </record>
+    <record id="curriculum_lesti_2026_27_unit_19411013" model="facodi.learning.curriculum.unit">
+        <field name="reference_id" ref="curriculum_lesti_2026_27"/>
+        <field name="external_unit_code">19411013</field>
+        <field name="name">APRENDIZAGEM AUTOMÁTICA</field>
+        <field name="credits">5</field>
+        <field name="curricular_year">2</field>
+        <field name="period">semester_1</field>
+        <field name="classification">mandatory</field>
+        <field name="sequence">220</field>
+    </record>
+    <record id="curriculum_lesti_2026_27_unit_19411012" model="facodi.learning.curriculum.unit">
+        <field name="reference_id" ref="curriculum_lesti_2026_27"/>
+        <field name="external_unit_code">19411012</field>
+        <field name="name">BASE DE DADOS I</field>
+        <field name="credits">5</field>
+        <field name="curricular_year">2</field>
+        <field name="period">semester_1</field>
+        <field name="classification">mandatory</field>
+        <field name="sequence">230</field>
+    </record>
+    <record id="curriculum_lesti_2026_27_unit_19411015" model="facodi.learning.curriculum.unit">
+        <field name="reference_id" ref="curriculum_lesti_2026_27"/>
+        <field name="external_unit_code">19411015</field>
+        <field name="name">COMPUTAÇÃO VISUAL</field>
+        <field name="credits">5</field>
+        <field name="curricular_year">2</field>
+        <field name="period">semester_1</field>
+        <field name="classification">mandatory</field>
+        <field name="sequence">240</field>
+    </record>
+    <record id="curriculum_lesti_2026_27_unit_19411014" model="facodi.learning.curriculum.unit">
+        <field name="reference_id" ref="curriculum_lesti_2026_27"/>
+        <field name="external_unit_code">19411014</field>
+        <field name="name">REDES DE COMPUTADORES</field>
+        <field name="credits">5</field>
+        <field name="curricular_year">2</field>
+        <field name="period">semester_1</field>
+        <field name="classification">mandatory</field>
+        <field name="sequence">250</field>
+    </record>
+    <record id="curriculum_lesti_2026_27_unit_19411059" model="facodi.learning.curriculum.unit">
+        <field name="reference_id" ref="curriculum_lesti_2026_27"/>
+        <field name="external_unit_code">19411059</field>
+        <field name="name">DESENVOLVIMENTO DE JOGOS DIGITAIS</field>
+        <field name="credits">5</field>
+        <field name="curricular_year">2</field>
+        <field name="period">semester_1</field>
+        <field name="classification">optional</field>
+        <field name="option_group">OPÇÃO II (EE,CI,QAC)</field>
+        <field name="sequence">260</field>
+    </record>
+    <record id="curriculum_lesti_2026_27_unit_19411025" model="facodi.learning.curriculum.unit">
+        <field name="reference_id" ref="curriculum_lesti_2026_27"/>
+        <field name="external_unit_code">19411025</field>
+        <field name="name">MICROPROCESSADORES</field>
+        <field name="credits">5</field>
+        <field name="curricular_year">2</field>
+        <field name="period">semester_1</field>
+        <field name="classification">optional</field>
+        <field name="option_group">OPÇÃO II (EE,CI,QAC)</field>
+        <field name="sequence">270</field>
+    </record>
+    <record id="curriculum_lesti_2026_27_unit_19411038" model="facodi.learning.curriculum.unit">
+        <field name="reference_id" ref="curriculum_lesti_2026_27"/>
+        <field name="external_unit_code">19411038</field>
+        <field name="name">OUTRA (OPÇÃO II - A ESCOLHER DENTRO DA UALG/ ISE)</field>
+        <field name="credits">5</field>
+        <field name="curricular_year">2</field>
+        <field name="period">semester_1</field>
+        <field name="classification">optional</field>
+        <field name="option_group">OPÇÃO II (EE,CI,QAC)</field>
+        <field name="sequence">280</field>
+    </record>
+    <record id="curriculum_lesti_2026_27_unit_19411017" model="facodi.learning.curriculum.unit">
+        <field name="reference_id" ref="curriculum_lesti_2026_27"/>
+        <field name="external_unit_code">19411017</field>
+        <field name="name">BASE DE DADOS II</field>
+        <field name="credits">5</field>
+        <field name="curricular_year">2</field>
+        <field name="period">semester_2</field>
+        <field name="classification">mandatory</field>
+        <field name="sequence">310</field>
+    </record>
+    <record id="curriculum_lesti_2026_27_unit_19411019" model="facodi.learning.curriculum.unit">
+        <field name="reference_id" ref="curriculum_lesti_2026_27"/>
+        <field name="external_unit_code">19411019</field>
+        <field name="name">COMPUTAÇÃO MÓVEL</field>
+        <field name="credits">5</field>
+        <field name="curricular_year">2</field>
+        <field name="period">semester_2</field>
+        <field name="classification">mandatory</field>
+        <field name="sequence">320</field>
+    </record>
+    <record id="curriculum_lesti_2026_27_unit_19411016" model="facodi.learning.curriculum.unit">
+        <field name="reference_id" ref="curriculum_lesti_2026_27"/>
+        <field name="external_unit_code">19411016</field>
+        <field name="name">ENGENHARIA DE SOFTWARE</field>
+        <field name="credits">5</field>
+        <field name="curricular_year">2</field>
+        <field name="period">semester_2</field>
+        <field name="classification">mandatory</field>
+        <field name="sequence">330</field>
+    </record>
+    <record id="curriculum_lesti_2026_27_unit_19411018" model="facodi.learning.curriculum.unit">
+        <field name="reference_id" ref="curriculum_lesti_2026_27"/>
+        <field name="external_unit_code">19411018</field>
+        <field name="name">PROBABILIDADES E ESTATÍSTICA</field>
+        <field name="credits">5</field>
+        <field name="curricular_year">2</field>
+        <field name="period">semester_2</field>
+        <field name="classification">mandatory</field>
+        <field name="sequence">340</field>
+    </record>
+    <record id="curriculum_lesti_2026_27_unit_19411028" model="facodi.learning.curriculum.unit">
+        <field name="reference_id" ref="curriculum_lesti_2026_27"/>
+        <field name="external_unit_code">19411028</field>
+        <field name="name">COMPUTAÇÃO RECONFIGURÁVEL</field>
+        <field name="credits">5</field>
+        <field name="curricular_year">2</field>
+        <field name="period">semester_2</field>
+        <field name="classification">optional</field>
+        <field name="option_group">OPÇÃO III (EE)</field>
+        <field name="sequence">350</field>
+    </record>
+    <record id="curriculum_lesti_2026_27_unit_19411039" model="facodi.learning.curriculum.unit">
+        <field name="reference_id" ref="curriculum_lesti_2026_27"/>
+        <field name="external_unit_code">19411039</field>
+        <field name="name">OUTRA (OPÇÃO III - A ESCOLHER DENTRO DA UALG/ ISE)</field>
+        <field name="credits">5</field>
+        <field name="curricular_year">2</field>
+        <field name="period">semester_2</field>
+        <field name="classification">optional</field>
+        <field name="option_group">OPÇÃO III (EE)</field>
+        <field name="sequence">360</field>
+    </record>
+    <record id="curriculum_lesti_2026_27_unit_19411029" model="facodi.learning.curriculum.unit">
+        <field name="reference_id" ref="curriculum_lesti_2026_27"/>
+        <field name="external_unit_code">19411029</field>
+        <field name="name">COMPUTAÇÃO EM NUVEM</field>
+        <field name="credits">5</field>
+        <field name="curricular_year">2</field>
+        <field name="period">semester_2</field>
+        <field name="classification">optional</field>
+        <field name="option_group">OPÇÃO IV (CI, QAC)</field>
+        <field name="sequence">370</field>
+    </record>
+    <record id="curriculum_lesti_2026_27_unit_19411040" model="facodi.learning.curriculum.unit">
+        <field name="reference_id" ref="curriculum_lesti_2026_27"/>
+        <field name="external_unit_code">19411040</field>
+        <field name="name">OUTRA (OPÇÃO IV - A ESCOLHER DENTRO DA UALG/ ISE)</field>
+        <field name="credits">5</field>
+        <field name="curricular_year">2</field>
+        <field name="period">semester_2</field>
+        <field name="classification">optional</field>
+        <field name="option_group">OPÇÃO IV (CI, QAC)</field>
+        <field name="sequence">380</field>
+    </record>
+    <record id="curriculum_lesti_2026_27_unit_19411030" model="facodi.learning.curriculum.unit">
+        <field name="reference_id" ref="curriculum_lesti_2026_27"/>
+        <field name="external_unit_code">19411030</field>
+        <field name="name">PROJETO NA EMPRESA III</field>
+        <field name="credits">5</field>
+        <field name="curricular_year">2</field>
+        <field name="period">semester_2</field>
+        <field name="classification">unspecified</field>
+        <field name="sequence">390</field>
+    </record>
+    <record id="curriculum_lesti_2026_27_unit_19411020" model="facodi.learning.curriculum.unit">
+        <field name="reference_id" ref="curriculum_lesti_2026_27"/>
+        <field name="external_unit_code">19411020</field>
+        <field name="name">ANÁLISE DE DADOS E VISUALIZAÇÃO DA INFORMAÇÃO</field>
+        <field name="credits">5</field>
+        <field name="curricular_year">3</field>
+        <field name="period">semester_1</field>
+        <field name="classification">mandatory</field>
+        <field name="sequence">410</field>
+    </record>
+    <record id="curriculum_lesti_2026_27_unit_19411021" model="facodi.learning.curriculum.unit">
+        <field name="reference_id" ref="curriculum_lesti_2026_27"/>
+        <field name="external_unit_code">19411021</field>
+        <field name="name">DESENVOLVIMENTO DE APLICAÇÕES WEB</field>
+        <field name="credits">5</field>
+        <field name="curricular_year">3</field>
+        <field name="period">semester_1</field>
+        <field name="classification">mandatory</field>
+        <field name="sequence">420</field>
+    </record>
+    <record id="curriculum_lesti_2026_27_unit_19411022" model="facodi.learning.curriculum.unit">
+        <field name="reference_id" ref="curriculum_lesti_2026_27"/>
+        <field name="external_unit_code">19411022</field>
+        <field name="name">INTELIGÊNCIA ARTIFICIAL</field>
+        <field name="credits">5</field>
+        <field name="curricular_year">3</field>
+        <field name="period">semester_1</field>
+        <field name="classification">mandatory</field>
+        <field name="sequence">430</field>
+    </record>
+    <record id="curriculum_lesti_2026_27_unit_19411031" model="facodi.learning.curriculum.unit">
+        <field name="reference_id" ref="curriculum_lesti_2026_27"/>
+        <field name="external_unit_code">19411031</field>
+        <field name="name">LABORATÓRIO IoT</field>
+        <field name="credits">5</field>
+        <field name="curricular_year">3</field>
+        <field name="period">semester_1</field>
+        <field name="classification">optional</field>
+        <field name="option_group">OPÇÃO V (EE)</field>
+        <field name="sequence">440</field>
+    </record>
+    <record id="curriculum_lesti_2026_27_unit_19411041" model="facodi.learning.curriculum.unit">
+        <field name="reference_id" ref="curriculum_lesti_2026_27"/>
+        <field name="external_unit_code">19411041</field>
+        <field name="name">OUTRA (OPÇÃO V - A ESCOLHER DENTRO DA UALG/ ISE)</field>
+        <field name="credits">5</field>
+        <field name="curricular_year">3</field>
+        <field name="period">semester_1</field>
+        <field name="classification">optional</field>
+        <field name="option_group">OPÇÃO V (EE)</field>
+        <field name="sequence">450</field>
+    </record>
+    <record id="curriculum_lesti_2026_27_unit_19411049" model="facodi.learning.curriculum.unit">
+        <field name="reference_id" ref="curriculum_lesti_2026_27"/>
+        <field name="external_unit_code">19411049</field>
+        <field name="name">CIBERSEGURANÇA</field>
+        <field name="credits">5</field>
+        <field name="curricular_year">3</field>
+        <field name="period">semester_1</field>
+        <field name="classification">optional</field>
+        <field name="option_group">OPÇÃO VI (CI)</field>
+        <field name="sequence">460</field>
+    </record>
+    <record id="curriculum_lesti_2026_27_unit_19411042" model="facodi.learning.curriculum.unit">
+        <field name="reference_id" ref="curriculum_lesti_2026_27"/>
+        <field name="external_unit_code">19411042</field>
+        <field name="name">OUTRA (OPÇÃO VI - A ESCOLHER DENTRO DA UALG/ ISE)</field>
+        <field name="credits">5</field>
+        <field name="curricular_year">3</field>
+        <field name="period">semester_1</field>
+        <field name="classification">optional</field>
+        <field name="option_group">OPÇÃO VI (CI)</field>
+        <field name="sequence">470</field>
+    </record>
+    <record id="curriculum_lesti_2026_27_unit_15241279" model="facodi.learning.curriculum.unit">
+        <field name="reference_id" ref="curriculum_lesti_2026_27"/>
+        <field name="external_unit_code">15241279</field>
+        <field name="name">AUTOMAÇÃO E ROBÓTICA</field>
+        <field name="credits">5</field>
+        <field name="curricular_year">3</field>
+        <field name="period">semester_1</field>
+        <field name="classification">optional</field>
+        <field name="option_group">OPÇÃO VII (EE,CI,QAC)</field>
+        <field name="sequence">480</field>
+    </record>
+    <record id="curriculum_lesti_2026_27_unit_19411050" model="facodi.learning.curriculum.unit">
+        <field name="reference_id" ref="curriculum_lesti_2026_27"/>
+        <field name="external_unit_code">19411050</field>
+        <field name="name">DESENVOLVIMENTO DE APLICAÇÕES COM LOW-CODE</field>
+        <field name="credits">5</field>
+        <field name="curricular_year">3</field>
+        <field name="period">semester_1</field>
+        <field name="classification">optional</field>
+        <field name="option_group">OPÇÃO VII (EE,CI,QAC)</field>
+        <field name="sequence">490</field>
+    </record>
+    <record id="curriculum_lesti_2026_27_unit_19411043" model="facodi.learning.curriculum.unit">
+        <field name="reference_id" ref="curriculum_lesti_2026_27"/>
+        <field name="external_unit_code">19411043</field>
+        <field name="name">OUTRA (OPÇÃO VII - A ESCOLHER DENTRO DA UALG/ ISE)</field>
+        <field name="credits">5</field>
+        <field name="curricular_year">3</field>
+        <field name="period">semester_1</field>
+        <field name="classification">optional</field>
+        <field name="option_group">OPÇÃO VII (EE,CI,QAC)</field>
+        <field name="sequence">500</field>
+    </record>
+    <record id="curriculum_lesti_2026_27_unit_19411034" model="facodi.learning.curriculum.unit">
+        <field name="reference_id" ref="curriculum_lesti_2026_27"/>
+        <field name="external_unit_code">19411034</field>
+        <field name="name">PROJETO NA EMPRESA IV</field>
+        <field name="credits">5</field>
+        <field name="curricular_year">3</field>
+        <field name="period">semester_1</field>
+        <field name="classification">unspecified</field>
+        <field name="sequence">510</field>
+    </record>
+    <record id="curriculum_lesti_2026_27_unit_19411035" model="facodi.learning.curriculum.unit">
+        <field name="reference_id" ref="curriculum_lesti_2026_27"/>
+        <field name="external_unit_code">19411035</field>
+        <field name="name">ESTÁGIO</field>
+        <field name="credits">30</field>
+        <field name="curricular_year">3</field>
+        <field name="period">semester_2</field>
+        <field name="classification">optional</field>
+        <field name="option_group">OPÇÃO VIII (CI)</field>
+        <field name="sequence">610</field>
+    </record>
+    <record id="curriculum_lesti_2026_27_unit_19411036" model="facodi.learning.curriculum.unit">
+        <field name="reference_id" ref="curriculum_lesti_2026_27"/>
+        <field name="external_unit_code">19411036</field>
+        <field name="name">PROJETO</field>
+        <field name="credits">30</field>
+        <field name="curricular_year">3</field>
+        <field name="period">semester_2</field>
+        <field name="classification">optional</field>
+        <field name="option_group">OPÇÃO VIII (CI)</field>
+        <field name="sequence">620</field>
+    </record>
+</odoo>
