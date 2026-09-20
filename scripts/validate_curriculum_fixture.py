@@ -18,7 +18,8 @@ def main():
     assert reference["provider"] == "ualg"
     assert reference["external_programme_code"] == "1941"
     assert reference["academic_year"] == "2026/27"
-    assert len(reference["source_hash"]) == 64
+    assert reference["metadata"]["source_verified_on"] == "2026-09-20"
+    assert "source_hash" not in reference
 
     seen = set()
     for index, unit in enumerate(payload["units"], start=1):
