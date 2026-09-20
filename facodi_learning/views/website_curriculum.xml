@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="curriculum_public_index" name="FACODI Official Curricula">
+        <t t-call="website.layout">
+            <div id="wrap" class="oe_structure">
+                <section class="container py-5">
+                    <div class="row justify-content-center">
+                        <div class="col-12 col-xl-10">
+                            <p class="text-uppercase small text-muted mb-2">FACODI · Currículos oficiais</p>
+                            <h1 class="display-5 mb-3">Percursos baseados em planos de estudos oficiais</h1>
+                            <p class="lead text-muted mb-5">
+                                Referências curriculares versionadas e verificadas, usadas para organizar e auditar a cobertura dos cursos FACODI.
+                            </p>
+                            <div t-if="not references" class="alert alert-info">
+                                Ainda não existem currículos validados publicados.
+                            </div>
+                            <div class="row g-4">
+                                <div t-foreach="references" t-as="reference" class="col-12 col-lg-6">
+                                    <article class="card h-100 shadow-sm">
+                                        <div class="card-body">
+                                            <p class="small text-muted mb-2">
+                                                <t t-esc="reference.institution"/> · <t t-esc="reference.academic_year"/>
+                                            </p>
+                                            <h2 class="h4">
+                                                <a t-att-href="'/curriculos/%s' % reference.id" class="text-decoration-none">
+                                                    <t t-esc="reference.programme_name"/>
+                                                </a>
+                                            </h2>
+                                            <p t-if="reference.external_programme_code" class="mb-0">
+                                                Código do programa: <strong t-esc="reference.external_programme_code"/>
+                                            </p>
+                                        </div>
+                                    </article>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </t>
+    </template>
+
+    <template id="curriculum_public_detail" name="FACODI Official Curriculum Detail">
+        <t t-call="website.layout">
+            <div id="wrap" class="oe_structure">
+                <section class="container py-5">
+                    <div class="row justify-content-center">
+                        <div class="col-12 col-xl-10">
+                            <a href="/curriculos" class="small text-decoration-none">← Todos os currículos</a>
+                            <p class="text-uppercase small text-muted mt-4 mb-2">
+                                <t t-esc="reference.institution"/> · <t t-esc="reference.academic_year"/>
+                            </p>
+                            <h1 class="display-5 mb-3"><t t-esc="reference.programme_name"/></h1>
+                            <div class="d-flex flex-wrap gap-2 mb-4">
+                                <span t-if="reference.external_programme_code" class="badge text-bg-light">
+                                    Programa <t t-esc="reference.external_programme_code"/>
+                                </span>
+                                <span class="badge text-bg-success">Referência validada</span>
+                            </div>
+                            <div class="alert alert-light border mb-5">
+                                <strong>Proveniência.</strong>
+                                Esta página reproduz uma referência externa versionada. O FACODI não atribui créditos académicos nem substitui a fonte institucional.
+                                <a t-if="reference.source_url" t-att-href="reference.source_url" target="_blank" rel="noopener noreferrer">Consultar fonte oficial</a>.
+                            </div>
+
+                            <section t-foreach="unit_groups" t-as="group" class="mb-5">
+                                <h2 class="h3 mb-3"><t t-esc="group[0]"/>.º ano</h2>
+                                <div class="table-responsive">
+                                    <table class="table align-middle">
+                                        <thead>
+                                            <tr>
+                                                <th>Unidade curricular</th>
+                                                <th>Código</th>
+                                                <th>ECTS</th>
+                                                <th>Período</th>
+                                                <th>Tipo</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr t-foreach="group[1]" t-as="unit">
+                                                <td>
+                                                    <strong t-esc="unit.name"/>
+                                                    <div t-if="unit.option_group" class="small text-muted" t-esc="unit.option_group"/>
+                                                </td>
+                                                <td><code t-esc="unit.external_unit_code"/></td>
+                                                <td t-esc="('%g' % unit.credits) if unit.credits else '—'"/>
+                                                <td>
+                                                    <t t-if="unit.period == 'semester_1'">1.º semestre</t>
+                                                    <t t-elif="unit.period == 'semester_2'">2.º semestre</t>
+                                                    <t t-elif="unit.period == 'annual'">Anual</t>
+                                                    <t t-else="">Conforme fonte</t>
+                                                </td>
+                                                <td>
+                                                    <t t-if="unit.classification == 'mandatory'">Obrigatória</t>
+                                                    <t t-elif="unit.classification == 'optional'">Opção</t>
+                                                    <t t-else="">Não especificado</t>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </section>
+
+                            <section t-if="coverage_links" class="mt-5 pt-4 border-top">
+                                <h2 class="h3">Cobertura FACODI validada</h2>
+                                <p class="text-muted">Cursos publicados ligados a unidades curriculares através de relações revistas por um gestor.</p>
+                                <div class="list-group">
+                                    <a t-foreach="coverage_links"
+                                       t-as="link"
+                                       t-att-href="'/slides/%s' % slug(link['channel'])"
+                                       class="list-group-item list-group-item-action">
+                                        <strong t-esc="link['unit'].name"/>
+                                        <span class="text-muted"> — </span>
+                                        <span t-esc="link['channel'].name"/>
+                                    </a>
+                                </div>
+                            </section>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </t>
+    </template>
+
+    <template id="approved_course_curriculum_links" inherit_id="website_slides.course_main" name="Official curriculum alignment">
+        <xpath expr="//div[@id='home']" position="inside">
+            <t t-set="facodi_curriculum_links" t-value="channel._facodi_public_curriculum_links(website)"/>
+            <section t-if="facodi_curriculum_links" class="mt-5 pt-4 border-top" aria-label="Official curriculum alignment">
+                <h2 class="h4 mb-2">Ligação a currículos oficiais</h2>
+                <p class="text-muted">Relações de cobertura revistas e aprovadas pela curadoria FACODI.</p>
+                <ul class="list-unstyled mb-0">
+                    <li t-foreach="facodi_curriculum_links" t-as="link" class="mb-2">
+                        <a t-att-href="'/curriculos/%s' % link['reference_id']" class="text-decoration-none">
+                            <strong t-esc="link['unit_name']"/>
+                            <span class="text-muted"> · </span>
+                            <span t-esc="link['programme_name']"/>
+                            <span class="text-muted"> (<t t-esc="link['academic_year']"/>)</span>
+                        </a>
+                    </li>
+                </ul>
+            </section>
+        </xpath>
+    </template>
+</odoo>
