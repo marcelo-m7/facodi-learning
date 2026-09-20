@@ -158,16 +158,18 @@ or completion. Curriculum year, semester/period, sequence and option-group data 
 not infer Odoo prerequisites. Native `slide.channel.prerequisite_channel_ids`
 continues to be managed only by the standard Odoo/M3.3 prerequisite flow.
 
-Public and Portal users have no access to curriculum audit records and M3.4 adds no
-public curriculum QWeb route. Officers can inspect the workspace and work on manual
-coverage for courses they own; Manager review remains terminal and auditable.
+Public and Portal users have no ACL access to curriculum audit records. A deliberately
+small public read surface now exposes only references that a Manager has explicitly
+validated and marked for Website publication. The public routes never expose raw audit
+records or unreviewed coverage.
 
-The Universidade do Algarve LESTI 2026/27 plan is included only as a regression-test
-shape: programme code `1941`, representative units such as Programação and Base de
-Dados II, and the final Estágio/Projeto option group validate the generic data
-model. No UAlg-specific production seed, scraper, provider, partnership assumption,
-credit decision or automatic syllabus match is shipped. External discovery/import
-of curricula belongs to a later provider milestone.
+The Universidade do Algarve LESTI 2026/27 plan is the first curated production
+reference. It is reconciled idempotently from a versioned fixture sourced from the
+official UAlg study-plan page. Programme code `1941` and 43 distinct curricular-unit
+codes are preserved as external facts. The bootstrap creates no course coverage,
+equivalence, credit decision, prerequisite or learner progression. Approved coverage
+continues to require an explicit Manager review, and standard `slide.channel` remains
+the only learner-facing course model.
 
 ## Content analysis pipeline
 
@@ -192,10 +194,11 @@ odoo -d facodi -u facodi_learning --stop-after-init
 Back up the database and matching filestore for an existing deployment. Version
 `19.0.1.4.0` added the M3.3 course-mapping audit schema, settings and views through
 the normal Odoo module upgrade. Version `19.0.1.4.1` is a schema-neutral M3.3
-concurrency hardening patch. Version `19.0.1.5.0` adds the M3.4 external curriculum
-reference/unit and reviewed coverage schema plus backend-only workspace and read-only
-gap analysis. The M3.4 upgrade is additive: it performs no historical rewrite and
-does not fabricate curriculum references or coverage for existing courses.
+concurrency hardening patch. Version `19.0.1.5.0` added the M3.4 external curriculum reference/unit and reviewed
+coverage schema. Version `19.0.1.7.0` adds the first public curriculum golden path:
+the official UAlg LESTI 2026/27 reference is reconciled idempotently on install/upgrade,
+while coverage remains empty until explicitly reviewed. Existing course, mapping and
+editorial records are preserved.
 
 ## Manager workflow
 
@@ -249,9 +252,10 @@ provider/external identifier/course and forces new content to remain unpublished
 The built-in YouTube adapter uses public channel pages, oEmbed and watch-page
 metadata only. It does not use an API key, download media, fetch transcripts or
 create courses directly. The core candidate evaluator, course profile and M3.3
-mapping ranker remain deterministic and offline. M3.4 likewise includes no external
-curriculum fetcher: references can be curated manually without changing their
-editorial meaning.
+mapping ranker remain deterministic and offline. M3.4 remains free of an automatic external curriculum fetcher. The LESTI golden-path
+fixture is a reviewed, versioned source snapshot rather than a live scraper; future
+refreshes must create/reconcile source evidence without silently changing reviewed
+coverage.
 
 See [architecture](docs/architecture.md) for normalized output, course-selection,
 course-profile, course-mapping, curriculum-coverage and transaction contracts.
