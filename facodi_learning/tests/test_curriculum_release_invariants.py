@@ -3,10 +3,25 @@ from odoo.tests import TransactionCase
 
 
 class TestCurriculumReleaseInvariants(TransactionCase):
-    def test_m3_4_ships_no_curriculum_seed_records(self):
-        self.assertFalse(self.env["facodi.learning.curriculum.reference"].search([]))
-        self.assertFalse(self.env["facodi.learning.curriculum.unit"].search([]))
-        self.assertFalse(self.env["facodi.learning.curriculum.coverage"].search([]))
+    def test_release_bootstraps_only_validated_lesti_reference(self):
+        Reference = self.env["facodi.learning.curriculum.reference"]
+        Unit = self.env["facodi.learning.curriculum.unit"]
+        Coverage = self.env["facodi.learning.curriculum.coverage"]
+
+        references = Reference.search([])
+        self.assertEqual(len(references), 1)
+        reference = references
+        self.assertEqual(reference.provider, "ualg")
+        self.assertEqual(reference.external_id, "ualg-1941-2026-27")
+        self.assertEqual(reference.external_programme_code, "1941")
+        self.assertEqual(reference.academic_year, "2026/27")
+        self.assertTrue(reference.validated_at)
+        self.assertTrue(reference.website_published)
+
+        units = Unit.search([("reference_id", "=", reference.id)])
+        self.assertEqual(len(units), 43)
+        self.assertEqual(len(set(units.mapped("external_unit_code"))), 43)
+        self.assertFalse(Coverage.search([]))
 
     def test_empty_curriculum_analysis_does_not_mutate_standard_course_graph(self):
         prerequisite = self.env["slide.channel"].create({"name": "Existing Prerequisite"})
