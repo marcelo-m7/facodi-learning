@@ -96,14 +96,18 @@ class FacodiCurriculumController(http.Controller):
             return request.not_found()
 
         coverage_rows = unit._facodi_public_coverage_rows(website=request.website)
+        if any(row["coverage_status"] == "covered" for row in coverage_rows):
+            coverage_status = "covered"
+        elif coverage_rows:
+            coverage_status = "partial"
+        else:
+            coverage_status = "gap"
         return request.render(
             "facodi_learning.curriculum_public_unit",
             {
                 "reference": reference,
                 "unit": unit,
                 "coverage_rows": coverage_rows,
-                "coverage_status": unit._facodi_public_coverage_status(
-                    website=request.website
-                ),
+                "coverage_status": coverage_status,
             },
         )
