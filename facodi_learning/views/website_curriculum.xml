@@ -63,7 +63,7 @@
                                 <a t-if="reference.source_url" t-att-href="reference.source_url" target="_blank" rel="noopener noreferrer">Consultar fonte oficial</a>.
                             </div>
 
-                            <section t-foreach="unit_groups" t-as="group" class="mb-5">
+                            <section t-foreach="unit_matrix_groups" t-as="group" class="mb-5">
                                 <h2 class="h3 mb-3"><t t-esc="group[0]"/>.º ano</h2>
                                 <div class="table-responsive">
                                     <table class="table align-middle">
@@ -74,12 +74,16 @@
                                                 <th>ECTS</th>
                                                 <th>Período</th>
                                                 <th>Tipo</th>
+                                                <th>Cobertura FACODI</th>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <tr t-foreach="group[1]" t-as="unit">
+                                            <tr t-foreach="group[1]" t-as="entry">
+                                                <t t-set="unit" t-value="entry['unit']"/>
                                                 <td>
-                                                    <strong t-esc="unit.name"/>
+                                                    <a t-att-href="entry['unit_url']" class="fw-semibold text-decoration-none">
+                                                        <t t-esc="unit.name"/>
+                                                    </a>
                                                     <div t-if="unit.option_group" class="small text-muted" t-esc="unit.option_group"/>
                                                 </td>
                                                 <td><code t-esc="unit.external_unit_code"/></td>
@@ -94,6 +98,17 @@
                                                     <t t-if="unit.classification == 'mandatory'">Obrigatória</t>
                                                     <t t-elif="unit.classification == 'optional'">Opção</t>
                                                     <t t-else="">Não especificado</t>
+                                                </td>
+                                                <td>
+                                                    <span t-if="entry['coverage_status'] == 'covered'" class="badge text-bg-success">
+                                                        Coberta · <t t-esc="entry['published_course_count']"/> curso(s)
+                                                    </span>
+                                                    <span t-elif="entry['coverage_status'] == 'partial'" class="badge text-bg-warning">
+                                                        Parcial · <t t-esc="entry['published_course_count']"/> curso(s)
+                                                    </span>
+                                                    <span t-else="" class="badge text-bg-light">
+                                                        Sem cobertura publicada
+                                                    </span>
                                                 </td>
                                             </tr>
                                         </tbody>
@@ -122,6 +137,131 @@
         </t>
     </template>
 
+    <template id="curriculum_public_unit" name="FACODI Official Curriculum Unit">
+        <t t-call="website.layout">
+            <t t-set="additional_title"><t t-esc="unit.name"/> · <t t-esc="reference.programme_name"/></t>
+            <div id="wrap" class="oe_structure">
+                <section class="container py-5">
+                    <div class="row justify-content-center">
+                        <div class="col-12 col-xl-10">
+                            <nav class="small mb-4" aria-label="Breadcrumb">
+                                <a href="/curriculos" class="text-decoration-none">Currículos</a>
+                                <span class="text-muted mx-1">/</span>
+                                <a t-att-href="'/curriculos/%s' % reference.id" class="text-decoration-none">
+                                    <t t-esc="reference.programme_name"/>
+                                </a>
+                                <span class="text-muted mx-1">/</span>
+                                <span t-esc="unit.external_unit_code"/>
+                            </nav>
+
+                            <p class="text-uppercase small text-muted mb-2">
+                                <t t-esc="reference.institution"/> · <t t-esc="reference.academic_year"/>
+                            </p>
+                            <h1 class="display-5 mb-2"><t t-esc="unit.name"/></h1>
+                            <p class="lead text-muted mb-4">
+                                Unidade curricular <code t-esc="unit.external_unit_code"/> do plano oficial
+                                <t t-esc="reference.programme_name"/>.
+                            </p>
+
+                            <div class="row g-3 mb-5">
+                                <div class="col-6 col-md-3">
+                                    <div class="border rounded p-3 h-100">
+                                        <div class="small text-muted">ECTS da fonte</div>
+                                        <strong class="fs-4" t-esc="('%g' % unit.credits) if unit.credits else '—'"/>
+                                    </div>
+                                </div>
+                                <div class="col-6 col-md-3">
+                                    <div class="border rounded p-3 h-100">
+                                        <div class="small text-muted">Ano curricular</div>
+                                        <strong class="fs-4"><t t-esc="unit.curricular_year"/>.º</strong>
+                                    </div>
+                                </div>
+                                <div class="col-6 col-md-3">
+                                    <div class="border rounded p-3 h-100">
+                                        <div class="small text-muted">Período</div>
+                                        <strong>
+                                            <t t-if="unit.period == 'semester_1'">1.º semestre</t>
+                                            <t t-elif="unit.period == 'semester_2'">2.º semestre</t>
+                                            <t t-elif="unit.period == 'annual'">Anual</t>
+                                            <t t-else="">Conforme fonte</t>
+                                        </strong>
+                                    </div>
+                                </div>
+                                <div class="col-6 col-md-3">
+                                    <div class="border rounded p-3 h-100">
+                                        <div class="small text-muted">Classificação</div>
+                                        <strong>
+                                            <t t-if="unit.classification == 'mandatory'">Obrigatória</t>
+                                            <t t-elif="unit.classification == 'optional'">Opção</t>
+                                            <t t-else="">Não especificado</t>
+                                        </strong>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div t-if="unit.option_group" class="alert alert-light border mb-4">
+                                <strong>Grupo de opção:</strong> <t t-esc="unit.option_group"/>
+                            </div>
+
+                            <div class="alert alert-light border mb-5">
+                                <strong>Proveniência e limites.</strong>
+                                Os ECTS e a estrutura curricular apresentados são factos da fonte externa.
+                                A FACODI não atribui créditos, matrícula, equivalência académica nem substitui a instituição.
+                                <a t-if="reference.source_url"
+                                   t-att-href="reference.source_url"
+                                   target="_blank"
+                                   rel="noopener noreferrer">Consultar fonte oficial</a>.
+                            </div>
+
+                            <section class="mb-5" aria-labelledby="facodi-unit-coverage-heading">
+                                <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
+                                    <div>
+                                        <h2 id="facodi-unit-coverage-heading" class="h3 mb-1">Cobertura FACODI publicada</h2>
+                                        <p class="text-muted mb-0">
+                                            Apenas relações revistas e aprovadas com cursos atualmente publicados.
+                                        </p>
+                                    </div>
+                                    <span t-if="coverage_status == 'covered'" class="badge text-bg-success fs-6">Coberta</span>
+                                    <span t-elif="coverage_status == 'partial'" class="badge text-bg-warning fs-6">Parcial</span>
+                                    <span t-else="" class="badge text-bg-light fs-6">Sem cobertura publicada</span>
+                                </div>
+
+                                <div t-if="coverage_rows" class="row g-3">
+                                    <div t-foreach="coverage_rows" t-as="coverage" class="col-12 col-lg-6">
+                                        <article class="card h-100 shadow-sm">
+                                            <div class="card-body">
+                                                <p class="small text-muted mb-2" t-esc="coverage['coverage_label']"/>
+                                                <h3 class="h5 mb-3">
+                                                    <a t-att-href="coverage['channel'].website_url" class="text-decoration-none">
+                                                        <t t-esc="coverage['channel'].name"/>
+                                                    </a>
+                                                </h3>
+                                                <a t-att-href="coverage['channel'].website_url" class="btn btn-outline-primary btn-sm">
+                                                    Abrir curso
+                                                </a>
+                                            </div>
+                                        </article>
+                                    </div>
+                                </div>
+                                <div t-else="" class="border rounded p-4 bg-light">
+                                    <p class="mb-2"><strong>Ainda não existe curso publicado com cobertura revista para esta UC.</strong></p>
+                                    <p class="text-muted mb-3">
+                                        Isto representa um gap editorial público; não significa inexistência de materiais externos ou reconhecimento académico.
+                                    </p>
+                                    <a href="/slides" class="btn btn-outline-primary">Explorar cursos FACODI</a>
+                                </div>
+                            </section>
+
+                            <a t-att-href="'/curriculos/%s' % reference.id" class="btn btn-link px-0">
+                                ← Voltar ao currículo
+                            </a>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </t>
+    </template>
+
     <template id="approved_course_curriculum_links" inherit_id="website_slides.course_main" name="Official curriculum alignment">
         <xpath expr="//div[@id='home']" position="inside">
             <t t-set="facodi_curriculum_links" t-value="channel._facodi_public_curriculum_links(website)"/>
@@ -130,7 +270,7 @@
                 <p class="text-muted">Relações de cobertura revistas e aprovadas pela curadoria FACODI.</p>
                 <ul class="list-unstyled mb-0">
                     <li t-foreach="facodi_curriculum_links" t-as="link" class="mb-2">
-                        <a t-att-href="'/curriculos/%s' % link['reference_id']" class="text-decoration-none">
+                        <a t-att-href="link['unit_url']" class="text-decoration-none">
                             <strong t-esc="link['unit_name']"/>
                             <span class="text-muted"> · </span>
                             <span t-esc="link['programme_name']"/>
