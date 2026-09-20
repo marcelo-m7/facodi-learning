@@ -6,15 +6,14 @@
     "academic_year": "2026/27",
     "source_url": "https://www.ualg.pt/curso/1941/plano",
     "source_title": "Engenharia de Sistemas e Tecnologias Informáticas — Plano de estudos",
-    "source_hash": "1dce2c46045ea47e93911ddfd26c3de0fcd4a6d2ec48d056d52ff6443ea10269",
-    "source_retrieved_at": "2026-09-20 20:00:00",
     "provider": "ualg",
     "external_id": "ualg-1941-2026-27",
-    "validated_at": "2026-09-20 20:00:00",
     "website_published": true,
     "metadata": {
       "source_kind": "official_study_plan",
-      "curation_note": "Curated from the official UAlg study-plan page; ambiguous repeated period occurrences are preserved in unit metadata."
+      "curation_note": "Curated from the official UAlg study-plan page; ambiguous repeated period occurrences are preserved in unit metadata.",
+      "source_verified_on": "2026-09-20",
+      "provenance_note": "No byte-level source snapshot hash is claimed; the curated fixture records the official source URL and verification date."
     }
   },
   "units": [
