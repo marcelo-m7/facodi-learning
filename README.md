@@ -159,9 +159,12 @@ not infer Odoo prerequisites. Native `slide.channel.prerequisite_channel_ids`
 continues to be managed only by the standard Odoo/M3.3 prerequisite flow.
 
 Public and Portal users have no ACL access to curriculum audit records. A deliberately
-small public read surface now exposes only references that a Manager has explicitly
-validated and marked for Website publication. The public routes never expose raw audit
-records or unreviewed coverage.
+small public read surface exposes only references that a Manager has explicitly
+validated and marked for Website publication. Version `19.0.1.8.0` adds curricular-unit
+pages and a public coverage matrix. Those surfaces elevate only the audit lookup needed
+to find approved relations, then re-read standard `slide.channel` records under the
+learner context so native publication, visibility and website boundaries stay
+authoritative. Proposed/rejected coverage and unpublished courses never appear.
 
 The Universidade do Algarve LESTI 2026/27 plan is the first curated production
 reference. It is reconciled idempotently from a versioned fixture sourced from the
@@ -195,10 +198,12 @@ Back up the database and matching filestore for an existing deployment. Version
 `19.0.1.4.0` added the M3.3 course-mapping audit schema, settings and views through
 the normal Odoo module upgrade. Version `19.0.1.4.1` is a schema-neutral M3.3
 concurrency hardening patch. Version `19.0.1.5.0` added the M3.4 external curriculum reference/unit and reviewed
-coverage schema. Version `19.0.1.7.0` adds the first public curriculum golden path:
+coverage schema. Version `19.0.1.7.0` added the first public curriculum golden path:
 the official UAlg LESTI 2026/27 reference is reconciled idempotently on install/upgrade,
-while coverage remains empty until explicitly reviewed. Existing course, mapping and
-editorial records are preserved.
+while coverage remains empty until explicitly reviewed. Version `19.0.1.8.0` adds
+public curricular-unit pages, covered/partial/gap matrix rendering and direct
+course-to-unit links using only reviewed coverage plus native Odoo learner visibility.
+Existing course, mapping and editorial records are preserved.
 
 ## Manager workflow
 

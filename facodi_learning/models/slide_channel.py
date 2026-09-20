@@ -123,6 +123,7 @@ class SlideChannel(models.Model):
                     "academic_year": reference.academic_year,
                     "unit_name": coverage.curriculum_unit_id.name,
                     "unit_code": coverage.curriculum_unit_id.external_unit_code,
+                    "unit_url": coverage.curriculum_unit_id._facodi_public_path(),
                     "coverage_type": coverage.coverage_type,
                 }
             )
