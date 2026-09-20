@@ -297,10 +297,18 @@ request.
 The backend workspace lives under **eLearning → FACODI Learning → Curriculum
 Coverage** with separate References, Curricular Units and Coverage actions. The
 standard course form exposes a small stat button that opens only coverage records for
-that canonical course. There is deliberately no public/Portal curriculum QWeb route
-in M3.4.
+that canonical course. M3.4 originally shipped backend-only; the later public
+curriculum milestone adds a narrow Website projection without granting Public/Portal
+ACL access to the audit models.
 
-The official Universidade do Algarve LESTI 2026/27 plan is used only as a test-shaped
+Public curriculum pages expose only validated, explicitly published references.
+Curricular-unit pages and the reference coverage matrix use approved coverage as
+audit evidence, then filter the linked `slide.channel` records through native active,
+published, visible and current-website rules. A public status of `covered`,
+`partial` or `gap` therefore describes currently published FACODI coverage, not
+academic credit, equivalence, enrolment or learner completion.
+
+The official Universidade do Algarve LESTI 2026/27 plan is used as the first curated
 reference case. Its programme code, curricular-unit codes/ECTS and final Estágio /
 Projeto option group validate the generic schema; no UAlg-specific production rule,
 seed, scraper or institutional equivalence is shipped. External fetching/import is
