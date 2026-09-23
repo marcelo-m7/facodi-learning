@@ -1,5 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+    <template id="curriculum_catalog_navigation" inherit_id="website_slides.courses_home" name="Curriculum catalogue navigation">
+        <xpath expr="//div[@id='wrap']/div[contains(concat(' ', normalize-space(@class), ' '), ' container ')][1]" position="before">
+            <section class="container pt-4" aria-label="Aprendizagem FACODI">
+                <nav class="d-flex flex-wrap gap-3 small">
+                    <strong>Aprendizagem</strong>
+                    <a href="/unidades-curriculares" class="text-decoration-none">Unidades curriculares</a>
+                    <a href="/curriculos" class="text-decoration-none">Currículos</a>
+                    <a href="/slides" class="text-decoration-none">Explorar conteúdos</a>
+                </nav>
+            </section>
+        </xpath>
+    </template>
+
     <template id="approved_learning_resources" inherit_id="website_slides.slide_main" name="Reviewed learning resources">
         <xpath expr="//t[@t-call='website_slides.slide_content_detailed']" position="after">
             <t t-set="learning_resources" t-value="slide._facodi_related_slides(website)"/>

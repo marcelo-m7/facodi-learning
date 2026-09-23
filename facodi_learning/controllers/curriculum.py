@@ -186,10 +186,41 @@ class FacodiCurriculumController(http.Controller):
 
         return self._render_unit(reference, unit)
 
+    @http.route(
+        "/modulos/<int:module_id>",
+        type="http",
+        auth="public",
+        website=True,
+        sitemap=True,
+    )
+    def curriculum_module_detail(self, module_id, **kwargs):
+        module = (
+            request.env["facodi.learning.curriculum.module"]
+            .sudo()
+            .search([( "id", "=", module_id), ("website_published", "=", True)], limit=1)
+        )
+        if not module:
+            return request.not_found()
+        show_learning_progress = not request.env.user._is_public()
+        return request.render(
+            "facodi_learning.curriculum_public_module",
+            {
+                "module_row": module._facodi_public_projection(
+                    website=request.website,
+                    partner=request.env.user.partner_id if show_learning_progress else None,
+                ),
+                "show_learning_progress": show_learning_progress,
+            },
+        )
+
     @staticmethod
     def _render_unit(reference, unit):
-
         coverage_rows = unit._facodi_public_coverage_rows(website=request.website)
+        show_learning_progress = not request.env.user._is_public()
+        learning = unit._facodi_public_learning_projection(
+            website=request.website,
+            partner=request.env.user.partner_id if show_learning_progress else None,
+        )
         if any(row["coverage_status"] == "covered" for row in coverage_rows):
             coverage_status = "covered"
         elif coverage_rows:
@@ -203,5 +234,7 @@ class FacodiCurriculumController(http.Controller):
                 "unit": unit,
                 "coverage_rows": coverage_rows,
                 "coverage_status": coverage_status,
+                "learning": learning,
+                "show_learning_progress": show_learning_progress,
             },
         )
