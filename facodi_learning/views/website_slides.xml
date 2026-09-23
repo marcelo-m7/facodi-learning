@@ -6,8 +6,7 @@
                 <nav class="d-flex flex-wrap gap-3 small">
                     <strong>Learning</strong>
                     <a href="/unidades-curriculares" class="text-decoration-none">Curricular Units</a>
-                    <a href="/mapa-curricular" class="text-decoration-none">Curriculum Map</a>
-                    <a href="/curriculos" class="text-decoration-none">Curricula</a>
+                    <a href="/roadmaps" class="text-decoration-none">Roadmaps</a>
                     <a href="/slides" class="text-decoration-none">Explore Content</a>
                 </nav>
             </section>

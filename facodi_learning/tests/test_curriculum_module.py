@@ -53,6 +53,7 @@ class TestCurriculumModule(TransactionCase):
                 "slide_category": "document",
                 "is_published": True,
                 "website_published": True,
+                "is_preview": True,
             }
         )
         cls.unpublished_slide = cls.env["slide.slide"].create(
@@ -197,6 +198,34 @@ class TestCurriculumModule(TransactionCase):
         self.assertEqual(rows[0]["item_count"], 1)
         self.assertEqual(rows[0]["items"][0]["record"], self.published_slide)
 
+    def test_public_projection_excludes_published_non_preview_content(self):
+        self._publish_reference()
+        module = self._module("Preview Boundary Module")
+        self.env["facodi.learning.curriculum.module.assignment"].create(
+            {"curriculum_unit_id": self.unit_a.id, "module_id": module.id}
+        )
+        non_preview_slide = self.env["slide.slide"].create(
+            {
+                "channel_id": self.course_a.id,
+                "name": "Members Only Resource",
+                "slide_category": "document",
+                "is_published": True,
+                "website_published": True,
+                "is_preview": False,
+            }
+        )
+        self.env["facodi.learning.curriculum.module.item"].create(
+            {"module_id": module.id, "slide_id": non_preview_slide.id}
+        )
+
+        public = self.env.ref("base.public_user")
+        rows = self.unit_a.sudo()._facodi_public_module_rows(
+            website=self.website.with_user(public)
+        )
+
+        self.assertEqual(rows[0]["item_count"], 0)
+        self.assertFalse(rows[0]["items"])
+
     def test_public_user_can_project_published_module_items(self):
         self._publish_reference()
         module = self._module("Public Projection Module")
@@ -207,9 +236,10 @@ class TestCurriculumModule(TransactionCase):
             {"module_id": module.id, "slide_id": self.published_slide.id}
         )
 
-        rows = self.unit_a.with_user(
-            self.env.ref("base.public_user")
-        )._facodi_public_module_rows()
+        public = self.env.ref("base.public_user")
+        rows = self.unit_a.sudo()._facodi_public_module_rows(
+            website=self.website.with_user(public)
+        )
 
         self.assertEqual(len(rows), 1)
         self.assertEqual(rows[0]["items"][0]["record"], self.published_slide)

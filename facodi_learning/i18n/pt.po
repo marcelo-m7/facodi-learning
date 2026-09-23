@@ -22,6 +22,11 @@ msgid "Curricular Units"
 msgstr "Unidades Curriculares"
 
 #. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_catalog_navigation
+msgid "Roadmaps"
+msgstr "Roadmaps"
+
+#. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_index
 msgid "Roadmaps"
 msgstr "Roadmaps"

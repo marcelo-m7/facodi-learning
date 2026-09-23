@@ -28,10 +28,10 @@ class FacodiLearningCurriculumModule(models.Model):
     def _facodi_public_items(self, website=None, partner=None, viewer_env=None):
         """Project published module items without exposing authoring records.
 
-        Module relations have no Public/Portal ACL. Standard slide records also
-        cannot be listed by the public user, so the final projection is elevated
-        only after limiting it to editorial IDs and explicit website publication,
-        website and native visibility conditions.
+        Editorial relations are read with sudo because Public/Portal users do
+        not have authoring-model access. Final course and content records are
+        always re-read as the viewer, so standard eLearning ACLs and record
+        rules remain authoritative.
         """
         self.ensure_one()
         items = self.env["facodi.learning.curriculum.module.item"].sudo().search(
@@ -66,8 +66,11 @@ class FacodiLearningCurriculumModule(models.Model):
             )
 
         viewer_env = viewer_env or (website.env if website else self.env)
-        Channel = viewer_env["slide.channel"].sudo()
-        Slide = viewer_env["slide.slide"].sudo()
+        if viewer_env.user._is_public():
+            slide_domain.append(("is_preview", "=", True))
+
+        Channel = viewer_env["slide.channel"]
+        Slide = viewer_env["slide.slide"]
         channels = {channel.id: channel for channel in Channel.search(channel_domain)}
         slides = {slide.id: slide for slide in Slide.search(slide_domain)}
         progress_by_channel = self._facodi_channel_progress(channels, partner)
