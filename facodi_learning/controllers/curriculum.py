@@ -211,7 +211,7 @@ class FacodiCurriculumController(http.Controller):
         type="http",
         auth="public",
         website=True,
-        sitemap=True,
+        sitemap=False,
     )
     def curriculum_unit_catalog_detail(self, reference_id, unit_slug, **kwargs):
         reference = self._public_references().filtered(lambda item: item.id == reference_id)
@@ -230,8 +230,7 @@ class FacodiCurriculumController(http.Controller):
         )
         if not unit:
             return request.not_found()
-
-        return self._render_unit(reference, unit)
+        return request.redirect(unit._facodi_public_path(), code=301)
 
     @http.route(
         "/modulos/<int:module_id>",

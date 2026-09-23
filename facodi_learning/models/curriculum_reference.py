@@ -540,7 +540,7 @@ class FacodiLearningCurriculumUnit(models.Model):
                 {
                     "unit": unit,
                     "reference": unit.reference_id,
-                    "unit_url": unit._facodi_public_catalog_path(),
+                    "unit_url": unit._facodi_public_path(),
                     "coverage_status": coverage_status,
                     "published_course_count": len(coverage_rows),
                 }
@@ -579,7 +579,12 @@ class FacodiLearningCurriculumUnit(models.Model):
             partner=partner,
             viewer_env=viewer_env,
         )
-        progress = sum(row["progress"] for row in modules) / len(modules) if modules else 0.0
+        measured_modules = [row for row in modules if row["progress"] is not None]
+        progress = (
+            sum(row["progress"] for row in measured_modules) / len(measured_modules)
+            if measured_modules
+            else None
+        )
         next_item = next((row["next_item"] for row in modules if row["next_item"]), False)
         return {
             "modules": modules,

@@ -74,6 +74,8 @@ class FacodiLearningCurriculumModule(models.Model):
         channels = {channel.id: channel for channel in Channel.search(channel_domain)}
         slides = {slide.id: slide for slide in Slide.search(slide_domain)}
         progress_by_channel = self._facodi_channel_progress(channels, partner)
+        direct_channel_ids = set(channels)
+        progress_by_slide = self._facodi_slide_progress(slides, partner)
 
         rows = []
         for item in items:
@@ -88,7 +90,10 @@ class FacodiLearningCurriculumModule(models.Model):
                         "progress": progress_by_channel.get(channel.id, 0.0),
                     }
                 )
-            elif item.slide_id.id in slides:
+            elif (
+                item.slide_id.id in slides
+                and slides[item.slide_id.id].channel_id.id not in direct_channel_ids
+            ):
                 slide = slides[item.slide_id.id]
                 rows.append(
                     {
@@ -96,7 +101,7 @@ class FacodiLearningCurriculumModule(models.Model):
                         "record": slide,
                         "name": slide.name,
                         "url": slide.website_url,
-                        "progress": progress_by_channel.get(slide.channel_id.id, 0.0),
+                        "progress": progress_by_slide.get(slide.id),
                     }
                 )
         return rows
@@ -117,6 +122,18 @@ class FacodiLearningCurriculumModule(models.Model):
             progress[membership.channel_id.id] = value * 100 if value <= 1 else value
         return progress
 
+    def _facodi_slide_progress(self, slides, partner=None):
+        """Return native per-content completion without deriving it from a course."""
+        if not slides or not partner:
+            return {}
+        SlidePartner = self.env["slide.slide.partner"].sudo()
+        if "completed" not in SlidePartner._fields:
+            return {}
+        completions = SlidePartner.search(
+            [("slide_id", "in", list(slides)), ("partner_id", "=", partner.id)]
+        )
+        return {completion.slide_id.id: 100.0 for completion in completions if completion.completed}
+
     def _facodi_public_projection(self, website=None, partner=None, viewer_env=None):
         self.ensure_one()
         items = self._facodi_public_items(
@@ -124,8 +141,16 @@ class FacodiLearningCurriculumModule(models.Model):
             partner=partner,
             viewer_env=viewer_env,
         )
-        progress = sum(item["progress"] for item in items) / len(items) if items else 0.0
-        next_item = next((item for item in items if item["progress"] < 100), False)
+        measured_items = [item for item in items if item["progress"] is not None]
+        progress = (
+            sum(item["progress"] for item in measured_items) / len(measured_items)
+            if measured_items
+            else None
+        )
+        next_item = next(
+            (item for item in items if item["progress"] is None or item["progress"] < 100),
+            False,
+        )
         return {
             "module": self,
             "module_url": self._facodi_public_path(),

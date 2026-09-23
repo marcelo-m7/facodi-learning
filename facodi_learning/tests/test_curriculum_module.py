@@ -288,3 +288,18 @@ class TestCurriculumModule(TransactionCase):
         expected = 50.0 if "completion" in self.env["slide.channel.partner"]._fields else 0.0
         self.assertEqual(projection["progress"], expected)
         self.assertEqual(projection["next_item"]["record"], self.course_a)
+
+    def test_projection_does_not_double_count_a_slide_included_by_its_course(self):
+        self._publish_reference()
+        module = self._module("Deduplicated Module")
+        self.env["facodi.learning.curriculum.module.item"].create(
+            {"module_id": module.id, "channel_id": self.course_a.id}
+        )
+        self.env["facodi.learning.curriculum.module.item"].create(
+            {"module_id": module.id, "slide_id": self.published_slide.id}
+        )
+
+        projection = module._facodi_public_projection()
+
+        self.assertEqual(projection["item_count"], 1)
+        self.assertEqual(projection["items"][0]["record"], self.course_a)
