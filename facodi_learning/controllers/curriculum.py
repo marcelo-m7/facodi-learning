@@ -33,8 +33,8 @@ class FacodiCurriculumController(http.Controller):
             return False
         return value if value >= 0 else False
 
-    @http.route("/curriculos", type="http", auth="public", website=True, sitemap=True)
-    def curriculum_index(self, **kwargs):
+    @http.route("/roadmaps", type="http", auth="public", website=True, sitemap=True)
+    def roadmap_index(self, **kwargs):
         references = self._public_references()
         return request.render(
             "facodi_learning.curriculum_public_index",
@@ -42,16 +42,16 @@ class FacodiCurriculumController(http.Controller):
         )
 
     @http.route(
-        "/mapa-curricular", type="http", auth="public", website=True, sitemap=True
+        "/curriculos", type="http", auth="public", website=True, sitemap=False
     )
-    def curriculum_map(self, **kwargs):
-        curriculum_map = request.env[
-            "facodi.learning.curriculum.reference"
-        ]._facodi_public_curriculum_map(website=request.website)
-        return request.render(
-            "facodi_learning.curriculum_public_map",
-            {"curriculum_map": curriculum_map},
-        )
+    def legacy_curriculum_index(self, **kwargs):
+        return request.redirect("/roadmaps", code=301)
+
+    @http.route(
+        "/mapa-curricular", type="http", auth="public", website=True, sitemap=False
+    )
+    def legacy_curriculum_map(self, **kwargs):
+        return request.redirect("/roadmaps", code=301)
 
     @http.route(
         "/unidades-curriculares", type="http", auth="public", website=True, sitemap=True
@@ -96,13 +96,13 @@ class FacodiCurriculumController(http.Controller):
         )
 
     @http.route(
-        "/curriculos/<int:reference_id>",
+        "/roadmaps/<int:reference_id>",
         type="http",
         auth="public",
         website=True,
         sitemap=True,
     )
-    def curriculum_detail(self, reference_id, **kwargs):
+    def roadmap_detail(self, reference_id, **kwargs):
         reference = (
             request.env["facodi.learning.curriculum.reference"]
             .sudo()
@@ -118,14 +118,27 @@ class FacodiCurriculumController(http.Controller):
         if not reference:
             return request.not_found()
         website = request.website
+        show_learning_progress = not request.env.user._is_public()
+        partner = request.env.user.partner_id if show_learning_progress else None
+        unit_matrix_groups = reference._facodi_public_unit_matrix_by_period(
+            website=website
+        )
+        for _year, period_groups in unit_matrix_groups:
+            for _period, entries in period_groups:
+                for entry in entries:
+                    entry["learning"] = entry[
+                        "unit"
+                    ]._facodi_public_learning_projection(
+                        website=website,
+                        partner=partner,
+                        viewer_env=request.env,
+                    )
         return request.render(
             "facodi_learning.curriculum_public_detail",
             {
                 "reference": reference,
                 "unit_groups": reference._facodi_public_units_grouped(),
-                "unit_matrix_groups": reference._facodi_public_unit_matrix_by_period(
-                    website=website
-                ),
+                "unit_matrix_groups": unit_matrix_groups,
                 "coverage_links": reference._facodi_public_coverage_links(
                     website=website
                 ),
@@ -133,13 +146,23 @@ class FacodiCurriculumController(http.Controller):
         )
 
     @http.route(
-        "/curriculos/<int:reference_id>/unidades/<path:unit_code>",
+        "/curriculos/<int:reference_id>",
+        type="http",
+        auth="public",
+        website=True,
+        sitemap=False,
+    )
+    def legacy_curriculum_detail(self, reference_id, **kwargs):
+        return request.redirect("/roadmaps/%s" % reference_id, code=301)
+
+    @http.route(
+        "/roadmaps/<int:reference_id>/units/<path:unit_code>",
         type="http",
         auth="public",
         website=True,
         sitemap=True,
     )
-    def curriculum_unit_detail(self, reference_id, unit_code, **kwargs):
+    def roadmap_unit_detail(self, reference_id, unit_code, **kwargs):
         reference = (
             request.env["facodi.learning.curriculum.reference"]
             .sudo()
@@ -170,6 +193,18 @@ class FacodiCurriculumController(http.Controller):
             return request.not_found()
 
         return self._render_unit(reference, unit)
+
+    @http.route(
+        "/curriculos/<int:reference_id>/unidades/<path:unit_code>",
+        type="http",
+        auth="public",
+        website=True,
+        sitemap=False,
+    )
+    def legacy_curriculum_unit_detail(self, reference_id, unit_code, **kwargs):
+        return request.redirect(
+            "/roadmaps/%s/units/%s" % (reference_id, unit_code), code=301
+        )
 
     @http.route(
         "/unidades-curriculares/<int:reference_id>/<path:unit_slug>",

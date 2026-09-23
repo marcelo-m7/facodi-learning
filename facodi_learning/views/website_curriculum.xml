@@ -1,22 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <template id="curriculum_public_index" name="FACODI Official Curricula">
+    <template id="curriculum_public_index" name="FACODI Roadmaps">
         <t t-call="website.layout">
+            <t t-set="additional_title">Roadmaps</t>
+            <t t-set="meta_description">Explore verified FACODI learning roadmaps, curricular units, modules and published learning content.</t>
             <div id="wrap" class="oe_structure">
                 <section class="container py-5 facodi-curriculum">
                     <div class="row justify-content-center">
                         <div class="col-12 col-xl-10">
-                            <p class="text-uppercase small text-muted mb-2">FACODI · Currículos oficiais</p>
-                            <h1 class="display-5 mb-3">Percursos baseados em planos de estudos oficiais</h1>
+                            <p class="text-uppercase small text-muted mb-2">FACODI · Roadmaps</p>
+                            <h1 class="display-5 mb-3">Learning roadmaps grounded in verified academic sources</h1>
                             <p class="lead text-muted mb-5">
-                                Referências curriculares versionadas e verificadas, usadas para organizar e auditar a cobertura dos cursos FACODI.
+                                Explore each structured learning journey from curricular unit to module, course and learning content.
                             </p>
                             <div class="d-flex flex-wrap gap-2 mb-5">
-                                <a href="/mapa-curricular" class="btn btn-primary">View curriculum map</a>
-                                <a href="/unidades-curriculares" class="btn btn-outline-primary">Explorar unidades curriculares</a>
+                                <a href="/unidades-curriculares" class="btn btn-outline-primary">Explore curricular units</a>
                             </div>
                             <div t-if="not references" class="alert alert-info">
-                                Ainda não existem currículos validados publicados.
+                                There are no published roadmaps yet.
                             </div>
                             <div class="row g-4">
                                 <div t-foreach="references" t-as="reference" class="col-12 col-lg-6">
@@ -26,7 +27,7 @@
                                                 <t t-esc="reference.institution"/> · <t t-esc="reference.academic_year"/>
                                             </p>
                                             <h2 class="h4">
-                                                <a t-att-href="'/curriculos/%s' % reference.id" class="text-decoration-none">
+                                                <a t-att-href="'/roadmaps/%s' % reference.id" class="text-decoration-none">
                                                     <t t-esc="reference.programme_name"/>
                                                 </a>
                                             </h2>
@@ -44,26 +45,26 @@
         </t>
     </template>
 
-    <template id="curriculum_public_map" name="FACODI Public Curriculum Map">
+    <template id="curriculum_public_map" name="FACODI Public Roadmap">
         <t t-call="website.layout">
-            <t t-set="additional_title">Curriculum map</t>
-            <t t-set="meta_description">Explore published FACODI curricular units, learning modules and approved course coverage.</t>
+            <t t-set="additional_title">Roadmaps</t>
+            <t t-set="meta_description">Explore published FACODI roadmaps, curricular units, learning modules and approved course coverage.</t>
             <div id="wrap" class="oe_structure">
                 <section class="container py-5 facodi-curriculum facodi-curriculum-map">
                     <div class="row justify-content-center">
                         <div class="col-12 col-xl-10">
                             <nav class="small mb-4" aria-label="Breadcrumb">
-                                <a href="/curriculos" class="text-decoration-none">Curricula</a>
+                                <a href="/roadmaps" class="text-decoration-none">Roadmaps</a>
                                 <span class="text-muted mx-1">/</span>
-                                <span>Curriculum map</span>
+                                <span>Roadmap</span>
                             </nav>
-                            <p class="text-uppercase small text-muted mb-2">FACODI · Curriculum map</p>
-                            <h1 class="display-5 mb-3">Published learning paths</h1>
+                            <p class="text-uppercase small text-muted mb-2">FACODI · Roadmaps</p>
+                            <h1 class="display-5 mb-3">Published learning roadmaps</h1>
                             <p class="lead text-muted mb-5">
                                 Follow each published path from curriculum reference to curricular unit, learning module and public FACODI course or content.
                             </p>
                             <div t-if="not curriculum_map" class="alert alert-info" role="status">
-                                There are no published curriculum maps yet.
+                                There are no published roadmaps yet.
                             </div>
                             <section t-foreach="curriculum_map" t-as="path" class="facodi-curriculum-pathway mb-5" t-att-aria-label="path['reference'].programme_name">
                                 <header class="facodi-curriculum-pathway__header">
@@ -91,7 +92,7 @@
                                             <p t-else="" class="text-muted small mb-0">No published modules yet.</p>
                                         </div>
                                         <div class="facodi-curriculum-map__unit-coverage">
-                                            <p class="small fw-semibold mb-2">Curriculum coverage</p>
+                                            <p class="small fw-semibold mb-2">Roadmap coverage</p>
                                             <ul t-if="entry['coverage_rows']" class="list-unstyled mb-0">
                                                 <li t-foreach="entry['coverage_rows']" t-as="coverage" class="mb-2">
                                                     <a t-att-href="coverage['channel'].website_url" class="text-decoration-none"><t t-esc="coverage['channel'].name"/></a>
@@ -117,13 +118,11 @@
                     <div class="row justify-content-center">
                         <div class="col-12 col-xl-10">
                             <nav class="small mb-4" aria-label="Breadcrumb">
-                                <a href="/curriculos" class="text-decoration-none">Currículos</a>
-                                <span class="text-muted mx-1">/</span>
-                                <a href="/mapa-curricular" class="text-decoration-none">Mapa curricular</a>
+                                <a href="/roadmaps" class="text-decoration-none">Roadmaps</a>
                                 <span class="text-muted mx-1">/</span>
                                 <span>Unidades curriculares</span>
                             </nav>
-                            <p class="text-uppercase small text-muted mb-2">FACODI · Currículos oficiais</p>
+                            <p class="text-uppercase small text-muted mb-2">FACODI · Roadmaps</p>
                             <h1 class="display-5 mb-3">Unidades curriculares</h1>
                             <p class="lead text-muted mb-4">
                                 Explore unidades de planos de estudos validados e a respetiva cobertura editorial publicada no FACODI.
@@ -199,17 +198,20 @@
         </t>
     </template>
 
-    <template id="curriculum_public_detail" name="FACODI Official Curriculum Detail">
+    <template id="curriculum_public_detail" name="FACODI Roadmap Detail">
         <t t-call="website.layout">
+            <t t-set="additional_title"><t t-esc="reference.programme_name"/> · Roadmap</t>
+            <t t-set="meta_description">Explore the FACODI learning roadmap for <t t-esc="reference.programme_name"/>.</t>
             <div id="wrap" class="oe_structure">
                 <section class="container py-5">
                     <div class="row justify-content-center">
                         <div class="col-12 col-xl-10">
-                            <a href="/curriculos" class="small text-decoration-none">← Todos os currículos</a>
+                            <a href="/roadmaps" class="small text-decoration-none">← All roadmaps</a>
                             <p class="text-uppercase small text-muted mt-4 mb-2">
                                 <t t-esc="reference.institution"/> · <t t-esc="reference.academic_year"/>
                             </p>
-                            <h1 class="display-5 mb-3"><t t-esc="reference.programme_name"/></h1>
+                            <h1 class="display-5 mb-2"><t t-esc="reference.programme_name"/></h1>
+                            <p class="lead text-muted mb-3">FACODI learning roadmap</p>
                             <div class="d-flex flex-wrap gap-2 mb-4">
                                 <span t-if="reference.external_programme_code" class="badge text-bg-light">
                                     Programa <t t-esc="reference.external_programme_code"/>
@@ -239,7 +241,7 @@
                                                 <th>ECTS</th>
                                                 <th>Período</th>
                                                 <th class="d-none d-lg-table-cell">Tipo</th>
-                                                <th class="d-none d-lg-table-cell">Cobertura FACODI</th>
+                                                <th>Roadmap</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -265,6 +267,15 @@
                                                     <t t-else="">Não especificado</t>
                                                 </td>
                                                 <td>
+                                                    <div t-if="entry['learning']['modules']" class="mb-2">
+                                                        <a t-foreach="entry['learning']['modules']"
+                                                           t-as="module_row"
+                                                           t-att-href="module_row['module_url']"
+                                                           class="d-block small text-decoration-none mb-1">
+                                                            <t t-esc="module_row['module'].name"/>
+                                                            <span class="text-muted"> · <t t-esc="module_row['item_count']"/> conteúdos</span>
+                                                        </a>
+                                                    </div>
                                                     <span t-if="entry['coverage_status'] == 'covered'" class="badge text-bg-success">
                                                         Coberta · <t t-esc="entry['published_course_count']"/> curso(s)
                                                     </span>
@@ -282,7 +293,7 @@
                             </section>
 
                             <section t-if="coverage_links" class="mt-5 pt-4 border-top">
-                                <h2 class="h3">Cobertura FACODI validada</h2>
+                                <h2 class="h3">Published roadmap coverage</h2>
                                 <p class="text-muted">Cursos publicados ligados a unidades curriculares através de relações revistas por um gestor.</p>
                                 <div class="list-group">
                                     <a t-foreach="coverage_links"
@@ -302,7 +313,7 @@
         </t>
     </template>
 
-    <template id="curriculum_public_unit" name="FACODI Official Curriculum Unit">
+    <template id="curriculum_public_unit" name="FACODI Roadmap Unit">
         <t t-call="website.layout">
             <t t-set="additional_title"><t t-esc="unit.name"/> · <t t-esc="reference.programme_name"/></t>
             <div id="wrap" class="oe_structure">
@@ -310,11 +321,11 @@
                     <div class="row justify-content-center">
                         <div class="col-12 col-xl-10">
                             <nav class="small mb-4" aria-label="Breadcrumb">
-                                <a href="/curriculos" class="text-decoration-none">Currículos</a>
+                                <a href="/roadmaps" class="text-decoration-none">Roadmaps</a>
                                 <span class="text-muted mx-1">/</span>
                                 <a href="/unidades-curriculares" class="text-decoration-none">Unidades curriculares</a>
                                 <span class="text-muted mx-1">/</span>
-                                <a t-att-href="'/curriculos/%s' % reference.id" class="text-decoration-none">
+                                <a t-att-href="'/roadmaps/%s' % reference.id" class="text-decoration-none">
                                     <t t-esc="reference.programme_name"/>
                                 </a>
                                 <span class="text-muted mx-1">/</span>
@@ -468,7 +479,7 @@
         </t>
     </template>
 
-    <template id="curriculum_public_module" name="FACODI Curriculum Module">
+    <template id="curriculum_public_module" name="FACODI Roadmap Module">
         <t t-call="website.layout">
             <t t-set="additional_title"><t t-esc="module_row['module'].name"/></t>
             <div id="wrap" class="oe_structure">
@@ -476,7 +487,7 @@
                     <div class="row justify-content-center">
                         <div class="col-12 col-xl-8">
                             <nav class="small mb-4" aria-label="Breadcrumb">
-                                <a href="/unidades-curriculares" class="text-decoration-none">Unidades curriculares</a>
+                                <a href="/roadmaps" class="text-decoration-none">Roadmaps</a>
                                 <span class="text-muted mx-1">/</span>
                                 <span t-esc="module_row['module'].name"/>
                             </nav>

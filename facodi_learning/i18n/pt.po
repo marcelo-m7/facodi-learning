@@ -22,14 +22,9 @@ msgid "Curricular Units"
 msgstr "Unidades Curriculares"
 
 #. module: facodi_learning
-#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_catalog_navigation
-msgid "Curriculum Map"
-msgstr "Mapa curricular"
-
-#. module: facodi_learning
-#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_catalog_navigation
-msgid "Curricula"
-msgstr "Currículos"
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_index
+msgid "Roadmaps"
+msgstr "Roadmaps"
 
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_catalog_navigation
@@ -38,33 +33,33 @@ msgstr "Explorar conteúdos"
 
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_index
-msgid "View curriculum map"
-msgstr "Ver mapa curricular"
+msgid "Learning roadmaps grounded in verified academic sources"
+msgstr "Roadmaps de aprendizagem assentes em fontes académicas verificadas"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_index
+msgid "Explore each structured learning journey from curricular unit to module, course and learning content."
+msgstr "Explore cada percurso de aprendizagem estruturado, da unidade curricular ao módulo, curso e conteúdo."
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_index
+msgid "Explore curricular units"
+msgstr "Explorar unidades curriculares"
 
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_map
-msgid "Curriculum map"
-msgstr "Mapa curricular"
-
-#. module: facodi_learning
-#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_map
-msgid "Explore published FACODI curricular units, learning modules and approved course coverage."
-msgstr "Explore unidades curriculares, módulos de aprendizagem e cobertura de cursos aprovada da FACODI."
-
-#. module: facodi_learning
-#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_map
-msgid "Published learning paths"
-msgstr "Percursos de aprendizagem publicados"
+msgid "Published learning roadmaps"
+msgstr "Roadmaps de aprendizagem publicados"
 
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_map
 msgid "Follow each published path from curriculum reference to curricular unit, learning module and public FACODI course or content."
-msgstr "Siga cada percurso publicado desde a referência curricular à unidade curricular, módulo de aprendizagem e curso ou conteúdo público da FACODI."
+msgstr "Siga cada roadmap publicado desde a referência curricular à unidade curricular, módulo de aprendizagem e curso ou conteúdo público da FACODI."
 
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_map
-msgid "There are no published curriculum maps yet."
-msgstr "Ainda não existem mapas curriculares publicados."
+msgid "There are no published roadmaps yet."
+msgstr "Ainda não existem roadmaps publicados."
 
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_map
@@ -83,8 +78,8 @@ msgstr "Ainda não há módulos publicados."
 
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_map
-msgid "Curriculum coverage"
-msgstr "Cobertura curricular"
+msgid "Roadmap coverage"
+msgstr "Cobertura do roadmap"
 
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_map

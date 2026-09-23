@@ -39,7 +39,7 @@ class TestCurriculumPublicUnits(TransactionCase):
         path = self.database_unit._facodi_public_path()
         self.assertEqual(
             path,
-            f"/curriculos/{self.reference.id}/unidades/19411017",
+            f"/roadmaps/{self.reference.id}/units/19411017",
         )
 
         self.reference.write({"website_published": False})
@@ -83,7 +83,7 @@ class TestCurriculumPublicUnits(TransactionCase):
         self.assertEqual(row["published_course_count"], 2)
         self.assertEqual(
             row["unit_url"],
-            f"/curriculos/{self.reference.id}/unidades/19411000",
+            f"/roadmaps/{self.reference.id}/units/19411000",
         )
 
         gap = next(
@@ -176,6 +176,7 @@ class TestCurriculumPublicUnits(TransactionCase):
 
         self.assertEqual([entry["reference"] for entry in entries], self.reference)
         self.assertNotIn(hidden_reference, [entry["reference"] for entry in entries])
+        self.assertEqual(entries[0]["reference_url"], f"/roadmaps/{self.reference.id}")
         programming = next(
             entry
             for entry in entries[0]["unit_matrix"]
@@ -192,4 +193,5 @@ class TestCurriculumPublicUnits(TransactionCase):
         self.assertIn("coverage_rows", view.arch_db)
         self.assertIn("learning['modules']", view.arch_db)
         self.assertIn("learning['next_item']", view.arch_db)
+        self.assertIn("/roadmaps", view.arch_db)
         self.assertNotIn("facodi.learning.curriculum.coverage", view.arch_db)

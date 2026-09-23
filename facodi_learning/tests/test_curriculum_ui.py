@@ -105,6 +105,8 @@ class TestCurriculumUI(TransactionCase):
         self.assertIn("period", unit_index.arch_db)
         self.assertIn("source_url", detail.arch_db)
         self.assertIn("coverage_links", detail.arch_db)
+        self.assertIn("entry['learning']['modules']", detail.arch_db)
+        self.assertIn("/roadmaps", detail.arch_db)
         self.assertEqual(course_link.inherit_id.key, "website_slides.course_main")
         self.assertNotIn("slide.slide", detail.arch_db)
         self.assertNotIn("facodi.learning.curriculum.coverage", detail.arch_db)

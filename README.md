@@ -133,6 +133,10 @@ credit recognition, vector storage, embeddings or AI-based course mapping.
 
 ## Curriculum Reference & Coverage — M3.4
 
+### Public Roadmaps
+
+On the Website, the public and editorial concept is a **Roadmap**: one reviewed learning structure from an external curricular unit through reusable learning modules to existing FACODI courses or content. Canonical routes are `/roadmaps`, `/roadmaps/<id>` and `/roadmaps/<id>/units/<code>`; legacy curriculum and map URLs redirect permanently. `facodi.learning.curriculum.*` remains the compatibility and evidence namespace for external academic sources, provenance and reviewed coverage, not a second public learning domain.
+
 M3.4 provides an internal editorial workspace for comparing canonical FACODI
 courses with a versioned external curriculum reference. It does **not** create a
 FACODI degree/pathway model and it does not alter Odoo learner progression.

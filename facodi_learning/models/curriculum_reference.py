@@ -343,7 +343,7 @@ class FacodiLearningCurriculumReference(models.Model):
             curriculum_map.append(
                 {
                     "reference": reference,
-                    "reference_url": "/curriculos/%s" % reference.id,
+                    "reference_url": "/roadmaps/%s" % reference.id,
                     "unit_matrix": unit_matrix,
                 }
             )
@@ -478,7 +478,7 @@ class FacodiLearningCurriculumUnit(models.Model):
         self.ensure_one()
         if not self.reference_id._facodi_is_public():
             return False
-        return "/curriculos/%s/unidades/%s" % (
+        return "/roadmaps/%s/units/%s" % (
             self.reference_id.id,
             quote(self.external_unit_code or "", safe=""),
         )
