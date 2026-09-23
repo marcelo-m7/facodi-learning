@@ -110,3 +110,9 @@ class TestCurriculumUI(TransactionCase):
         self.assertEqual(course_link.inherit_id.key, "website_slides.course_main")
         self.assertNotIn("slide.slide", detail.arch_db)
         self.assertNotIn("facodi.learning.curriculum.coverage", detail.arch_db)
+
+    def test_public_roadmaps_menu_uses_the_canonical_route(self):
+        menu = self.env.ref("facodi_learning.menu_public_curriculum_map")
+
+        self.assertEqual(menu.name, "Roadmaps")
+        self.assertEqual(menu.url, "/roadmaps")
