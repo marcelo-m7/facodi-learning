@@ -2,7 +2,7 @@ import re
 import unicodedata
 from urllib.parse import quote
 
-from odoo import api, fields, models
+from odoo import _, api, fields, models
 from odoo.exceptions import AccessError, ValidationError
 
 
@@ -203,10 +203,12 @@ class FacodiLearningCurriculumReference(models.Model):
             "equivalent": 4,
         }
         labels = {
-            "supports": "Suporte complementar",
-            "partial": "Cobertura parcial",
-            "covers": "Cobertura curricular",
-            "equivalent": "Correspondência de conteúdo — não equivalência académica",
+            "supports": _("Supplementary support"),
+            "partial": _("Partial coverage"),
+            "covers": _("Curriculum coverage"),
+            "equivalent": _(
+                "Content correspondence - not academic equivalence"
+            ),
         }
         grouped = {}
         by_unit_channel = {}
@@ -320,6 +322,32 @@ class FacodiLearningCurriculumReference(models.Model):
             )
         )
         return links
+
+    @api.model
+    def _facodi_public_curriculum_map(self, website=None):
+        """Project the approved public curriculum hierarchy for website visitors."""
+        references = self.sudo().search(
+            [
+                ("website_published", "=", True),
+                ("validated_at", "!=", False),
+            ],
+            order="institution, programme_name, academic_year desc, id",
+        )
+        curriculum_map = []
+        for reference in references:
+            unit_matrix = reference._facodi_public_unit_matrix(website=website)
+            for entry in unit_matrix:
+                entry["learning"] = entry["unit"]._facodi_public_learning_projection(
+                    website=website
+                )
+            curriculum_map.append(
+                {
+                    "reference": reference,
+                    "reference_url": "/curriculos/%s" % reference.id,
+                    "unit_matrix": unit_matrix,
+                }
+            )
+        return curriculum_map
 
 
 class FacodiLearningCurriculumUnit(models.Model):

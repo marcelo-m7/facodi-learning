@@ -11,6 +11,7 @@
         "security/ir.model.access.csv",
         "security/facodi_learning_security.xml",
         "data/ir_cron.xml",
+        "data/website_menu.xml",
         "views/slide_slide_views.xml",
         "views/analysis_views.xml",
         "views/course_candidate_views.xml",

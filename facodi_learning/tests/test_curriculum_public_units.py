@@ -157,6 +157,33 @@ class TestCurriculumPublicUnits(TransactionCase):
             {entry["unit"].external_unit_code for entry in entries},
         )
 
+    def test_public_curriculum_map_exposes_only_published_references(self):
+        course = self._course("Public Curriculum Map Course")
+        self._approved_coverage(course, self.programming_unit, "covers")
+        hidden_reference = self.env["facodi.learning.curriculum.reference"].create(
+            {
+                "institution": "Private Institution",
+                "programme_name": "Hidden Programme",
+                "academic_year": "2026/27",
+                "provider": "manual",
+                "external_id": "hidden-map-reference",
+            }
+        )
+
+        entries = self.env[
+            "facodi.learning.curriculum.reference"
+        ]._facodi_public_curriculum_map()
+
+        self.assertEqual([entry["reference"] for entry in entries], self.reference)
+        self.assertNotIn(hidden_reference, [entry["reference"] for entry in entries])
+        programming = next(
+            entry
+            for entry in entries[0]["unit_matrix"]
+            if entry["unit"] == self.programming_unit
+        )
+        self.assertEqual(programming["coverage_status"], "covered")
+        self.assertEqual(programming["coverage_rows"][0]["coverage_type"], "covers")
+
     def test_unit_qweb_view_is_loaded_and_links_back_to_official_source(self):
         view = self.env.ref("facodi_learning.curriculum_public_unit")
         self.assertEqual(view.type, "qweb")

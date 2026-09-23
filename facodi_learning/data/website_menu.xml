@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <record id="menu_public_curriculum_map" model="website.menu">
+        <field name="name">Curriculum Map</field>
+        <field name="url">/mapa-curricular</field>
+        <field name="parent_id" ref="website.main_menu"/>
+        <field name="sequence">45</field>
+    </record>
+</odoo>

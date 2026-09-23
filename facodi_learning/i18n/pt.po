@@ -1,0 +1,117 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# * facodi_learning
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Language: pt_PT\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch:facodi_learning.curriculum_catalog_navigation
+msgid "Learning"
+msgstr "Aprendizagem"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch:facodi_learning.curriculum_catalog_navigation
+msgid "Curricular Units"
+msgstr "Unidades Curriculares"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch:facodi_learning.curriculum_catalog_navigation
+msgid "Curriculum Map"
+msgstr "Mapa curricular"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch:facodi_learning.curriculum_catalog_navigation
+msgid "Curricula"
+msgstr "Currículos"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch:facodi_learning.curriculum_catalog_navigation
+msgid "Explore Content"
+msgstr "Explorar conteúdos"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch:facodi_learning.curriculum_public_index
+msgid "View curriculum map"
+msgstr "Ver mapa curricular"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch:facodi_learning.curriculum_public_map
+msgid "Curriculum map"
+msgstr "Mapa curricular"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch:facodi_learning.curriculum_public_map
+msgid "Explore published FACODI curricular units, learning modules and approved course coverage."
+msgstr "Explore unidades curriculares, módulos de aprendizagem e cobertura de cursos aprovada da FACODI."
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch:facodi_learning.curriculum_public_map
+msgid "Published learning paths"
+msgstr "Percursos de aprendizagem publicados"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch:facodi_learning.curriculum_public_map
+msgid "Follow each published path from curriculum reference to curricular unit, learning module and public FACODI course or content."
+msgstr "Siga cada percurso publicado desde a referência curricular à unidade curricular, módulo de aprendizagem e curso ou conteúdo público da FACODI."
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch:facodi_learning.curriculum_public_map
+msgid "There are no published curriculum maps yet."
+msgstr "Ainda não existem mapas curriculares publicados."
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch:facodi_learning.curriculum_public_map
+msgid "View path"
+msgstr "Ver percurso"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch:facodi_learning.curriculum_public_map
+msgid "Modules"
+msgstr "Módulos"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch:facodi_learning.curriculum_public_map
+msgid "No published modules yet."
+msgstr "Ainda não há módulos publicados."
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch:facodi_learning.curriculum_public_map
+msgid "Curriculum coverage"
+msgstr "Cobertura curricular"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch:facodi_learning.curriculum_public_map
+msgid "No approved public course coverage yet."
+msgstr "Ainda não existe cobertura pública de cursos aprovada."
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch:facodi_learning.curriculum_public_map
+msgid "items"
+msgstr "conteúdos"
+
+#. module: facodi_learning
+#: code:addons/facodi_learning/models/curriculum_reference.py:0
+msgid "Supplementary support"
+msgstr "Suporte complementar"
+
+#. module: facodi_learning
+#: code:addons/facodi_learning/models/curriculum_reference.py:0
+msgid "Partial coverage"
+msgstr "Cobertura parcial"
+
+#. module: facodi_learning
+#: code:addons/facodi_learning/models/curriculum_reference.py:0
+msgid "Curriculum coverage"
+msgstr "Cobertura curricular"
+
+#. module: facodi_learning
+#: code:addons/facodi_learning/models/curriculum_reference.py:0
+msgid "Content correspondence - not academic equivalence"
+msgstr "Correspondência de conteúdo - não equivalência académica"

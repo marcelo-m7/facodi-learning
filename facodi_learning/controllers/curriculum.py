@@ -42,6 +42,18 @@ class FacodiCurriculumController(http.Controller):
         )
 
     @http.route(
+        "/mapa-curricular", type="http", auth="public", website=True, sitemap=True
+    )
+    def curriculum_map(self, **kwargs):
+        curriculum_map = request.env[
+            "facodi.learning.curriculum.reference"
+        ]._facodi_public_curriculum_map(website=request.website)
+        return request.render(
+            "facodi_learning.curriculum_public_map",
+            {"curriculum_map": curriculum_map},
+        )
+
+    @http.route(
         "/unidades-curriculares", type="http", auth="public", website=True, sitemap=True
     )
     def curriculum_unit_index(self, **kwargs):

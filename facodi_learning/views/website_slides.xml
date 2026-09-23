@@ -4,10 +4,11 @@
         <xpath expr="//div[@id='wrap']/div[contains(concat(' ', normalize-space(@class), ' '), ' container ')][1]" position="before">
             <section class="container pt-4" aria-label="Aprendizagem FACODI">
                 <nav class="d-flex flex-wrap gap-3 small">
-                    <strong>Aprendizagem</strong>
-                    <a href="/unidades-curriculares" class="text-decoration-none">Unidades curriculares</a>
-                    <a href="/curriculos" class="text-decoration-none">Currículos</a>
-                    <a href="/slides" class="text-decoration-none">Explorar conteúdos</a>
+                    <strong>Learning</strong>
+                    <a href="/unidades-curriculares" class="text-decoration-none">Curricular Units</a>
+                    <a href="/mapa-curricular" class="text-decoration-none">Curriculum Map</a>
+                    <a href="/curriculos" class="text-decoration-none">Curricula</a>
+                    <a href="/slides" class="text-decoration-none">Explore Content</a>
                 </nav>
             </section>
         </xpath>
