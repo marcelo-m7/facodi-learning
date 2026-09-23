@@ -89,15 +89,20 @@ class TestCurriculumUI(TransactionCase):
     def test_public_curriculum_qweb_views_are_explicit_and_standard_first(self):
         index = self.env.ref("facodi_learning.curriculum_public_index")
         detail = self.env.ref("facodi_learning.curriculum_public_detail")
+        unit_index = self.env.ref("facodi_learning.curriculum_public_unit_index")
         course_link = self.env.ref(
             "facodi_learning.approved_course_curriculum_links"
         )
 
         self.assertEqual(index.type, "qweb")
         self.assertEqual(detail.type, "qweb")
+        self.assertEqual(unit_index.type, "qweb")
         self.assertEqual(course_link.type, "qweb")
         self.assertIn("website.layout", index.arch_db)
         self.assertIn("website.layout", detail.arch_db)
+        self.assertIn("/unidades-curriculares", unit_index.arch_db)
+        self.assertIn("reference_id", unit_index.arch_db)
+        self.assertIn("period", unit_index.arch_db)
         self.assertIn("source_url", detail.arch_db)
         self.assertIn("coverage_links", detail.arch_db)
         self.assertEqual(course_link.inherit_id.key, "website_slides.course_main")

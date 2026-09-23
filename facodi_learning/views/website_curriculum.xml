@@ -11,6 +11,7 @@
                             <p class="lead text-muted mb-5">
                                 Referências curriculares versionadas e verificadas, usadas para organizar e auditar a cobertura dos cursos FACODI.
                             </p>
+                            <a href="/unidades-curriculares" class="btn btn-outline-primary mb-5">Explorar unidades curriculares</a>
                             <div t-if="not references" class="alert alert-info">
                                 Ainda não existem currículos validados publicados.
                             </div>
@@ -29,6 +30,93 @@
                                             <p t-if="reference.external_programme_code" class="mb-0">
                                                 Código do programa: <strong t-esc="reference.external_programme_code"/>
                                             </p>
+                                        </div>
+                                    </article>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </t>
+    </template>
+
+    <template id="curriculum_public_unit_index" name="FACODI Curricular Units">
+        <t t-call="website.layout">
+            <div id="wrap" class="oe_structure">
+                <section class="container py-5 facodi-curriculum">
+                    <div class="row justify-content-center">
+                        <div class="col-12 col-xl-10">
+                            <nav class="small mb-4" aria-label="Breadcrumb">
+                                <a href="/curriculos" class="text-decoration-none">Currículos</a>
+                                <span class="text-muted mx-1">/</span>
+                                <span>Unidades curriculares</span>
+                            </nav>
+                            <p class="text-uppercase small text-muted mb-2">FACODI · Currículos oficiais</p>
+                            <h1 class="display-5 mb-3">Unidades curriculares</h1>
+                            <p class="lead text-muted mb-4">
+                                Explore unidades de planos de estudos validados e a respetiva cobertura editorial publicada no FACODI.
+                            </p>
+
+                            <form action="/unidades-curriculares" method="get" class="row g-3 border rounded p-3 mb-5" aria-label="Filtrar unidades curriculares">
+                                <div class="col-12 col-md-6">
+                                    <label for="curriculum-reference" class="form-label">Percurso</label>
+                                    <select id="curriculum-reference" name="reference_id" class="form-select">
+                                        <option value="">Todos os percursos</option>
+                                        <option t-foreach="references" t-as="reference"
+                                                t-att-value="reference.id"
+                                                t-att-selected="'selected' if selected_reference_id == reference.id else None">
+                                            <t t-esc="reference.institution"/> · <t t-esc="reference.programme_name"/> (<t t-esc="reference.academic_year"/>)
+                                        </option>
+                                    </select>
+                                </div>
+                                <div class="col-6 col-md-2">
+                                    <label for="curriculum-year" class="form-label">Ano</label>
+                                    <select id="curriculum-year" name="year" class="form-select">
+                                        <option value="">Todos</option>
+                                        <option t-foreach="years" t-as="year" t-att-value="year" t-att-selected="'selected' if selected_year == year else None"><t t-esc="year"/>.º</option>
+                                    </select>
+                                </div>
+                                <div class="col-6 col-md-2">
+                                    <label for="curriculum-period" class="form-label">Período</label>
+                                    <select id="curriculum-period" name="period" class="form-select">
+                                        <option value="">Todos</option>
+                                        <option value="semester_1" t-att-selected="'selected' if selected_period == 'semester_1' else None">1.º semestre</option>
+                                        <option value="semester_2" t-att-selected="'selected' if selected_period == 'semester_2' else None">2.º semestre</option>
+                                        <option value="annual" t-att-selected="'selected' if selected_period == 'annual' else None">Anual</option>
+                                        <option value="other" t-att-selected="'selected' if selected_period == 'other' else None">Conforme fonte</option>
+                                    </select>
+                                </div>
+                                <div class="col-6 col-md-2">
+                                    <label for="curriculum-credits" class="form-label">ECTS</label>
+                                    <select id="curriculum-credits" name="credits" class="form-select">
+                                        <option value="">Todos</option>
+                                        <option t-foreach="credits_options" t-as="credit" t-att-value="credit" t-att-selected="'selected' if selected_credits == credit else None"><t t-esc="'%g' % credit"/></option>
+                                    </select>
+                                </div>
+                                <div class="col-12 d-flex gap-2">
+                                    <button type="submit" class="btn btn-primary">Aplicar filtros</button>
+                                    <a href="/unidades-curriculares" class="btn btn-outline-secondary">Limpar</a>
+                                </div>
+                            </form>
+
+                            <p class="text-muted small mb-3"><t t-esc="len(entries)"/> unidade(s) encontrada(s).</p>
+                            <div t-if="not entries" class="alert alert-info">Não existem unidades curriculares para os filtros selecionados.</div>
+                            <div class="row g-3">
+                                <div t-foreach="entries" t-as="entry" class="col-12 col-lg-6">
+                                    <article class="card h-100 shadow-sm">
+                                        <div class="card-body d-flex flex-column">
+                                            <p class="small text-muted mb-2">
+                                                <t t-esc="entry['reference'].institution"/> · <t t-esc="entry['reference'].programme_name"/>
+                                            </p>
+                                            <h2 class="h5"><a t-att-href="entry['unit_url']" class="text-decoration-none"><t t-esc="entry['unit'].name"/></a></h2>
+                                            <p class="mb-3"><code t-esc="entry['unit'].external_unit_code"/> · <t t-esc="entry['unit'].curricular_year"/>.º ano · <t t-esc="('%g' % entry['unit'].credits) if entry['unit'].credits else '—'"/> ECTS</p>
+                                            <div class="mt-auto d-flex justify-content-between align-items-center gap-2">
+                                                <span t-if="entry['coverage_status'] == 'covered'" class="badge text-bg-success">Coberta</span>
+                                                <span t-elif="entry['coverage_status'] == 'partial'" class="badge text-bg-warning">Parcial</span>
+                                                <span t-else="" class="badge text-bg-light">Sem cobertura publicada</span>
+                                                <a t-att-href="entry['unit_url']" class="btn btn-outline-primary btn-sm">Ver UC</a>
+                                            </div>
                                         </div>
                                     </article>
                                 </div>
@@ -65,20 +153,26 @@
 
                             <section t-foreach="unit_matrix_groups" t-as="group" class="mb-5">
                                 <h2 class="h3 mb-3"><t t-esc="group[0]"/>.º ano</h2>
-                                <div class="table-responsive">
+                                <div t-foreach="group[1]" t-as="period_group" class="table-responsive mb-4">
+                                    <h3 class="h5 mb-2">
+                                        <t t-if="period_group[0] == 'semester_1'">1.º semestre</t>
+                                        <t t-elif="period_group[0] == 'semester_2'">2.º semestre</t>
+                                        <t t-elif="period_group[0] == 'annual'">Anual</t>
+                                        <t t-else="">Conforme fonte</t>
+                                    </h3>
                                     <table class="table align-middle">
                                         <thead>
                                             <tr>
                                                 <th>Unidade curricular</th>
-                                                <th>Código</th>
+                                                <th class="d-none d-md-table-cell">Código</th>
                                                 <th>ECTS</th>
                                                 <th>Período</th>
-                                                <th>Tipo</th>
-                                                <th>Cobertura FACODI</th>
+                                                <th class="d-none d-lg-table-cell">Tipo</th>
+                                                <th class="d-none d-lg-table-cell">Cobertura FACODI</th>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <tr t-foreach="group[1]" t-as="entry">
+                                            <tr t-foreach="period_group[1]" t-as="entry">
                                                 <t t-set="unit" t-value="entry['unit']"/>
                                                 <td>
                                                     <a t-att-href="entry['unit_url']" class="fw-semibold text-decoration-none">
@@ -86,15 +180,15 @@
                                                     </a>
                                                     <div t-if="unit.option_group" class="small text-muted" t-esc="unit.option_group"/>
                                                 </td>
-                                                <td><code t-esc="unit.external_unit_code"/></td>
+                                                <td class="d-none d-md-table-cell"><code t-esc="unit.external_unit_code"/></td>
                                                 <td t-esc="('%g' % unit.credits) if unit.credits else '—'"/>
-                                                <td>
+                                                <td class="d-none d-lg-table-cell">
                                                     <t t-if="unit.period == 'semester_1'">1.º semestre</t>
                                                     <t t-elif="unit.period == 'semester_2'">2.º semestre</t>
                                                     <t t-elif="unit.period == 'annual'">Anual</t>
                                                     <t t-else="">Conforme fonte</t>
                                                 </td>
-                                                <td>
+                                                <td class="d-none d-lg-table-cell">
                                                     <t t-if="unit.classification == 'mandatory'">Obrigatória</t>
                                                     <t t-elif="unit.classification == 'optional'">Opção</t>
                                                     <t t-else="">Não especificado</t>
@@ -146,6 +240,8 @@
                         <div class="col-12 col-xl-10">
                             <nav class="small mb-4" aria-label="Breadcrumb">
                                 <a href="/curriculos" class="text-decoration-none">Currículos</a>
+                                <span class="text-muted mx-1">/</span>
+                                <a href="/unidades-curriculares" class="text-decoration-none">Unidades curriculares</a>
                                 <span class="text-muted mx-1">/</span>
                                 <a t-att-href="'/curriculos/%s' % reference.id" class="text-decoration-none">
                                     <t t-esc="reference.programme_name"/>
@@ -252,8 +348,8 @@
                                 </div>
                             </section>
 
-                            <a t-att-href="'/curriculos/%s' % reference.id" class="btn btn-link px-0">
-                                ← Voltar ao currículo
+                            <a href="/unidades-curriculares" class="btn btn-link px-0">
+                                ← Voltar às unidades curriculares
                             </a>
                         </div>
                     </div>

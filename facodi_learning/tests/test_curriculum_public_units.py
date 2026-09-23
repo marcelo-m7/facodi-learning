@@ -106,6 +106,57 @@ class TestCurriculumPublicUnits(TransactionCase):
         self.assertEqual(row["coverage_status"], "partial")
         self.assertEqual(row["published_course_count"], 1)
 
+    def test_public_catalog_filters_only_validated_published_units(self):
+        course = self._course("Programming Foundations")
+        self._approved_coverage(course, self.programming_unit, "covers")
+        hidden_reference = self.env["facodi.learning.curriculum.reference"].create(
+            {
+                "institution": "Private Institution",
+                "programme_name": "Private Programme",
+                "academic_year": "2026/27",
+                "provider": "manual",
+                "external_id": "private-catalog-reference",
+            }
+        )
+        self.env["facodi.learning.curriculum.unit"].create(
+            {
+                "reference_id": hidden_reference.id,
+                "external_unit_code": "PRIVATE-001",
+                "name": "Private Unit",
+                "credits": 5.0,
+                "curricular_year": 1,
+                "period": "semester_1",
+                "classification": "mandatory",
+            }
+        )
+
+        all_entries = self.env[
+            "facodi.learning.curriculum.unit"
+        ]._facodi_public_catalog_entries()
+        self.assertEqual(len(all_entries), len(self.reference.unit_ids))
+
+        entries = self.env["facodi.learning.curriculum.unit"]._facodi_public_catalog_entries(
+            reference_id=self.reference.id,
+            curricular_year=1,
+            period="semester_1",
+            credits=5.0,
+        )
+        programming = next(
+            entry
+            for entry in entries
+            if entry["unit"].external_unit_code == "19411000"
+        )
+        self.assertEqual(programming["coverage_status"], "covered")
+        self.assertEqual(programming["published_course_count"], 1)
+        self.assertEqual(
+            programming["unit_url"],
+            f"/unidades-curriculares/{self.reference.id}/19411000-programacao",
+        )
+        self.assertNotIn(
+            "PRIVATE-001",
+            {entry["unit"].external_unit_code for entry in entries},
+        )
+
     def test_unit_qweb_view_is_loaded_and_links_back_to_official_source(self):
         view = self.env.ref("facodi_learning.curriculum_public_unit")
         self.assertEqual(view.type, "qweb")

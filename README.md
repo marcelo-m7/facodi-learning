@@ -166,6 +166,13 @@ to find approved relations, then re-read standard `slide.channel` records under 
 learner context so native publication, visibility and website boundaries stay
 authoritative. Proposed/rejected coverage and unpublished courses never appear.
 
+Version `19.0.1.9.0` adds `/unidades-curriculares`, a public catalogue of those
+validated units with filters for programme, curricular year, source period and source
+ECTS. It provides readable unit URLs without replacing the stable source-oriented
+`/curriculos/<reference>/unidades/<code>` links. The programme matrix is grouped by
+year and source period; it does not infer academic prerequisites, objectives, scientific
+areas or any relation from a UC directly to individual learning content.
+
 The Universidade do Algarve LESTI 2026/27 plan is the first curated production
 reference. It is reconciled idempotently from a versioned fixture sourced from the
 official UAlg study-plan page. Programme code `1941` and 43 distinct curricular-unit

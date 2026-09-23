@@ -1,3 +1,5 @@
+import re
+import unicodedata
 from urllib.parse import quote
 
 from odoo import api, fields, models
@@ -280,6 +282,20 @@ class FacodiLearningCurriculumReference(models.Model):
             )
         return grouped
 
+    def _facodi_public_unit_matrix_by_period(self, website=None):
+        self.ensure_one()
+        grouped = []
+        for year, entries in self._facodi_public_unit_matrix_grouped(website=website):
+            periods = []
+            for period in ("semester_1", "semester_2", "annual", "other"):
+                period_entries = [
+                    entry for entry in entries if entry["unit"].period == period
+                ]
+                if period_entries:
+                    periods.append((period, period_entries))
+            grouped.append((year, periods))
+        return grouped
+
     def _facodi_public_coverage_links(self, website=None):
         self.ensure_one()
         links = []
@@ -438,6 +454,70 @@ class FacodiLearningCurriculumUnit(models.Model):
             self.reference_id.id,
             quote(self.external_unit_code or "", safe=""),
         )
+
+    def _facodi_public_catalog_path(self):
+        self.ensure_one()
+        if not self.reference_id._facodi_is_public():
+            return False
+        normalized_name = unicodedata.normalize("NFKD", self.name or "")
+        normalized_name = normalized_name.encode("ascii", "ignore").decode("ascii")
+        readable_name = re.sub(r"[^a-z0-9]+", "-", normalized_name.lower()).strip("-")
+        return "/unidades-curriculares/%s/%s-%s" % (
+            self.reference_id.id,
+            quote(self.external_unit_code or "", safe=""),
+            readable_name or "unidade-curricular",
+        )
+
+    @api.model
+    def _facodi_public_catalog_entries(
+        self,
+        *,
+        reference_id=None,
+        curricular_year=None,
+        period=None,
+        credits=None,
+        website=None,
+    ):
+        domain = [
+            ("reference_id.website_published", "=", True),
+            ("reference_id.validated_at", "!=", False),
+        ]
+        if reference_id:
+            domain.append(("reference_id", "=", reference_id))
+        if curricular_year:
+            domain.append(("curricular_year", "=", curricular_year))
+        if period:
+            domain.append(("period", "=", period))
+        if credits is not None:
+            domain.append(("credits", "=", credits))
+
+        units = self.sudo().search(
+            domain,
+            order="reference_id, curricular_year, period, sequence, id",
+        )
+        coverage_maps = {
+            reference.id: reference._facodi_public_coverage_map(website=website)
+            for reference in units.mapped("reference_id")
+        }
+        entries = []
+        for unit in units:
+            coverage_rows = coverage_maps[unit.reference_id.id].get(unit.id, [])
+            if any(row["coverage_status"] == "covered" for row in coverage_rows):
+                coverage_status = "covered"
+            elif coverage_rows:
+                coverage_status = "partial"
+            else:
+                coverage_status = "gap"
+            entries.append(
+                {
+                    "unit": unit,
+                    "reference": unit.reference_id,
+                    "unit_url": unit._facodi_public_catalog_path(),
+                    "coverage_status": coverage_status,
+                    "published_course_count": len(coverage_rows),
+                }
+            )
+        return entries
 
     def _facodi_public_coverage_rows(self, website=None):
         self.ensure_one()
