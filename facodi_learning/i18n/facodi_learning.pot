@@ -9,38 +9,37 @@ msgstr ""
 "POT-Creation-Date: 2026-09-23 21:55+0000\n"
 "PO-Revision-Date: 2026-09-23 21:55+0000\n"
 "Last-Translator: \n"
-"Language-Team: pt_PT\n"
-"Language: pt_PT\n"
+"Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: \n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Plural-Forms: \n"
 
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_module
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit
 msgid "% complete"
-msgstr "% concluído"
+msgstr ""
 
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_map
 msgid ".º year ·"
-msgstr ".º ano ·"
+msgstr ""
 
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit_index
 msgid "<option value=\"\">All roadmaps</option>"
-msgstr "<option value=\"\">Todos os roadmaps</option>"
+msgstr ""
 
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit_index
 msgid "<option value=\"\">All</option>"
-msgstr "<option value=\"\">Todos</option>"
+msgstr ""
 
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_detail
 msgid "<span class=\"badge text-bg-success\">Validated reference</span>"
-msgstr "<span class=\"badge text-bg-success\">Validated reference</span>"
+msgstr ""
 
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.slide_channel_view_form_facodi_curriculum
@@ -48,8 +47,6 @@ msgid ""
 "<span class=\"o_stat_text\">Curriculum</span>\n"
 "                        <span class=\"o_stat_text\">Coverage</span>"
 msgstr ""
-"<span class=\"o_stat_text\">Curriculum</span>\n"
-"                        <span class=\"o_stat_text\">Coverage</span>"
 
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.slide_channel_view_form_facodi_mapping
@@ -57,14 +54,12 @@ msgid ""
 "<span class=\"o_stat_text\">FACODI</span>\n"
 "                        <span class=\"o_stat_text\">Course Mappings</span>"
 msgstr ""
-"<span class=\"o_stat_text\">FACODI</span>\n"
-"                        <span class=\"o_stat_text\">Course Mappings</span>"
 
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_module
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit
 msgid "<span class=\"text-muted mx-1\">/</span>"
-msgstr "<span class=\"text-muted mx-1\">/</span>"
+msgstr ""
 
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit_index
@@ -72,8 +67,6 @@ msgid ""
 "<span class=\"text-muted mx-1\">/</span>\n"
 "                                <span>Curricular units</span>"
 msgstr ""
-"<span class=\"text-muted mx-1\">/</span>\n"
-"                                <span>Curricular units</span>"
 
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_map
@@ -81,18 +74,16 @@ msgid ""
 "<span class=\"text-muted mx-1\">/</span>\n"
 "                                <span>Roadmap</span>"
 msgstr ""
-"<span class=\"text-muted mx-1\">/</span>\n"
-"                                <span>Roadmap</span>"
 
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.approved_course_curriculum_links
 msgid "<span class=\"text-muted\"> · </span>"
-msgstr "<span class=\"text-muted\"> · </span>"
+msgstr ""
 
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_detail
 msgid "<span class=\"text-muted\"> — </span>"
-msgstr "<span class=\"text-muted\"> — </span>"
+msgstr ""
 
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_catalog_navigation
@@ -102,7 +93,7 @@ msgstr ""
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit
 msgid "<strong>Optional group:</strong>"
-msgstr "<strong>Grupo de opção:</strong>"
+msgstr ""
 
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit
@@ -111,9 +102,6 @@ msgid ""
 "                                ECTS and the curricular structure shown are facts from the external source.\n"
 "                                FACODI does not grant credits, enrolment, academic equivalence, or replace the institution."
 msgstr ""
-"<strong>Proveniência e limites.</strong>\n"
-"                                ECTS and the curricular structure shown are facts from the external source.\n"
-"                                FACODI does not grant credits, enrolment, academic equivalence, or replace the institution."
 
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_detail
@@ -121,8 +109,6 @@ msgid ""
 "<strong>Provenance.</strong>\n"
 "                                This page reproduces a versioned external reference. FACODI does not award academic credits or replace the institutional source."
 msgstr ""
-"<strong>Proveniência.</strong>\n"
-"                                Esta página reproduz uma referência externa versionada. A FACODI não atribui créditos académicos nem substitui a fonte institucional."
 
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit
@@ -130,8 +116,6 @@ msgid ""
 "<strong>There is no published course with reviewed coverage for this unit "
 "yet.</strong>"
 msgstr ""
-"<strong>Ainda não existe curso publicado com cobertura revista para esta "
-"unidade.</strong>"
 
 #. module: facodi_learning
 #: model:ir.model.constraint,message:facodi_learning.constraint_facodi_learning_curriculum_module_assignment_unit_module_unique
@@ -206,7 +190,7 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit_index
 msgid "Annual"
-msgstr "Anual"
+msgstr ""
 
 #. module: facodi_learning
 #: model:ir.model.fields.selection,name:facodi_learning.selection__facodi_learning_analysis_result__tags_review_state__applied
@@ -221,7 +205,7 @@ msgstr ""
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit_index
 msgid "Apply filters"
-msgstr "Aplicar filtros"
+msgstr ""
 
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.view_facodi_course_mapping_form
@@ -263,7 +247,7 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit_index
 msgid "As stated by the source"
-msgstr "Conforme indicado pela fonte"
+msgstr ""
 
 #. module: facodi_learning
 #: model:ir.model.fields.selection,name:facodi_learning.selection__res_config_settings__facodi_learning_course_mapping_mode__assisted
@@ -314,7 +298,7 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit_index
 msgid "Breadcrumb"
-msgstr "Percurso"
+msgstr ""
 
 #. module: facodi_learning
 #: model:ir.model.fields,field_description:facodi_learning.field_facodi_learning_source__candidate_id
@@ -366,17 +350,17 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit
 #: model_terms:ir.ui.view,arch_db:facodi_learning.view_facodi_curriculum_unit_search
 msgid "Classification"
-msgstr "Classificação"
+msgstr ""
 
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit_index
 msgid "Clear"
-msgstr "Limpar"
+msgstr ""
 
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_detail
 msgid "Code"
-msgstr "Código"
+msgstr ""
 
 #. module: facodi_learning
 #: model:ir.model.fields,help:facodi_learning.field_res_config_settings__facodi_learning_discovery_enabled_providers
@@ -526,7 +510,7 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_module
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit
 msgid "Continue:"
-msgstr "Continuar:"
+msgstr ""
 
 #. module: facodi_learning
 #: model:ir.model.fields,help:facodi_learning.field_res_config_settings__facodi_learning_course_mapping_mode
@@ -609,18 +593,18 @@ msgstr ""
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.approved_course_curriculum_links
 msgid "Coverage relations reviewed and approved by FACODI curation."
-msgstr "Relações de cobertura revistas e aprovadas pela curadoria FACODI."
+msgstr ""
 
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit_index
 msgid "Covered"
-msgstr "Coberta"
+msgstr ""
 
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_detail
 msgid "Covered ·"
-msgstr "Coberta ·"
+msgstr ""
 
 #. module: facodi_learning
 #: model:ir.model.fields.selection,name:facodi_learning.selection__facodi_learning_curriculum_coverage__coverage_type__covers
@@ -725,18 +709,18 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_detail
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit
 msgid "Curricular unit"
-msgstr "Unidade curricular"
+msgstr ""
 
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit_index
 msgid "Curricular units"
-msgstr "Unidades curriculares"
+msgstr ""
 
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit
 msgid "Curricular year"
-msgstr "Ano curricular"
+msgstr ""
 
 #. module: facodi_learning
 #: model:ir.ui.menu,name:facodi_learning.menu_facodi_learning_curriculum_coverage
@@ -895,17 +879,17 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_map
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit_index
 msgid "ECTS"
-msgstr "ECTS"
+msgstr ""
 
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit
 msgid "ECTS from source"
-msgstr "ECTS da fonte"
+msgstr ""
 
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit
 msgid "Editorial modules with existing FACODI courses and content."
-msgstr "Módulos editoriais com cursos e conteúdos FACODI existentes."
+msgstr ""
 
 #. module: facodi_learning
 #: model:ir.model.fields,field_description:facodi_learning.field_res_config_settings__facodi_learning_discovery_enabled
@@ -989,12 +973,12 @@ msgstr ""
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit
 msgid "Explore FACODI courses"
-msgstr "Explorar cursos FACODI"
+msgstr ""
 
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_index
 msgid "Explore curricular units"
-msgstr "Explorar unidades curriculares"
+msgstr ""
 
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_index
@@ -1002,8 +986,6 @@ msgid ""
 "Explore each structured learning journey from curricular unit to module, "
 "course and learning content."
 msgstr ""
-"Explore cada percurso de aprendizagem estruturado, da unidade curricular ao "
-"módulo, curso e conteúdo."
 
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.approved_learning_resources
@@ -1016,13 +998,11 @@ msgid ""
 "Explore published FACODI roadmaps, curricular units, learning modules and "
 "approved course coverage."
 msgstr ""
-"Explore roadmaps FACODI publicados, unidades curriculares, módulos de "
-"aprendizagem e cobertura de cursos aprovada."
 
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_detail
 msgid "Explore the FACODI learning roadmap for"
-msgstr "Explore o roadmap de aprendizagem FACODI para"
+msgstr ""
 
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit_index
@@ -1030,8 +1010,6 @@ msgid ""
 "Explore units from validated programmes and their published FACODI editorial"
 " coverage."
 msgstr ""
-"Explore unidades de programas validados e a respetiva cobertura editorial "
-"FACODI publicada."
 
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_index
@@ -1039,8 +1017,6 @@ msgid ""
 "Explore verified FACODI learning roadmaps, curricular units, modules and "
 "published learning content."
 msgstr ""
-"Explore roadmaps de aprendizagem FACODI verificados, unidades curriculares, "
-"módulos e conteúdos publicados."
 
 #. module: facodi_learning
 #: model:ir.model.fields,help:facodi_learning.field_facodi_learning_curriculum_reference__website_published
@@ -1259,14 +1235,14 @@ msgstr ""
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_detail
 msgid "FACODI learning roadmap"
-msgstr "Roadmap de aprendizagem FACODI"
+msgstr ""
 
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_index
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_map
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit_index
 msgid "FACODI · Roadmaps"
-msgstr "FACODI · Roadmaps"
+msgstr ""
 
 #. module: facodi_learning
 #: model:ir.actions.server,name:facodi_learning.ir_cron_discover_facodi_learning_courses_ir_actions_server
@@ -1312,7 +1288,7 @@ msgstr ""
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit_index
 msgid "Filter curricular units"
-msgstr "Filtrar unidades curriculares"
+msgstr ""
 
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.slide_channel_view_form_facodi_mapping
@@ -1324,7 +1300,7 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit_index
 msgid "First semester"
-msgstr "1.º semestre"
+msgstr ""
 
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_map
@@ -1332,8 +1308,6 @@ msgid ""
 "Follow each published path from curriculum reference to curricular unit, "
 "learning module and public FACODI course or content."
 msgstr ""
-"Siga cada percurso publicado desde a referência curricular à unidade "
-"curricular, módulo de aprendizagem e curso ou conteúdo público FACODI."
 
 #. module: facodi_learning
 #: model:ir.model.fields,field_description:facodi_learning.field_facodi_learning_analysis_attempt__id
@@ -1512,7 +1486,7 @@ msgstr ""
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit
 msgid "Learning pathway"
-msgstr "Percurso de aprendizagem"
+msgstr ""
 
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.approved_learning_resources
@@ -1522,7 +1496,7 @@ msgstr ""
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_index
 msgid "Learning roadmaps grounded in verified academic sources"
-msgstr "Roadmaps de aprendizagem assentes em fontes académicas verificadas"
+msgstr ""
 
 #. module: facodi_learning
 #: model:ir.model.fields,field_description:facodi_learning.field_facodi_learning_course_candidate__level
@@ -1549,7 +1523,7 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_detail
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit
 msgid "Mandatory"
-msgstr "Obrigatória"
+msgstr ""
 
 #. module: facodi_learning
 #: model:ir.model.fields.selection,name:facodi_learning.selection__facodi_learning_course_candidate__decision_origin__manual
@@ -1652,7 +1626,7 @@ msgstr ""
 #: model:ir.ui.menu,name:facodi_learning.menu_facodi_curriculum_modules
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_map
 msgid "Modules"
-msgstr "Módulos"
+msgstr ""
 
 #. module: facodi_learning
 #: model:ir.model.fields,field_description:facodi_learning.field_facodi_learning_course_candidate__name
@@ -1694,19 +1668,19 @@ msgstr ""
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_map
 msgid "No approved public course coverage yet."
-msgstr "Ainda não existe cobertura pública de cursos aprovada."
+msgstr ""
 
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_detail
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit_index
 msgid "No published coverage"
-msgstr "Sem cobertura publicada"
+msgstr ""
 
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_map
 msgid "No published modules yet."
-msgstr "Ainda não há módulos publicados."
+msgstr ""
 
 #. module: facodi_learning
 #: model:ir.model.fields,help:facodi_learning.field_res_config_settings__facodi_learning_course_mapping_min_confidence
@@ -1747,7 +1721,7 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_detail
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit
 msgid "Not specified"
-msgstr "Não especificado"
+msgstr ""
 
 #. module: facodi_learning
 #: model:ir.model.fields,field_description:facodi_learning.field_facodi_learning_analysis_attempt__number
@@ -1767,7 +1741,7 @@ msgstr ""
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.approved_course_curriculum_links
 msgid "Official curriculum alignment"
-msgstr "Ligação a currículos oficiais"
+msgstr ""
 
 #. module: facodi_learning
 #: model:ir.model,name:facodi_learning.model_facodi_learning_curriculum_capture
@@ -1789,7 +1763,6 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit
 msgid "Only reviewed and approved relations with currently published courses."
 msgstr ""
-"Apenas relações revistas e aprovadas com cursos atualmente publicados."
 
 #. module: facodi_learning
 #. odoo-python
@@ -1800,7 +1773,7 @@ msgstr ""
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit
 msgid "Open course"
-msgstr "Abrir curso"
+msgstr ""
 
 #. module: facodi_learning
 #: model:ir.model.fields,field_description:facodi_learning.field_facodi_learning_curriculum_occurrence__option_group_id
@@ -1813,7 +1786,7 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_detail
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit
 msgid "Optional"
-msgstr "Opção"
+msgstr ""
 
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.view_slide_slide_form_facodi_learning
@@ -1856,7 +1829,7 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit_index
 msgid "Partial"
-msgstr "Parcial"
+msgstr ""
 
 #. module: facodi_learning
 #. odoo-python
@@ -1868,7 +1841,7 @@ msgstr ""
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_detail
 msgid "Partial ·"
-msgstr "Parcial ·"
+msgstr ""
 
 #. module: facodi_learning
 #: model:ir.model.fields,field_description:facodi_learning.field_facodi_learning_curriculum_capture__payload_hash
@@ -1895,7 +1868,7 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit_index
 #: model_terms:ir.ui.view,arch_db:facodi_learning.view_facodi_curriculum_unit_search
 msgid "Period"
-msgstr "Período"
+msgstr ""
 
 #. module: facodi_learning
 #: model:ir.model.fields,field_description:facodi_learning.field_facodi_learning_course_mapping__policy_version
@@ -1928,7 +1901,7 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_detail
 #: model_terms:ir.ui.view,arch_db:facodi_learning.view_facodi_curriculum_reference_search
 msgid "Programme"
-msgstr "Programa"
+msgstr ""
 
 #. module: facodi_learning
 #: model:ir.model.fields,field_description:facodi_learning.field_facodi_learning_curriculum_reference__programme_name
@@ -1939,7 +1912,7 @@ msgstr ""
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_index
 msgid "Programme code:"
-msgstr "Código do programa:"
+msgstr ""
 
 #. module: facodi_learning
 #: model:ir.model.fields.selection,name:facodi_learning.selection__facodi_learning_course_mapping__state__proposed
@@ -1984,7 +1957,7 @@ msgstr ""
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit
 msgid "Published FACODI coverage"
-msgstr "Cobertura FACODI publicada"
+msgstr ""
 
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_detail
@@ -1992,18 +1965,16 @@ msgid ""
 "Published courses linked to curricular units through Manager-reviewed "
 "relations."
 msgstr ""
-"Cursos publicados ligados a unidades curriculares através de relações "
-"revistas por um gestor."
 
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_map
 msgid "Published learning roadmaps"
-msgstr "Roadmaps de aprendizagem publicados"
+msgstr ""
 
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_detail
 msgid "Published roadmap coverage"
-msgstr "Cobertura de roadmap publicada"
+msgstr ""
 
 #. module: facodi_learning
 #: model:ir.model.fields,field_description:facodi_learning.field_facodi_learning_content_review__purpose
@@ -2206,12 +2177,12 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_detail
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit_index
 msgid "Roadmap"
-msgstr "Roadmap"
+msgstr ""
 
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_map
 msgid "Roadmap coverage"
-msgstr "Cobertura do roadmap"
+msgstr ""
 
 #. module: facodi_learning
 #: model:website.menu,name:facodi_learning.menu_public_curriculum_map
@@ -2222,7 +2193,7 @@ msgstr "Cobertura do roadmap"
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit_index
 msgid "Roadmaps"
-msgstr "Roadmaps"
+msgstr ""
 
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.view_facodi_discovery_run_form
@@ -2234,7 +2205,7 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit_index
 msgid "Second semester"
-msgstr "2.º semestre"
+msgstr ""
 
 #. module: facodi_learning
 #: model:ir.model.fields,field_description:facodi_learning.field_facodi_learning_curriculum_reference__selection_enabled
@@ -2447,19 +2418,19 @@ msgstr ""
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit_index
 msgid "There are no curricular units for the selected filters."
-msgstr "Não existem unidades curriculares para os filtros selecionados."
+msgstr ""
 
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_index
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_map
 msgid "There are no published roadmaps yet."
-msgstr "Ainda não existem roadmaps publicados."
+msgstr ""
 
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_module
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit
 msgid "There is no published content in this module yet."
-msgstr "Ainda não há conteúdos publicados neste módulo."
+msgstr ""
 
 #. module: facodi_learning
 #: model:ir.model.constraint,message:facodi_learning.constraint_facodi_learning_course_mapping_mapping_unique
@@ -2492,8 +2463,6 @@ msgid ""
 "This is a public editorial gap; it does not mean that external material is "
 "unavailable or that academic recognition exists."
 msgstr ""
-"Isto representa uma lacuna editorial pública; não significa inexistência de "
-"materiais externos ou reconhecimento académico."
 
 #. module: facodi_learning
 #: model:ir.model.constraint,message:facodi_learning.constraint_facodi_learning_mapping_mapping_unique
@@ -2514,7 +2483,7 @@ msgstr ""
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_detail
 msgid "Type"
-msgstr "Tipo"
+msgstr ""
 
 #. module: facodi_learning
 #: model:ir.model.fields,field_description:facodi_learning.field_facodi_learning_curriculum_occurrence__unit_id
@@ -2563,17 +2532,17 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_detail
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit
 msgid "View official source"
-msgstr "Consultar fonte oficial"
+msgstr ""
 
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_map
 msgid "View path"
-msgstr "Ver percurso"
+msgstr ""
 
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit_index
 msgid "View unit"
-msgstr "Ver unidade"
+msgstr ""
 
 #. module: facodi_learning
 #: model:ir.model,name:facodi_learning.model_website
@@ -2598,7 +2567,7 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_detail
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit_index
 msgid "Year"
-msgstr "Ano"
+msgstr ""
 
 #. module: facodi_learning
 #: model:ir.model.fields,field_description:facodi_learning.field_res_config_settings__facodi_learning_discovery_youtube_seeds
@@ -2608,41 +2577,41 @@ msgstr ""
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_detail
 msgid "course(s)"
-msgstr "curso(s)"
+msgstr ""
 
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit_index
 msgid "curricular unit(s) found."
-msgstr "unidade(s) curricular(es) encontrada(s)."
+msgstr ""
 
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit
 msgid "from the official programme"
-msgstr "do programa oficial"
+msgstr ""
 
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_detail
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_map
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit
 msgid "items"
-msgstr "conteúdos"
+msgstr ""
 
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_detail
 msgid "· Roadmap"
-msgstr "· Roadmap"
+msgstr ""
 
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit_index
 msgid "· Year"
-msgstr "· Ano"
+msgstr ""
 
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_detail
 msgid "← All roadmaps"
-msgstr "← Todos os roadmaps"
+msgstr ""
 
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit
 msgid "← Back to curricular units"
-msgstr "← Voltar às unidades curriculares"
+msgstr ""

@@ -32,7 +32,7 @@
                                                 </a>
                                             </h2>
                                             <p t-if="reference.external_programme_code" class="mb-0">
-                                                Código do programa: <strong t-esc="reference.external_programme_code"/>
+                                                Programme code: <strong t-esc="reference.external_programme_code"/>
                                             </p>
                                         </div>
                                     </article>
@@ -120,19 +120,19 @@
                             <nav class="small mb-4" aria-label="Breadcrumb">
                                 <a href="/roadmaps" class="text-decoration-none">Roadmaps</a>
                                 <span class="text-muted mx-1">/</span>
-                                <span>Unidades curriculares</span>
+                                <span>Curricular units</span>
                             </nav>
                             <p class="text-uppercase small text-muted mb-2">FACODI · Roadmaps</p>
-                            <h1 class="display-5 mb-3">Unidades curriculares</h1>
+                            <h1 class="display-5 mb-3">Curricular units</h1>
                             <p class="lead text-muted mb-4">
-                                Explore unidades de planos de estudos validados e a respetiva cobertura editorial publicada no FACODI.
+                                Explore units from validated programmes and their published FACODI editorial coverage.
                             </p>
 
-                            <form action="/unidades-curriculares" method="get" class="row g-3 border rounded p-3 mb-5" aria-label="Filtrar unidades curriculares">
+                            <form action="/unidades-curriculares" method="get" class="row g-3 border rounded p-3 mb-5" aria-label="Filter curricular units">
                                 <div class="col-12 col-md-6">
-                                    <label for="curriculum-reference" class="form-label">Percurso</label>
+                                    <label for="curriculum-reference" class="form-label">Roadmap</label>
                                     <select id="curriculum-reference" name="reference_id" class="form-select">
-                                        <option value="">Todos os percursos</option>
+                                        <option value="">All roadmaps</option>
                                         <option t-foreach="references" t-as="reference"
                                                 t-att-value="reference.id"
                                                 t-att-selected="'selected' if selected_reference_id == reference.id else None">
@@ -141,37 +141,37 @@
                                     </select>
                                 </div>
                                 <div class="col-6 col-md-2">
-                                    <label for="curriculum-year" class="form-label">Ano</label>
+                                    <label for="curriculum-year" class="form-label">Year</label>
                                     <select id="curriculum-year" name="year" class="form-select">
-                                        <option value="">Todos</option>
-                                        <option t-foreach="years" t-as="year" t-att-value="year" t-att-selected="'selected' if selected_year == year else None"><t t-esc="year"/>.º</option>
+                                        <option value="">All</option>
+                                        <option t-foreach="years" t-as="year" t-att-value="year" t-att-selected="'selected' if selected_year == year else None"><t t-esc="year"/></option>
                                     </select>
                                 </div>
                                 <div class="col-6 col-md-2">
-                                    <label for="curriculum-period" class="form-label">Período</label>
+                                    <label for="curriculum-period" class="form-label">Period</label>
                                     <select id="curriculum-period" name="period" class="form-select">
-                                        <option value="">Todos</option>
-                                        <option value="semester_1" t-att-selected="'selected' if selected_period == 'semester_1' else None">1.º semestre</option>
-                                        <option value="semester_2" t-att-selected="'selected' if selected_period == 'semester_2' else None">2.º semestre</option>
-                                        <option value="annual" t-att-selected="'selected' if selected_period == 'annual' else None">Anual</option>
-                                        <option value="other" t-att-selected="'selected' if selected_period == 'other' else None">Conforme fonte</option>
+                                        <option value="">All</option>
+                                        <option value="semester_1" t-att-selected="'selected' if selected_period == 'semester_1' else None">First semester</option>
+                                        <option value="semester_2" t-att-selected="'selected' if selected_period == 'semester_2' else None">Second semester</option>
+                                        <option value="annual" t-att-selected="'selected' if selected_period == 'annual' else None">Annual</option>
+                                        <option value="other" t-att-selected="'selected' if selected_period == 'other' else None">As stated by the source</option>
                                     </select>
                                 </div>
                                 <div class="col-6 col-md-2">
                                     <label for="curriculum-credits" class="form-label">ECTS</label>
                                     <select id="curriculum-credits" name="credits" class="form-select">
-                                        <option value="">Todos</option>
+                                        <option value="">All</option>
                                         <option t-foreach="credits_options" t-as="credit" t-att-value="credit" t-att-selected="'selected' if selected_credits == credit else None"><t t-esc="'%g' % credit"/></option>
                                     </select>
                                 </div>
                                 <div class="col-12 d-flex gap-2">
-                                    <button type="submit" class="btn btn-primary">Aplicar filtros</button>
-                                    <a href="/unidades-curriculares" class="btn btn-outline-secondary">Limpar</a>
+                                    <button type="submit" class="btn btn-primary">Apply filters</button>
+                                    <a href="/unidades-curriculares" class="btn btn-outline-secondary">Clear</a>
                                 </div>
                             </form>
 
-                            <p class="text-muted small mb-3"><t t-esc="len(entries)"/> unidade(s) encontrada(s).</p>
-                            <div t-if="not entries" class="alert alert-info">Não existem unidades curriculares para os filtros selecionados.</div>
+                            <p class="text-muted small mb-3"><t t-esc="len(entries)"/> curricular unit(s) found.</p>
+                            <div t-if="not entries" class="alert alert-info">There are no curricular units for the selected filters.</div>
                             <div class="row g-3">
                                 <div t-foreach="entries" t-as="entry" class="col-12 col-lg-6">
                                     <article class="card h-100 shadow-sm">
@@ -180,12 +180,12 @@
                                                 <t t-esc="entry['reference'].institution"/> · <t t-esc="entry['reference'].programme_name"/>
                                             </p>
                                             <h2 class="h5"><a t-att-href="entry['unit_url']" class="text-decoration-none"><t t-esc="entry['unit'].name"/></a></h2>
-                                            <p class="mb-3"><code t-esc="entry['unit'].external_unit_code"/> · <t t-esc="entry['unit'].curricular_year"/>.º ano · <t t-esc="('%g' % entry['unit'].credits) if entry['unit'].credits else '—'"/> ECTS</p>
+                                            <p class="mb-3"><code t-esc="entry['unit'].external_unit_code"/> · Year <t t-esc="entry['unit'].curricular_year"/> · <t t-esc="('%g' % entry['unit'].credits) if entry['unit'].credits else '—'"/> ECTS</p>
                                             <div class="mt-auto d-flex justify-content-between align-items-center gap-2">
-                                                <span t-if="entry['coverage_status'] == 'covered'" class="badge text-bg-success">Coberta</span>
-                                                <span t-elif="entry['coverage_status'] == 'partial'" class="badge text-bg-warning">Parcial</span>
-                                                <span t-else="" class="badge text-bg-light">Sem cobertura publicada</span>
-                                                <a t-att-href="entry['unit_url']" class="btn btn-outline-primary btn-sm">Ver UC</a>
+                                                <span t-if="entry['coverage_status'] == 'covered'" class="badge text-bg-success">Covered</span>
+                                                <span t-elif="entry['coverage_status'] == 'partial'" class="badge text-bg-warning">Partial</span>
+                                                <span t-else="" class="badge text-bg-light">No published coverage</span>
+                                                <a t-att-href="entry['unit_url']" class="btn btn-outline-primary btn-sm">View unit</a>
                                             </div>
                                         </div>
                                     </article>
@@ -214,33 +214,33 @@
                             <p class="lead text-muted mb-3">FACODI learning roadmap</p>
                             <div class="d-flex flex-wrap gap-2 mb-4">
                                 <span t-if="reference.external_programme_code" class="badge text-bg-light">
-                                    Programa <t t-esc="reference.external_programme_code"/>
+                                    Programme <t t-esc="reference.external_programme_code"/>
                                 </span>
-                                <span class="badge text-bg-success">Referência validada</span>
+                                <span class="badge text-bg-success">Validated reference</span>
                             </div>
                             <div class="alert alert-light border mb-5">
-                                <strong>Proveniência.</strong>
-                                Esta página reproduz uma referência externa versionada. O FACODI não atribui créditos académicos nem substitui a fonte institucional.
-                                <a t-if="reference.source_url" t-att-href="reference.source_url" target="_blank" rel="noopener noreferrer">Consultar fonte oficial</a>.
+                                <strong>Provenance.</strong>
+                                This page reproduces a versioned external reference. FACODI does not award academic credits or replace the institutional source.
+                                <a t-if="reference.source_url" t-att-href="reference.source_url" target="_blank" rel="noopener noreferrer">View official source</a>.
                             </div>
 
                             <section t-foreach="unit_matrix_groups" t-as="group" class="mb-5">
-                                <h2 class="h3 mb-3"><t t-esc="group[0]"/>.º ano</h2>
+                                <h2 class="h3 mb-3">Year <t t-esc="group[0]"/></h2>
                                 <div t-foreach="group[1]" t-as="period_group" class="table-responsive mb-4">
                                     <h3 class="h5 mb-2">
-                                        <t t-if="period_group[0] == 'semester_1'">1.º semestre</t>
-                                        <t t-elif="period_group[0] == 'semester_2'">2.º semestre</t>
-                                        <t t-elif="period_group[0] == 'annual'">Anual</t>
-                                        <t t-else="">Conforme fonte</t>
+                                        <t t-if="period_group[0] == 'semester_1'">First semester</t>
+                                        <t t-elif="period_group[0] == 'semester_2'">Second semester</t>
+                                        <t t-elif="period_group[0] == 'annual'">Annual</t>
+                                        <t t-else="">As stated by the source</t>
                                     </h3>
                                     <table class="table align-middle">
                                         <thead>
                                             <tr>
-                                                <th>Unidade curricular</th>
-                                                <th class="d-none d-md-table-cell">Código</th>
+                                                <th>Curricular unit</th>
+                                                <th class="d-none d-md-table-cell">Code</th>
                                                 <th>ECTS</th>
-                                                <th>Período</th>
-                                                <th class="d-none d-lg-table-cell">Tipo</th>
+                                                <th>Period</th>
+                                                <th class="d-none d-lg-table-cell">Type</th>
                                                 <th>Roadmap</th>
                                             </tr>
                                         </thead>
@@ -256,15 +256,15 @@
                                                 <td class="d-none d-md-table-cell"><code t-esc="unit.external_unit_code"/></td>
                                                 <td t-esc="('%g' % unit.credits) if unit.credits else '—'"/>
                                                 <td class="d-none d-lg-table-cell">
-                                                    <t t-if="unit.period == 'semester_1'">1.º semestre</t>
-                                                    <t t-elif="unit.period == 'semester_2'">2.º semestre</t>
-                                                    <t t-elif="unit.period == 'annual'">Anual</t>
-                                                    <t t-else="">Conforme fonte</t>
+                                                    <t t-if="unit.period == 'semester_1'">First semester</t>
+                                                    <t t-elif="unit.period == 'semester_2'">Second semester</t>
+                                                    <t t-elif="unit.period == 'annual'">Annual</t>
+                                                    <t t-else="">As stated by the source</t>
                                                 </td>
                                                 <td class="d-none d-lg-table-cell">
-                                                    <t t-if="unit.classification == 'mandatory'">Obrigatória</t>
-                                                    <t t-elif="unit.classification == 'optional'">Opção</t>
-                                                    <t t-else="">Não especificado</t>
+                                                    <t t-if="unit.classification == 'mandatory'">Mandatory</t>
+                                                    <t t-elif="unit.classification == 'optional'">Optional</t>
+                                                    <t t-else="">Not specified</t>
                                                 </td>
                                                 <td>
                                                     <div t-if="entry['learning']['modules']" class="mb-2">
@@ -273,17 +273,17 @@
                                                            t-att-href="module_row['module_url']"
                                                            class="d-block small text-decoration-none mb-1">
                                                             <t t-esc="module_row['module'].name"/>
-                                                            <span class="text-muted"> · <t t-esc="module_row['item_count']"/> conteúdos</span>
+                                                            <span class="text-muted"> · <t t-esc="module_row['item_count']"/> items</span>
                                                         </a>
                                                     </div>
                                                     <span t-if="entry['coverage_status'] == 'covered'" class="badge text-bg-success">
-                                                        Coberta · <t t-esc="entry['published_course_count']"/> curso(s)
+                                                        Covered · <t t-esc="entry['published_course_count']"/> course(s)
                                                     </span>
                                                     <span t-elif="entry['coverage_status'] == 'partial'" class="badge text-bg-warning">
-                                                        Parcial · <t t-esc="entry['published_course_count']"/> curso(s)
+                                                        Partial · <t t-esc="entry['published_course_count']"/> course(s)
                                                     </span>
                                                     <span t-else="" class="badge text-bg-light">
-                                                        Sem cobertura publicada
+                                                        No published coverage
                                                     </span>
                                                 </td>
                                             </tr>
@@ -294,7 +294,7 @@
 
                             <section t-if="coverage_links" class="mt-5 pt-4 border-top">
                                 <h2 class="h3">Published roadmap coverage</h2>
-                                <p class="text-muted">Cursos publicados ligados a unidades curriculares através de relações revistas por um gestor.</p>
+                                <p class="text-muted">Published courses linked to curricular units through Manager-reviewed relations.</p>
                                 <div class="list-group">
                                     <a t-foreach="coverage_links"
                                        t-as="link"
@@ -323,7 +323,7 @@
                             <nav class="small mb-4" aria-label="Breadcrumb">
                                 <a href="/roadmaps" class="text-decoration-none">Roadmaps</a>
                                 <span class="text-muted mx-1">/</span>
-                                <a href="/unidades-curriculares" class="text-decoration-none">Unidades curriculares</a>
+                                <a href="/unidades-curriculares" class="text-decoration-none">Curricular units</a>
                                 <span class="text-muted mx-1">/</span>
                                 <a t-att-href="'/roadmaps/%s' % reference.id" class="text-decoration-none">
                                     <t t-esc="reference.programme_name"/>
@@ -337,74 +337,74 @@
                             </p>
                             <h1 class="display-5 mb-2"><t t-esc="unit.name"/></h1>
                             <p class="lead text-muted mb-4">
-                                Unidade curricular <code t-esc="unit.external_unit_code"/> do plano oficial
+                                Curricular unit <code t-esc="unit.external_unit_code"/> from the official programme
                                 <t t-esc="reference.programme_name"/>.
                             </p>
 
                             <div class="row g-3 mb-5">
                                 <div class="col-6 col-md-3">
                                     <div class="border rounded p-3 h-100">
-                                        <div class="small text-muted">ECTS da fonte</div>
+                                        <div class="small text-muted">ECTS from source</div>
                                         <strong class="fs-4" t-esc="('%g' % unit.credits) if unit.credits else '—'"/>
                                     </div>
                                 </div>
                                 <div class="col-6 col-md-3">
                                     <div class="border rounded p-3 h-100">
-                                        <div class="small text-muted">Ano curricular</div>
-                                        <strong class="fs-4"><t t-esc="unit.curricular_year"/>.º</strong>
+                                        <div class="small text-muted">Curricular year</div>
+                                        <strong class="fs-4"><t t-esc="unit.curricular_year"/></strong>
                                     </div>
                                 </div>
                                 <div class="col-6 col-md-3">
                                     <div class="border rounded p-3 h-100">
-                                        <div class="small text-muted">Período</div>
+                                        <div class="small text-muted">Period</div>
                                         <strong>
-                                            <t t-if="unit.period == 'semester_1'">1.º semestre</t>
-                                            <t t-elif="unit.period == 'semester_2'">2.º semestre</t>
-                                            <t t-elif="unit.period == 'annual'">Anual</t>
-                                            <t t-else="">Conforme fonte</t>
+                                            <t t-if="unit.period == 'semester_1'">First semester</t>
+                                            <t t-elif="unit.period == 'semester_2'">Second semester</t>
+                                            <t t-elif="unit.period == 'annual'">Annual</t>
+                                            <t t-else="">As stated by the source</t>
                                         </strong>
                                     </div>
                                 </div>
                                 <div class="col-6 col-md-3">
                                     <div class="border rounded p-3 h-100">
-                                        <div class="small text-muted">Classificação</div>
+                                        <div class="small text-muted">Classification</div>
                                         <strong>
-                                            <t t-if="unit.classification == 'mandatory'">Obrigatória</t>
-                                            <t t-elif="unit.classification == 'optional'">Opção</t>
-                                            <t t-else="">Não especificado</t>
+                                            <t t-if="unit.classification == 'mandatory'">Mandatory</t>
+                                            <t t-elif="unit.classification == 'optional'">Optional</t>
+                                            <t t-else="">Not specified</t>
                                         </strong>
                                     </div>
                                 </div>
                             </div>
 
                             <div t-if="unit.option_group" class="alert alert-light border mb-4">
-                                <strong>Grupo de opção:</strong> <t t-esc="unit.option_group"/>
+                                <strong>Optional group:</strong> <t t-esc="unit.option_group"/>
                             </div>
 
                             <div class="alert alert-light border mb-5">
-                                <strong>Proveniência e limites.</strong>
-                                Os ECTS e a estrutura curricular apresentados são factos da fonte externa.
-                                A FACODI não atribui créditos, matrícula, equivalência académica nem substitui a instituição.
+                                <strong>Provenance and limits.</strong>
+                                ECTS and the curricular structure shown are facts from the external source.
+                                FACODI does not grant credits, enrolment, academic equivalence, or replace the institution.
                                 <a t-if="reference.source_url"
                                    t-att-href="reference.source_url"
                                    target="_blank"
-                                   rel="noopener noreferrer">Consultar fonte oficial</a>.
+                                   rel="noopener noreferrer">View official source</a>.
                             </div>
 
                             <section t-if="learning['modules']" class="mb-5" aria-labelledby="facodi-unit-modules-heading">
                                 <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
                                     <div>
-                                        <h2 id="facodi-unit-modules-heading" class="h3 mb-1">Percurso de aprendizagem</h2>
-                                        <p class="text-muted mb-0">Módulos editoriais com cursos e conteúdos FACODI existentes.</p>
+                                        <h2 id="facodi-unit-modules-heading" class="h3 mb-1">Learning pathway</h2>
+                                        <p class="text-muted mb-0">Editorial modules with existing FACODI courses and content.</p>
                                     </div>
                                     <span t-if="show_learning_progress" class="badge text-bg-light fs-6">
-                                        <t t-esc="'%.0f' % learning['progress']"/>% concluído
+                                        <t t-esc="'%.0f' % learning['progress']"/>% complete
                                     </span>
                                 </div>
                                 <a t-if="show_learning_progress and learning['next_item']"
                                    t-att-href="learning['next_item']['url']"
                                    class="btn btn-primary btn-sm mb-3">
-                                    Continuar: <t t-esc="learning['next_item']['name']"/>
+                                    Continue: <t t-esc="learning['next_item']['name']"/>
                                 </a>
                                 <div class="vstack gap-3">
                                     <article t-foreach="learning['modules']" t-as="module_row" class="border rounded p-3">
@@ -412,7 +412,7 @@
                                             <h3 class="h5 mb-0">
                                                 <a t-att-href="module_row['module_url']" class="text-decoration-none"><t t-esc="module_row['module'].name"/></a>
                                             </h3>
-                                            <span class="text-muted small"><t t-esc="module_row['item_count']"/> conteúdos</span>
+                                            <span class="text-muted small"><t t-esc="module_row['item_count']"/> items</span>
                                         </div>
                                         <div t-if="module_row['items']" class="mt-3">
                                             <div t-foreach="module_row['items']" t-as="item" class="d-flex flex-wrap align-items-center justify-content-between gap-2 border-top py-2">
@@ -420,7 +420,7 @@
                                                 <span t-if="show_learning_progress" class="text-muted small"><t t-esc="'%.0f' % item['progress']"/>%</span>
                                             </div>
                                         </div>
-                                        <p t-else="" class="text-muted mb-0 mt-3">Ainda não há conteúdos publicados neste módulo.</p>
+                                        <p t-else="" class="text-muted mb-0 mt-3">There is no published content in this module yet.</p>
                                     </article>
                                 </div>
                             </section>
@@ -428,14 +428,14 @@
                             <section class="mb-5" aria-labelledby="facodi-unit-coverage-heading">
                                 <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
                                     <div>
-                                        <h2 id="facodi-unit-coverage-heading" class="h3 mb-1">Cobertura FACODI publicada</h2>
+                                        <h2 id="facodi-unit-coverage-heading" class="h3 mb-1">Published FACODI coverage</h2>
                                         <p class="text-muted mb-0">
-                                            Apenas relações revistas e aprovadas com cursos atualmente publicados.
+                                            Only reviewed and approved relations with currently published courses.
                                         </p>
                                     </div>
-                                    <span t-if="coverage_status == 'covered'" class="badge text-bg-success fs-6">Coberta</span>
-                                    <span t-elif="coverage_status == 'partial'" class="badge text-bg-warning fs-6">Parcial</span>
-                                    <span t-else="" class="badge text-bg-light fs-6">Sem cobertura publicada</span>
+                                    <span t-if="coverage_status == 'covered'" class="badge text-bg-success fs-6">Covered</span>
+                                    <span t-elif="coverage_status == 'partial'" class="badge text-bg-warning fs-6">Partial</span>
+                                    <span t-else="" class="badge text-bg-light fs-6">No published coverage</span>
                                 </div>
 
                                 <div t-if="coverage_rows" class="row g-3">
@@ -454,23 +454,23 @@
                                                     </a>
                                                 </h3>
                                                 <a t-att-href="coverage['channel'].website_url" class="btn btn-outline-primary btn-sm">
-                                                    Abrir curso
+                                                    Open course
                                                 </a>
                                             </div>
                                         </article>
                                     </div>
                                 </div>
                                 <div t-else="" class="border rounded p-4 bg-light">
-                                    <p class="mb-2"><strong>Ainda não existe curso publicado com cobertura revista para esta UC.</strong></p>
+                                    <p class="mb-2"><strong>There is no published course with reviewed coverage for this unit yet.</strong></p>
                                     <p class="text-muted mb-3">
-                                        Isto representa um gap editorial público; não significa inexistência de materiais externos ou reconhecimento académico.
+                                        This is a public editorial gap; it does not mean that external material is unavailable or that academic recognition exists.
                                     </p>
-                                    <a href="/slides" class="btn btn-outline-primary">Explorar cursos FACODI</a>
+                                    <a href="/slides" class="btn btn-outline-primary">Explore FACODI courses</a>
                                 </div>
                             </section>
 
                             <a href="/unidades-curriculares" class="btn btn-link px-0">
-                                ← Voltar às unidades curriculares
+                                ← Back to curricular units
                             </a>
                         </div>
                     </div>
@@ -493,11 +493,11 @@
                             </nav>
                             <h1 class="display-5 mb-2" t-esc="module_row['module'].name"/>
                             <div t-if="module_row['module'].description" class="lead text-muted mb-4" t-field="module_row['module'].description"/>
-                            <p t-if="show_learning_progress" class="text-muted mb-4"><t t-esc="'%.0f' % module_row['progress']"/>% concluído</p>
+                            <p t-if="show_learning_progress" class="text-muted mb-4"><t t-esc="'%.0f' % module_row['progress']"/>% complete</p>
                             <a t-if="show_learning_progress and module_row['next_item']"
                                t-att-href="module_row['next_item']['url']"
                                class="btn btn-primary mb-4">
-                                Continuar: <t t-esc="module_row['next_item']['name']"/>
+                                Continue: <t t-esc="module_row['next_item']['name']"/>
                             </a>
                             <div t-if="module_row['items']" class="list-group">
                                 <a t-foreach="module_row['items']" t-as="item" t-att-href="item['url']" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center gap-3">
@@ -505,7 +505,7 @@
                                     <span t-if="show_learning_progress" class="text-muted small"><t t-esc="'%.0f' % item['progress']"/>%</span>
                                 </a>
                             </div>
-                            <p t-else="" class="border rounded p-4 bg-light mb-0">Ainda não há conteúdos publicados neste módulo.</p>
+                            <p t-else="" class="border rounded p-4 bg-light mb-0">There is no published content in this module yet.</p>
                         </div>
                     </div>
                 </section>
@@ -517,8 +517,8 @@
         <xpath expr="//div[@id='home']" position="inside">
             <t t-set="facodi_curriculum_links" t-value="channel._facodi_public_curriculum_links(website)"/>
             <section t-if="facodi_curriculum_links" class="mt-5 pt-4 border-top" aria-label="Official curriculum alignment">
-                <h2 class="h4 mb-2">Ligação a currículos oficiais</h2>
-                <p class="text-muted">Relações de cobertura revistas e aprovadas pela curadoria FACODI.</p>
+                <h2 class="h4 mb-2">Official curriculum alignment</h2>
+                <p class="text-muted">Coverage relations reviewed and approved by FACODI curation.</p>
                 <ul class="list-unstyled mb-0">
                     <li t-foreach="facodi_curriculum_links" t-as="link" class="mb-2">
                         <a t-att-href="link['unit_url']" class="text-decoration-none">
