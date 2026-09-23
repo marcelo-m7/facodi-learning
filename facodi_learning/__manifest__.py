@@ -4,7 +4,7 @@
     "version": "19.0.1.9.0",
     "category": "Website/eLearning",
     "author": "FACODI",
-    "website": "https://facodi.pt",
+    "website": "https://facodi.com",
     "license": "LGPL-3",
     "depends": ["website_slides"],
     "data": [
@@ -18,6 +18,7 @@
         "views/discovery_run_views.xml",
         "views/course_mapping_views.xml",
         "views/curriculum_views.xml",
+        "views/curriculum_module_views.xml",
         "views/website_curriculum.xml",
         "views/source_views.xml",
         "views/website_slides.xml",

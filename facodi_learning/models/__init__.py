@@ -7,6 +7,7 @@ from . import curriculum_source
 from . import content_review
 from . import curriculum_selection
 from . import curriculum_coverage
+from . import curriculum_module
 from . import res_config_settings
 from . import slide_slide
 from . import slide_channel

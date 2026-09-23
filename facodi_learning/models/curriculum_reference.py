@@ -519,6 +519,42 @@ class FacodiLearningCurriculumUnit(models.Model):
             )
         return entries
 
+    def _facodi_public_module_rows(self, website=None, partner=None):
+        """Return ordered reusable learning modules for this public UC."""
+        self.ensure_one()
+        if not self.reference_id._facodi_is_public():
+            return []
+        assignments = self.env[
+            "facodi.learning.curriculum.module.assignment"
+        ].sudo().search(
+            [
+                ("curriculum_unit_id", "=", self.id),
+                ("module_id.website_published", "=", True),
+            ],
+            order="sequence, id",
+        )
+        rows = []
+        for assignment in assignments:
+            projection = assignment.module_id.sudo(False)._facodi_public_projection(
+                website=website,
+                partner=partner,
+            )
+            projection["sequence"] = assignment.sequence
+            rows.append(projection)
+        return rows
+
+    def _facodi_public_learning_projection(self, website=None, partner=None):
+        self.ensure_one()
+        modules = self._facodi_public_module_rows(website=website, partner=partner)
+        progress = sum(row["progress"] for row in modules) / len(modules) if modules else 0.0
+        next_item = next((row["next_item"] for row in modules if row["next_item"]), False)
+        return {
+            "modules": modules,
+            "module_count": len(modules),
+            "progress": progress,
+            "next_item": next_item,
+        }
+
     def _facodi_public_coverage_rows(self, website=None):
         self.ensure_one()
         if not self.reference_id._facodi_is_public():
