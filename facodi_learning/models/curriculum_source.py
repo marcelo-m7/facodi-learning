@@ -1,7 +1,16 @@
-from odoo import fields, models
+import logging
+
+from odoo import _, fields, models
 from odoo.exceptions import AccessError, ValidationError
 
-from ..services.curriculum import canonical_payload_hash, parse_ualg_course_plan
+from ..services.curriculum import (
+    CurriculumParseError,
+    canonical_payload_hash,
+    parse_ualg_course_plan,
+)
+
+
+_logger = logging.getLogger(__name__)
 
 
 class CurriculumSource(models.Model):
@@ -23,16 +32,30 @@ class CurriculumSource(models.Model):
 
     def _import_raw(self, raw):
         self.ensure_one()
+        message = False
         try:
             if self.provider != "ualg":
-                raise ValidationError("Unsupported official curriculum provider.")
-            payload = parse_ualg_course_plan(raw, academic_year=self.academic_year, source_url=self.source_url)
+                raise ValidationError(_("Unsupported official curriculum provider."))
+            payload = parse_ualg_course_plan(
+                raw,
+                academic_year=self.academic_year,
+                source_url=self.source_url,
+            )
             payload_hash = canonical_payload_hash(payload)
+        except (CurriculumParseError, ValidationError) as error:
+            message = str(error)
         except Exception as error:
-            self.env["facodi.learning.curriculum.capture"].create({
-                "source_id": self.id, "status": "failed", "error": str(error),
-            })
-            raise ValidationError(str(error)) from error
+            _logger.exception("Unexpected curriculum import failure for source %s", self.id)
+            message = _(
+                "The curriculum import failed unexpectedly. Please review the server logs."
+            )
+
+        if message:
+            self.env["facodi.learning.curriculum.capture"].create(
+                {"source_id": self.id, "status": "failed", "error": message}
+            )
+            raise ValidationError(message)
+
         self.env["facodi.learning.curriculum.capture"].create({
             "source_id": self.id, "status": "success", "payload_hash": payload_hash,
         })
@@ -110,27 +133,32 @@ class CurriculumReference(models.Model):
 
     def _require_manager(self):
         if not self.env.user.has_group("website_slides.group_website_slides_manager"):
-            raise AccessError("Only eLearning Managers can review curriculum references.")
+            raise AccessError(_("Only eLearning Managers can review curriculum references."))
+
+    def _write_lifecycle(self, vals):
+        """Apply a reviewed lifecycle change without exposing a context bypass."""
+        return super().write(vals)
 
     def action_validate(self):
         self._require_manager()
-        self.with_context(facodi_curriculum_review=True).write({"state": "validated", "validated_at": fields.Datetime.now()})
+        self._write_lifecycle(
+            {"state": "validated", "validated_at": fields.Datetime.now()}
+        )
 
     def action_publish(self):
         self._require_manager()
         if any(reference.state != "validated" for reference in self):
-            raise ValidationError("Only validated curriculum references can be published.")
-        self.with_context(facodi_curriculum_review=True).write({"is_published": True, "website_published": True})
+            raise ValidationError(_("Only validated curriculum references can be published."))
+        self._write_lifecycle({"is_published": True, "website_published": True})
 
     def action_archive(self):
         self._require_manager()
-        self.with_context(facodi_curriculum_review=True).write({"state": "archived", "website_published": False})
+        self._write_lifecycle({"state": "archived", "website_published": False})
 
     def write(self, vals):
-        if any(reference.state == "validated" for reference in self) and not self.env.context.get("facodi_curriculum_review"):
-            allowed = {"state", "is_published", "website_published", "validated_at"}
-            if set(vals) - allowed:
-                raise AccessError("Validated curriculum facts are immutable.")
-        if "state" in vals and not self.env.context.get("facodi_curriculum_review"):
-            raise AccessError("Use curriculum review actions to change state.")
+        lifecycle_fields = {"state", "is_published", "website_published", "validated_at"}
+        if lifecycle_fields.intersection(vals):
+            raise AccessError(_("Use curriculum review actions to change lifecycle state."))
+        if any(reference.state == "validated" for reference in self):
+            raise AccessError(_("Validated curriculum facts are immutable."))
         return super().write(vals)
