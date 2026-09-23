@@ -163,4 +163,6 @@ class TestCurriculumPublicUnits(TransactionCase):
         self.assertIn("website.layout", view.arch_db)
         self.assertIn("source_url", view.arch_db)
         self.assertIn("coverage_rows", view.arch_db)
+        self.assertIn("learning['modules']", view.arch_db)
+        self.assertIn("learning['next_item']", view.arch_db)
         self.assertNotIn("facodi.learning.curriculum.coverage", view.arch_db)
