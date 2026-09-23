@@ -86,3 +86,19 @@ class TestFacodiLearningMapping(TransactionCase):
                     "origin": "analysis",
                 }
             )
+
+    def test_analysis_origin_accepts_complete_external_provenance(self):
+        mapping = self.env["facodi.learning.mapping"].create(
+            {
+                "source_slide_id": self.source.id,
+                "target_slide_id": self.target.id,
+                "origin": "analysis",
+                "analysis_provenance_model": "facodi.ai.learning.analysis",
+                "analysis_provenance_res_id": 42,
+            }
+        )
+
+        self.assertEqual(mapping.analysis_provenance_model, "facodi.ai.learning.analysis")
+        self.assertEqual(mapping.analysis_provenance_res_id, 42)
+        with self.assertRaises(AccessError):
+            mapping.write({"analysis_provenance_res_id": 43})

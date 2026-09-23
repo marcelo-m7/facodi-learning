@@ -48,6 +48,8 @@ class FacodiLearningMapping(models.Model):
         ondelete="set null",
         string="Analysis Provenance",
     )
+    analysis_provenance_model = fields.Char(readonly=True)
+    analysis_provenance_res_id = fields.Integer(readonly=True)
     reviewed_by_id = fields.Many2one("res.users", readonly=True)
     reviewed_at = fields.Datetime(readonly=True)
 
@@ -74,10 +76,16 @@ class FacodiLearningMapping(models.Model):
             result_id = vals.get(
                 "analysis_result_id", self.env.context.get("default_analysis_result_id")
             )
-            if origin == "analysis" and not result_id:
+            provenance_model = vals.get("analysis_provenance_model")
+            provenance_res_id = vals.get("analysis_provenance_res_id")
+            if origin == "analysis" and not result_id and not (
+                provenance_model and provenance_res_id
+            ):
                 raise ValidationError("Analysis mappings require result provenance.")
-            if result_id and origin != "analysis":
+            if (result_id or provenance_model or provenance_res_id) and origin != "analysis":
                 raise ValidationError("Result provenance requires analysis origin.")
+            if bool(provenance_model) != bool(provenance_res_id):
+                raise ValidationError("External analysis provenance must include model and record ID.")
             if (
                 vals.get("state", "proposed") != "proposed"
                 or vals.get("reviewed_by_id")
@@ -94,6 +102,8 @@ class FacodiLearningMapping(models.Model):
             "reviewed_at",
             "source_slide_id",
             "analysis_result_id",
+            "analysis_provenance_model",
+            "analysis_provenance_res_id",
             "origin",
         } & vals.keys():
             raise AccessError("Use the explicit Manager review actions.")
@@ -103,7 +113,10 @@ class FacodiLearningMapping(models.Model):
 
     def unlink(self):
         if any(
-            record.state != "proposed" or record.analysis_result_id for record in self
+            record.state != "proposed"
+            or record.analysis_result_id
+            or record.analysis_provenance_res_id
+            for record in self
         ):
             raise AccessError("Reviewed and analysis mappings are audit history.")
         return super().unlink()

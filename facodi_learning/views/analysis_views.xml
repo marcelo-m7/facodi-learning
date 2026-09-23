@@ -164,6 +164,8 @@
                         <group>
                             <field name="origin"/>
                             <field name="analysis_result_id"/>
+                            <field name="analysis_provenance_model"/>
+                            <field name="analysis_provenance_res_id"/>
                             <field name="reviewed_by_id"/>
                             <field name="reviewed_at"/>
                         </group>
