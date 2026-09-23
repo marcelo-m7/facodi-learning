@@ -25,13 +25,13 @@ class FacodiLearningCurriculumModule(models.Model):
         self.ensure_one()
         return "/modulos/%s" % self.id if self.website_published else False
 
-    def _facodi_public_items(self, website=None, partner=None):
+    def _facodi_public_items(self, website=None, partner=None, viewer_env=None):
         """Project published module items without exposing authoring records.
 
-        Module relations are editorial data with no Public/Portal ACL. Only their
-        identifiers are read with sudo; course and content records are searched
-        again in the caller environment so standard Odoo visibility rules decide
-        what a learner can actually see.
+        Module relations have no Public/Portal ACL. Standard slide records also
+        cannot be listed by the public user, so the final projection is elevated
+        only after limiting it to editorial IDs and explicit website publication,
+        website and native visibility conditions.
         """
         self.ensure_one()
         items = self.env["facodi.learning.curriculum.module.item"].sudo().search(
@@ -44,13 +44,16 @@ class FacodiLearningCurriculumModule(models.Model):
             ("id", "in", channel_ids),
             ("active", "=", True),
             ("is_published", "=", True),
+            ("website_published", "=", True),
             ("is_visible", "=", True),
         ]
         slide_domain = [
             ("id", "in", slide_ids),
             ("is_published", "=", True),
+            ("website_published", "=", True),
             ("channel_id.active", "=", True),
             ("channel_id.is_published", "=", True),
+            ("channel_id.website_published", "=", True),
             ("channel_id.is_visible", "=", True),
         ]
         if website:
@@ -62,8 +65,9 @@ class FacodiLearningCurriculumModule(models.Model):
                 ]
             )
 
-        Channel = self.env["slide.channel"].sudo(False)
-        Slide = self.env["slide.slide"].sudo(False)
+        viewer_env = viewer_env or (website.env if website else self.env)
+        Channel = viewer_env["slide.channel"].sudo()
+        Slide = viewer_env["slide.slide"].sudo()
         channels = {channel.id: channel for channel in Channel.search(channel_domain)}
         slides = {slide.id: slide for slide in Slide.search(slide_domain)}
         progress_by_channel = self._facodi_channel_progress(channels, partner)
@@ -110,9 +114,13 @@ class FacodiLearningCurriculumModule(models.Model):
             progress[membership.channel_id.id] = value * 100 if value <= 1 else value
         return progress
 
-    def _facodi_public_projection(self, website=None, partner=None):
+    def _facodi_public_projection(self, website=None, partner=None, viewer_env=None):
         self.ensure_one()
-        items = self._facodi_public_items(website=website, partner=partner)
+        items = self._facodi_public_items(
+            website=website,
+            partner=partner,
+            viewer_env=viewer_env,
+        )
         progress = sum(item["progress"] for item in items) / len(items) if items else 0.0
         next_item = next((item for item in items if item["progress"] < 100), False)
         return {

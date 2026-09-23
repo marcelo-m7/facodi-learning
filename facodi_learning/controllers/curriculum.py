@@ -220,6 +220,7 @@ class FacodiCurriculumController(http.Controller):
                 "module_row": module._facodi_public_projection(
                     website=request.website,
                     partner=request.env.user.partner_id if show_learning_progress else None,
+                    viewer_env=request.env,
                 ),
                 "show_learning_progress": show_learning_progress,
             },
@@ -232,6 +233,7 @@ class FacodiCurriculumController(http.Controller):
         learning = unit._facodi_public_learning_projection(
             website=request.website,
             partner=request.env.user.partner_id if show_learning_progress else None,
+            viewer_env=request.env,
         )
         if any(row["coverage_status"] == "covered" for row in coverage_rows):
             coverage_status = "covered"

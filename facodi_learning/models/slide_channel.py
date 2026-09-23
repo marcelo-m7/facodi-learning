@@ -99,6 +99,14 @@ class SlideChannel(models.Model):
         self.ensure_one()
         channel = self.sudo(False)
         channel.check_access("read")
+        coverage_labels = {
+            "supports": self.env._("Supplementary support"),
+            "partial": self.env._("Partial coverage"),
+            "covers": self.env._("Curriculum coverage"),
+            "equivalent": self.env._(
+                "Content correspondence - not academic equivalence"
+            ),
+        }
         domain = [
             ("channel_id", "=", channel.id),
             ("state", "=", "approved"),
@@ -125,6 +133,7 @@ class SlideChannel(models.Model):
                     "unit_code": coverage.curriculum_unit_id.external_unit_code,
                     "unit_url": coverage.curriculum_unit_id._facodi_public_path(),
                     "coverage_type": coverage.coverage_type,
+                    "coverage_label": coverage_labels[coverage.coverage_type],
                 }
             )
         return links

@@ -49,6 +49,7 @@ class TestCurriculumBootstrap(TransactionCase):
         self.assertEqual(len(links), 1)
         self.assertEqual(links[0]["unit_code"], "19411017")
         self.assertEqual(links[0]["reference_id"], reference.id)
+        self.assertEqual(links[0]["coverage_label"], "Curriculum coverage")
 
     def test_unpublished_reference_is_not_exposed_by_course_link(self):
         reference = ensure_lesti_2026_27(self.env)

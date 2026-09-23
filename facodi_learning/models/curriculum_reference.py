@@ -547,7 +547,7 @@ class FacodiLearningCurriculumUnit(models.Model):
             )
         return entries
 
-    def _facodi_public_module_rows(self, website=None, partner=None):
+    def _facodi_public_module_rows(self, website=None, partner=None, viewer_env=None):
         """Return ordered reusable learning modules for this public UC."""
         self.ensure_one()
         if not self.reference_id._facodi_is_public():
@@ -566,14 +566,19 @@ class FacodiLearningCurriculumUnit(models.Model):
             projection = assignment.module_id._facodi_public_projection(
                 website=website,
                 partner=partner,
+                viewer_env=viewer_env,
             )
             projection["sequence"] = assignment.sequence
             rows.append(projection)
         return rows
 
-    def _facodi_public_learning_projection(self, website=None, partner=None):
+    def _facodi_public_learning_projection(self, website=None, partner=None, viewer_env=None):
         self.ensure_one()
-        modules = self._facodi_public_module_rows(website=website, partner=partner)
+        modules = self._facodi_public_module_rows(
+            website=website,
+            partner=partner,
+            viewer_env=viewer_env,
+        )
         progress = sum(row["progress"] for row in modules) / len(modules) if modules else 0.0
         next_item = next((row["next_item"] for row in modules if row["next_item"]), False)
         return {
