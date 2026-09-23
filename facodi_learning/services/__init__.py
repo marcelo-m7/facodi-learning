@@ -35,3 +35,4 @@ from .curriculum_coverage import (
     coverage_strength_for_unit,
     score_candidate_curriculum_gap,
 )
+from .probability_statistics_mapping import apply_probability_statistics_mapping

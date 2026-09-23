@@ -1368,6 +1368,18 @@ msgid "Ignore"
 msgstr ""
 
 #. module: facodi_learning
+msgid "Explore this course"
+msgstr "Explorar este curso"
+
+#. module: facodi_learning
+msgid "Explore curricular unit"
+msgstr "Explorar unidade curricular"
+
+#. module: facodi_learning
+msgid "related courses"
+msgstr "cursos relacionados"
+
+#. module: facodi_learning
 #: model:ir.model.fields.selection,name:facodi_learning.selection__facodi_learning_source__state__imported
 msgid "Imported"
 msgstr ""

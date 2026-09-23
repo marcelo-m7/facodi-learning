@@ -13,6 +13,9 @@ class TestWebsiteI18nContract(unittest.TestCase):
 
         self.assertIn("Apply filters", template)
         self.assertIn("Official curriculum alignment", template)
+        self.assertIn("Explore this course", template)
+        self.assertIn("Explore curricular unit", template)
+        self.assertIn("related courses", template)
         self.assertNotIn("Aplicar filtros", template)
         self.assertNotIn("Ligação a currículos oficiais", template)
 
@@ -21,14 +24,23 @@ class TestWebsiteI18nContract(unittest.TestCase):
             "pt": {
                 "Apply filters": "Aplicar filtros",
                 "Official curriculum alignment": "Ligação a currículos oficiais",
+                "Explore this course": "Explorar este curso",
+                "Explore curricular unit": "Explorar unidade curricular",
+                "related courses": "cursos relacionados",
             },
             "es": {
                 "Apply filters": "Aplicar filtros",
                 "Official curriculum alignment": "Vinculación con planes de estudio oficiales",
+                "Explore this course": "Explorar este curso",
+                "Explore curricular unit": "Explorar unidad curricular",
+                "related courses": "cursos relacionados",
             },
             "fr": {
                 "Apply filters": "Appliquer les filtres",
                 "Official curriculum alignment": "Correspondance avec les cursus officiels",
+                "Explore this course": "Explorer ce cours",
+                "Explore curricular unit": "Explorer l'unite d'enseignement",
+                "related courses": "cours associes",
             },
         }
 

@@ -16,6 +16,7 @@ from . import test_curriculum_bootstrap
 from . import test_curriculum_public_units
 from . import test_curriculum_coverage
 from . import test_curriculum_module
+from . import test_probability_statistics_mapping
 from . import test_curriculum_gap_analysis
 from . import test_curriculum_candidate_selection
 from . import test_curriculum_ui
