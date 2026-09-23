@@ -303,3 +303,18 @@ class TestCurriculumModule(TransactionCase):
 
         self.assertEqual(projection["item_count"], 1)
         self.assertEqual(projection["items"][0]["record"], self.course_a)
+
+    def test_unit_projection_keeps_unknown_progress_unavailable(self):
+        self._publish_reference()
+        module = self._module("Unknown Progress Module")
+        self.env["facodi.learning.curriculum.module.assignment"].create(
+            {"curriculum_unit_id": self.unit_a.id, "module_id": module.id}
+        )
+        self.env["facodi.learning.curriculum.module.item"].create(
+            {"module_id": module.id, "channel_id": self.course_a.id}
+        )
+
+        projection = self.unit_a._facodi_public_learning_projection()
+
+        self.assertIsNone(projection["progress"])
+        self.assertEqual(projection["next_item"]["record"], self.course_a)

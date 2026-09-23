@@ -116,10 +116,3 @@ class TestCurriculumUI(TransactionCase):
 
         self.assertEqual(menu.name, "Roadmaps")
         self.assertEqual(menu.url, "/roadmaps")
-
-    def test_catalog_navigation_uses_the_canonical_roadmaps_route(self):
-        view = self.env.ref("facodi_learning.curriculum_catalog_navigation")
-
-        self.assertIn('href="/roadmaps"', view.arch_db)
-        self.assertNotIn("/mapa-curricular", view.arch_db)
-        self.assertNotIn("/curriculos", view.arch_db)

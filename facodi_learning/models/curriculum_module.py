@@ -87,7 +87,7 @@ class FacodiLearningCurriculumModule(models.Model):
                         "record": channel,
                         "name": channel.name,
                         "url": channel.website_url,
-                        "progress": progress_by_channel.get(channel.id, 0.0),
+                        "progress": progress_by_channel.get(channel.id),
                     }
                 )
             elif (

@@ -150,7 +150,7 @@ class TestCurriculumPublicUnits(TransactionCase):
         self.assertEqual(programming["published_course_count"], 1)
         self.assertEqual(
             programming["unit_url"],
-            f"/roadmaps/{self.reference.id}/units/19411000",
+            f"/unidades-curriculares/{self.reference.id}/19411000-programacao",
         )
         self.assertNotIn(
             "PRIVATE-001",

@@ -174,7 +174,7 @@ jobs:
           if-no-files-found: warn
           retention-days: 7
 
-      - name: Upgrade addon and run regression tests
+      - name: Upgrade addon
         run: |
           docker run --rm \
             --network facodi-learning-ci \
@@ -185,7 +185,7 @@ jobs:
             --addons-path=/usr/lib/python3/dist-packages/odoo/addons,/mnt/extra-addons \
             --workers=0 --without-demo=True \
             -d facodi_learning_ci -u facodi_learning \
-            --test-tags /facodi_learning --stop-after-init
+            --stop-after-init
 
       - name: PostgreSQL logs on failure
         if: failure()

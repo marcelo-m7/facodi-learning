@@ -540,7 +540,7 @@ class FacodiLearningCurriculumUnit(models.Model):
                 {
                     "unit": unit,
                     "reference": unit.reference_id,
-                    "unit_url": unit._facodi_public_path(),
+                    "unit_url": unit._facodi_public_catalog_path(),
                     "coverage_status": coverage_status,
                     "published_course_count": len(coverage_rows),
                 }
