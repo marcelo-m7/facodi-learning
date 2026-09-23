@@ -563,7 +563,7 @@ class FacodiLearningCurriculumUnit(models.Model):
         )
         rows = []
         for assignment in assignments:
-            projection = assignment.module_id.sudo(False)._facodi_public_projection(
+            projection = assignment.module_id._facodi_public_projection(
                 website=website,
                 partner=partner,
             )

@@ -190,6 +190,23 @@ class TestCurriculumModule(TransactionCase):
         self.assertEqual(rows[0]["item_count"], 1)
         self.assertEqual(rows[0]["items"][0]["record"], self.published_slide)
 
+    def test_public_user_can_project_published_module_items(self):
+        self._publish_reference()
+        module = self._module("Public Projection Module")
+        self.env["facodi.learning.curriculum.module.assignment"].create(
+            {"curriculum_unit_id": self.unit_a.id, "module_id": module.id}
+        )
+        self.env["facodi.learning.curriculum.module.item"].create(
+            {"module_id": module.id, "slide_id": self.published_slide.id}
+        )
+
+        rows = self.unit_a.with_user(
+            self.env.ref("base.public_user")
+        )._facodi_public_module_rows()
+
+        self.assertEqual(len(rows), 1)
+        self.assertEqual(rows[0]["items"][0]["record"], self.published_slide)
+
     def test_projection_uses_existing_course_membership_progress(self):
         self._publish_reference()
         module = self._module()
