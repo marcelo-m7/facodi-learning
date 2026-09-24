@@ -2896,3 +2896,8 @@ msgstr "Le contexte de l’unité d’enseignement n’est plus disponible publi
 #: model:ir.model.fields,field_description:facodi_learning.field_facodi_learning_submission__curriculum_unit_id
 msgid "Curricular Unit Context"
 msgstr "Contexte de l’unité d’enseignement"
+
+#. module: facodi_learning
+#: model:ir.model.fields,help:facodi_learning.field_facodi_learning_submission__curriculum_unit_id
+msgid "Optional contributor context only. This relation does not create curriculum coverage or an approved academic mapping."
+msgstr "Contexte facultatif du contributeur. Cette relation ne crée pas de couverture curriculaire ni de correspondance académique approuvée."
