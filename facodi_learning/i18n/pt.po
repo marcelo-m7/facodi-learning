@@ -2856,3 +2856,35 @@ msgstr "Aceite"
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit
 msgid "Suggest a resource"
 msgstr "Sugerir um recurso"
+
+#. module: facodi_learning
+msgid "Suggested for curricular unit"
+msgstr "Sugerido para a unidade curricular"
+
+#. module: facodi_learning
+msgid "View curricular unit"
+msgstr "Ver unidade curricular"
+
+#. module: facodi_learning
+msgid "This resource is already under editorial review for this context. You can suggest another resource instead."
+msgstr "Este recurso já está em revisão editorial para este contexto. Pode sugerir outro recurso."
+
+#. module: facodi_learning
+msgid "Suggested for"
+msgstr "Sugerido para"
+
+#. module: facodi_learning
+msgid "Back to curricular unit"
+msgstr "Voltar à unidade curricular"
+
+#. module: facodi_learning
+msgid "The curricular unit context is no longer publicly available."
+msgstr "O contexto da unidade curricular já não está disponível publicamente."
+
+#. module: facodi_learning
+msgid "Curricular Unit Context"
+msgstr "Contexto da Unidade Curricular"
+
+#. module: facodi_learning
+msgid "Optional contributor context only. This relation does not create curriculum coverage or an approved academic mapping."
+msgstr "Contexto opcional fornecido pelo contribuidor. Esta relação não cria cobertura curricular nem um mapeamento académico aprovado."
