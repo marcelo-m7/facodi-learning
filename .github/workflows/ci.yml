@@ -161,7 +161,7 @@ jobs:
             --without-demo=True \
             -d facodi_learning_ci \
             -i facodi_learning \
-            --test-tags /facodi_learning:TestCurriculumModule,/facodi_learning:TestProbabilityStatisticsMapping \
+            --test-tags /facodi_learning:TestCurriculumModule,/facodi_learning:TestProbabilityStatisticsMapping,/facodi_learning:TestResourceSubmissionModel,/facodi_learning:TestResourceSubmissionWebsite \
             --stop-after-init \
             2>&1 | tee /tmp/facodi-current-install.log
 
