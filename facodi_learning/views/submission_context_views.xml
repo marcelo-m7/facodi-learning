@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_facodi_submission_search_context" model="ir.ui.view">
+        <field name="name">facodi.learning.submission.search.context</field>
+        <field name="model">facodi.learning.submission</field>
+        <field name="inherit_id" ref="facodi_learning.view_facodi_submission_search"/>
+        <field name="arch" type="xml">
+            <field name="submitted_by_id" position="after">
+                <field name="curriculum_unit_id"/>
+            </field>
+            <filter name="group_language" position="after">
+                <filter name="group_curriculum_unit"
+                        string="Curricular Unit"
+                        context="{'group_by': 'curriculum_unit_id'}"/>
+            </filter>
+        </field>
+    </record>
+
+    <record id="view_facodi_submission_list_context" model="ir.ui.view">
+        <field name="name">facodi.learning.submission.list.context</field>
+        <field name="model">facodi.learning.submission</field>
+        <field name="inherit_id" ref="facodi_learning.view_facodi_submission_list"/>
+        <field name="arch" type="xml">
+            <field name="language" position="after">
+                <field name="curriculum_unit_id" optional="show"/>
+            </field>
+        </field>
+    </record>
+
+    <record id="view_facodi_submission_form_context" model="ir.ui.view">
+        <field name="name">facodi.learning.submission.form.context</field>
+        <field name="model">facodi.learning.submission</field>
+        <field name="inherit_id" ref="facodi_learning.view_facodi_submission_form"/>
+        <field name="arch" type="xml">
+            <field name="language" position="after">
+                <field name="curriculum_unit_id"
+                       readonly="state in ('rejected', 'resolved')"/>
+            </field>
+            <field name="source_id" position="after">
+                <field name="normalized_source_url" readonly="1"/>
+            </field>
+        </field>
+    </record>
+</odoo>
