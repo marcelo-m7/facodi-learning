@@ -22,6 +22,9 @@ class TestWebsiteI18nContract(unittest.TestCase):
     def test_public_roadmap_catalogues_cover_supported_languages(self):
         expected_translations = {
             "pt": {
+                "Learning": "Aprendizagem",
+                "Curricular Units": "Unidades Curriculares",
+                "Explore Content": "Explorar conteúdos",
                 "Apply filters": "Aplicar filtros",
                 "Official curriculum alignment": "Ligação a currículos oficiais",
                 "Explore this course": "Explorar este curso",
@@ -29,6 +32,9 @@ class TestWebsiteI18nContract(unittest.TestCase):
                 "related courses": "cursos relacionados",
             },
             "es": {
+                "Learning": "Aprendizaje",
+                "Curricular Units": "Unidades Curriculares",
+                "Explore Content": "Explorar contenidos",
                 "Apply filters": "Aplicar filtros",
                 "Official curriculum alignment": "Vinculación con planes de estudio oficiales",
                 "Explore this course": "Explorar este curso",
@@ -36,6 +42,9 @@ class TestWebsiteI18nContract(unittest.TestCase):
                 "related courses": "cursos relacionados",
             },
             "fr": {
+                "Learning": "Apprentissage",
+                "Curricular Units": "Unités d’enseignement",
+                "Explore Content": "Explorer les contenus",
                 "Apply filters": "Appliquer les filtres",
                 "Official curriculum alignment": "Correspondance avec les cursus officiels",
                 "Explore this course": "Explorer ce cours",

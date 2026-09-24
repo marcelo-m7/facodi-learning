@@ -985,7 +985,7 @@ msgstr ""
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_catalog_navigation
 msgid "Explore Content"
-msgstr ""
+msgstr "Explorer les contenus"
 
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit
@@ -2663,3 +2663,14 @@ msgstr "← Tous les parcours"
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit
 msgid "← Back to curricular units"
 msgstr "← Retour aux unités d'enseignement"
+
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_catalog_navigation
+msgid "Learning"
+msgstr "Apprentissage"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_catalog_navigation
+msgid "Curricular Units"
+msgstr "Unités d’enseignement"
