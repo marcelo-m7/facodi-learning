@@ -156,6 +156,26 @@ def evaluate_course_candidate(
         if str(language).strip()
     }
 
+    if targeted_unit_ids is None:
+        linked_submissions = (
+            candidate.env["facodi.learning.submission"]
+            .sudo()
+            .search(
+                [
+                    ("candidate_id", "=", candidate.id),
+                    ("state", "=", "resolved"),
+                    ("curriculum_unit_id", "!=", False),
+                ],
+                order="id",
+            )
+        )
+        targeted_unit_ids = sorted(
+            set(linked_submissions.mapped("curriculum_unit_id").ids)
+        )
+        if targeted_unit_ids:
+            target_origin = target_origin or "accepted-submission"
+            submission_ids = submission_ids or linked_submissions.ids
+
     metadata_fields = (
         candidate.name,
         candidate.description,
