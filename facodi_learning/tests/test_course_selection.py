@@ -132,7 +132,7 @@ class TestCourseSelection(TransactionCase):
             candidate.evaluation_reasons,
         )
         self.assertEqual(first, second)
-        self.assertEqual(candidate.evaluation_policy_version, "course-evaluation-v1")
+        self.assertEqual(candidate.evaluation_policy_version, "course-evaluation-v2")
         self.assertEqual(candidate.coverage_score, 1.0)
         self.assertEqual(candidate.state, "evaluated")
 
