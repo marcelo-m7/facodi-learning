@@ -185,6 +185,22 @@ equivalence, credit decision, prerequisite or learner progression. Approved cove
 continues to require an explicit Manager review, and standard `slide.channel` remains
 the only learner-facing course model.
 
+## Public resource submissions
+
+FACODI exposes a contributor front door at `/contribuir/recurso`. It persists a
+`facodi.learning.submission` audit record and redirects the contributor to a
+private tokenized status page. Public and Portal users receive no direct model ACL.
+
+Submission states are `submitted → reviewing → accepted/rejected → resolved`.
+Only eLearning Managers make review decisions. Acceptance is editorial intent, not
+publication: it creates no `slide.channel`, no `slide.slide`, no mapping and no
+academic-equivalence claim. A submission may become `resolved` only after it is
+linked to an existing canonical `facodi.learning.course.candidate` or
+`facodi.learning.source`.
+
+Curricular-unit pages with no reviewed published coverage may link contextually to
+this form. The form is not added as a duplicate top-level Website taxonomy.
+
 ## Content analysis pipeline
 
 Source → unpublished standard content → queued analysis → historical result →
