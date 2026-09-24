@@ -190,7 +190,13 @@ def score_candidate_curriculum_gap(
             "evidence": {
                 "mode": "curriculum-targeted-gap",
                 "reference_ids": reference_ids,
-                "target_unit_ids": sorted(targeted_ids),
+                "target_unit_ids": sorted(
+                    {
+                        unit.get("unit_id")
+                        for unit in targeted_units
+                        if unit.get("unit_id")
+                    }
+                ),
                 "target_origin": target_origin or "workflow-context",
                 "submission_ids": sorted(
                     {
