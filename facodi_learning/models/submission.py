@@ -1,5 +1,5 @@
 import secrets
-from urllib.parse import urlsplit
+from urllib.parse import urlsplit, urlunsplit
 
 from odoo import api, fields, models
 from odoo.exceptions import AccessError, ValidationError
@@ -22,6 +22,22 @@ class FacodiLearningSubmission(models.Model):
     source_url = fields.Char(required=True, index=True)
     context = fields.Text()
     language = fields.Char(index=True)
+    curriculum_unit_id = fields.Many2one(
+        "facodi.learning.curriculum.unit",
+        string="Curricular Unit Context",
+        ondelete="set null",
+        index=True,
+        help=(
+            "Optional contributor context only. This relation does not create "
+            "curriculum coverage or an approved academic mapping."
+        ),
+    )
+    normalized_source_url = fields.Char(
+        compute="_compute_normalized_source_url",
+        store=True,
+        index=True,
+        readonly=True,
+    )
     submitted_by_id = fields.Many2one(
         "res.users",
         readonly=True,
@@ -86,6 +102,39 @@ class FacodiLearningSubmission(models.Model):
     @api.model
     def _is_valid_source_url(self, value):
         return _is_public_http_url(value)
+
+    @api.model
+    def _normalize_source_url(self, value):
+        raw = (value or "").strip()
+        if not _is_public_http_url(raw):
+            return ""
+        parsed = urlsplit(raw)
+        hostname = (parsed.hostname or "").lower()
+        port = parsed.port
+        if port and not (
+            (parsed.scheme.lower() == "http" and port == 80)
+            or (parsed.scheme.lower() == "https" and port == 443)
+        ):
+            hostname = f"{hostname}:{port}"
+        path = parsed.path or "/"
+        if path != "/":
+            path = path.rstrip("/") or "/"
+        return urlunsplit(
+            (
+                parsed.scheme.lower(),
+                hostname,
+                path,
+                parsed.query,
+                "",
+            )
+        )
+
+    @api.depends("source_url")
+    def _compute_normalized_source_url(self):
+        for submission in self:
+            submission.normalized_source_url = self._normalize_source_url(
+                submission.source_url
+            )
 
     @api.model_create_multi
     def create(self, vals_list):
