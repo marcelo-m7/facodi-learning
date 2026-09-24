@@ -44,6 +44,7 @@ class TestWebsiteI18nContract(unittest.TestCase):
                 "Submit for review": "Enviar para revisão",
                 "Submission received": "Submissão recebida",
                 "Waiting for editorial review.": "A aguardar revisão editorial.",
+                "Suggest a resource": "Sugerir um recurso",
             },
             "es": {
                 "Learning": "Aprendizaje",
@@ -58,6 +59,7 @@ class TestWebsiteI18nContract(unittest.TestCase):
                 "Submit for review": "Enviar a revisión",
                 "Submission received": "Envío recibido",
                 "Waiting for editorial review.": "En espera de revisión editorial.",
+                "Suggest a resource": "Sugerir un recurso",
             },
             "fr": {
                 "Learning": "Apprentissage",
@@ -72,6 +74,7 @@ class TestWebsiteI18nContract(unittest.TestCase):
                 "Submit for review": "Envoyer pour examen",
                 "Submission received": "Soumission reçue",
                 "Waiting for editorial review.": "En attente d’un examen éditorial.",
+                "Suggest a resource": "Suggérer une ressource",
             },
         }
 

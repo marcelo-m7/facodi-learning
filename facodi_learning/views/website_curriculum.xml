@@ -467,7 +467,10 @@
                                     <p class="text-muted mb-3">
                                         This is a public editorial gap; it does not mean that external material is unavailable or that academic recognition exists.
                                     </p>
-                                    <a href="/slides" class="btn btn-outline-primary">Explore FACODI courses</a>
+                                    <div class="d-flex flex-wrap gap-2">
+                                        <a href="/contribuir/recurso" class="btn btn-primary">Suggest a resource</a>
+                                        <a href="/slides" class="btn btn-outline-primary">Explore FACODI courses</a>
+                                    </div>
                                 </div>
                             </section>
 
