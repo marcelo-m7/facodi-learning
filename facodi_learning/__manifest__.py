@@ -16,6 +16,7 @@
         "views/analysis_views.xml",
         "views/submission_views.xml",
         "views/submission_context_views.xml",
+        "views/submission_candidate_handoff_views.xml",
         "views/course_candidate_views.xml",
         "views/course_candidate_discovery_views.xml",
         "views/discovery_run_views.xml",
