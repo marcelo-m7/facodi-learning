@@ -6,6 +6,7 @@ dependency on `theme_facodi`.
 
 | Model | Responsibility |
 | --- | --- |
+| `facodi.learning.submission` | Public contributor suggestion before editorial ingestion; tokenized status, Manager review and optional link to canonical candidate/source |
 | `facodi.learning.course.candidate` | Stable provider/external course identity, normalized source metadata, deterministic evaluation and terminal decision audit |
 | `facodi.learning.source` | Stable provider/external ID/course identity, URL, metadata, state, timestamps and canonical content link |
 | `facodi.learning.analysis.job` | Requester, provider, state, attempt count and latest outcome |
@@ -16,6 +17,8 @@ dependency on `theme_facodi`.
 | `facodi.learning.curriculum.reference` | Versioned external programme/study-plan identity and source facts |
 | `facodi.learning.curriculum.unit` | External curricular-unit facts belonging to one versioned reference |
 | `facodi.learning.curriculum.coverage` | Reviewed evidence linking a canonical FACODI course to an external curricular unit |
+
+Public submissions are not canonical learning content. Anonymous/Portal users do not receive model ACLs; the Website controller creates only a strict safe-field whitelist and status pages require a private token. Acceptance does not create or publish a course/content record; resolution requires a link to the existing candidate/source pipeline.
 
 Attempts are separate from successful results because failures also require
 history. Course candidates are not canonical courses: a resolved new candidate
