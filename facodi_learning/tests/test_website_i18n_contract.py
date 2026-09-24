@@ -27,6 +27,8 @@ class TestWebsiteI18nContract(unittest.TestCase):
         self.assertIn("Submit for review", template)
         self.assertIn("Submission received", template)
         self.assertIn("Waiting for editorial review.", template)
+        self.assertIn("Suggested for curricular unit", template)
+        self.assertIn("Back to curricular unit", template)
         self.assertNotIn("Sugerir um recurso de aprendizagem", template)
 
     def test_public_roadmap_catalogues_cover_supported_languages(self):
