@@ -2857,3 +2857,8 @@ msgstr "Aceptado"
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit
 msgid "Suggest a resource"
 msgstr "Sugerir un recurso"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_form
+msgid "Suggested for curricular unit"
+msgstr "Sugerido para la unidad curricular"
