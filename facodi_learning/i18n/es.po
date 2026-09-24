@@ -2877,3 +2877,13 @@ msgstr "Sugerido para"
 #: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_status
 msgid "Back to curricular unit"
 msgstr "Volver a la unidad curricular"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_form
+msgid "This resource is already under editorial review for this context. You can suggest another resource instead."
+msgstr "Este recurso ya está en revisión editorial para este contexto. Puedes sugerir otro recurso."
+
+#. module: facodi_learning
+#: code:addons/facodi_learning/controllers/submission.py:0
+msgid "The curricular unit context is no longer publicly available."
+msgstr "El contexto de la unidad curricular ya no está disponible públicamente."
