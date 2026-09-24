@@ -188,7 +188,7 @@ class TestCurriculumPublicUnits(TransactionCase):
 
     def test_gap_state_offers_contextual_resource_submission(self):
         view = self.env.ref("facodi_learning.curriculum_public_unit")
-        self.assertIn('href="/contribuir/recurso"', view.arch_db)
+        self.assertIn("curriculum_unit_id", view.arch_db)
         self.assertIn("Suggest a resource", view.arch_db)
         self.assertIn("There is no published course with reviewed coverage", view.arch_db)
 
