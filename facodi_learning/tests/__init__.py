@@ -28,3 +28,4 @@ from . import test_course_discovery
 from . import test_youtube_service
 from . import test_submission
 from . import test_submission_context
+from . import test_submission_candidate_handoff

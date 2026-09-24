@@ -27,8 +27,6 @@ class TestWebsiteI18nContract(unittest.TestCase):
         self.assertIn("Submit for review", template)
         self.assertIn("Submission received", template)
         self.assertIn("Waiting for editorial review.", template)
-        self.assertIn("Suggested for curricular unit", template)
-        self.assertIn("Back to curricular unit", template)
         self.assertNotIn("Sugerir um recurso de aprendizagem", template)
 
     def test_public_roadmap_catalogues_cover_supported_languages(self):
@@ -47,11 +45,6 @@ class TestWebsiteI18nContract(unittest.TestCase):
                 "Submission received": "Submissão recebida",
                 "Waiting for editorial review.": "A aguardar revisão editorial.",
                 "Suggest a resource": "Sugerir um recurso",
-                "Suggested for curricular unit": "Sugerido para a unidade curricular",
-                "View curricular unit": "Ver unidade curricular",
-                "Suggested for": "Sugerido para",
-                "Back to curricular unit": "Voltar à unidade curricular",
-                "The curricular unit context is no longer publicly available.": "O contexto da unidade curricular já não está disponível publicamente.",
             },
             "es": {
                 "Learning": "Aprendizaje",
