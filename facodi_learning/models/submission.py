@@ -269,6 +269,84 @@ class FacodiLearningSubmission(models.Model):
             )
         return True
 
+    def action_handoff_candidate(self):
+        self.ensure_one()
+        self._require_manager()
+
+        if self.state == "resolved" and self.candidate_id:
+            candidate = self.candidate_id
+        else:
+            if self.state != "accepted":
+                raise ValidationError(
+                    "Accept the submission before routing it to the candidate pipeline."
+                )
+            if self.source_id:
+                raise ValidationError(
+                    "This submission is already linked to a canonical source."
+                )
+
+            Candidate = self.env["facodi.learning.course.candidate"]
+            canonical_url = self.normalized_source_url or self.source_url
+            candidate = self.candidate_id
+            if not candidate:
+                candidate = Candidate.search(
+                    [
+                        ("source_url", "in", [canonical_url, self.source_url]),
+                        ("state", "!=", "rejected"),
+                    ],
+                    order="id",
+                    limit=1,
+                )
+
+            if not candidate:
+                metadata = {
+                    "submission_id": self.id,
+                    "submission_context": self.context or False,
+                }
+                institution = False
+                if self.curriculum_unit_id:
+                    metadata.update(
+                        {
+                            "curriculum_unit_id": self.curriculum_unit_id.id,
+                            "curriculum_unit_code": (
+                                self.curriculum_unit_id.external_unit_code
+                            ),
+                            "curriculum_reference_id": (
+                                self.curriculum_unit_id.reference_id.id
+                            ),
+                        }
+                    )
+                    institution = self.curriculum_unit_id.reference_id.institution
+
+                candidate = Candidate.create(
+                    {
+                        "provider": "facodi-submission",
+                        "external_id": f"submission-{self.id}",
+                        "source_url": canonical_url,
+                        "name": self.name,
+                        "description": self.context or False,
+                        "institution": institution,
+                        "language": self.language or False,
+                        "metadata": metadata,
+                    }
+                )
+
+            super(FacodiLearningSubmission, self).write(
+                {
+                    "candidate_id": candidate.id,
+                    "state": "resolved",
+                }
+            )
+
+        return {
+            "type": "ir.actions.act_window",
+            "name": "Course Candidate",
+            "res_model": "facodi.learning.course.candidate",
+            "res_id": candidate.id,
+            "view_mode": "form",
+            "target": "current",
+        }
+
     def action_resolve(self):
         self._require_manager()
         for submission in self:
