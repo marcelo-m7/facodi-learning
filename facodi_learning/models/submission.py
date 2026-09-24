@@ -83,6 +83,10 @@ class FacodiLearningSubmission(models.Model):
     def _new_access_token(self):
         return secrets.token_urlsafe(32)
 
+    @api.model
+    def _is_valid_source_url(self, value):
+        return _is_public_http_url(value)
+
     @api.model_create_multi
     def create(self, vals_list):
         for vals in vals_list:
