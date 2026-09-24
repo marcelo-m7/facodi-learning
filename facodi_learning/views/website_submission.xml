@@ -96,7 +96,7 @@
                                     <dl class="row mb-0">
                                         <dt class="col-sm-4">Status</dt>
                                         <dd class="col-sm-8">
-                                            <span class="badge text-bg-secondary" t-esc="dict(submission._fields['state'].selection).get(submission.state)"/>
+                                            <span class="badge text-bg-secondary" t-esc="state_label"/>
                                         </dd>
                                         <dt class="col-sm-4">Resource</dt>
                                         <dd class="col-sm-8 mb-0">
