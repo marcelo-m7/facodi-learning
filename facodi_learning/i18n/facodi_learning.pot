@@ -2823,3 +2823,8 @@ msgstr ""
 #: model:ir.model.fields.selection,name:facodi_learning.selection__facodi_learning_submission__state__accepted
 msgid "Accepted"
 msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit
+msgid "Suggest a resource"
+msgstr ""
