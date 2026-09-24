@@ -95,9 +95,15 @@ class FacodiSubmissionController(http.Controller):
         if not submission:
             return request.not_found()
 
+        state_label = dict(submission._fields["state"].selection).get(
+            submission.state, submission.state
+        )
         response = request.render(
             "facodi_learning.resource_submission_status",
-            {"submission": submission},
+            {
+                "submission": submission,
+                "state_label": state_label,
+            },
         )
         response.headers["X-Robots-Tag"] = "noindex, nofollow"
         return response
