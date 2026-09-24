@@ -2,7 +2,7 @@ import re
 import unicodedata
 
 
-EVALUATION_POLICY_VERSION = "course-evaluation-v1"
+EVALUATION_POLICY_VERSION = "course-evaluation-v2"
 SELECTION_POLICY_VERSION = "course-selection-v1"
 
 _SELECTION_DEFAULTS = {
@@ -145,6 +145,10 @@ def evaluate_course_candidate(
     existing_channels,
     accepted_languages,
     curriculum_context=None,
+    *,
+    targeted_unit_ids=None,
+    target_origin=None,
+    submission_ids=None,
 ):
     accepted_languages = {
         str(language).strip().lower()
@@ -192,6 +196,9 @@ def evaluate_course_candidate(
         coverage_result = score_candidate_curriculum_gap(
             candidate.name,
             curriculum_context,
+            targeted_unit_ids=targeted_unit_ids,
+            target_origin=target_origin,
+            submission_ids=submission_ids,
         )
     coverage = coverage_result["score"]
     coverage_evidence = coverage_result["evidence"]
@@ -228,7 +235,15 @@ def evaluate_course_candidate(
             else f"Language {language} is outside the currently accepted set."
         ),
     ]
-    if coverage_evidence.get("mode") == "curriculum-gap":
+    if coverage_evidence.get("mode") == "curriculum-targeted-gap":
+        reasons.append(
+            "Accepted submission context targets "
+            f"{coverage_evidence.get('best_programme') or 'the active reference'} / "
+            f"{coverage_evidence.get('best_unit_name') or 'targeted unit'} "
+            f"({coverage:.4f} uncovered-need score). This prioritization context "
+            "is not approved curriculum coverage or academic equivalence."
+        )
+    elif coverage_evidence.get("mode") == "curriculum-gap":
         reasons.append(
             "Curriculum gap evaluated against "
             f"{coverage_evidence.get('best_programme') or 'the active reference'} / "
@@ -237,7 +252,8 @@ def evaluate_course_candidate(
         )
     else:
         reasons.append(
-            "No curriculum reference is active; coverage uses the M3.1 local baseline."
+            "No active targeted or generic curriculum reference applies; "
+            "coverage uses the local baseline."
         )
     if best_channel and duplication_risk >= 0.5:
         reasons.append(
