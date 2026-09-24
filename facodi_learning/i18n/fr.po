@@ -1440,8 +1440,10 @@ msgstr ""
 #. module: facodi_learning
 #: model:ir.model.fields,field_description:facodi_learning.field_facodi_learning_course_candidate__language
 #: model_terms:ir.ui.view,arch_db:facodi_learning.view_facodi_course_candidate_search
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_form
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_status
 msgid "Language"
-msgstr ""
+msgstr "Langue"
 
 #. module: facodi_learning
 #: model:ir.model.fields,field_description:facodi_learning.field_facodi_learning_course_candidate__language_fit_score
@@ -1760,6 +1762,8 @@ msgstr ""
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_detail
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_form
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_status
 msgid "Not specified"
 msgstr "Non précisé"
 
@@ -2102,8 +2106,9 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:facodi_learning.view_facodi_course_candidate_search
 #: model_terms:ir.ui.view,arch_db:facodi_learning.view_facodi_course_mapping_search
 #: model_terms:ir.ui.view,arch_db:facodi_learning.view_facodi_curriculum_coverage_search
+#: model:ir.model.fields.selection,name:facodi_learning.selection__facodi_learning_submission__state__rejected
 msgid "Rejected"
-msgstr ""
+msgstr "Rejeté"
 
 #. module: facodi_learning
 #: model:ir.model.fields.selection,name:facodi_learning.selection__facodi_learning_course_mapping__mapping_type__related
@@ -2151,8 +2156,9 @@ msgstr ""
 #. module: facodi_learning
 #: model:ir.model.fields.selection,name:facodi_learning.selection__facodi_learning_course_candidate__state__resolved
 #: model_terms:ir.ui.view,arch_db:facodi_learning.view_facodi_course_candidate_search
+#: model:ir.model.fields.selection,name:facodi_learning.selection__facodi_learning_submission__state__resolved
 msgid "Resolved"
-msgstr ""
+msgstr "Résolu"
 
 #. module: facodi_learning
 #: model:ir.model.fields,field_description:facodi_learning.field_facodi_learning_course_candidate__resolved_channel_id
@@ -2380,8 +2386,10 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:facodi_learning.view_facodi_course_mapping_search
 #: model_terms:ir.ui.view,arch_db:facodi_learning.view_facodi_curriculum_coverage_search
 #: model_terms:ir.ui.view,arch_db:facodi_learning.view_facodi_discovery_run_search
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_form
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_status
 msgid "Status"
-msgstr ""
+msgstr "Statut"
 
 #. module: facodi_learning
 #: model:ir.model.fields.selection,name:facodi_learning.selection__facodi_learning_curriculum_capture__status__success
@@ -2674,3 +2682,177 @@ msgstr "Apprentissage"
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_catalog_navigation
 msgid "Curricular Units"
 msgstr "Unités d’enseignement"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_form
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_status
+msgid "Contribute to FACODI"
+msgstr "Contribuer à FACODI"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_form
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_status
+msgid "Suggest a learning resource"
+msgstr "Suggérer une ressource d’apprentissage"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_form
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_status
+msgid "Share a public learning resource for editorial review. A submission is a suggestion only: FACODI will check relevance, provenance and publication rights before it can become learning content."
+msgstr "Partagez une ressource d’apprentissage publique pour examen éditorial. Une soumission reste une suggestion : FACODI vérifiera la pertinence, la provenance et les droits de publication avant qu’elle puisse devenir un contenu d’apprentissage."
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_form
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_status
+msgid "Check the information below."
+msgstr "Vérifiez les informations ci-dessous."
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_form
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_status
+msgid "Resource title"
+msgstr "Titre de la ressource"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_form
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_status
+msgid "Public resource URL"
+msgstr "URL publique de la ressource"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_form
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_status
+msgid "Use the canonical public HTTP or HTTPS page. Do not upload passwords, private links or credentials."
+msgstr "Utilisez la page publique HTTP ou HTTPS canonique. Ne transmettez pas de mots de passe, de liens privés ni d’identifiants."
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_form
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_status
+msgid "Portuguese"
+msgstr "Portugais"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_form
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_status
+msgid "English"
+msgstr "Anglais"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_form
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_status
+msgid "Spanish"
+msgstr "Espagnol"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_form
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_status
+msgid "French"
+msgstr "Français"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_form
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_status
+msgid "Why could this resource be useful?"
+msgstr "Pourquoi cette ressource pourrait-elle être utile ?"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_form
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_status
+msgid "Submit for review"
+msgstr "Envoyer pour examen"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_form
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_status
+msgid "Other contribution"
+msgstr "Autre contribution"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_form
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_status
+msgid "Resource suggestion"
+msgstr "Suggestion de ressource"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_form
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_status
+msgid "Submission received"
+msgstr "Soumission reçue"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_form
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_status
+msgid "Resource"
+msgstr "Ressource"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_form
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_status
+msgid "Waiting for editorial review."
+msgstr "En attente d’un examen éditorial."
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_form
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_status
+msgid "FACODI is checking relevance, provenance and publication rights."
+msgstr "FACODI vérifie la pertinence, la provenance et les droits de publication."
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_form
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_status
+msgid "Accepted for curation. This does not mean the resource is published yet."
+msgstr "Acceptée pour curation. Cela ne signifie pas que la ressource est déjà publiée."
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_form
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_status
+msgid "This suggestion will not proceed in its current form."
+msgstr "Cette suggestion ne sera pas poursuivie dans sa forme actuelle."
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_form
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_status
+msgid "The suggestion has been routed into the canonical FACODI content workflow."
+msgstr "La suggestion a été transmise au flux de contenu canonique de FACODI."
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_form
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_status
+msgid "Keep this private status link if you want to check the editorial state later."
+msgstr "Conservez ce lien d’état privé si vous souhaitez consulter l’avancement éditorial plus tard."
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_form
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_status
+msgid "Explore learning content"
+msgstr "Explorer les contenus d’apprentissage"
+
+#. module: facodi_learning
+#: code:addons/facodi_learning/controllers/submission.py:0
+msgid "Enter a short title for the resource."
+msgstr "Saisissez un titre court pour la ressource."
+
+#. module: facodi_learning
+#: code:addons/facodi_learning/controllers/submission.py:0
+msgid "Enter a valid public HTTP or HTTPS URL."
+msgstr "Saisissez une URL publique HTTP ou HTTPS valide."
+
+#. module: facodi_learning
+#: code:addons/facodi_learning/controllers/submission.py:0
+msgid "The resource could not be submitted. Check the URL and try again."
+msgstr "La ressource n’a pas pu être envoyée. Vérifiez l’URL et réessayez."
+
+#. module: facodi_learning
+#: model:ir.model.fields.selection,name:facodi_learning.selection__facodi_learning_submission__state__submitted
+msgid "Submitted"
+msgstr "Soumis"
+
+#. module: facodi_learning
+#: model:ir.model.fields.selection,name:facodi_learning.selection__facodi_learning_submission__state__reviewing
+msgid "Reviewing"
+msgstr "En cours d’examen"
+
+#. module: facodi_learning
+#: model:ir.model.fields.selection,name:facodi_learning.selection__facodi_learning_submission__state__accepted
+msgid "Accepted"
+msgstr "Accepté"

@@ -1,0 +1,206 @@
+import secrets
+from urllib.parse import urlsplit
+
+from odoo import api, fields, models
+from odoo.exceptions import AccessError, ValidationError
+
+
+def _is_public_http_url(value):
+    try:
+        parsed = urlsplit((value or "").strip())
+    except ValueError:
+        return False
+    return parsed.scheme.lower() in {"http", "https"} and bool(parsed.netloc)
+
+
+class FacodiLearningSubmission(models.Model):
+    _name = "facodi.learning.submission"
+    _description = "FACODI learning resource submission"
+    _order = "create_date desc, id desc"
+
+    name = fields.Char(required=True)
+    source_url = fields.Char(required=True, index=True)
+    context = fields.Text()
+    language = fields.Char(index=True)
+    submitted_by_id = fields.Many2one(
+        "res.users",
+        readonly=True,
+        ondelete="set null",
+        index=True,
+    )
+    state = fields.Selection(
+        [
+            ("submitted", "Submitted"),
+            ("reviewing", "Reviewing"),
+            ("accepted", "Accepted"),
+            ("rejected", "Rejected"),
+            ("resolved", "Resolved"),
+        ],
+        required=True,
+        default="submitted",
+        readonly=True,
+        index=True,
+    )
+    access_token = fields.Char(
+        required=True,
+        readonly=True,
+        copy=False,
+        index=True,
+    )
+    reviewed_by_id = fields.Many2one(
+        "res.users",
+        readonly=True,
+        ondelete="set null",
+    )
+    reviewed_at = fields.Datetime(readonly=True)
+    decision_note = fields.Text(
+        help="Internal editorial note. Never render this field on public status pages."
+    )
+    candidate_id = fields.Many2one(
+        "facodi.learning.course.candidate",
+        string="Course Candidate",
+        ondelete="restrict",
+    )
+    source_id = fields.Many2one(
+        "facodi.learning.source",
+        string="Canonical Source",
+        ondelete="restrict",
+    )
+
+    _token_unique = models.Constraint(
+        "unique(access_token)",
+        "Submission tracking tokens must be unique.",
+    )
+
+    _audit_fields = {
+        "state",
+        "access_token",
+        "reviewed_by_id",
+        "reviewed_at",
+    }
+
+    @api.model
+    def _new_access_token(self):
+        return secrets.token_urlsafe(32)
+
+    @api.model
+    def _is_valid_source_url(self, value):
+        return _is_public_http_url(value)
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        for vals in vals_list:
+            forged = self._audit_fields & vals.keys()
+            if forged:
+                raise AccessError(
+                    "Submission audit state is managed by FACODI review actions."
+                )
+            vals.update(
+                state="submitted",
+                access_token=self._new_access_token(),
+                reviewed_by_id=False,
+                reviewed_at=False,
+            )
+            if vals.get("name"):
+                vals["name"] = vals["name"].strip()
+            if vals.get("source_url"):
+                vals["source_url"] = vals["source_url"].strip()
+            if vals.get("language"):
+                vals["language"] = vals["language"].strip().lower()
+        return super().create(vals_list)
+
+    def write(self, vals):
+        protected = self._audit_fields | {"submitted_by_id"}
+        if protected & vals.keys():
+            raise AccessError(
+                "Submission audit state is managed by FACODI review actions."
+            )
+        if any(record.state in {"rejected", "resolved"} for record in self):
+            raise AccessError("Terminal submissions are audit history.")
+        return super().write(vals)
+
+    def unlink(self):
+        self._require_manager()
+        if any(record.state != "submitted" for record in self):
+            raise AccessError("Reviewed submissions are audit history.")
+        return super().unlink()
+
+    @api.constrains("name")
+    def _check_name(self):
+        if any(not (record.name or "").strip() for record in self):
+            raise ValidationError("A submission title is required.")
+
+    @api.constrains("source_url")
+    def _check_source_url(self):
+        if any(not _is_public_http_url(record.source_url) for record in self):
+            raise ValidationError("Enter a valid public HTTP or HTTPS URL.")
+
+    def _require_manager(self):
+        if not self.env.user.has_group(
+            "website_slides.group_website_slides_manager"
+        ):
+            raise AccessError(
+                "Only eLearning Managers can make submission review decisions."
+            )
+
+    def action_start_review(self):
+        self._require_manager()
+        for submission in self:
+            if submission.state != "submitted":
+                raise ValidationError(
+                    "Only submitted resources can enter editorial review."
+                )
+            super(FacodiLearningSubmission, submission).write(
+                {"state": "reviewing"}
+            )
+        return True
+
+    def action_accept(self):
+        self._require_manager()
+        now = fields.Datetime.now()
+        for submission in self:
+            if submission.state not in {"submitted", "reviewing"}:
+                raise ValidationError(
+                    "Only submitted or reviewing resources can be accepted."
+                )
+            super(FacodiLearningSubmission, submission).write(
+                {
+                    "state": "accepted",
+                    "reviewed_by_id": self.env.user.id,
+                    "reviewed_at": now,
+                }
+            )
+        return True
+
+    def action_reject(self):
+        self._require_manager()
+        now = fields.Datetime.now()
+        for submission in self:
+            if submission.state not in {"submitted", "reviewing"}:
+                raise ValidationError(
+                    "Only submitted or reviewing resources can be rejected."
+                )
+            super(FacodiLearningSubmission, submission).write(
+                {
+                    "state": "rejected",
+                    "reviewed_by_id": self.env.user.id,
+                    "reviewed_at": now,
+                }
+            )
+        return True
+
+    def action_resolve(self):
+        self._require_manager()
+        for submission in self:
+            if submission.state != "accepted":
+                raise ValidationError(
+                    "Only accepted submissions can be resolved."
+                )
+            if not submission.candidate_id and not submission.source_id:
+                raise ValidationError(
+                    "Link a canonical course candidate or content source before resolving."
+                )
+            super(FacodiLearningSubmission, submission).write(
+                {"state": "resolved"}
+            )
+        return True

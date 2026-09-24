@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="resource_submission_form" name="FACODI Resource Submission">
+        <t t-call="website.layout">
+            <div id="wrap" class="oe_structure">
+                <section class="container py-5">
+                    <div class="row justify-content-center">
+                        <div class="col-lg-8 col-xl-7">
+                            <p class="text-uppercase small fw-semibold mb-2">Contribute to FACODI</p>
+                            <h1>Suggest a learning resource</h1>
+                            <p class="lead">
+                                Share a public learning resource for editorial review. A submission is a suggestion only:
+                                FACODI will check relevance, provenance and publication rights before it can become learning content.
+                            </p>
+
+                            <div t-if="errors" class="alert alert-danger" role="alert">
+                                <p class="fw-semibold mb-2">Check the information below.</p>
+                                <ul class="mb-0">
+                                    <li t-foreach="errors" t-as="error"><t t-esc="error"/></li>
+                                </ul>
+                            </div>
+
+                            <form action="/contribuir/recurso" method="post" class="mt-4">
+                                <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+
+                                <div class="mb-3">
+                                    <label class="form-label" for="facodi_submission_name">Resource title</label>
+                                    <input id="facodi_submission_name"
+                                           name="name"
+                                           type="text"
+                                           required="required"
+                                           maxlength="200"
+                                           class="form-control"
+                                           t-att-value="form_values.get('name', '')"
+                                           placeholder="Example: Introduction to Operating Systems"/>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label" for="facodi_submission_url">Public resource URL</label>
+                                    <input id="facodi_submission_url"
+                                           name="source_url"
+                                           type="url"
+                                           required="required"
+                                           maxlength="2048"
+                                           class="form-control"
+                                           t-att-value="form_values.get('source_url', '')"
+                                           placeholder="https://..."/>
+                                    <div class="form-text">
+                                        Use the canonical public HTTP or HTTPS page. Do not upload passwords, private links or credentials.
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label" for="facodi_submission_language">Language</label>
+                                    <select id="facodi_submission_language" name="language" class="form-select">
+                                        <option value="" t-att-selected="not form_values.get('language')">Not specified</option>
+                                        <option value="pt" t-att-selected="form_values.get('language') == 'pt'">Portuguese</option>
+                                        <option value="en" t-att-selected="form_values.get('language') == 'en'">English</option>
+                                        <option value="es" t-att-selected="form_values.get('language') == 'es'">Spanish</option>
+                                        <option value="fr" t-att-selected="form_values.get('language') == 'fr'">French</option>
+                                    </select>
+                                </div>
+
+                                <div class="mb-4">
+                                    <label class="form-label" for="facodi_submission_context">Why could this resource be useful?</label>
+                                    <textarea id="facodi_submission_context"
+                                              name="context"
+                                              rows="5"
+                                              maxlength="4000"
+                                              class="form-control"
+                                              placeholder="Optional: topic, curricular unit, course or learning goal."><t t-esc="form_values.get('context', '')"/></textarea>
+                                </div>
+
+                                <button type="submit" class="btn btn-primary">Submit for review</button>
+                                <a href="/contactus" class="btn btn-link">Other contribution</a>
+                            </form>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </t>
+    </template>
+
+    <template id="resource_submission_status" name="FACODI Resource Submission Status">
+        <t t-call="website.layout">
+            <div id="wrap" class="oe_structure">
+                <section class="container py-5">
+                    <div class="row justify-content-center">
+                        <div class="col-lg-8 col-xl-7">
+                            <p class="text-uppercase small fw-semibold mb-2">Resource suggestion</p>
+                            <h1>Submission received</h1>
+                            <p class="lead" t-esc="submission.name"/>
+
+                            <div class="card my-4">
+                                <div class="card-body">
+                                    <dl class="row mb-0">
+                                        <dt class="col-sm-4">Status</dt>
+                                        <dd class="col-sm-8">
+                                            <span class="badge text-bg-secondary" t-esc="state_label"/>
+                                        </dd>
+                                        <dt class="col-sm-4">Resource</dt>
+                                        <dd class="col-sm-8 mb-0">
+                                            <a t-att-href="submission.source_url"
+                                               target="_blank"
+                                               rel="noopener noreferrer"
+                                               t-esc="submission.source_url"/>
+                                        </dd>
+                                    </dl>
+                                </div>
+                            </div>
+
+                            <div t-if="submission.state == 'submitted'" class="alert alert-info">
+                                Waiting for editorial review.
+                            </div>
+                            <div t-elif="submission.state == 'reviewing'" class="alert alert-info">
+                                FACODI is checking relevance, provenance and publication rights.
+                            </div>
+                            <div t-elif="submission.state == 'accepted'" class="alert alert-success">
+                                Accepted for curation. This does not mean the resource is published yet.
+                            </div>
+                            <div t-elif="submission.state == 'rejected'" class="alert alert-secondary">
+                                This suggestion will not proceed in its current form.
+                            </div>
+                            <div t-elif="submission.state == 'resolved'" class="alert alert-success">
+                                The suggestion has been routed into the canonical FACODI content workflow.
+                            </div>
+
+                            <p class="text-muted small">
+                                Keep this private status link if you want to check the editorial state later.
+                            </p>
+                            <a href="/slides" class="btn btn-outline-primary">Explore learning content</a>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </t>
+    </template>
+</odoo>

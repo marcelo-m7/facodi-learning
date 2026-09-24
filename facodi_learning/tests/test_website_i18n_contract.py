@@ -4,6 +4,7 @@ import unittest
 
 MODULE_ROOT = Path(__file__).resolve().parents[1]
 WEBSITE_TEMPLATE = MODULE_ROOT / "views" / "website_curriculum.xml"
+SUBMISSION_TEMPLATE = MODULE_ROOT / "views" / "website_submission.xml"
 I18N_DIR = MODULE_ROOT / "i18n"
 
 
@@ -19,6 +20,15 @@ class TestWebsiteI18nContract(unittest.TestCase):
         self.assertNotIn("Aplicar filtros", template)
         self.assertNotIn("Ligação a currículos oficiais", template)
 
+    def test_public_submission_copy_uses_english_source_strings(self):
+        template = SUBMISSION_TEMPLATE.read_text()
+
+        self.assertIn("Suggest a learning resource", template)
+        self.assertIn("Submit for review", template)
+        self.assertIn("Submission received", template)
+        self.assertIn("Waiting for editorial review.", template)
+        self.assertNotIn("Sugerir um recurso de aprendizagem", template)
+
     def test_public_roadmap_catalogues_cover_supported_languages(self):
         expected_translations = {
             "pt": {
@@ -30,6 +40,10 @@ class TestWebsiteI18nContract(unittest.TestCase):
                 "Explore this course": "Explorar este curso",
                 "Explore curricular unit": "Explorar unidade curricular",
                 "related courses": "cursos relacionados",
+                "Suggest a learning resource": "Sugerir um recurso de aprendizagem",
+                "Submit for review": "Enviar para revisão",
+                "Submission received": "Submissão recebida",
+                "Waiting for editorial review.": "A aguardar revisão editorial.",
             },
             "es": {
                 "Learning": "Aprendizaje",
@@ -40,6 +54,10 @@ class TestWebsiteI18nContract(unittest.TestCase):
                 "Explore this course": "Explorar este curso",
                 "Explore curricular unit": "Explorar unidad curricular",
                 "related courses": "cursos relacionados",
+                "Suggest a learning resource": "Sugerir un recurso de aprendizaje",
+                "Submit for review": "Enviar a revisión",
+                "Submission received": "Envío recibido",
+                "Waiting for editorial review.": "En espera de revisión editorial.",
             },
             "fr": {
                 "Learning": "Apprentissage",
@@ -50,6 +68,10 @@ class TestWebsiteI18nContract(unittest.TestCase):
                 "Explore this course": "Explorer ce cours",
                 "Explore curricular unit": "Explorer l'unite d'enseignement",
                 "related courses": "cours associes",
+                "Suggest a learning resource": "Suggérer une ressource d’apprentissage",
+                "Submit for review": "Envoyer pour examen",
+                "Submission received": "Soumission reçue",
+                "Waiting for editorial review.": "En attente d’un examen éditorial.",
             },
         }
 
