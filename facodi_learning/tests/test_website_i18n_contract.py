@@ -47,6 +47,11 @@ class TestWebsiteI18nContract(unittest.TestCase):
                 "Submission received": "Submissão recebida",
                 "Waiting for editorial review.": "A aguardar revisão editorial.",
                 "Suggest a resource": "Sugerir um recurso",
+                "Suggested for curricular unit": "Sugerido para a unidade curricular",
+                "View curricular unit": "Ver unidade curricular",
+                "Suggested for": "Sugerido para",
+                "Back to curricular unit": "Voltar à unidade curricular",
+                "The curricular unit context is no longer publicly available.": "O contexto da unidade curricular já não está disponível publicamente.",
             },
             "es": {
                 "Learning": "Aprendizaje",
