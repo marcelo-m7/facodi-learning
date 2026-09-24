@@ -5,10 +5,36 @@ from odoo.http import request
 
 class FacodiSubmissionController(http.Controller):
     @staticmethod
-    def _form_values(values=None, errors=None):
+    def _public_curriculum_unit(raw_id):
+        try:
+            unit_id = int(raw_id or 0)
+        except (TypeError, ValueError):
+            return request.env["facodi.learning.curriculum.unit"].browse()
+        if unit_id <= 0:
+            return request.env["facodi.learning.curriculum.unit"].browse()
+
+        unit = (
+            request.env["facodi.learning.curriculum.unit"]
+            .sudo()
+            .browse(unit_id)
+            .exists()
+        )
+        if not unit or not unit._facodi_public_path():
+            return request.env["facodi.learning.curriculum.unit"].browse()
+        return unit
+
+    @staticmethod
+    def _form_values(
+        values=None,
+        errors=None,
+        curriculum_unit=None,
+        duplicate=False,
+    ):
         return {
             "form_values": values or {},
             "errors": errors or [],
+            "curriculum_unit": curriculum_unit,
+            "duplicate": duplicate,
         }
 
     @http.route(
@@ -20,9 +46,18 @@ class FacodiSubmissionController(http.Controller):
         sitemap=True,
     )
     def resource_submission_form(self, **kwargs):
+        curriculum_unit = self._public_curriculum_unit(
+            kwargs.get("curriculum_unit_id")
+        )
+        values = {}
+        if curriculum_unit:
+            values["curriculum_unit_id"] = curriculum_unit.id
         return request.render(
             "facodi_learning.resource_submission_form",
-            self._form_values(),
+            self._form_values(
+                values=values,
+                curriculum_unit=curriculum_unit,
+            ),
         )
 
     @http.route(
@@ -39,6 +74,8 @@ class FacodiSubmissionController(http.Controller):
         source_url = (post.get("source_url") or "").strip()[:2048]
         context = (post.get("context") or "").strip()[:4000]
         language = (post.get("language") or "").strip().lower()[:16]
+        raw_curriculum_unit_id = post.get("curriculum_unit_id")
+        curriculum_unit = self._public_curriculum_unit(raw_curriculum_unit_id)
 
         values = {
             "name": name,
@@ -46,17 +83,55 @@ class FacodiSubmissionController(http.Controller):
             "context": context,
             "language": language,
         }
+        if curriculum_unit:
+            values["curriculum_unit_id"] = curriculum_unit.id
+
         errors = []
         if not name:
             errors.append(request.env._("Enter a short title for the resource."))
+
         Submission = request.env["facodi.learning.submission"]
         if not Submission._is_valid_source_url(source_url):
             errors.append(request.env._("Enter a valid public HTTP or HTTPS URL."))
 
+        if raw_curriculum_unit_id and not curriculum_unit:
+            errors.append(
+                request.env._(
+                    "The curricular unit context is no longer publicly available."
+                )
+            )
+
         if errors:
             return request.render(
                 "facodi_learning.resource_submission_form",
-                self._form_values(values=values, errors=errors),
+                self._form_values(
+                    values=values,
+                    errors=errors,
+                    curriculum_unit=curriculum_unit,
+                ),
+            )
+
+        normalized_source_url = Submission._normalize_source_url(source_url)
+        duplicate_domain = [
+            ("normalized_source_url", "=", normalized_source_url),
+            ("state", "in", ("submitted", "reviewing", "accepted")),
+        ]
+        if curriculum_unit:
+            duplicate_domain.append(
+                ("curriculum_unit_id", "=", curriculum_unit.id)
+            )
+        else:
+            duplicate_domain.append(("curriculum_unit_id", "=", False))
+
+        duplicate = Submission.sudo().search(duplicate_domain, limit=1)
+        if duplicate:
+            return request.render(
+                "facodi_learning.resource_submission_form",
+                self._form_values(
+                    values=values,
+                    curriculum_unit=curriculum_unit,
+                    duplicate=True,
+                ),
             )
 
         if not request.env.user._is_public():
@@ -69,6 +144,7 @@ class FacodiSubmissionController(http.Controller):
                 "facodi_learning.resource_submission_form",
                 self._form_values(
                     values=values,
+                    curriculum_unit=curriculum_unit,
                     errors=[
                         request.env._(
                             "The resource could not be submitted. Check the URL and try again."
@@ -102,11 +178,21 @@ class FacodiSubmissionController(http.Controller):
         state_label = dict(
             submission._fields["state"]._description_selection(request.env)
         ).get(submission.state, submission.state)
+
+        curriculum_unit = submission.curriculum_unit_id
+        curriculum_unit_url = (
+            curriculum_unit._facodi_public_path() if curriculum_unit else False
+        )
+        if not curriculum_unit_url:
+            curriculum_unit = False
+
         response = request.render(
             "facodi_learning.resource_submission_status",
             {
                 "submission": submission,
                 "state_label": state_label,
+                "curriculum_unit": curriculum_unit,
+                "curriculum_unit_url": curriculum_unit_url,
             },
         )
         response.headers["X-Robots-Tag"] = "noindex, nofollow"

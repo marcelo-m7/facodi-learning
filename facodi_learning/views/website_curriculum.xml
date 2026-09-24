@@ -468,7 +468,7 @@
                                         This is a public editorial gap; it does not mean that external material is unavailable or that academic recognition exists.
                                     </p>
                                     <div class="d-flex flex-wrap gap-2">
-                                        <a href="/contribuir/recurso" class="btn btn-primary">Suggest a resource</a>
+                                        <a t-att-href="'/contribuir/recurso?curriculum_unit_id=%s' % unit.id" class="btn btn-primary">Suggest a resource</a>
                                         <a href="/slides" class="btn btn-outline-primary">Explore FACODI courses</a>
                                     </div>
                                 </div>

@@ -2861,3 +2861,43 @@ msgstr "Accepté"
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit
 msgid "Suggest a resource"
 msgstr "Suggérer une ressource"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_form
+msgid "Suggested for curricular unit"
+msgstr "Suggéré pour l’unité d’enseignement"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_form
+msgid "View curricular unit"
+msgstr "Voir l’unité d’enseignement"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_status
+msgid "Suggested for"
+msgstr "Suggéré pour"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_status
+msgid "Back to curricular unit"
+msgstr "Retour à l’unité d’enseignement"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_form
+msgid "This resource is already under editorial review for this context. You can suggest another resource instead."
+msgstr "Cette ressource est déjà en cours d’examen éditorial pour ce contexte. Vous pouvez proposer une autre ressource."
+
+#. module: facodi_learning
+#: code:addons/facodi_learning/controllers/submission.py:0
+msgid "The curricular unit context is no longer publicly available."
+msgstr "Le contexte de l’unité d’enseignement n’est plus disponible publiquement."
+
+#. module: facodi_learning
+#: model:ir.model.fields,field_description:facodi_learning.field_facodi_learning_submission__curriculum_unit_id
+msgid "Curricular Unit Context"
+msgstr "Contexte de l’unité d’enseignement"
+
+#. module: facodi_learning
+#: model:ir.model.fields,help:facodi_learning.field_facodi_learning_submission__curriculum_unit_id
+msgid "Optional contributor context only. This relation does not create curriculum coverage or an approved academic mapping."
+msgstr "Contexte facultatif du contributeur. Cette relation ne crée pas de couverture curriculaire ni de correspondance académique approuvée."

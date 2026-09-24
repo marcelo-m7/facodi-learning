@@ -13,6 +13,22 @@
                                 FACODI will check relevance, provenance and publication rights before it can become learning content.
                             </p>
 
+                            <div t-if="curriculum_unit" class="alert alert-info" role="status">
+                                <span class="d-block small text-uppercase fw-semibold">Suggested for curricular unit</span>
+                                <strong>
+                                    <t t-esc="curriculum_unit.external_unit_code"/> ·
+                                    <t t-esc="curriculum_unit.name"/>
+                                </strong>
+                                <a t-att-href="curriculum_unit._facodi_public_path()"
+                                   class="d-block mt-1">
+                                    View curricular unit
+                                </a>
+                            </div>
+
+                            <div t-if="duplicate" class="alert alert-warning" role="status">
+                                This resource is already under editorial review for this context. You can suggest another resource instead.
+                            </div>
+
                             <div t-if="errors" class="alert alert-danger" role="alert">
                                 <p class="fw-semibold mb-2">Check the information below.</p>
                                 <ul class="mb-0">
@@ -22,6 +38,10 @@
 
                             <form action="/contribuir/recurso" method="post" class="mt-4">
                                 <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                <input t-if="curriculum_unit"
+                                       type="hidden"
+                                       name="curriculum_unit_id"
+                                       t-att-value="curriculum_unit.id"/>
 
                                 <div class="mb-3">
                                     <label class="form-label" for="facodi_submission_name">Resource title</label>
@@ -99,12 +119,19 @@
                                             <span class="badge text-bg-secondary" t-esc="state_label"/>
                                         </dd>
                                         <dt class="col-sm-4">Resource</dt>
-                                        <dd class="col-sm-8 mb-0">
+                                        <dd t-attf-class="col-sm-8 #{'mb-2' if curriculum_unit else 'mb-0'}">
                                             <a t-att-href="submission.source_url"
                                                target="_blank"
                                                rel="noopener noreferrer"
                                                t-esc="submission.source_url"/>
                                         </dd>
+                                        <t t-if="curriculum_unit">
+                                            <dt class="col-sm-4">Suggested for</dt>
+                                            <dd class="col-sm-8 mb-0">
+                                                <a t-att-href="curriculum_unit_url"
+                                                   t-esc="curriculum_unit.name"/>
+                                            </dd>
+                                        </t>
                                     </dl>
                                 </div>
                             </div>
@@ -128,7 +155,14 @@
                             <p class="text-muted small">
                                 Keep this private status link if you want to check the editorial state later.
                             </p>
-                            <a href="/slides" class="btn btn-outline-primary">Explore learning content</a>
+                            <div class="d-flex flex-wrap gap-2">
+                                <a t-if="curriculum_unit"
+                                   t-att-href="curriculum_unit_url"
+                                   class="btn btn-primary">
+                                    Back to curricular unit
+                                </a>
+                                <a href="/slides" class="btn btn-outline-primary">Explore learning content</a>
+                            </div>
                         </div>
                     </div>
                 </section>
