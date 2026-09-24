@@ -2887,3 +2887,8 @@ msgstr "Este recurso ya está en revisión editorial para este contexto. Puedes 
 #: code:addons/facodi_learning/controllers/submission.py:0
 msgid "The curricular unit context is no longer publicly available."
 msgstr "El contexto de la unidad curricular ya no está disponible públicamente."
+
+#. module: facodi_learning
+#: model:ir.model.fields,field_description:facodi_learning.field_facodi_learning_submission__curriculum_unit_id
+msgid "Curricular Unit Context"
+msgstr "Contexto de la Unidad Curricular"
