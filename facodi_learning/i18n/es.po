@@ -2862,3 +2862,18 @@ msgstr "Sugerir un recurso"
 #: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_form
 msgid "Suggested for curricular unit"
 msgstr "Sugerido para la unidad curricular"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_form
+msgid "View curricular unit"
+msgstr "Ver unidad curricular"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_status
+msgid "Suggested for"
+msgstr "Sugerido para"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_status
+msgid "Back to curricular unit"
+msgstr "Volver a la unidad curricular"
