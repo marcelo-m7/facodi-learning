@@ -185,6 +185,13 @@ class TestCurriculumPublicUnits(TransactionCase):
         self.assertEqual(programming["coverage_status"], "covered")
         self.assertEqual(programming["coverage_rows"][0]["coverage_type"], "covers")
 
+
+    def test_gap_state_offers_contextual_resource_submission(self):
+        view = self.env.ref("facodi_learning.curriculum_public_unit")
+        self.assertIn('href="/contribuir/recurso"', view.arch_db)
+        self.assertIn("Suggest a resource", view.arch_db)
+        self.assertIn("There is no published course with reviewed coverage", view.arch_db)
+
     def test_unit_qweb_view_is_loaded_and_links_back_to_official_source(self):
         view = self.env.ref("facodi_learning.curriculum_public_unit")
         self.assertEqual(view.type, "qweb")
