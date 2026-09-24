@@ -48,10 +48,10 @@ class FacodiSubmissionController(http.Controller):
         }
         errors = []
         if not name:
-            errors.append("Enter a short title for the resource.")
+            errors.append(request.env._("Enter a short title for the resource."))
         Submission = request.env["facodi.learning.submission"]
         if not Submission._is_valid_source_url(source_url):
-            errors.append("Enter a valid public HTTP or HTTPS URL.")
+            errors.append(request.env._("Enter a valid public HTTP or HTTPS URL."))
 
         if errors:
             return request.render(
@@ -69,7 +69,11 @@ class FacodiSubmissionController(http.Controller):
                 "facodi_learning.resource_submission_form",
                 self._form_values(
                     values=values,
-                    errors=["The resource could not be submitted. Check the URL and try again."],
+                    errors=[
+                        request.env._(
+                            "The resource could not be submitted. Check the URL and try again."
+                        )
+                    ],
                 ),
             )
 
@@ -95,9 +99,9 @@ class FacodiSubmissionController(http.Controller):
         if not submission:
             return request.not_found()
 
-        state_label = dict(submission._fields["state"].selection).get(
-            submission.state, submission.state
-        )
+        state_label = dict(
+            submission._fields["state"]._description_selection(request.env)
+        ).get(submission.state, submission.state)
         response = request.render(
             "facodi_learning.resource_submission_status",
             {
