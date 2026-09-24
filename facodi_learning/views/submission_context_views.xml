@@ -21,14 +21,6 @@
         <field name="model">facodi.learning.submission</field>
         <field name="inherit_id" ref="facodi_learning.view_facodi_submission_list"/>
         <field name="arch" type="xml">
-            <button name="action_accept" position="after">
-                <button name="action_handoff_candidate"
-                        type="object"
-                        string="Route to Candidate Pipeline"
-                        class="btn-primary"
-                        invisible="state != 'accepted' or candidate_id or source_id"
-                        groups="website_slides.group_website_slides_manager"/>
-            </button>
             <field name="language" position="after">
                 <field name="curriculum_unit_id" optional="show"/>
             </field>
