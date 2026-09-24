@@ -2881,3 +2881,18 @@ msgstr "Suggéré pour"
 #: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_status
 msgid "Back to curricular unit"
 msgstr "Retour à l’unité d’enseignement"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_form
+msgid "This resource is already under editorial review for this context. You can suggest another resource instead."
+msgstr "Cette ressource est déjà en cours d’examen éditorial pour ce contexte. Vous pouvez proposer une autre ressource."
+
+#. module: facodi_learning
+#: code:addons/facodi_learning/controllers/submission.py:0
+msgid "The curricular unit context is no longer publicly available."
+msgstr "Le contexte de l’unité d’enseignement n’est plus disponible publiquement."
+
+#. module: facodi_learning
+#: model:ir.model.fields,field_description:facodi_learning.field_facodi_learning_submission__curriculum_unit_id
+msgid "Curricular Unit Context"
+msgstr "Contexte de l’unité d’enseignement"
