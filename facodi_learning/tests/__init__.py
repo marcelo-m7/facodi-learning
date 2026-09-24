@@ -26,3 +26,4 @@ from . import test_curriculum_source_lifecycle
 from . import test_discovery_run
 from . import test_course_discovery
 from . import test_youtube_service
+from . import test_submission
