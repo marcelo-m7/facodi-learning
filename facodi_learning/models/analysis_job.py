@@ -146,6 +146,9 @@ class FacodiLearningAnalysisJob(models.Model):
                     "FACODI analysis job %s failed (%s)", job.id, type(exc).__name__
                 )
                 error = f"{type(exc).__name__}: operation failed; inspect the provider configuration."
+                correlation_id = getattr(exc, "correlation_id", False)
+                if correlation_id:
+                    error += f" Correlation: {correlation_id}."
                 result = self.env["facodi.learning.analysis.result"]
             completed = fields.Datetime.now()
             values = {
