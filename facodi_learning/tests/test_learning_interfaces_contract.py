@@ -14,6 +14,10 @@ class TestLearningInterfacesContract(unittest.TestCase):
         cls.curriculum = CURRICULUM.read_text(encoding="utf-8")
         cls.slides = SLIDES.read_text(encoding="utf-8")
 
+    def test_d1_release_version(self):
+        manifest = MANIFEST.read_text(encoding="utf-8")
+        self.assertIn('"version": "19.0.1.22.0"', manifest)
+
     def test_roadmap_catalogue_exposes_d1_structure(self):
         self.assertIn('id="curriculum_public_index"', self.curriculum)
         self.assertIn("facodi-learning-hero", self.curriculum)
