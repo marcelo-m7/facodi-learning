@@ -570,7 +570,9 @@
     <template id="approved_course_curriculum_links" inherit_id="website_slides.course_main" name="Official curriculum alignment">
         <xpath expr="//div[@id='home']" position="inside">
             <t t-set="facodi_curriculum_links" t-value="channel._facodi_public_curriculum_links(website)"/>
-            <section t-if="facodi_curriculum_links" class="mt-5 pt-4 border-top" aria-label="Official curriculum alignment">
+            <section t-if="facodi_curriculum_links"
+                         class="mt-5 facodi-course-alignment-sheet"
+                         aria-label="Official curriculum alignment">
                 <h2 class="h4 mb-2">Official curriculum alignment</h2>
                 <p class="text-muted">Coverage relations reviewed and approved by FACODI curation.</p>
                 <ul class="list-unstyled mb-0">
