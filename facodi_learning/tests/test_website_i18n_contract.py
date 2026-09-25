@@ -6,6 +6,9 @@ MODULE_ROOT = Path(__file__).resolve().parents[1]
 WEBSITE_TEMPLATE = MODULE_ROOT / "views" / "website_curriculum.xml"
 WEBSITE_SLIDES_TEMPLATE = MODULE_ROOT / "views" / "website_slides.xml"
 SUBMISSION_TEMPLATE = MODULE_ROOT / "views" / "website_submission.xml"
+SUBMISSION_JS = MODULE_ROOT / "static" / "src" / "js" / "resource_submission.js"
+SUBMISSION_CONTROLLER = MODULE_ROOT / "controllers" / "submission.py"
+MANIFEST = MODULE_ROOT / "__manifest__.py"
 I18N_DIR = MODULE_ROOT / "i18n"
 
 
@@ -80,6 +83,28 @@ class TestWebsiteI18nContract(unittest.TestCase):
                         references,
                     )
 
+    def test_url_first_submission_metadata_discovery_contract(self):
+        template = SUBMISSION_TEMPLATE.read_text()
+        javascript = SUBMISSION_JS.read_text()
+        controller = SUBMISSION_CONTROLLER.read_text()
+        manifest = MANIFEST.read_text()
+
+        self.assertIn('data-facodi-resource-submission="1"', template)
+        self.assertLess(
+            template.index('id="facodi_submission_url"'),
+            template.index('id="facodi_submission_name"'),
+        )
+        self.assertIn("Detect details", template)
+        self.assertIn("/contribuir/recurso/metadata", javascript)
+        self.assertIn('"/contribuir/recurso/metadata"', controller)
+        self.assertIn("csrf=True", controller)
+        self.assertIn(
+            "facodi_learning/static/src/js/resource_submission.js",
+            manifest,
+        )
+        self.assertNotIn("SUPABASE_SECRET_KEY", javascript)
+        self.assertNotIn("GEMINI_API_KEY", javascript)
+
     def test_public_submission_copy_uses_english_source_strings(self):
         template = SUBMISSION_TEMPLATE.read_text()
 
@@ -106,6 +131,9 @@ class TestWebsiteI18nContract(unittest.TestCase):
                 "Submission received": "Submissão recebida",
                 "Waiting for editorial review.": "A aguardar revisão editorial.",
                 "Suggest a resource": "Sugerir um recurso",
+                "Detect details": "Detetar detalhes",
+                "Resource details found.": "Detalhes do recurso encontrados.",
+                "Automatic details are temporarily unavailable. You can continue manually.": "Os detalhes automáticos estão temporariamente indisponíveis. Pode continuar manualmente.",
             },
             "es": {
                 "Learning": "Aprendizaje",
@@ -122,6 +150,9 @@ class TestWebsiteI18nContract(unittest.TestCase):
                 "Submission received": "Envío recibido",
                 "Waiting for editorial review.": "En espera de revisión editorial.",
                 "Suggest a resource": "Sugerir un recurso",
+                "Detect details": "Detectar detalles",
+                "Resource details found.": "Detalles del recurso encontrados.",
+                "Automatic details are temporarily unavailable. You can continue manually.": "Los detalles automáticos no están disponibles temporalmente. Puedes continuar manualmente.",
             },
             "fr": {
                 "Learning": "Apprentissage",
@@ -138,6 +169,9 @@ class TestWebsiteI18nContract(unittest.TestCase):
                 "Submission received": "Soumission reçue",
                 "Waiting for editorial review.": "En attente d’un examen éditorial.",
                 "Suggest a resource": "Suggérer une ressource",
+                "Detect details": "Détecter les détails",
+                "Resource details found.": "Détails de la ressource trouvés.",
+                "Automatic details are temporarily unavailable. You can continue manually.": "Les détails automatiques sont temporairement indisponibles. Vous pouvez continuer manuellement.",
             },
         }
 
