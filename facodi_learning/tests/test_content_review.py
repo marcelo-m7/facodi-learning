@@ -158,8 +158,11 @@ class TestContentPublicationGovernance(TransactionCase):
 
     def test_governance_cannot_be_disabled_through_normal_orm(self):
         self.website.action_facodi_enable_publication_review()
+        admin = self.env.ref("base.user_admin")
         with self.assertRaises(AccessError):
-            self.website.write({"facodi_publication_review_enabled": False})
+            self.website.with_user(admin).write(
+                {"facodi_publication_review_enabled": False}
+            )
         self.assertTrue(self.website.facodi_publication_review_enabled)
 
     def test_site_less_content_is_not_accidentally_governed(self):
