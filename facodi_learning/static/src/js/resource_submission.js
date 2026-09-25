@@ -40,11 +40,13 @@ function setupSubmissionDiscovery(form) {
     }
 
     const endpoint = form.dataset.metadataEndpoint;
+    const message = (name, fallback) =>
+        form.querySelector(`[data-facodi-message="${name}"]`)?.textContent?.trim() || fallback;
     const messages = {
-        discovering: form.dataset.msgDiscovering || "Detecting…",
-        detected: form.dataset.msgDetected || "Details detected.",
-        unavailable: form.dataset.msgUnavailable || "Automatic detection unavailable.",
-        unsupported: form.dataset.msgUnsupported || "Automatic detection is unavailable for this URL.",
+        discovering: message("discovering", "Detecting…"),
+        detected: message("detected", "Details detected."),
+        unavailable: message("unavailable", "Automatic detection unavailable."),
+        unsupported: message("unsupported", "Automatic detection is unavailable for this URL."),
     };
 
     let lastRequestedUrl = "";
