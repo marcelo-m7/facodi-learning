@@ -6,12 +6,15 @@ from odoo.exceptions import AccessError
 from ..services.analysis import normalize_output
 
 from ..services import analyze_local_metadata, analyze_supabase_edge
+from ..services.supabase_edge import SupabaseAnalysisError
 
 _logger = logging.getLogger(__name__)
 
 
 def _validated_correlation_id(error):
-    value = getattr(error, "correlation_id", False)
+    if not isinstance(error, SupabaseAnalysisError):
+        return False
+    value = error.correlation_id
     if not isinstance(value, str):
         return False
     try:
