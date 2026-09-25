@@ -60,7 +60,6 @@
                                     <input id="facodi_submission_name"
                                            name="name"
                                            type="text"
-                                           required="required"
                                            maxlength="200"
                                            class="form-control"
                                            t-att-value="form_values.get('name', '')"
