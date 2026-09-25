@@ -371,10 +371,6 @@ class Website(models.Model):
                     "|",
                     ("is_published", "=", True),
                     ("website_published", "=", True),
-                    "|",
-                    ("website_id", "=", website.id),
-                    "&",
-                    ("website_id", "=", False),
                     ("channel_id.website_id", "=", website.id),
                 ]
             )
