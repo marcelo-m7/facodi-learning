@@ -40,12 +40,16 @@
                                   method="post"
                                   class="mt-4"
                                   data-facodi-resource-submission="1"
-                                  data-metadata-endpoint="/contribuir/recurso/metadata"
-                                  data-msg-discovering="Detecting title and language…"
-                                  data-msg-detected="FACODI detected this YouTube resource."
-                                  data-msg-unavailable="Could not detect details automatically. You can continue manually."
-                                  data-msg-unsupported="Automatic discovery is currently available for public YouTube videos. You can continue manually.">
+                                  data-metadata-endpoint="/contribuir/recurso/metadata">
                                 <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                <div class="d-none"
+                                     aria-hidden="true"
+                                     data-facodi-discovery-messages="1">
+                                    <span data-facodi-message="discovering">Detecting title and language…</span>
+                                    <span data-facodi-message="detected">FACODI detected this YouTube resource.</span>
+                                    <span data-facodi-message="unavailable">Could not detect details automatically. You can continue manually.</span>
+                                    <span data-facodi-message="unsupported">Automatic discovery is currently available for public YouTube videos. You can continue manually.</span>
+                                </div>
                                 <input t-if="curriculum_unit"
                                        type="hidden"
                                        name="curriculum_unit_id"
