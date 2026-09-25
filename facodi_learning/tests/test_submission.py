@@ -183,6 +183,173 @@ class TestResourceSubmissionModel(TransactionCase):
             1,
         )
 
+    def test_submission_trace_uses_latest_job_and_is_officer_readable(self):
+        submission = self._submission(
+            name="Analysis trace resource",
+            source_url="https://www.youtube.com/watch?v=w9gb71ZUJDs",
+            language="pt",
+        )
+        submission.action_accept()
+        submission.action_handoff_candidate()
+        candidate = submission.candidate_id
+
+        channel = self.env["slide.channel"].create(
+            {"name": "Analysis trace target"}
+        )
+        candidate.action_evaluate()
+        candidate.write({"matched_channel_id": channel.id})
+        candidate.action_resolve_existing()
+
+        with patch.dict(
+            os.environ,
+            {
+                "SUPABASE_URL": "https://example.supabase.co",
+                "SUPABASE_SECRET_KEY": "sb_secret_test",
+            },
+            clear=False,
+        ):
+            source = candidate.action_ingest_source()
+
+        supabase_job = self.env["facodi.learning.analysis.job"].search(
+            [
+                ("slide_id", "=", source.slide_id.id),
+                ("provider", "=", "supabase_edge"),
+            ],
+            limit=1,
+        )
+        local_job = self.env["facodi.learning.analysis.job"].create(
+            {
+                "slide_id": source.slide_id.id,
+                "provider": "local_metadata",
+            }
+        )
+
+        submission.invalidate_recordset()
+        self.assertEqual(submission.analysis_job_id, local_job)
+        self.assertNotEqual(submission.analysis_job_id, supabase_job)
+
+        officer = self.env["res.users"].create(
+            {
+                "name": "Processing Trace Officer",
+                "login": "processing-trace-officer",
+                "group_ids": [
+                    (
+                        6,
+                        0,
+                        [
+                            self.env.ref(
+                                "website_slides.group_website_slides_officer"
+                            ).id
+                        ],
+                    )
+                ],
+            }
+        )
+        values = submission.with_user(officer).read(
+            [
+                "slide_id",
+                "source_state",
+                "processing_state",
+                "analysis_job_id",
+            ]
+        )[0]
+        self.assertEqual(values["source_state"], "imported")
+        self.assertEqual(values["processing_state"], "pending")
+        self.assertEqual(values["analysis_job_id"][0], local_job.id)
+        self.assertEqual(values["slide_id"][0], source.slide_id.id)
+
+    def test_same_canonical_youtube_source_can_link_multiple_submission_candidates(self):
+        first = self._submission(
+            name="Shared video A",
+            source_url=(
+                "https://www.youtube.com/watch?v=w9gb71ZUJDs"
+                "&list=PLa_2246N48_rlbheR_al4oqeFCP8dHoQR"
+            ),
+            language="pt",
+        )
+        second = self._submission(
+            name="Shared video B",
+            source_url=(
+                "https://www.youtube.com/watch?v=w9gb71ZUJDs"
+                "&list=PLdifferent123456789"
+            ),
+            language="pt",
+        )
+        for submission in (first, second):
+            submission.action_accept()
+            submission.action_handoff_candidate()
+
+        self.assertNotEqual(first.candidate_id, second.candidate_id)
+        channel = self.env["slide.channel"].create(
+            {"name": "Shared canonical source target"}
+        )
+        for candidate in (first.candidate_id, second.candidate_id):
+            candidate.action_evaluate()
+            candidate.write({"matched_channel_id": channel.id})
+            candidate.action_resolve_existing()
+
+        with patch.dict(
+            os.environ,
+            {
+                "SUPABASE_URL": "https://example.supabase.co",
+                "SUPABASE_SECRET_KEY": "sb_secret_test",
+            },
+            clear=False,
+        ):
+            first_source = first.candidate_id.action_ingest_source()
+            second_source = second.candidate_id.action_ingest_source()
+
+        first.invalidate_recordset()
+        second.invalidate_recordset()
+        self.assertEqual(first_source, second_source)
+        self.assertEqual(first.source_id, first_source)
+        self.assertEqual(second.source_id, first_source)
+        self.assertEqual(first_source.candidate_id, first.candidate_id)
+        self.assertNotEqual(first_source.candidate_id, second.candidate_id)
+        self.assertEqual(
+            self.env["facodi.learning.analysis.job"].search_count(
+                [
+                    ("slide_id", "=", first_source.slide_id.id),
+                    ("provider", "=", "supabase_edge"),
+                ]
+            ),
+            1,
+        )
+
+    def test_source_link_rejects_mismatched_canonical_identity(self):
+        submission = self._submission(
+            name="Identity protected",
+            source_url="https://www.youtube.com/watch?v=w9gb71ZUJDs",
+            language="pt",
+        )
+        submission.action_accept()
+        submission.action_handoff_candidate()
+        candidate = submission.candidate_id
+        channel = self.env["slide.channel"].create(
+            {"name": "Identity protected target"}
+        )
+        candidate.action_evaluate()
+        candidate.write({"matched_channel_id": channel.id})
+        candidate.action_resolve_existing()
+
+        mismatched = self.env["facodi.learning.source"].create(
+            {
+                "name": "Wrong source",
+                "provider": "youtube",
+                "external_id": "SNma-fAeMzA",
+                "url": "https://www.youtube.com/watch?v=SNma-fAeMzA",
+                "channel_id": channel.id,
+            }
+        )
+        with self.assertRaisesRegex(
+            ValidationError,
+            "Canonical source identity",
+        ):
+            submission._link_canonical_source(
+                mismatched,
+                candidate=candidate,
+            )
+
     def test_only_manager_can_take_terminal_review_actions(self):
         submission = self._submission()
         officer = self.env["res.users"].create(
