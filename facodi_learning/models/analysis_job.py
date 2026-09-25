@@ -7,6 +7,7 @@ from ..services.analysis import normalize_output
 
 from ..services import analyze_local_metadata, analyze_supabase_edge
 from ..services.supabase_edge import SupabaseAnalysisError
+from ..services.supabase_edge import SupabaseAnalysisError
 
 _logger = logging.getLogger(__name__)
 
