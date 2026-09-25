@@ -8,3 +8,5 @@ Task 3: complete (CI run 36186833772 → success; catalogue structure, i18n, rea
 Task 4: Ruling: enabling TestCurriculumPublicUnits exposed a preexisting bootstrap lifecycle bug introduced by current publication governance. Fixed ensure_lesti_2026_27 at the source to validate/publish through reviewed actions and updated stale tests to archive via action_archive. Cost if wrong: curated LESTI bootstrap could fail or republish incorrectly; TestCurriculumBootstrap is now part of exact-head CI.
 
 Task 4: Ruling: enabling the previously unexecuted public-unit suite exposed a stale assertion comparing a Python list to an Odoo recordset. Compare the list to [self.reference] so the test still proves exactly one public validated reference. Cost if wrong: public-map visibility regression; the same suite covers hidden-reference exclusion and exact URL/coverage values.
+
+Task 4: complete (CI run 36188839045 → success; D1 Roadmap/UC/module detail, lifecycle regression, real upgrade and 123-test current-install gates passed).
