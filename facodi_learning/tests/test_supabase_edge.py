@@ -1,3 +1,4 @@
+import io
 import json
 import os
 import urllib.error
@@ -386,3 +387,89 @@ class TestSupabaseEdgeAnalysis(TransactionCase):
         )
         with self.assertRaisesRegex(ValueError, "size limit"):
             _read_bounded_response(oversized, MAX_METADATA_RESPONSE_BYTES)
+
+
+    def test_supabase_failure_records_only_safe_processing_correlation(self):
+        correlation_id = "11111111-1111-1111-1111-111111111111"
+        edge_body = {
+            "success": False,
+            "error": "gemini_failed",
+            "message": "Learning-resource analysis failed.",
+            "details": {
+                "processing_job_id": correlation_id,
+                "provider_secret": "must-not-enter-odoo",
+            },
+        }
+
+        with patch.dict(
+            os.environ,
+            {
+                "SUPABASE_URL": "https://example.supabase.co",
+                "SUPABASE_SECRET_KEY": "sb_secret_test",
+            },
+            clear=False,
+        ):
+            source = self._ingest_youtube()
+            job = self.env["facodi.learning.analysis.job"].search(
+                [
+                    ("slide_id", "=", source.slide_id.id),
+                    ("provider", "=", "supabase_edge"),
+                ],
+                limit=1,
+            )
+            http_error = urllib.error.HTTPError(
+                "https://example.supabase.co/functions/v1/v3_analyze_learning_resource",
+                424,
+                "Failed Dependency",
+                {},
+                io.BytesIO(json.dumps(edge_body).encode("utf-8")),
+            )
+
+            with patch(
+                "facodi_learning.services.supabase_edge._open_endpoint",
+                side_effect=http_error,
+            ):
+                job.action_process()
+
+            self.assertEqual(job.state, "failed")
+            self.assertIn(f"Correlation: {correlation_id}.", job.last_error)
+            self.assertNotIn("gemini_failed", job.last_error)
+            self.assertNotIn("must-not-enter-odoo", job.last_error)
+            self.assertNotIn("Learning-resource analysis failed", job.last_error)
+            self.assertEqual(len(job.attempt_ids), 1)
+            self.assertIn(correlation_id, job.attempt_ids.error)
+            self.assertNotIn("must-not-enter-odoo", job.attempt_ids.error)
+
+    def test_invalid_supabase_failure_correlation_is_ignored(self):
+        from facodi_learning.services.supabase_edge import (
+            _safe_processing_correlation,
+        )
+
+        body = {
+            "details": {
+                "processing_job_id": "not-a-uuid",
+            },
+        }
+        error = urllib.error.HTTPError(
+            "https://example.supabase.co/functions/v1/v3_analyze_learning_resource",
+            500,
+            "Server Error",
+            {},
+            io.BytesIO(json.dumps(body).encode("utf-8")),
+        )
+        self.assertFalse(_safe_processing_correlation(error))
+
+    def test_supabase_failure_correlation_body_is_bounded(self):
+        from facodi_learning.services.supabase_edge import (
+            MAX_ERROR_RESPONSE_BYTES,
+            _safe_processing_correlation,
+        )
+
+        error = urllib.error.HTTPError(
+            "https://example.supabase.co/functions/v1/v3_analyze_learning_resource",
+            500,
+            "Server Error",
+            {},
+            io.BytesIO(b"x" * (MAX_ERROR_RESPONSE_BYTES + 1)),
+        )
+        self.assertFalse(_safe_processing_correlation(error))
