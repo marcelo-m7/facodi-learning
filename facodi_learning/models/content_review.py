@@ -18,16 +18,24 @@ _CONTENT_HASH_FIELD_ORDER = (
 _CONTENT_HASH_FIELDS = frozenset(_CONTENT_HASH_FIELD_ORDER)
 _PUBLICATION_FIELDS = frozenset({"is_published", "website_published"})
 _PUBLICATION_SCOPE_FIELDS = frozenset({"channel_id"})
+_QUESTION_HASH_FIELD_ORDER = ("sequence", "question")
+_QUESTION_HASH_FIELDS = frozenset(
+    {"sequence", "question", "slide_id", "answer_ids"}
+)
+_ANSWER_HASH_FIELD_ORDER = ("sequence", "text_value", "is_correct", "comment")
+_ANSWER_HASH_FIELDS = frozenset(
+    {"sequence", "text_value", "is_correct", "comment", "question_id"}
+)
 
 
-def _field_hash_payload(slide, field_name):
+def _field_hash_payload(record, field_name):
     """Return a language-independent, deterministic payload for one field."""
-    field = slide._fields[field_name]
+    field = record._fields[field_name]
 
     # Odoo stores translated textual fields as their complete JSONB translation
     # mapping. Hash that canonical mapping instead of the caller-language value.
     if field.translate and field.store:
-        translations = field._get_stored_translations(slide) or {}
+        translations = field._get_stored_translations(record) or {}
         return json.dumps(
             translations,
             ensure_ascii=False,
@@ -35,7 +43,7 @@ def _field_hash_payload(slide, field_name):
             separators=(",", ":"),
         ).encode("utf-8")
 
-    value = slide[field_name]
+    value = record[field_name]
     if field.type == "many2one":
         return str(value.id if value else 0).encode("ascii")
     if isinstance(value, bytes):
@@ -43,15 +51,41 @@ def _field_hash_payload(slide, field_name):
     return str(value or "").encode("utf-8")
 
 
-def _slide_hash(slide):
-    """Hash the reviewed payload, translations and publication scope."""
-    slide.ensure_one()
-    digest = hashlib.sha256()
-    for field_name in _CONTENT_HASH_FIELD_ORDER:
+def _update_hash_fields(digest, record, field_names):
+    for field_name in field_names:
         digest.update(field_name.encode("utf-8"))
         digest.update(b"\0")
-        digest.update(_field_hash_payload(slide, field_name))
+        digest.update(_field_hash_payload(record, field_name))
         digest.update(b"\0")
+
+
+def _update_quiz_hash(digest, slide):
+    """Add the complete learner-visible quiz payload in deterministic order."""
+    questions = (
+        slide.env["slide.question"]
+        .sudo()
+        .search([("slide_id", "=", slide.id)], order="sequence, id")
+    )
+    digest.update(b"quiz_payload\0")
+    for question in questions:
+        digest.update(b"question\0")
+        _update_hash_fields(digest, question, _QUESTION_HASH_FIELD_ORDER)
+        answers = question.answer_ids.sudo().sorted(
+            key=lambda answer: (answer.sequence, answer.id)
+        )
+        for answer in answers:
+            digest.update(b"answer\0")
+            _update_hash_fields(digest, answer, _ANSWER_HASH_FIELD_ORDER)
+        digest.update(b"end_question\0")
+    digest.update(b"end_quiz_payload\0")
+
+
+def _slide_hash(slide):
+    """Hash reviewed content, translations, course scope and quiz payload."""
+    slide.ensure_one()
+    digest = hashlib.sha256()
+    _update_hash_fields(digest, slide, _CONTENT_HASH_FIELD_ORDER)
+    _update_quiz_hash(digest, slide)
     return digest.hexdigest()
 
 
@@ -344,6 +378,98 @@ class SlideSlide(models.Model):
                 source_lang=source_lang,
             )
             self._facodi_check_publication_review()
+        return result
+
+
+class SlideQuestion(models.Model):
+    _inherit = "slide.question"
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        with self.env.cr.savepoint():
+            records = super().create(vals_list)
+            records.mapped("slide_id")._facodi_check_publication_review()
+        return records
+
+    def write(self, vals):
+        if not _QUESTION_HASH_FIELDS.intersection(vals):
+            return super().write(vals)
+        slides_before = self.mapped("slide_id")
+        with self.env.cr.savepoint():
+            result = super().write(vals)
+            (slides_before | self.mapped("slide_id"))._facodi_check_publication_review()
+        return result
+
+    def unlink(self):
+        slides = self.mapped("slide_id")
+        with self.env.cr.savepoint():
+            result = super().unlink()
+            slides.exists()._facodi_check_publication_review()
+        return result
+
+    def update_field_translations(self, field_name, translations, source_lang=""):
+        if field_name != "question":
+            return super().update_field_translations(
+                field_name,
+                translations,
+                source_lang=source_lang,
+            )
+        # The base method mutates the JSONB translation payload before it
+        # re-enters write(); keep that mutation inside the governance savepoint.
+        slides = self.mapped("slide_id")
+        with self.env.cr.savepoint():
+            result = super().update_field_translations(
+                field_name,
+                translations,
+                source_lang=source_lang,
+            )
+            slides._facodi_check_publication_review()
+        return result
+
+
+class SlideAnswer(models.Model):
+    _inherit = "slide.answer"
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        with self.env.cr.savepoint():
+            records = super().create(vals_list)
+            records.mapped("question_id.slide_id")._facodi_check_publication_review()
+        return records
+
+    def write(self, vals):
+        if not _ANSWER_HASH_FIELDS.intersection(vals):
+            return super().write(vals)
+        slides_before = self.mapped("question_id.slide_id")
+        with self.env.cr.savepoint():
+            result = super().write(vals)
+            (
+                slides_before | self.mapped("question_id.slide_id")
+            )._facodi_check_publication_review()
+        return result
+
+    def unlink(self):
+        slides = self.mapped("question_id.slide_id")
+        with self.env.cr.savepoint():
+            result = super().unlink()
+            slides.exists()._facodi_check_publication_review()
+        return result
+
+    def update_field_translations(self, field_name, translations, source_lang=""):
+        if field_name not in {"text_value", "comment"}:
+            return super().update_field_translations(
+                field_name,
+                translations,
+                source_lang=source_lang,
+            )
+        slides = self.mapped("question_id.slide_id")
+        with self.env.cr.savepoint():
+            result = super().update_field_translations(
+                field_name,
+                translations,
+                source_lang=source_lang,
+            )
+            slides._facodi_check_publication_review()
         return result
 
 
