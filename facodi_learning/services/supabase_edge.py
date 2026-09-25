@@ -11,6 +11,8 @@ from odoo import tools
 
 DEFAULT_FUNCTION = "v3_analyze_learning_resource"
 DEFAULT_METADATA_FUNCTION = "v3_discover_resource_metadata"
+MAX_ANALYSIS_RESPONSE_BYTES = 512 * 1024
+MAX_METADATA_RESPONSE_BYTES = 64 * 1024
 _FUNCTION_RE = re.compile(r"^[A-Za-z0-9_-]+$")
 
 
@@ -72,6 +74,13 @@ class _RejectRedirects(urllib.request.HTTPRedirectHandler):
 def _open_endpoint(request, timeout=60):
     opener = urllib.request.build_opener(_RejectRedirects())
     return opener.open(request, timeout=timeout)
+
+
+def _read_bounded_response(response, max_bytes):
+    payload = response.read(max_bytes + 1)
+    if len(payload) > max_bytes:
+        raise ValueError("Supabase response exceeded the configured size limit.")
+    return payload.decode("utf-8", "replace")
 
 
 def _source_url_for_slide(slide):
@@ -182,7 +191,7 @@ def analyze_supabase_edge(slide):
 
     try:
         with _open_endpoint(request, timeout=60) as response:
-            raw = response.read().decode("utf-8", "replace")
+            raw = _read_bounded_response(response, MAX_ANALYSIS_RESPONSE_BYTES)
     except urllib.error.HTTPError as exc:
         # Do not propagate response bodies: provider responses can contain
         # operational details that should stay out of Odoo user-facing errors.
@@ -225,7 +234,7 @@ def discover_supabase_resource_metadata(source_url):
 
     try:
         with _open_endpoint(request, timeout=15) as response:
-            raw = response.read().decode("utf-8", "replace")
+            raw = _read_bounded_response(response, MAX_METADATA_RESPONSE_BYTES)
     except urllib.error.HTTPError as exc:
         raise ValueError(f"Supabase metadata discovery returned HTTP {exc.code}.") from exc
     except urllib.error.URLError as exc:
