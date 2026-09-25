@@ -53,7 +53,7 @@ class TestCurriculumBootstrap(TransactionCase):
 
     def test_unpublished_reference_is_not_exposed_by_course_link(self):
         reference = ensure_lesti_2026_27(self.env)
-        reference.write({"website_published": False})
+        reference.action_archive()
         unit = reference.unit_ids.filtered(
             lambda item: item.external_unit_code == "19411017"
         )
