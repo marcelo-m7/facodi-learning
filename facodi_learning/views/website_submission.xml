@@ -162,7 +162,10 @@
                                     Back to curricular unit
                                 </a>
                                 <a href="/slides" class="btn btn-outline-primary">Explore learning content</a>
-                                <a href="/contribuir/recurso" class="btn btn-link">Suggest a resource</a>
+                                <a t-if="curriculum_unit"
+                                   t-att-href="'/contribuir/recurso?curriculum_unit_id=%s' % curriculum_unit.id"
+                                   class="btn btn-link">Suggest a resource</a>
+                                <a t-else="" href="/contribuir/recurso" class="btn btn-link">Suggest a resource</a>
                             </div>
                         </div>
                     </div>
