@@ -32,6 +32,19 @@ class TestPipelineSecurity(TransactionCase):
                 ],
             }
         )
+        cls.manager = cls.env["res.users"].create(
+            {
+                "name": "Pipeline Manager",
+                "login": "pipeline-manager",
+                "group_ids": [
+                    (
+                        6,
+                        0,
+                        [cls.env.ref("website_slides.group_website_slides_manager").id],
+                    )
+                ],
+            }
+        )
         cls.channel = cls.env["slide.channel"].create(
             {"name": "Owned", "user_id": cls.officer.id}
         )
@@ -43,6 +56,19 @@ class TestPipelineSecurity(TransactionCase):
             }
         )
         cls.target = cls.slide.copy({"name": "Target"})
+
+    def _approve_publication_reviews(self, slides):
+        for slide in slides:
+            review = self.env["facodi.learning.content.review"].create(
+                {
+                    "slide_id": slide.id,
+                    "author": "FACODI fixture",
+                    "rights_mode": "original",
+                    "usage_basis": "Test fixture content authored for FACODI.",
+                    "purpose": "Exercise learner-facing publication behavior.",
+                }
+            )
+            review.with_user(self.manager).action_approve()
 
     def test_review_direct_orm_denied(self):
         mapping = (
@@ -338,6 +364,7 @@ class TestPipelineSecurity(TransactionCase):
                 "visibility": "public",
             }
         )
+        self._approve_publication_reviews(self.slide | self.target)
         (self.slide | self.target).write(
             {"website_published": True, "is_preview": True}
         )
@@ -418,6 +445,7 @@ class TestPipelineSecurity(TransactionCase):
         self.channel.write(
             {"is_published": True, "website_id": website.id, "visibility": "public"}
         )
+        self._approve_publication_reviews(self.slide | self.target)
         (self.slide | self.target).write({"is_published": True, "is_preview": True})
         self.env["facodi.learning.mapping"].create(
             {"source_slide_id": self.slide.id, "target_slide_id": self.target.id}
@@ -432,7 +460,10 @@ class TestPipelineSecurity(TransactionCase):
                 "is_published": True,
             }
         )
+        self.target.write({"is_published": False, "website_published": False})
         self.target.channel_id = hidden
+        self._approve_publication_reviews(self.target)
+        self.target.write({"is_published": True, "is_preview": True})
         self.assertFalse(public._facodi_related_slides(website))
 
     def test_context_cannot_forge_result_review(self):

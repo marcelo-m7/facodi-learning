@@ -46,24 +46,6 @@ class TestCurriculumModule(TransactionCase):
         cls.course_b = cls.env["slide.channel"].create(
             {"name": "Reusable Course B", "is_published": True}
         )
-        cls.published_slide = cls.env["slide.slide"].create(
-            {
-                "channel_id": cls.course_a.id,
-                "name": "Published Resource",
-                "slide_category": "document",
-                "is_published": True,
-                "website_published": True,
-                "is_preview": True,
-            }
-        )
-        cls.unpublished_slide = cls.env["slide.slide"].create(
-            {
-                "channel_id": cls.course_a.id,
-                "name": "Unpublished Resource",
-                "slide_category": "document",
-                "is_published": False,
-            }
-        )
         cls.manager = cls.env["res.users"].create(
             {
                 "name": "Module Manager",
@@ -78,6 +60,35 @@ class TestCurriculumModule(TransactionCase):
                         ]
                     )
                 ],
+            }
+        )
+        cls.published_slide = cls.env["slide.slide"].create(
+            {
+                "channel_id": cls.course_a.id,
+                "name": "Published Resource",
+                "slide_category": "document",
+                "is_preview": True,
+            }
+        )
+        review = cls.env["facodi.learning.content.review"].create(
+            {
+                "slide_id": cls.published_slide.id,
+                "author": "FACODI fixture",
+                "rights_mode": "original",
+                "usage_basis": "Test fixture content authored for FACODI.",
+                "purpose": "Exercise public curriculum module projection.",
+            }
+        )
+        review.with_user(cls.manager).action_approve()
+        cls.published_slide.write(
+            {"is_published": True, "website_published": True}
+        )
+        cls.unpublished_slide = cls.env["slide.slide"].create(
+            {
+                "channel_id": cls.course_a.id,
+                "name": "Unpublished Resource",
+                "slide_category": "document",
+                "is_published": False,
             }
         )
 
@@ -209,10 +220,21 @@ class TestCurriculumModule(TransactionCase):
                 "channel_id": self.course_a.id,
                 "name": "Members Only Resource",
                 "slide_category": "document",
-                "is_published": True,
-                "website_published": True,
                 "is_preview": False,
             }
+        )
+        review = self.env["facodi.learning.content.review"].create(
+            {
+                "slide_id": non_preview_slide.id,
+                "author": "FACODI fixture",
+                "rights_mode": "original",
+                "usage_basis": "Test fixture content authored for FACODI.",
+                "purpose": "Exercise private curriculum module projection.",
+            }
+        )
+        review.with_user(self.manager).action_approve()
+        non_preview_slide.write(
+            {"is_published": True, "website_published": True}
         )
         self.env["facodi.learning.curriculum.module.item"].create(
             {"module_id": module.id, "slide_id": non_preview_slide.id}
