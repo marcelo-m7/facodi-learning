@@ -42,7 +42,7 @@ class TestCurriculumPublicUnits(TransactionCase):
             f"/roadmaps/{self.reference.id}/units/19411017",
         )
 
-        self.reference.write({"website_published": False})
+        self.reference.action_archive()
         self.assertFalse(self.database_unit._facodi_public_path())
 
     def test_public_unit_coverage_exposes_only_approved_published_courses(self):
