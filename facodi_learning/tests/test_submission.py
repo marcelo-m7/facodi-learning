@@ -113,6 +113,26 @@ class TestResourceSubmissionModel(TransactionCase):
         self.assertEqual(submission.state, "resolved")
         self.assertEqual(submission.source_id, source)
 
+    def test_youtube_submission_handoff_preserves_submission_provenance(self):
+        submission = self._submission(
+            name="Pré-Cálculo",
+            source_url=(
+                "https://www.youtube.com/watch?v=w9gb71ZUJDs"
+                "&list=PLa_2246N48_rlbheR_al4oqeFCP8dHoQR"
+            ),
+            language="pt",
+        )
+        submission.action_accept()
+        action = submission.action_handoff_candidate()
+        candidate = submission.candidate_id
+
+        self.assertEqual(action["res_id"], candidate.id)
+        self.assertEqual(candidate.provider, "facodi-submission")
+        self.assertEqual(candidate.external_id, f"submission-{submission.id}")
+        self.assertIn("youtube.com/watch?v=w9gb71ZUJDs", candidate.source_url)
+        self.assertEqual(candidate.language, "pt")
+        self.assertEqual(candidate.metadata["submission_id"], submission.id)
+
     def test_only_manager_can_take_terminal_review_actions(self):
         submission = self._submission()
         officer = self.env["res.users"].create(

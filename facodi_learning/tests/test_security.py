@@ -180,6 +180,35 @@ class TestPipelineSecurity(TransactionCase):
         self.assertFalse(source.slide_id.is_published)
         self.assertFalse(source.slide_id.website_published)
 
+    def test_legacy_submission_candidate_routes_to_youtube_ingestion_adapter(self):
+        candidate = self.env["facodi.learning.course.candidate"].create(
+            {
+                "provider": "facodi-submission",
+                "external_id": "submission-legacy-youtube",
+                "source_url": (
+                    "https://www.youtube.com/watch?v=w9gb71ZUJDs"
+                    "&list=PLa_2246N48_rlbheR_al4oqeFCP8dHoQR"
+                ),
+                "name": "Legacy submitted YouTube resource",
+                "language": "pt",
+            }
+        )
+        candidate.action_evaluate()
+        candidate.write({"matched_channel_id": self.channel.id})
+        candidate.action_resolve_existing()
+
+        source = candidate.action_ingest_source()
+
+        self.assertEqual(source.provider, "youtube")
+        self.assertEqual(source.external_id, "w9gb71ZUJDs")
+        self.assertEqual(
+            source.url,
+            "https://www.youtube.com/watch?v=w9gb71ZUJDs",
+        )
+        self.assertEqual(source.state, "imported")
+        self.assertEqual(source.slide_id.slide_type, "youtube_video")
+        self.assertFalse(source.slide_id.website_published)
+
     def test_retry_preserves_failure(self):
         job = self.env["facodi.learning.analysis.job"].create(
             {"slide_id": self.slide.id, "provider": "missing"}

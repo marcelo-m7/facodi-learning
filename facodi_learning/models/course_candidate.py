@@ -7,6 +7,7 @@ from ..services.course_selection import (
     get_course_selection_policy,
 )
 from ..services.curriculum_coverage import build_curriculum_selection_context
+from ..services.youtube import youtube_video_identity
 
 
 class FacodiLearningCourseCandidate(models.Model):
@@ -455,12 +456,21 @@ class FacodiLearningCourseCandidate(models.Model):
         for candidate in self:
             if candidate.state != "resolved" or not candidate.resolved_channel_id:
                 raise ValidationError("Resolve the candidate to a course before ingestion.")
+
+            ingestion_identity = {
+                "provider": candidate.provider,
+                "external_id": candidate.external_id,
+                "source_url": candidate.source_url,
+            }
+            if candidate.provider == "facodi-submission":
+                ingestion_identity = youtube_video_identity(candidate.source_url) or ingestion_identity
+
             source = self.env["facodi.learning.source"].ingest(
                 {
                     "name": candidate.name,
-                    "provider": candidate.provider,
-                    "external_id": candidate.external_id,
-                    "url": candidate.source_url,
+                    "provider": ingestion_identity["provider"],
+                    "external_id": ingestion_identity["external_id"],
+                    "url": ingestion_identity["source_url"],
                     "channel_id": candidate.resolved_channel_id.id,
                     "candidate_id": candidate.id,
                     "metadata": candidate.metadata or {},
