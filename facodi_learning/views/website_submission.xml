@@ -36,8 +36,20 @@
                                 </ul>
                             </div>
 
-                            <form action="/contribuir/recurso" method="post" class="mt-4">
+                            <form action="/contribuir/recurso"
+                                  method="post"
+                                  class="mt-4"
+                                  data-facodi-resource-submission="1"
+                                  data-metadata-endpoint="/contribuir/recurso/metadata">
                                 <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                <div class="d-none"
+                                     aria-hidden="true"
+                                     data-facodi-discovery-messages="1">
+                                    <span data-facodi-message="discovering">Detecting title and language…</span>
+                                    <span data-facodi-message="detected">FACODI detected this YouTube resource.</span>
+                                    <span data-facodi-message="unavailable">Could not detect details automatically. You can continue manually.</span>
+                                    <span data-facodi-message="unsupported">Automatic discovery is currently available for public YouTube videos. You can continue manually.</span>
+                                </div>
                                 <input t-if="curriculum_unit"
                                        type="hidden"
                                        name="curriculum_unit_id"
@@ -48,11 +60,13 @@
                                     <input id="facodi_submission_name"
                                            name="name"
                                            type="text"
-                                           required="required"
                                            maxlength="200"
                                            class="form-control"
                                            t-att-value="form_values.get('name', '')"
                                            placeholder="Example: Introduction to Operating Systems"/>
+                                    <div class="form-text">
+                                        For supported YouTube links, FACODI can fill the title and language automatically. Review the detected details before submitting.
+                                    </div>
                                 </div>
 
                                 <div class="mb-3">
@@ -67,6 +81,37 @@
                                            placeholder="https://..."/>
                                     <div class="form-text">
                                         Use the canonical public HTTP or HTTPS page. Do not upload passwords, private links or credentials.
+                                    </div>
+                                    <div class="d-flex flex-wrap align-items-center gap-2 mt-2">
+                                        <button type="button"
+                                                class="btn btn-sm btn-outline-primary"
+                                                data-facodi-discover-button="1">
+                                            Detect details
+                                        </button>
+                                        <span class="small text-muted"
+                                              data-facodi-discovery-status="1"
+                                              aria-live="polite"></span>
+                                    </div>
+                                    <div class="card mt-3 d-none"
+                                         data-facodi-metadata-preview="1"
+                                         aria-live="polite">
+                                        <div class="card-body">
+                                            <div class="d-flex gap-3 align-items-start">
+                                                <img class="rounded d-none"
+                                                     data-facodi-metadata-thumbnail="1"
+                                                     alt=""
+                                                     width="144"
+                                                     height="81"
+                                                     loading="lazy"/>
+                                                <div class="min-w-0">
+                                                    <div class="small text-uppercase fw-semibold text-muted mb-1">Detected resource</div>
+                                                    <div class="fw-semibold"
+                                                         data-facodi-metadata-title="1"></div>
+                                                    <div class="small text-muted"
+                                                         data-facodi-metadata-author="1"></div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
 

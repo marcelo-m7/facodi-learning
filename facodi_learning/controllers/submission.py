@@ -1,6 +1,109 @@
+import logging
+import threading
+import time
+from collections import OrderedDict
+
 from odoo import http
 from odoo.exceptions import ValidationError
 from odoo.http import request
+
+from ..services.supabase_edge import discover_supabase_resource_metadata
+from ..services.youtube import youtube_video_identity
+
+
+_logger = logging.getLogger(__name__)
+
+_METADATA_CACHE_MAX = 256
+_METADATA_CACHE_TTL = 900
+_METADATA_RATE_WINDOW = 60
+_METADATA_RATE_PER_CLIENT = 12
+_METADATA_RATE_GLOBAL = 60
+_METADATA_RATE_CLIENTS_MAX = 2048
+_metadata_lock = threading.Lock()
+_metadata_cache = OrderedDict()
+_metadata_rate = OrderedDict()
+
+
+class MetadataDiscoveryRateLimited(Exception):
+    pass
+
+
+def _metadata_cache_get(key, now=None):
+    now = time.monotonic() if now is None else now
+    with _metadata_lock:
+        entry = _metadata_cache.get(key)
+        if not entry:
+            return False
+        expires_at, payload = entry
+        if expires_at <= now:
+            _metadata_cache.pop(key, None)
+            return False
+        _metadata_cache.move_to_end(key)
+        return dict(payload)
+
+
+def _metadata_cache_set(key, payload, now=None):
+    now = time.monotonic() if now is None else now
+    with _metadata_lock:
+        _metadata_cache[key] = (now + _METADATA_CACHE_TTL, dict(payload))
+        _metadata_cache.move_to_end(key)
+        while len(_metadata_cache) > _METADATA_CACHE_MAX:
+            _metadata_cache.popitem(last=False)
+
+
+def _consume_metadata_budget(client_key, now=None):
+    now = time.monotonic() if now is None else now
+    client_key = client_key or "unknown"
+
+    def consume(key, limit):
+        timestamps = _metadata_rate.get(key, [])
+        cutoff = now - _METADATA_RATE_WINDOW
+        timestamps = [stamp for stamp in timestamps if stamp > cutoff]
+        if len(timestamps) >= limit:
+            _metadata_rate[key] = timestamps
+            _metadata_rate.move_to_end(key)
+            return False
+        timestamps.append(now)
+        _metadata_rate[key] = timestamps
+        _metadata_rate.move_to_end(key)
+        return True
+
+    with _metadata_lock:
+        if not consume("__global__", _METADATA_RATE_GLOBAL):
+            return False
+        if not consume(f"client:{client_key}", _METADATA_RATE_PER_CLIENT):
+            # Roll back the global token consumed above.
+            global_stamps = _metadata_rate.get("__global__", [])
+            if global_stamps and global_stamps[-1] == now:
+                global_stamps.pop()
+            return False
+        while len(_metadata_rate) > _METADATA_RATE_CLIENTS_MAX + 1:
+            first_key = next(iter(_metadata_rate))
+            if first_key == "__global__":
+                _metadata_rate.move_to_end(first_key)
+                continue
+            _metadata_rate.popitem(last=False)
+        return True
+
+
+def _discover_public_youtube_metadata(source_url):
+    identity = youtube_video_identity(source_url)
+    if not identity:
+        return False
+
+    cache_key = identity["source_url"]
+    cached = _metadata_cache_get(cache_key)
+    if cached:
+        return cached
+
+    client_key = request.httprequest.remote_addr or "unknown"
+    if not _consume_metadata_budget(client_key):
+        raise MetadataDiscoveryRateLimited()
+
+    metadata = discover_supabase_resource_metadata(cache_key)
+    if metadata.get("supported"):
+        _metadata_cache_set(cache_key, metadata)
+    return metadata
 
 
 class FacodiSubmissionController(http.Controller):
@@ -61,6 +164,81 @@ class FacodiSubmissionController(http.Controller):
         )
 
     @http.route(
+        "/contribuir/recurso/metadata",
+        type="http",
+        auth="public",
+        website=True,
+        methods=["POST"],
+        sitemap=False,
+        csrf=True,
+    )
+    def resource_submission_metadata(self, **post):
+        source_url = (post.get("source_url") or "").strip()[:2048]
+        Submission = request.env["facodi.learning.submission"]
+
+        if not Submission._is_valid_source_url(source_url):
+            return request.make_json_response(
+                {
+                    "success": False,
+                    "supported": False,
+                    "error": "invalid_source_url",
+                },
+                status=400,
+            )
+
+        # Keep the public discovery surface intentionally narrow. Generic URLs
+        # remain valid submissions, but only recognized YouTube videos trigger
+        # server-side network enrichment.
+        if not youtube_video_identity(source_url):
+            return request.make_json_response(
+                {
+                    "success": True,
+                    "supported": False,
+                    "provider": "generic",
+                }
+            )
+
+        try:
+            metadata = _discover_public_youtube_metadata(source_url)
+        except MetadataDiscoveryRateLimited:
+            response = request.make_json_response(
+                {
+                    "success": False,
+                    "supported": True,
+                    "provider": "youtube",
+                    "error": "rate_limited",
+                },
+                status=429,
+            )
+            response.headers["Retry-After"] = str(_METADATA_RATE_WINDOW)
+            response.headers["Cache-Control"] = "no-store"
+            return response
+        except Exception as exc:
+            _logger.warning(
+                "FACODI public metadata discovery failed (%s)",
+                type(exc).__name__,
+            )
+            return request.make_json_response(
+                {
+                    "success": False,
+                    "supported": True,
+                    "provider": "youtube",
+                    "error": "metadata_unavailable",
+                },
+                status=502,
+            )
+
+        response = request.make_json_response(
+            {
+                "success": True,
+                **metadata,
+            }
+        )
+        response.headers["Cache-Control"] = "no-store"
+        response.headers["X-Robots-Tag"] = "noindex, nofollow"
+        return response
+
+    @http.route(
         "/contribuir/recurso",
         type="http",
         auth="public",
@@ -76,6 +254,35 @@ class FacodiSubmissionController(http.Controller):
         language = (post.get("language") or "").strip().lower()[:16]
         raw_curriculum_unit_id = post.get("curriculum_unit_id")
         curriculum_unit = self._public_curriculum_unit(raw_curriculum_unit_id)
+        Submission = request.env["facodi.learning.submission"]
+
+        youtube_identity = (
+            youtube_video_identity(source_url)
+            if Submission._is_valid_source_url(source_url)
+            else False
+        )
+        if youtube_identity and (
+            not name
+            or not language
+            or source_url != youtube_identity["source_url"]
+        ):
+            try:
+                discovered = _discover_public_youtube_metadata(source_url)
+            except MetadataDiscoveryRateLimited:
+                discovered = False
+            except Exception as exc:
+                _logger.info(
+                    "FACODI submission enrichment unavailable (%s)",
+                    type(exc).__name__,
+                )
+                discovered = False
+
+            if discovered and discovered.get("supported"):
+                source_url = discovered.get("canonical_url") or source_url
+                name = name or (discovered.get("title") or "")
+                detected_language = (discovered.get("language") or "").lower()
+                detected_language = detected_language.replace("_", "-").split("-", 1)[0]
+                language = language or detected_language[:16]
 
         values = {
             "name": name,
@@ -90,7 +297,6 @@ class FacodiSubmissionController(http.Controller):
         if not name:
             errors.append(request.env._("Enter a short title for the resource."))
 
-        Submission = request.env["facodi.learning.submission"]
         if not Submission._is_valid_source_url(source_url):
             errors.append(request.env._("Enter a valid public HTTP or HTTPS URL."))
 

@@ -2909,3 +2909,38 @@ msgstr "Contexto da Unidade Curricular"
 #. module: facodi_learning
 msgid "Optional contributor context only. This relation does not create curriculum coverage or an approved academic mapping."
 msgstr "Contexto opcional fornecido pelo contribuidor. Esta relação não cria cobertura curricular nem um mapeamento académico aprovado."
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_form
+msgid "For supported YouTube links, FACODI can fill the title and language automatically. Review the detected details before submitting."
+msgstr "Para ligações do YouTube suportadas, a FACODI pode preencher automaticamente o título e o idioma. Reveja os detalhes detetados antes de enviar."
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_form
+msgid "Detect details"
+msgstr "Detetar detalhes"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_form
+msgid "Detected resource"
+msgstr "Recurso detetado"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_form
+msgid "Detecting title and language…"
+msgstr "A detetar título e idioma…"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_form
+msgid "FACODI detected this YouTube resource."
+msgstr "A FACODI detetou este recurso do YouTube."
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_form
+msgid "Could not detect details automatically. You can continue manually."
+msgstr "Não foi possível detetar os detalhes automaticamente. Pode continuar manualmente."
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_form
+msgid "Automatic discovery is currently available for public YouTube videos. You can continue manually."
+msgstr "A descoberta automática está atualmente disponível para vídeos públicos do YouTube. Pode continuar manualmente."

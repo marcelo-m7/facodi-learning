@@ -6,6 +6,9 @@ MODULE_ROOT = Path(__file__).resolve().parents[1]
 WEBSITE_TEMPLATE = MODULE_ROOT / "views" / "website_curriculum.xml"
 WEBSITE_SLIDES_TEMPLATE = MODULE_ROOT / "views" / "website_slides.xml"
 SUBMISSION_TEMPLATE = MODULE_ROOT / "views" / "website_submission.xml"
+SUBMISSION_CONTROLLER = MODULE_ROOT / "controllers" / "submission.py"
+SUBMISSION_JS = MODULE_ROOT / "static" / "src" / "js" / "resource_submission.js"
+MANIFEST = MODULE_ROOT / "__manifest__.py"
 I18N_DIR = MODULE_ROOT / "i18n"
 
 
@@ -80,6 +83,31 @@ class TestWebsiteI18nContract(unittest.TestCase):
                         references,
                     )
 
+    def test_public_submission_metadata_discovery_contract(self):
+        template = SUBMISSION_TEMPLATE.read_text()
+        controller = SUBMISSION_CONTROLLER.read_text()
+        javascript = SUBMISSION_JS.read_text()
+        manifest = MANIFEST.read_text()
+
+        self.assertIn('data-metadata-endpoint="/contribuir/recurso/metadata"', template)
+        self.assertIn('data-facodi-discover-button="1"', template)
+        self.assertIn('data-facodi-metadata-preview="1"', template)
+        self.assertIn("Detecting title and language…", template)
+        title_field = template.split('id="facodi_submission_name"', 1)[1].split(
+            "</div>", 1
+        )[0]
+        self.assertNotIn('required="required"', title_field)
+        self.assertIn('"/contribuir/recurso/metadata"', controller)
+        self.assertIn("youtube_video_identity(source_url)", controller)
+        self.assertIn("_discover_public_youtube_metadata(source_url)", controller)
+        self.assertIn("discover_supabase_resource_metadata", controller)
+        self.assertIn("fetch(endpoint", javascript)
+        self.assertIn("primaryLanguage", javascript)
+        self.assertIn(
+            '"facodi_learning/static/src/js/resource_submission.js"',
+            manifest,
+        )
+
     def test_public_submission_copy_uses_english_source_strings(self):
         template = SUBMISSION_TEMPLATE.read_text()
 
@@ -106,6 +134,9 @@ class TestWebsiteI18nContract(unittest.TestCase):
                 "Submission received": "Submissão recebida",
                 "Waiting for editorial review.": "A aguardar revisão editorial.",
                 "Suggest a resource": "Sugerir um recurso",
+                "Detect details": "Detetar detalhes",
+                "Detected resource": "Recurso detetado",
+                "Detecting title and language…": "A detetar título e idioma…",
             },
             "es": {
                 "Learning": "Aprendizaje",
@@ -122,6 +153,9 @@ class TestWebsiteI18nContract(unittest.TestCase):
                 "Submission received": "Envío recibido",
                 "Waiting for editorial review.": "En espera de revisión editorial.",
                 "Suggest a resource": "Sugerir un recurso",
+                "Detect details": "Detectar detalles",
+                "Detected resource": "Recurso detectado",
+                "Detecting title and language…": "Detectando título e idioma…",
             },
             "fr": {
                 "Learning": "Apprentissage",
@@ -138,6 +172,9 @@ class TestWebsiteI18nContract(unittest.TestCase):
                 "Submission received": "Soumission reçue",
                 "Waiting for editorial review.": "En attente d’un examen éditorial.",
                 "Suggest a resource": "Suggérer une ressource",
+                "Detect details": "Détecter les détails",
+                "Detected resource": "Ressource détectée",
+                "Detecting title and language…": "Détection du titre et de la langue…",
             },
         }
 

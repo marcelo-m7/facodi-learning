@@ -216,6 +216,59 @@ class TestResourceSubmissionWebsite(HttpCase):
             before,
         )
 
+    def test_metadata_discovery_budget_is_bounded_per_client(self):
+        from odoo.addons.facodi_learning.controllers import submission as submission_controller
+
+        with submission_controller._metadata_lock:
+            submission_controller._metadata_rate.clear()
+
+        for offset in range(submission_controller._METADATA_RATE_PER_CLIENT):
+            self.assertTrue(
+                submission_controller._consume_metadata_budget(
+                    "203.0.113.10",
+                    now=1000.0 + offset * 0.01,
+                )
+            )
+        self.assertFalse(
+            submission_controller._consume_metadata_budget(
+                "203.0.113.10",
+                now=1001.0,
+            )
+        )
+        self.assertTrue(
+            submission_controller._consume_metadata_budget(
+                "203.0.113.11",
+                now=1001.0,
+            )
+        )
+
+    def test_metadata_cache_reuses_discovered_payload(self):
+        from odoo.addons.facodi_learning.controllers import submission as submission_controller
+
+        with submission_controller._metadata_lock:
+            submission_controller._metadata_cache.clear()
+
+        key = "https://www.youtube.com/watch?v=w9gb71ZUJDs"
+        payload = {
+            "supported": True,
+            "provider": "youtube",
+            "title": "Pré-Cálculo",
+        }
+        submission_controller._metadata_cache_set(key, payload, now=1000.0)
+        cached = submission_controller._metadata_cache_get(key, now=1001.0)
+        self.assertEqual(cached["title"], "Pré-Cálculo")
+        cached["title"] = "Changed"
+        self.assertEqual(
+            submission_controller._metadata_cache_get(key, now=1002.0)["title"],
+            "Pré-Cálculo",
+        )
+        self.assertFalse(
+            submission_controller._metadata_cache_get(
+                key,
+                now=1000.0 + submission_controller._METADATA_CACHE_TTL + 1,
+            )
+        )
+
     def test_status_page_requires_exact_private_token(self):
         submission = (
             self.env["facodi.learning.submission"]
