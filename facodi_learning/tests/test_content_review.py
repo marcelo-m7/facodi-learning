@@ -220,6 +220,62 @@ class TestContentPublicationGovernance(TransactionCase):
         slide.invalidate_recordset()
         self.assertEqual(slide.name, "Governed content")
 
+    def test_approved_hash_is_language_context_independent(self):
+        self.env["res.lang"]._activate_lang("fr_FR")
+        slide = self._slide("Governed multilingual content")
+        slide.update_field_translations(
+            "name",
+            {
+                "en_US": "Governed multilingual content",
+                "fr_FR": "Contenu multilingue gouverné",
+            },
+        )
+        review = self._complete_review(slide.with_context(lang="en_US"))
+        review.with_user(self.manager).with_context(lang="en_US").action_approve()
+
+        slide.with_user(self.manager).with_context(lang="fr_FR").write(
+            {"is_published": True}
+        )
+        slide.invalidate_recordset()
+        self.assertTrue(slide.is_published)
+
+    def test_moving_approved_sourced_content_to_another_course_requires_new_review(self):
+        source = self.env["facodi.learning.source"].create(
+            {
+                "name": "Course-scoped canonical source",
+                "external_id": "governance-source-move",
+                "provider": "manual",
+                "channel_id": self.channel.id,
+                "url": "https://example.org/scoped-source",
+            }
+        )
+        slide = self._slide("Course-scoped reviewed content")
+        source.write({"slide_id": slide.id})
+        review = self._complete_review(
+            slide,
+            source_id=source.id,
+            source_url=source.url,
+            rights_mode="external",
+        )
+        review.with_user(self.manager).action_approve()
+        slide.write({"is_published": True})
+
+        other_channel = self.env["slide.channel"].create(
+            {
+                "name": "Other governed course",
+                "website_id": self.website.id,
+                "user_id": self.manager.id,
+            }
+        )
+        try:
+            slide.write({"channel_id": other_channel.id})
+        except ValidationError:
+            pass
+        else:
+            self.fail("Moving reviewed sourced content must require a new review.")
+        slide.invalidate_recordset()
+        self.assertEqual(slide.channel_id, self.channel)
+
     def test_replacing_public_document_payload_invalidates_review(self):
         slide = self._slide(
             "Governed document",
