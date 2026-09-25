@@ -129,6 +129,9 @@ class TestWebsiteI18nContract(unittest.TestCase):
                 "Submission received": "Submissão recebida",
                 "Waiting for editorial review.": "A aguardar revisão editorial.",
                 "Suggest a resource": "Sugerir um recurso",
+                "Detect details": "Detetar detalhes",
+                "Detected resource": "Recurso detetado",
+                "Detecting title and language…": "A detetar título e idioma…",
             },
             "es": {
                 "Learning": "Aprendizaje",
@@ -145,6 +148,9 @@ class TestWebsiteI18nContract(unittest.TestCase):
                 "Submission received": "Envío recibido",
                 "Waiting for editorial review.": "En espera de revisión editorial.",
                 "Suggest a resource": "Sugerir un recurso",
+                "Detect details": "Detectar detalles",
+                "Detected resource": "Recurso detectado",
+                "Detecting title and language…": "Detectando título e idioma…",
             },
             "fr": {
                 "Learning": "Apprentissage",
@@ -161,6 +167,9 @@ class TestWebsiteI18nContract(unittest.TestCase):
                 "Submission received": "Soumission reçue",
                 "Waiting for editorial review.": "En attente d’un examen éditorial.",
                 "Suggest a resource": "Suggérer une ressource",
+                "Detect details": "Détecter les détails",
+                "Detected resource": "Ressource détectée",
+                "Detecting title and language…": "Détection du titre et de la langue…",
             },
         }
 
