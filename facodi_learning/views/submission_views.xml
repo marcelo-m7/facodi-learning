@@ -36,6 +36,8 @@
                 <field name="language" optional="show"/>
                 <field name="submitted_by_id" optional="show"/>
                 <field name="state"/>
+                <field name="source_id" optional="hide"/>
+                <field name="processing_state" optional="show"/>
                 <field name="create_date"/>
                 <field name="reviewed_by_id" optional="hide"/>
                 <field name="reviewed_at" optional="hide"/>
@@ -88,6 +90,11 @@
                         <group>
                             <field name="candidate_id" readonly="state in ('rejected', 'resolved')"/>
                             <field name="source_id" readonly="state in ('rejected', 'resolved')"/>
+                            <field name="source_state" readonly="1" invisible="not source_id"/>
+                            <field name="slide_id" readonly="1" invisible="not slide_id"/>
+                            <field name="processing_state" readonly="1" invisible="not source_id"/>
+                            <field name="analysis_job_id" readonly="1" invisible="not analysis_job_id"/>
+                            <field name="analysis_result_id" readonly="1" invisible="not analysis_result_id"/>
                             <field name="reviewed_by_id" readonly="1"/>
                             <field name="reviewed_at" readonly="1"/>
                         </group>
