@@ -217,7 +217,7 @@ class TestResourceSubmissionWebsite(HttpCase):
         )
 
     def test_metadata_discovery_budget_is_bounded_per_client(self):
-        from facodi_learning.controllers import submission as submission_controller
+        from odoo.addons.facodi_learning.controllers import submission as submission_controller
 
         with submission_controller._metadata_lock:
             submission_controller._metadata_rate.clear()
@@ -243,7 +243,7 @@ class TestResourceSubmissionWebsite(HttpCase):
         )
 
     def test_metadata_cache_reuses_discovered_payload(self):
-        from facodi_learning.controllers import submission as submission_controller
+        from odoo.addons.facodi_learning.controllers import submission as submission_controller
 
         with submission_controller._metadata_lock:
             submission_controller._metadata_cache.clear()
