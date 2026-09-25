@@ -2001,9 +2001,13 @@ msgstr ""
 #. module: facodi_learning
 #: model:ir.model.fields,help:facodi_learning.field_res_config_settings__facodi_learning_analysis_provider
 msgid ""
-"Provider used for new FACODI analysis jobs. Provider addons may extend this "
-"selection."
+"Provider used for new FACODI analysis jobs. Production processing should use "
+"Supabase Edge Functions; local metadata is a deterministic development/test "
+"fallback."
 msgstr ""
+"Proveedor utilizado para nuevos trabajos de análisis FACODI. El procesamiento "
+"en producción debe utilizar las Funciones Edge de Supabase; los metadatos "
+"locales son una alternativa determinista para desarrollo/pruebas."
 
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit
