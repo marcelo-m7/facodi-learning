@@ -4,6 +4,7 @@ import unittest
 
 MODULE_ROOT = Path(__file__).resolve().parents[1]
 WEBSITE_TEMPLATE = MODULE_ROOT / "views" / "website_curriculum.xml"
+WEBSITE_SLIDES_TEMPLATE = MODULE_ROOT / "views" / "website_slides.xml"
 SUBMISSION_TEMPLATE = MODULE_ROOT / "views" / "website_submission.xml"
 I18N_DIR = MODULE_ROOT / "i18n"
 
@@ -19,6 +20,20 @@ class TestWebsiteI18nContract(unittest.TestCase):
         self.assertIn("related courses", template)
         self.assertNotIn("Aplicar filtros", template)
         self.assertNotIn("Ligação a currículos oficiais", template)
+
+    def test_contextual_resource_contribution_ctas_use_canonical_route(self):
+        curriculum = WEBSITE_TEMPLATE.read_text()
+        slides = WEBSITE_SLIDES_TEMPLATE.read_text()
+        submission = SUBMISSION_TEMPLATE.read_text()
+
+        self.assertGreaterEqual(curriculum.count("/contribuir/recurso"), 6)
+        self.assertIn(
+            "/contribuir/recurso?curriculum_unit_id=%s",
+            curriculum,
+        )
+        self.assertGreaterEqual(slides.count("/contribuir/recurso"), 2)
+        self.assertIn("/contactus", slides)
+        self.assertIn("/contribuir/recurso", submission)
 
     def test_public_submission_copy_uses_english_source_strings(self):
         template = SUBMISSION_TEMPLATE.read_text()
