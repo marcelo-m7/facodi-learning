@@ -1,12 +1,16 @@
 import json
 import os
+import re
 import urllib.error
 import urllib.request
+from urllib.parse import urlsplit, urlunsplit
+from uuid import UUID
 
 from odoo import tools
 
 
 DEFAULT_FUNCTION = "v3_analyze_learning_resource"
+_FUNCTION_RE = re.compile(r"^[A-Za-z0-9_-]+$")
 
 
 def _env(name):
@@ -14,11 +18,99 @@ def _env(name):
 
 
 def _analysis_endpoint():
-    base = _env("SUPABASE_URL").rstrip("/")
-    if not base:
+    raw = _env("SUPABASE_URL")
+    if not raw:
         raise ValueError("SUPABASE_URL is not configured.")
+
+    try:
+        parsed = urlsplit(raw)
+        port = parsed.port
+    except ValueError as exc:
+        raise ValueError("SUPABASE_URL is invalid.") from exc
+
+    if (
+        parsed.scheme.lower() != "https"
+        or not parsed.hostname
+        or parsed.username
+        or parsed.password
+        or (port not in (None, 443))
+        or parsed.query
+        or parsed.fragment
+        or parsed.path not in ("", "/")
+    ):
+        raise ValueError("SUPABASE_URL must be a credential-free HTTPS origin.")
+
     function = _env("FACODI_SUPABASE_ANALYSIS_FUNCTION") or DEFAULT_FUNCTION
-    return f"{base}/functions/v1/{function}"
+    if not _FUNCTION_RE.fullmatch(function):
+        raise ValueError("FACODI Supabase function name is invalid.")
+
+    origin = urlunsplit(("https", parsed.netloc, "", "", "")).rstrip("/")
+    return f"{origin}/functions/v1/{function}"
+
+
+class _RejectRedirects(urllib.request.HTTPRedirectHandler):
+    def redirect_request(self, req, fp, code, msg, headers, newurl):
+        raise urllib.error.HTTPError(
+            req.full_url,
+            code,
+            "Supabase analysis redirects are not allowed.",
+            headers,
+            fp,
+        )
+
+
+def _open_endpoint(request, timeout=60):
+    opener = urllib.request.build_opener(_RejectRedirects())
+    return opener.open(request, timeout=timeout)
+
+
+def _source_url_for_slide(slide):
+    source_url = (slide.url or "").strip()
+    if source_url:
+        return source_url
+
+    source = (
+        slide.env["facodi.learning.source"]
+        .search(
+            [
+                ("slide_id", "=", slide.id),
+                ("state", "=", "imported"),
+                ("url", "!=", False),
+            ],
+            order="id desc",
+            limit=1,
+        )
+    )
+    return (source.url or "").strip() if source else ""
+
+
+def _validate_response_correlation(result, idempotency_key):
+    job_id = result.get("job_id")
+    status = result.get("status")
+    if not isinstance(job_id, str):
+        raise ValueError("Supabase analysis response is missing its job identifier.")
+    try:
+        UUID(job_id)
+    except (ValueError, TypeError, AttributeError) as exc:
+        raise ValueError("Supabase analysis returned an invalid job identifier.") from exc
+    if status not in {"completed", "needs_review"}:
+        raise ValueError("Supabase analysis returned an invalid terminal status.")
+
+    normalized = result.get("odoo_payload")
+    if not isinstance(normalized, dict):
+        raise ValueError("Supabase analysis response is missing the Odoo payload.")
+
+    raw_payload = normalized.get("raw_payload")
+    if not isinstance(raw_payload, dict):
+        raise ValueError("Supabase analysis response is missing correlation evidence.")
+    if raw_payload.get("processing_job_id") != job_id:
+        raise ValueError("Supabase analysis job correlation does not match.")
+    if raw_payload.get("idempotency_key") != idempotency_key:
+        raise ValueError("Supabase analysis idempotency correlation does not match.")
+    if raw_payload.get("source") != "supabase_edge":
+        raise ValueError("Supabase analysis source correlation does not match.")
+
+    return normalized
 
 
 def analyze_supabase_edge(slide):
@@ -33,7 +125,7 @@ def analyze_supabase_edge(slide):
     if not secret:
         raise ValueError("SUPABASE_SECRET_KEY is not configured.")
 
-    source_url = (slide.url or "").strip()
+    source_url = _source_url_for_slide(slide)
     if not source_url:
         raise ValueError("Supabase analysis requires a public source URL.")
 
@@ -44,9 +136,10 @@ def analyze_supabase_edge(slide):
     description = tools.html2plaintext(slide.description or "").strip()
     transcript = (slide.facodi_transcript or "").strip()
     provider_hint = "youtube" if slide.slide_type == "youtube_video" else "generic"
+    idempotency_key = f"odoo-analysis-job-{job_id}"
 
     payload = {
-        "idempotency_key": f"odoo-analysis-job-{job_id}",
+        "idempotency_key": idempotency_key,
         "source_url": source_url,
         "provider_hint": provider_hint,
         "odoo": {
@@ -78,7 +171,7 @@ def analyze_supabase_edge(slide):
     )
 
     try:
-        with urllib.request.urlopen(request, timeout=60) as response:
+        with _open_endpoint(request, timeout=60) as response:
             raw = response.read().decode("utf-8", "replace")
     except urllib.error.HTTPError as exc:
         # Do not propagate response bodies: provider responses can contain
@@ -95,8 +188,4 @@ def analyze_supabase_edge(slide):
     if not isinstance(result, dict) or result.get("success") is not True:
         raise ValueError("Supabase analysis did not complete successfully.")
 
-    normalized = result.get("odoo_payload")
-    if not isinstance(normalized, dict):
-        raise ValueError("Supabase analysis response is missing the Odoo payload.")
-
-    return normalized
+    return _validate_response_correlation(result, idempotency_key)
