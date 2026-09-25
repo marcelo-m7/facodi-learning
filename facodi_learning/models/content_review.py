@@ -4,16 +4,34 @@ from odoo import api, fields, models
 from odoo.exceptions import AccessError, ValidationError
 
 
-_CONTENT_HASH_FIELDS = frozenset({"name", "description", "html_content", "url"})
+_CONTENT_HASH_FIELD_ORDER = (
+    "name",
+    "description",
+    "html_content",
+    "url",
+    "binary_content",
+    "slide_category",
+    "source_type",
+)
+_CONTENT_HASH_FIELDS = frozenset(_CONTENT_HASH_FIELD_ORDER)
 _PUBLICATION_FIELDS = frozenset({"is_published", "website_published"})
+_PUBLICATION_SCOPE_FIELDS = frozenset({"channel_id"})
 
 
 def _slide_hash(slide):
-    values = "\0".join(
-        str(getattr(slide, field, "") or "")
-        for field in ("name", "description", "html_content", "url")
-    )
-    return hashlib.sha256(values.encode()).hexdigest()
+    """Hash the learner-visible payload covered by a publication decision."""
+    digest = hashlib.sha256()
+    for field_name in _CONTENT_HASH_FIELD_ORDER:
+        value = getattr(slide, field_name, False)
+        if isinstance(value, bytes):
+            payload = value
+        else:
+            payload = str(value or "").encode("utf-8")
+        digest.update(field_name.encode("utf-8"))
+        digest.update(b"\0")
+        digest.update(payload)
+        digest.update(b"\0")
+    return digest.hexdigest()
 
 
 class ContentReview(models.Model):
@@ -105,6 +123,10 @@ class ContentReview(models.Model):
     @api.constrains("slide_id", "source_id")
     def _check_source_consistency(self):
         for review in self.filtered("source_id"):
+            if review.source_id.channel_id != review.slide_id.channel_id:
+                raise ValidationError(
+                    "The canonical source must belong to the reviewed content course."
+                )
             if review.source_id.slide_id and review.source_id.slide_id != review.slide_id:
                 raise ValidationError(
                     "The canonical source must point to the content being reviewed."
@@ -113,6 +135,18 @@ class ContentReview(models.Model):
     def _require_manager(self):
         if not self.env.user.has_group("website_slides.group_website_slides_manager"):
             raise AccessError("Only eLearning Managers can decide content reviews.")
+
+    def _lock_pending_for_decision(self):
+        self.check_access("write")
+        records = self.try_lock_for_update()
+        records.invalidate_recordset()
+        if len(records) != len(self) or any(
+            review.state != "pending" for review in records
+        ):
+            raise ValidationError(
+                "Only available pending content reviews can be decided."
+            )
+        return records
 
     def _check_approval_evidence(self):
         self.ensure_one()
@@ -137,37 +171,42 @@ class ContentReview(models.Model):
 
     def action_approve(self):
         self._require_manager()
-        for review in self:
-            if review.state != "pending":
-                raise ValidationError("Only pending reviews can be approved.")
-            review._check_source_consistency()
-            review._check_approval_evidence()
-            super(ContentReview, review).write(
-                {
-                    "state": "approved",
-                    "content_hash": _slide_hash(review.slide_id),
-                    "reviewed_by_id": self.env.user.id,
-                    "reviewed_at": fields.Datetime.now(),
-                }
-            )
-            review.slide_id.write({"facodi_legacy_review_pending": False})
+        with self.env.cr.savepoint():
+            records = self._lock_pending_for_decision()
+            records._check_source_consistency()
+            for review in records:
+                review._check_approval_evidence()
+            reviewed_at = fields.Datetime.now()
+            for review in records:
+                super(ContentReview, review).write(
+                    {
+                        "state": "approved",
+                        "content_hash": _slide_hash(review.slide_id),
+                        "reviewed_by_id": self.env.user.id,
+                        "reviewed_at": reviewed_at,
+                    }
+                )
+                review.slide_id.write({"facodi_legacy_review_pending": False})
         return True
 
     def action_reject(self):
         self._require_manager()
-        for review in self:
-            if review.state != "pending":
-                raise ValidationError("Only pending reviews can be rejected.")
-            if not (review.decision_note or "").strip():
-                raise ValidationError("A decision note is required when rejecting content.")
-            super(ContentReview, review).write(
-                {
-                    "state": "rejected",
-                    "content_hash": _slide_hash(review.slide_id),
-                    "reviewed_by_id": self.env.user.id,
-                    "reviewed_at": fields.Datetime.now(),
-                }
-            )
+        with self.env.cr.savepoint():
+            records = self._lock_pending_for_decision()
+            if any(not (review.decision_note or "").strip() for review in records):
+                raise ValidationError(
+                    "A decision note is required when rejecting content."
+                )
+            reviewed_at = fields.Datetime.now()
+            for review in records:
+                super(ContentReview, review).write(
+                    {
+                        "state": "rejected",
+                        "content_hash": _slide_hash(review.slide_id),
+                        "reviewed_by_id": self.env.user.id,
+                        "reviewed_at": reviewed_at,
+                    }
+                )
         return True
 
 
@@ -190,27 +229,37 @@ class SlideSlide(models.Model):
 
     def _facodi_review_website(self):
         self.ensure_one()
-        explicit = self.website_id or self.channel_id.website_id
-        if explicit:
-            return explicit
-        return self.env["website"].search(
-            [("facodi_publication_review_enabled", "=", True)],
-            order="id",
-            limit=1,
-        )
+        return self.website_id or self.channel_id.website_id
 
     def _facodi_requires_review(self):
         return any(
-            slide._facodi_review_website().facodi_publication_review_enabled
+            bool(
+                slide._facodi_review_website()
+                and slide._facodi_review_website().facodi_publication_review_enabled
+            )
             for slide in self
         )
 
     def _facodi_has_approved_review(self):
+        """Check only the approval marker with elevated read access.
+
+        Content-review rows remain Manager-only. Officers may publish content they
+        can edit after a Manager approval without gaining access to private review
+        evidence.
+        """
         self.ensure_one()
         current_hash = _slide_hash(self)
-        return any(
-            review.state == "approved" and review.content_hash == current_hash
-            for review in self.facodi_content_review_ids
+        return bool(
+            self.env["facodi.learning.content.review"]
+            .sudo()
+            .search(
+                [
+                    ("slide_id", "=", self.id),
+                    ("state", "=", "approved"),
+                    ("content_hash", "=", current_hash),
+                ],
+                limit=1,
+            )
         )
 
     def _facodi_is_public(self):
@@ -233,14 +282,32 @@ class SlideSlide(models.Model):
 
     @api.model_create_multi
     def create(self, vals_list):
-        records = super().create(vals_list)
-        records._facodi_check_publication_review()
+        with self.env.cr.savepoint():
+            records = super().create(vals_list)
+            records._facodi_check_publication_review()
         return records
 
     def write(self, vals):
-        result = super().write(vals)
-        if (_CONTENT_HASH_FIELDS | _PUBLICATION_FIELDS) & set(vals):
+        guarded_fields = (
+            _CONTENT_HASH_FIELDS | _PUBLICATION_FIELDS | _PUBLICATION_SCOPE_FIELDS
+        )
+        if not guarded_fields.intersection(vals):
+            return super().write(vals)
+        with self.env.cr.savepoint():
+            result = super().write(vals)
             self._facodi_check_publication_review()
+        return result
+
+
+class SlideChannel(models.Model):
+    _inherit = "slide.channel"
+
+    def write(self, vals):
+        if "website_id" not in vals:
+            return super().write(vals)
+        with self.env.cr.savepoint():
+            result = super().write(vals)
+            self.mapped("slide_ids")._facodi_check_publication_review()
         return result
 
 
@@ -256,12 +323,30 @@ class Website(models.Model):
         ),
     )
 
+    def write(self, vals):
+        if (
+            "facodi_publication_review_enabled" in vals
+            and not vals["facodi_publication_review_enabled"]
+            and not self.env.su
+        ):
+            raise AccessError(
+                "FACODI publication review cannot be disabled through ordinary writes."
+            )
+        return super().write(vals)
+
     def action_facodi_enable_publication_review(self):
         Slide = self.env["slide.slide"]
         for website in self:
             if not website.facodi_publication_review_enabled:
                 website.write({"facodi_publication_review_enabled": True})
-            for slide in Slide.search([("is_published", "=", True)]):
+            public_slides = Slide.search(
+                [
+                    "|",
+                    ("is_published", "=", True),
+                    ("website_published", "=", True),
+                ]
+            )
+            for slide in public_slides:
                 if (
                     slide._facodi_review_website() == website
                     and not slide._facodi_has_approved_review()
