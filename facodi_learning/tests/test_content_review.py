@@ -160,6 +160,39 @@ class TestContentPublicationGovernance(TransactionCase):
         self.assertFalse(slide.facodi_legacy_review_pending)
         self.assertEqual(review.state, "approved")
 
+    def test_batch_reenable_backfills_each_website_without_flagging_approved(self):
+        other_website = self.env["website"].create({"name": "Governance Batch Site"})
+        other_channel = self.env["slide.channel"].create(
+            {
+                "name": "Governance Batch Course",
+                "website_id": other_website.id,
+                "user_id": self.manager.id,
+            }
+        )
+        websites = self.website | other_website
+        websites.sudo().write({"facodi_publication_review_enabled": False})
+
+        approved_slide = self._slide("Approved batch legacy content")
+        approved_review = self._complete_review(approved_slide)
+        approved_review.with_user(self.manager).action_approve()
+        approved_slide.write({"is_published": True})
+
+        pending_slide = self.env["slide.slide"].create(
+            {
+                "name": "Pending batch legacy content",
+                "channel_id": other_channel.id,
+                "slide_category": "article",
+                "is_published": True,
+            }
+        )
+
+        websites.sudo().write({"facodi_publication_review_enabled": True})
+        approved_slide.invalidate_recordset()
+        pending_slide.invalidate_recordset()
+
+        self.assertFalse(approved_slide.facodi_legacy_review_pending)
+        self.assertTrue(pending_slide.facodi_legacy_review_pending)
+
     def test_governance_cannot_be_disabled_through_normal_orm(self):
         self.website.action_facodi_enable_publication_review()
         admin = self.env.ref("base.user_admin")
