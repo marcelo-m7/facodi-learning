@@ -1556,6 +1556,11 @@ msgid "Licensed"
 msgstr ""
 
 #. module: facodi_learning
+#: model:ir.model.fields.selection,name:facodi_learning.selection__res_config_settings__facodi_learning_analysis_provider__supabase_edge
+msgid "Supabase Edge Functions"
+msgstr "Funções Edge do Supabase"
+
+#. module: facodi_learning
 #: model:ir.model.fields.selection,name:facodi_learning.selection__res_config_settings__facodi_learning_analysis_provider__local_metadata
 msgid "Local Odoo metadata"
 msgstr ""
