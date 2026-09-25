@@ -104,6 +104,15 @@ class TestWebsiteI18nContract(unittest.TestCase):
         )
         self.assertNotIn("SUPABASE_SECRET_KEY", javascript)
         self.assertNotIn("GEMINI_API_KEY", javascript)
+        self.assertIn("invalidateDiscoveredMetadata", javascript)
+        self.assertIn(
+            'if (autoTitle && titleInput.value === autoTitle)',
+            javascript,
+        )
+        self.assertIn(
+            'if (autoLanguage && languageInput.value === autoLanguage)',
+            javascript,
+        )
 
     def test_public_submission_copy_uses_english_source_strings(self):
         template = SUBMISSION_TEMPLATE.read_text()
