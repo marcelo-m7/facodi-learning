@@ -55,6 +55,9 @@ jobs:
       - name: Validate website and translation contracts
         run: python facodi_learning/tests/test_website_i18n_contract.py
 
+      - name: Validate D1 learning interfaces contract
+        run: python facodi_learning/tests/test_learning_interfaces_contract.py
+
       - name: Start PostgreSQL 16
         run: |
           docker network create facodi-learning-ci
