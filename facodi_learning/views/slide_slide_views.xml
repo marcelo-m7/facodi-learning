@@ -45,6 +45,22 @@
                         </list>
                     </field>
                 </page>
+                <page name="facodi_publication_governance" string="Publication Governance" groups="website_slides.group_website_slides_manager">
+                    <group>
+                        <field name="facodi_legacy_review_pending" readonly="1"/>
+                    </group>
+                    <field name="facodi_content_review_ids" readonly="1">
+                        <list create="0" delete="0">
+                            <field name="state"/>
+                            <field name="origin"/>
+                            <field name="author"/>
+                            <field name="rights_mode"/>
+                            <field name="source_id"/>
+                            <field name="reviewed_by_id"/>
+                            <field name="reviewed_at"/>
+                        </list>
+                    </field>
+                </page>
             </xpath>
         </field>
     </record>
