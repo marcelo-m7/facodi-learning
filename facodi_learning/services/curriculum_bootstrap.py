@@ -2,6 +2,7 @@ import json
 from pathlib import Path
 
 from odoo import fields
+from odoo.exceptions import ValidationError
 
 
 _FIXTURE = Path(__file__).resolve().parents[1] / "data" / "lesti_2026_27.json"
@@ -36,9 +37,7 @@ def ensure_lesti_2026_27(env):
     """
     payload = _load_fixture()
     reference_values = dict(payload["reference"])
-    # Validation is an operational human-curation state. Timestamp it at the
-    # installation/reconciliation event instead of fabricating a source-fetch time.
-    reference_values["validated_at"] = fields.Datetime.now()
+    publish_requested = bool(reference_values.pop("website_published", False))
     Reference = env["facodi.learning.curriculum.reference"].sudo()
     Unit = env["facodi.learning.curriculum.unit"].sudo()
 
@@ -60,26 +59,25 @@ def ensure_lesti_2026_27(env):
             and reference.academic_year == reference_values["academic_year"]
             and reference.source_url == reference_values["source_url"]
         )
-        if identity_matches:
-            operational = {"website_published": True}
-            if not reference.validated_at:
-                operational["validated_at"] = fields.Datetime.now()
-            reference.write(operational)
+        if not identity_matches:
+            raise ValidationError(
+                "Curated curriculum identity does not match the existing curriculum reference."
+            )
 
-            if not reference._has_terminal_coverage():
-                source_updates = {}
-                for field_name in (
-                    "source_title",
-                    "source_hash",
-                    "source_retrieved_at",
-                    "metadata",
-                ):
-                    wanted = reference_values.get(field_name)
-                    current = reference[field_name]
-                    if wanted and current != wanted:
-                        source_updates[field_name] = wanted
-                if source_updates:
-                    reference.write(source_updates)
+        if reference.state == "draft" and not reference._has_terminal_coverage():
+            source_updates = {}
+            for field_name in (
+                "source_title",
+                "source_hash",
+                "source_retrieved_at",
+                "metadata",
+            ):
+                wanted = reference_values.get(field_name)
+                current = reference[field_name]
+                if wanted and current != wanted:
+                    source_updates[field_name] = wanted
+            if source_updates:
+                reference.write(source_updates)
 
     for unit_payload in payload["units"]:
         unit = Unit.search(
@@ -103,4 +101,9 @@ def ensure_lesti_2026_27(env):
         }
         if mutable:
             unit.write(mutable)
+
+    if reference.state == "draft":
+        reference.action_validate()
+    if publish_requested and reference.state == "validated" and not reference.website_published:
+        reference.action_publish()
     return reference

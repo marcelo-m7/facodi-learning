@@ -24,6 +24,16 @@ class TestWebsiteI18nContract(unittest.TestCase):
         self.assertNotIn("Aplicar filtros", template)
         self.assertNotIn("Ligação a currículos oficiais", template)
 
+    def test_d1_learning_views_do_not_render_unsupported_stitch_features(self):
+        source = WEBSITE_TEMPLATE.read_text()
+        for forbidden in (
+            "My Notebook",
+            "Class Questions",
+            "Open Bibliography",
+            "verified answer",
+        ):
+            self.assertNotIn(forbidden, source)
+
     def test_contextual_resource_contribution_ctas_use_canonical_route(self):
         curriculum = WEBSITE_TEMPLATE.read_text()
         slides = WEBSITE_SLIDES_TEMPLATE.read_text()
@@ -121,6 +131,7 @@ class TestWebsiteI18nContract(unittest.TestCase):
         expected_translations = {
             "pt": {
                 "Learning": "Aprendizagem",
+                "Courses": "Cursos",
                 "Curricular Units": "Unidades Curriculares",
                 "Explore Content": "Explorar conteúdos",
                 "Apply filters": "Aplicar filtros",
@@ -140,6 +151,7 @@ class TestWebsiteI18nContract(unittest.TestCase):
             },
             "es": {
                 "Learning": "Aprendizaje",
+                "Courses": "Cursos",
                 "Curricular Units": "Unidades Curriculares",
                 "Explore Content": "Explorar contenidos",
                 "Apply filters": "Aplicar filtros",
@@ -159,6 +171,7 @@ class TestWebsiteI18nContract(unittest.TestCase):
             },
             "fr": {
                 "Learning": "Apprentissage",
+                "Courses": "Cours",
                 "Curricular Units": "Unités d’enseignement",
                 "Explore Content": "Explorer les contenus",
                 "Apply filters": "Appliquer les filtres",

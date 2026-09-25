@@ -30,7 +30,7 @@
 
     <template id="course_contribution_cta" inherit_id="website_slides.course_main" name="Course contribution CTA">
         <xpath expr="//div[@id='home']" position="inside">
-            <section class="mt-5 pt-4 border-top" aria-label="Contribute to FACODI">
+            <section class="mt-5 facodi-open-callout" aria-label="Contribute to FACODI">
                 <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
                     <strong>Contribute to FACODI</strong>
                     <div class="d-flex flex-wrap gap-2">

@@ -2943,3 +2943,9 @@ msgstr "Estado del procesamiento"
 #: model:ir.model.fields.selection,name:facodi_learning.selection__facodi_learning_submission__processing_state__not_queued
 msgid "Not Queued"
 msgstr "No en cola"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_index
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit_index
+msgid "Courses"
+msgstr "Cursos"

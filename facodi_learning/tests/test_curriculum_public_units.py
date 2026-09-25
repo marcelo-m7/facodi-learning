@@ -42,7 +42,7 @@ class TestCurriculumPublicUnits(TransactionCase):
             f"/roadmaps/{self.reference.id}/units/19411017",
         )
 
-        self.reference.write({"website_published": False})
+        self.reference.action_archive()
         self.assertFalse(self.database_unit._facodi_public_path())
 
     def test_public_unit_coverage_exposes_only_approved_published_courses(self):
@@ -174,7 +174,7 @@ class TestCurriculumPublicUnits(TransactionCase):
             "facodi.learning.curriculum.reference"
         ]._facodi_public_curriculum_map()
 
-        self.assertEqual([entry["reference"] for entry in entries], self.reference)
+        self.assertEqual([entry["reference"] for entry in entries], [self.reference])
         self.assertNotIn(hidden_reference, [entry["reference"] for entry in entries])
         self.assertEqual(entries[0]["reference_url"], f"/roadmaps/{self.reference.id}")
         programming = next(
@@ -185,6 +185,15 @@ class TestCurriculumPublicUnits(TransactionCase):
         self.assertEqual(programming["coverage_status"], "covered")
         self.assertEqual(programming["coverage_rows"][0]["coverage_type"], "covers")
 
+
+    def test_unit_detail_omits_missing_optional_metadata(self):
+        view = self.env.ref("facodi_learning.curriculum_public_unit")
+        self.assertIn('t-if="unit.credits"', view.arch_db)
+        self.assertIn('t-if="unit.option_group"', view.arch_db)
+        self.assertIn('t-if="unit.classification"', view.arch_db)
+        self.assertNotIn("My Notebook", view.arch_db)
+        self.assertNotIn("Class Questions", view.arch_db)
+        self.assertNotIn("Open Bibliography", view.arch_db)
 
     def test_gap_state_offers_contextual_resource_submission(self):
         view = self.env.ref("facodi_learning.curriculum_public_unit")

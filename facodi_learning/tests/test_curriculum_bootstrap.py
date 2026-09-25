@@ -1,3 +1,6 @@
+from unittest.mock import patch
+
+from odoo.exceptions import ValidationError
 from odoo.tests import TransactionCase
 
 from ..services.curriculum_bootstrap import ensure_lesti_2026_27
@@ -22,6 +25,28 @@ class TestCurriculumBootstrap(TransactionCase):
             ).credits,
             30.0,
         )
+
+    def test_lesti_bootstrap_rejects_identity_mismatch(self):
+        reference = ensure_lesti_2026_27(self.env)
+        original_institution = reference.institution
+
+        from ..services import curriculum_bootstrap as bootstrap
+
+        payload = bootstrap._load_fixture()
+        payload["reference"] = dict(payload["reference"])
+        payload["reference"]["institution"] = "Conflicting Institution"
+
+        with patch.object(bootstrap, "_load_fixture", return_value=payload):
+            with self.assertRaisesRegex(
+                ValidationError,
+                "does not match the existing curriculum reference",
+            ):
+                ensure_lesti_2026_27(self.env)
+
+        reference.invalidate_recordset()
+        self.assertEqual(reference.institution, original_institution)
+        self.assertTrue(reference.website_published)
+        self.assertEqual(len(reference.unit_ids), 43)
 
     def test_public_curriculum_links_require_reviewed_coverage(self):
         reference = ensure_lesti_2026_27(self.env)
@@ -53,7 +78,7 @@ class TestCurriculumBootstrap(TransactionCase):
 
     def test_unpublished_reference_is_not_exposed_by_course_link(self):
         reference = ensure_lesti_2026_27(self.env)
-        reference.write({"website_published": False})
+        reference.action_archive()
         unit = reference.unit_ids.filtered(
             lambda item: item.external_unit_code == "19411017"
         )

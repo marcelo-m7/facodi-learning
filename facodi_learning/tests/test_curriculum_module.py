@@ -101,6 +101,15 @@ class TestCurriculumModule(TransactionCase):
         self.reference.with_user(self.manager).action_validate()
         self.reference.with_user(self.manager).action_publish()
 
+
+    def test_public_module_view_keeps_progress_model_backed(self):
+        view = self.env.ref("facodi_learning.curriculum_public_module")
+        self.assertIn("facodi-module-detail", view.arch_db)
+        self.assertIn("show_learning_progress", view.arch_db)
+        self.assertIn("module_row['progress']", view.arch_db)
+        self.assertIn("module_row['next_item']", view.arch_db)
+        self.assertNotIn("module_row_index", view.arch_db)
+
     def test_unit_can_order_multiple_modules(self):
         first = self._module("First Module")
         second = self._module("Second Module")
