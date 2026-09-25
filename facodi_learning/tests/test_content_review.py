@@ -19,9 +19,10 @@ class TestContentPublicationGovernance(TransactionCase):
                         6,
                         0,
                         [
+                            cls.env.ref("base.group_user").id,
                             cls.env.ref(
                                 "website_slides.group_website_slides_manager"
-                            ).id
+                            ).id,
                         ],
                     )
                 ],
@@ -259,22 +260,31 @@ class TestContentPublicationGovernance(TransactionCase):
         self.assertTrue(slide.is_published)
 
     def test_moving_approved_sourced_content_to_another_course_requires_new_review(self):
-        source = self.env["facodi.learning.source"].create(
+        slide = self._slide("Course-scoped reviewed content")
+        source = self.env["facodi.learning.source"].ingest_manual(
             {
                 "name": "Course-scoped canonical source",
                 "external_id": "governance-source-move",
-                "provider": "manual",
                 "channel_id": self.channel.id,
                 "url": "https://example.org/scoped-source",
-            }
+            },
+            slide_id=slide.id,
         )
-        slide = self._slide("Course-scoped reviewed content")
-        source.write({"slide_id": slide.id})
-        review = self._complete_review(
-            slide,
-            source_id=source.id,
-            source_url=source.url,
-            rights_mode="external",
+        review = self.env["facodi.learning.content.review"].search(
+            [
+                ("slide_id", "=", slide.id),
+                ("source_id", "=", source.id),
+                ("state", "=", "pending"),
+            ],
+            limit=1,
+        )
+        review.write(
+            {
+                "author": "External contributor",
+                "rights_mode": "external",
+                "usage_basis": "Public external resource linked by FACODI.",
+                "purpose": "Course-scoped learning resource.",
+            }
         )
         review.with_user(self.manager).action_approve()
         slide.write({"is_published": True})
