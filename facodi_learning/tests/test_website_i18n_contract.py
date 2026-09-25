@@ -99,7 +99,8 @@ class TestWebsiteI18nContract(unittest.TestCase):
         self.assertNotIn('required="required"', title_field)
         self.assertIn('"/contribuir/recurso/metadata"', controller)
         self.assertIn("youtube_video_identity(source_url)", controller)
-        self.assertIn("discover_supabase_resource_metadata(source_url)", controller)
+        self.assertIn("_discover_public_youtube_metadata(source_url)", controller)
+        self.assertIn("discover_supabase_resource_metadata", controller)
         self.assertIn("fetch(endpoint", javascript)
         self.assertIn("primaryLanguage", javascript)
         self.assertIn(
