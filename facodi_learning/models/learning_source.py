@@ -167,6 +167,9 @@ class LearningSource(models.Model):
 
         jobs = self.env["facodi.learning.analysis.job"]
         for source in self.filtered("slide_id"):
+            source_url = (source.slide_id.url or source.url or "").strip()
+            if not source_url:
+                continue
             existing = jobs.search(
                 [
                     ("slide_id", "=", source.slide_id.id),
