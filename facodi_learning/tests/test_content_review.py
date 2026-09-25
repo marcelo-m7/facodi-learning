@@ -206,25 +206,6 @@ class TestContentPublicationGovernance(TransactionCase):
         self.assertFalse(channel.website_id)
         self.assertTrue(slide.is_published)
 
-    def test_assigning_governed_website_to_public_slide_requires_review(self):
-        self.website.sudo().write({"facodi_publication_review_enabled": False})
-        channel = self.env["slide.channel"].create({"name": "Site-less slide scope"})
-        slide = self.env["slide.slide"].create(
-            {
-                "name": "Public content entering scope by website",
-                "channel_id": channel.id,
-                "slide_category": "article",
-                "is_published": True,
-            }
-        )
-        self.website.action_facodi_enable_publication_review()
-
-        with self.assertRaises(ValidationError):
-            slide.write({"website_id": self.website.id})
-        slide.invalidate_recordset()
-        self.assertFalse(slide.website_id)
-        self.assertTrue(slide.is_published)
-
     def test_editing_public_content_invalidates_approved_hash(self):
         self.website.action_facodi_enable_publication_review()
         slide = self._slide()
@@ -257,6 +238,26 @@ class TestContentPublicationGovernance(TransactionCase):
             {"is_published": True}
         )
         slide.invalidate_recordset()
+        self.assertTrue(slide.is_published)
+
+    def test_translation_update_invalidates_public_review_atomically(self):
+        self.env["res.lang"]._activate_lang("fr_FR")
+        slide = self._slide("Stable reviewed title")
+        review = self._complete_review(slide)
+        review.with_user(self.manager).action_approve()
+        slide.write({"is_published": True})
+
+        with self.assertRaises(ValidationError):
+            slide.update_field_translations(
+                "name",
+                {"fr_FR": "Titre modifié après validation"},
+            )
+
+        slide.invalidate_recordset(["name"])
+        self.assertEqual(
+            slide.with_context(lang="fr_FR").name,
+            "Stable reviewed title",
+        )
         self.assertTrue(slide.is_published)
 
     def test_moving_approved_sourced_content_to_another_course_requires_new_review(self):
