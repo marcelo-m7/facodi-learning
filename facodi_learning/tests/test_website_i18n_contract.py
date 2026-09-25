@@ -88,25 +88,37 @@ class TestWebsiteI18nContract(unittest.TestCase):
                 self.assertIn(f'msgstr "{translated}"', catalogue)
 
     def test_public_curriculum_academic_boundary_is_fully_translated(self):
-        expected_fragments = {
+        source_entry = (
+            'msgid ""\n'
+            '"<strong>Provenance and limits.</strong>\\n"\n'
+            '"                                ECTS and the curricular structure shown are facts from the external source.\\n"\n'
+            '"                                FACODI does not grant credits, enrolment, academic equivalence, or replace the institution."\n'
+        )
+        expected_msgstr = {
             "pt": (
-                "Os ECTS e a estrutura curricular apresentada são factos da fonte externa.",
-                "A FACODI não atribui créditos, matrícula, equivalência académica nem substitui a instituição.",
+                'msgstr ""\n'
+                '"<strong>Proveniência e limites.</strong>\\n"\n'
+                '"                                Os ECTS e a estrutura curricular apresentada são factos da fonte externa.\\n"\n'
+                '"                                A FACODI não atribui créditos, matrícula, equivalência académica nem substitui a instituição."'
             ),
             "es": (
-                "Los ECTS y la estructura curricular mostrados son datos de la fuente externa.",
-                "FACODI no otorga créditos, matrícula, equivalencia académica ni sustituye a la institución.",
+                'msgstr ""\n'
+                '"<strong>Procedencia y límites.</strong>\\n"\n'
+                '"                                Los ECTS y la estructura curricular mostrados son datos de la fuente externa.\\n"\n'
+                '"                                FACODI no otorga créditos, matrícula, equivalencia académica ni sustituye a la institución."'
             ),
             "fr": (
-                "Les ECTS et la structure du cursus présentés sont des faits provenant de la source externe.",
-                "FACODI n'accorde pas de crédits, d'inscription ni d'équivalence académique et ne remplace pas l'établissement.",
+                'msgstr ""\n'
+                '"<strong>Provenance et limites.</strong>\\n"\n'
+                '"                                Les ECTS et la structure du cursus présentés sont des faits provenant de la source externe.\\n"\n'
+                '"                                FACODI n\'accorde pas de crédits, d\'inscription ni d\'équivalence académique et ne remplace pas l\'établissement."'
             ),
         }
 
-        for language, fragments in expected_fragments.items():
+        for language, translated_entry in expected_msgstr.items():
             catalogue = (I18N_DIR / f"{language}.po").read_text()
-            for fragment in fragments:
-                self.assertIn(fragment, catalogue)
+            complete_entry = f"{source_entry}{translated_entry}"
+            self.assertIn(complete_entry, catalogue)
 
 
 if __name__ == "__main__":
