@@ -5,6 +5,8 @@ from urllib.parse import urlsplit, urlunsplit
 from odoo import api, fields, models
 from odoo.exceptions import AccessError, ValidationError
 
+from ..services.youtube import youtube_video_identity
+
 
 def _is_public_http_url(value):
     try:
@@ -299,6 +301,11 @@ class FacodiLearningSubmission(models.Model):
                 )
 
             if not candidate:
+                source_identity = youtube_video_identity(canonical_url) or {
+                    "provider": "facodi-submission",
+                    "external_id": f"submission-{self.id}",
+                    "source_url": canonical_url,
+                }
                 metadata = {
                     "submission_id": self.id,
                     "submission_context": self.context or False,
@@ -320,9 +327,9 @@ class FacodiLearningSubmission(models.Model):
 
                 candidate = Candidate.create(
                     {
-                        "provider": "facodi-submission",
-                        "external_id": f"submission-{self.id}",
-                        "source_url": canonical_url,
+                        "provider": source_identity["provider"],
+                        "external_id": source_identity["external_id"],
+                        "source_url": source_identity["source_url"],
                         "name": self.name,
                         "description": self.context or False,
                         "institution": institution,
