@@ -1,12 +1,26 @@
 import logging
+from uuid import UUID
 
 from odoo import api, fields, models
 from odoo.exceptions import AccessError
 from ..services.analysis import normalize_output
 
 from ..services import analyze_local_metadata, analyze_supabase_edge
+from ..services.supabase_edge import SupabaseAnalysisError
 
 _logger = logging.getLogger(__name__)
+
+
+def _validated_correlation_id(error):
+    if not isinstance(error, SupabaseAnalysisError):
+        return False
+    value = error.correlation_id
+    if not isinstance(value, str):
+        return False
+    try:
+        return str(UUID(value))
+    except (ValueError, TypeError, AttributeError):
+        return False
 
 
 class FacodiLearningAnalysisJob(models.Model):
@@ -146,6 +160,9 @@ class FacodiLearningAnalysisJob(models.Model):
                     "FACODI analysis job %s failed (%s)", job.id, type(exc).__name__
                 )
                 error = f"{type(exc).__name__}: operation failed; inspect the provider configuration."
+                correlation_id = _validated_correlation_id(exc)
+                if correlation_id:
+                    error += f" Correlation: {correlation_id}."
                 result = self.env["facodi.learning.analysis.result"]
             completed = fields.Datetime.now()
             values = {

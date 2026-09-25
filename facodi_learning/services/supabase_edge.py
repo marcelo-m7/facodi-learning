@@ -13,7 +13,16 @@ DEFAULT_FUNCTION = "v3_analyze_learning_resource"
 DEFAULT_METADATA_FUNCTION = "v3_discover_resource_metadata"
 MAX_ANALYSIS_RESPONSE_BYTES = 512 * 1024
 MAX_METADATA_RESPONSE_BYTES = 64 * 1024
+MAX_ERROR_RESPONSE_BYTES = 16 * 1024
 _FUNCTION_RE = re.compile(r"^[A-Za-z0-9_-]+$")
+
+
+class SupabaseAnalysisError(ValueError):
+    """Sanitized provider failure with an optional opaque correlation UUID."""
+
+    def __init__(self, message, *, correlation_id=False):
+        super().__init__(message)
+        self.correlation_id = correlation_id or False
 
 
 def _env(name):
@@ -81,6 +90,24 @@ def _read_bounded_response(response, max_bytes):
     if len(payload) > max_bytes:
         raise ValueError("Supabase response exceeded the configured size limit.")
     return payload.decode("utf-8", "replace")
+
+
+def _safe_processing_correlation(error):
+    """Extract only the opaque processing UUID from a bounded Edge error body."""
+    try:
+        raw = _read_bounded_response(error, MAX_ERROR_RESPONSE_BYTES)
+        payload = json.loads(raw)
+        correlation_id = (
+            payload.get("details", {}).get("processing_job_id")
+            if isinstance(payload, dict)
+            and isinstance(payload.get("details"), dict)
+            else False
+        )
+        if not isinstance(correlation_id, str):
+            return False
+        return str(UUID(correlation_id))
+    except (ValueError, TypeError, AttributeError, json.JSONDecodeError):
+        return False
 
 
 def _source_url_for_slide(slide):
@@ -193,9 +220,13 @@ def analyze_supabase_edge(slide):
         with _open_endpoint(request, timeout=60) as response:
             raw = _read_bounded_response(response, MAX_ANALYSIS_RESPONSE_BYTES)
     except urllib.error.HTTPError as exc:
-        # Do not propagate response bodies: provider responses can contain
-        # operational details that should stay out of Odoo user-facing errors.
-        raise ValueError(f"Supabase analysis returned HTTP {exc.code}.") from exc
+        # The response body is never propagated. Extract only the opaque
+        # processing-job UUID emitted by the trusted Edge contract.
+        correlation_id = _safe_processing_correlation(exc)
+        raise SupabaseAnalysisError(
+            f"Supabase analysis returned HTTP {exc.code}.",
+            correlation_id=correlation_id,
+        ) from exc
     except urllib.error.URLError as exc:
         raise ValueError("Supabase analysis endpoint is unavailable.") from exc
 

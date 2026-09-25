@@ -307,6 +307,28 @@ class TestPipelineSecurity(TransactionCase):
         self.assertTrue(job.last_error)
         self.assertFalse(job.result_id)
 
+    def test_provider_correlation_id_is_uuid_validated_before_audit_persistence(self):
+        from unittest.mock import patch
+
+        class UntrustedProviderError(RuntimeError):
+            correlation_id = "secret-provider-details"
+
+        def fail(slide):
+            raise UntrustedProviderError("provider-secret-message")
+
+        job = self.slide.action_facodi_request_analysis()
+        with patch.object(
+            type(job), "_get_provider_registry", return_value={"local_metadata": fail}
+        ):
+            job.action_process()
+
+        self.assertEqual(job.state, "failed")
+        self.assertNotIn("secret-provider-details", job.last_error)
+        self.assertNotIn("provider-secret-message", job.last_error)
+        self.assertNotIn("Correlation:", job.last_error)
+        self.assertEqual(len(job.attempt_ids), 1)
+        self.assertNotIn("secret-provider-details", job.attempt_ids.error)
+
     def test_learner_relations_only_approved_visible_targets(self):
         website = self.env["website"].search([], limit=1)
         self.channel.write(
