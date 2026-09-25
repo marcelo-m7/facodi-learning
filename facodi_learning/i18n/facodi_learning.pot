@@ -1533,6 +1533,11 @@ msgid "Licensed"
 msgstr ""
 
 #. module: facodi_learning
+#: model:ir.model.fields.selection,name:facodi_learning.selection__res_config_settings__facodi_learning_analysis_provider__supabase_edge
+msgid "Supabase Edge Functions"
+msgstr ""
+
+#. module: facodi_learning
 #: model:ir.model.fields.selection,name:facodi_learning.selection__res_config_settings__facodi_learning_analysis_provider__local_metadata
 msgid "Local Odoo metadata"
 msgstr ""
@@ -1971,8 +1976,9 @@ msgstr ""
 #. module: facodi_learning
 #: model:ir.model.fields,help:facodi_learning.field_res_config_settings__facodi_learning_analysis_provider
 msgid ""
-"Provider used for new FACODI analysis jobs. Provider addons may extend this "
-"selection."
+"Provider used for new FACODI analysis jobs. Production processing should use "
+"Supabase Edge Functions; local metadata is a deterministic development/test "
+"fallback."
 msgstr ""
 
 #. module: facodi_learning
