@@ -414,6 +414,12 @@ class TestContentPublicationGovernance(TransactionCase):
         edited.invalidate_recordset(["text_value"])
         self.assertEqual(edited.text_value, "Correct answer")
 
+        correctness_edit = answers[1]
+        with self.assertRaises(ValidationError):
+            correctness_edit.write({"is_correct": True})
+        correctness_edit.invalidate_recordset(["is_correct"])
+        self.assertFalse(correctness_edit.is_correct)
+
         before = self.env["slide.answer"].search_count(
             [("question_id", "=", question.id)]
         )
@@ -436,6 +442,34 @@ class TestContentPublicationGovernance(TransactionCase):
         with self.assertRaises(ValidationError):
             removable.unlink()
         self.assertTrue(removable.exists())
+        self.assertTrue(slide.is_published)
+
+    def test_public_quiz_translation_updates_roll_back_atomically(self):
+        self.env["res.lang"]._activate_lang("fr_FR")
+        slide, question = self._reviewed_public_quiz()
+        answer = question.answer_ids.sorted("sequence")[0]
+
+        with self.assertRaises(ValidationError):
+            question.update_field_translations(
+                "question",
+                {"fr_FR": "Question modifiée après validation"},
+            )
+        question.invalidate_recordset(["question"])
+        self.assertEqual(
+            question.with_context(lang="fr_FR").question,
+            "Which option is correct?",
+        )
+
+        with self.assertRaises(ValidationError):
+            answer.update_field_translations(
+                "text_value",
+                {"fr_FR": "Réponse modifiée après validation"},
+            )
+        answer.invalidate_recordset(["text_value"])
+        self.assertEqual(
+            answer.with_context(lang="fr_FR").text_value,
+            "Correct answer",
+        )
         self.assertTrue(slide.is_published)
 
     def test_public_quiz_question_create_and_unlink_require_new_review(self):
