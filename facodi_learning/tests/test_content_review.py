@@ -205,6 +205,25 @@ class TestContentPublicationGovernance(TransactionCase):
         self.assertFalse(channel.website_id)
         self.assertTrue(slide.is_published)
 
+    def test_assigning_governed_website_to_public_slide_requires_review(self):
+        self.website.sudo().write({"facodi_publication_review_enabled": False})
+        channel = self.env["slide.channel"].create({"name": "Site-less slide scope"})
+        slide = self.env["slide.slide"].create(
+            {
+                "name": "Public content entering scope by website",
+                "channel_id": channel.id,
+                "slide_category": "article",
+                "is_published": True,
+            }
+        )
+        self.website.action_facodi_enable_publication_review()
+
+        with self.assertRaises(ValidationError):
+            slide.write({"website_id": self.website.id})
+        slide.invalidate_recordset()
+        self.assertFalse(slide.website_id)
+        self.assertTrue(slide.is_published)
+
     def test_editing_public_content_invalidates_approved_hash(self):
         self.website.action_facodi_enable_publication_review()
         slide = self._slide()
@@ -401,3 +420,13 @@ class TestContentPublicationGovernance(TransactionCase):
         self.assertFalse(review.author)
         self.assertFalse(review.rights_mode)
         self.assertFalse(slide.is_published)
+
+    def test_reenabling_governance_via_write_backfills_legacy_public_content(self):
+        self.website.sudo().write({"facodi_publication_review_enabled": False})
+        slide = self._slide("Legacy public via direct enable")
+        slide.write({"is_published": True})
+
+        self.website.sudo().write({"facodi_publication_review_enabled": True})
+        slide.invalidate_recordset()
+        self.assertTrue(slide.is_published)
+        self.assertTrue(slide.facodi_legacy_review_pending)

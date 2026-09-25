@@ -15,7 +15,7 @@ _CONTENT_HASH_FIELD_ORDER = (
 )
 _CONTENT_HASH_FIELDS = frozenset(_CONTENT_HASH_FIELD_ORDER)
 _PUBLICATION_FIELDS = frozenset({"is_published", "website_published"})
-_PUBLICATION_SCOPE_FIELDS = frozenset({"channel_id"})
+_PUBLICATION_SCOPE_FIELDS = frozenset({"channel_id", "website_id"})
 
 
 def _slide_hash(slide):
@@ -323,7 +323,32 @@ class Website(models.Model):
         ),
     )
 
+    def _facodi_backfill_legacy_publications(self):
+        Slide = self.env["slide.slide"]
+        public_slides = Slide.search(
+            [
+                "|",
+                ("is_published", "=", True),
+                ("website_published", "=", True),
+            ]
+        )
+        for website in self:
+            for slide in public_slides:
+                if (
+                    slide._facodi_review_website() == website
+                    and not slide._facodi_has_approved_review()
+                    and not slide.facodi_legacy_review_pending
+                ):
+                    slide.write({"facodi_legacy_review_pending": True})
+
     def write(self, vals):
+        enabling = (
+            "facodi_publication_review_enabled" in vals
+            and vals["facodi_publication_review_enabled"]
+        )
+        disabled_before = self.filtered(
+            lambda website: not website.facodi_publication_review_enabled
+        )
         if (
             "facodi_publication_review_enabled" in vals
             and not vals["facodi_publication_review_enabled"]
@@ -332,25 +357,15 @@ class Website(models.Model):
             raise AccessError(
                 "FACODI publication review cannot be disabled through ordinary writes."
             )
-        return super().write(vals)
+        result = super().write(vals)
+        if enabling and disabled_before:
+            disabled_before._facodi_backfill_legacy_publications()
+        return result
 
     def action_facodi_enable_publication_review(self):
-        Slide = self.env["slide.slide"]
         for website in self:
             if not website.facodi_publication_review_enabled:
                 website.write({"facodi_publication_review_enabled": True})
-            public_slides = Slide.search(
-                [
-                    "|",
-                    ("is_published", "=", True),
-                    ("website_published", "=", True),
-                ]
-            )
-            for slide in public_slides:
-                if (
-                    slide._facodi_review_website() == website
-                    and not slide._facodi_has_approved_review()
-                    and not slide.facodi_legacy_review_pending
-                ):
-                    slide.write({"facodi_legacy_review_pending": True})
+            else:
+                website._facodi_backfill_legacy_publications()
         return True
