@@ -2878,3 +2878,38 @@ msgstr "Aceptado"
 #: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_status
 msgid "Suggest a resource"
 msgstr "Sugerir un recurso"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_form
+msgid "For supported YouTube links, FACODI can fill the title and language automatically. Review the detected details before submitting."
+msgstr "Para enlaces de YouTube compatibles, FACODI puede completar automáticamente el título y el idioma. Revisa los detalles detectados antes de enviar."
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_form
+msgid "Detect details"
+msgstr "Detectar detalles"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_form
+msgid "Detected resource"
+msgstr "Recurso detectado"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_form
+msgid "Detecting title and language…"
+msgstr "Detectando título e idioma…"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_form
+msgid "FACODI detected this YouTube resource."
+msgstr "FACODI detectó este recurso de YouTube."
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_form
+msgid "Could not detect details automatically. You can continue manually."
+msgstr "No se pudieron detectar los detalles automáticamente. Puedes continuar manualmente."
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_form
+msgid "Automatic discovery is currently available for public YouTube videos. You can continue manually."
+msgstr "El descubrimiento automático está disponible actualmente para vídeos públicos de YouTube. Puedes continuar manualmente."
