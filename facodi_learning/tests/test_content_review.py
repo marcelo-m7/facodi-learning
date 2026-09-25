@@ -147,6 +147,19 @@ class TestContentPublicationGovernance(TransactionCase):
         self.assertTrue(slide.website_published)
         self.assertTrue(slide.facodi_legacy_review_pending)
 
+    def test_legacy_backfill_skips_currently_approved_public_content(self):
+        self.website.sudo().write({"facodi_publication_review_enabled": False})
+        slide = self._slide("Approved before governance enablement")
+        review = self._complete_review(slide)
+        review.with_user(self.manager).action_approve()
+        slide.write({"is_published": True})
+
+        self.website.action_facodi_enable_publication_review()
+        slide.invalidate_recordset()
+        self.assertTrue(slide.is_published)
+        self.assertFalse(slide.facodi_legacy_review_pending)
+        self.assertEqual(review.state, "approved")
+
     def test_governance_cannot_be_disabled_through_normal_orm(self):
         self.website.action_facodi_enable_publication_review()
         admin = self.env.ref("base.user_admin")
