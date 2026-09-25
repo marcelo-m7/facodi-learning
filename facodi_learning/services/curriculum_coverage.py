@@ -117,8 +117,21 @@ def build_curriculum_selection_context(env):
     }
 
 
-def score_candidate_curriculum_gap(candidate_name, context):
-    """Score uncovered curriculum need for a course candidate."""
+def score_candidate_curriculum_gap(
+    candidate_name,
+    context,
+    *,
+    targeted_unit_ids=None,
+    target_origin=None,
+    submission_ids=None,
+):
+    """Score uncovered curriculum need for a course candidate.
+
+    An explicit curricular-unit target coming from an accepted FACODI
+    submission is workflow context, not approved curriculum coverage. When
+    that target is still part of the active selection context, it scopes only
+    the uncovered-need signal. All approved coverage remains authoritative.
+    """
     reference_ids = list((context or {}).get("reference_ids") or [])
     units = list((context or {}).get("units") or [])
     if not reference_ids or not units:
@@ -130,10 +143,107 @@ def score_candidate_curriculum_gap(candidate_name, context):
             },
         }
 
+    targeted_ids = {
+        int(unit_id)
+        for unit_id in (targeted_unit_ids or [])
+        if unit_id
+    }
+    targeted_units = [
+        unit for unit in units if unit.get("unit_id") in targeted_ids
+    ]
+
+    if targeted_units:
+        best = None
+        best_need = -1.0
+        for unit in targeted_units:
+            strength = max(
+                0.0,
+                min(
+                    float(unit.get("approved_coverage_strength") or 0.0),
+                    1.0,
+                ),
+            )
+            uncovered_gap = 1.0 - strength
+            similarity = course_title_similarity(
+                candidate_name, unit.get("unit_name")
+            )
+            if uncovered_gap > best_need:
+                best_need = uncovered_gap
+                best = {
+                    "reference_id": unit.get("reference_id"),
+                    "programme_name": unit.get("programme_name"),
+                    "academic_year": unit.get("academic_year"),
+                    "unit_id": unit.get("unit_id"),
+                    "unit_code": unit.get("unit_code"),
+                    "unit_name": unit.get("unit_name"),
+                    "title_similarity": similarity,
+                    "approved_coverage_strength": strength,
+                    "uncovered_gap": uncovered_gap,
+                }
+
+        score = max(
+            0.0,
+            min(best_need if best is not None else 0.0, 1.0),
+        )
+        return {
+            "score": round(float(score), 4),
+            "evidence": {
+                "mode": "curriculum-targeted-gap",
+                "reference_ids": reference_ids,
+                "target_unit_ids": sorted(
+                    {
+                        unit.get("unit_id")
+                        for unit in targeted_units
+                        if unit.get("unit_id")
+                    }
+                ),
+                "target_origin": target_origin or "workflow-context",
+                "submission_ids": sorted(
+                    {
+                        int(submission_id)
+                        for submission_id in (submission_ids or [])
+                        if submission_id
+                    }
+                ),
+                "best_reference_id": (
+                    best.get("reference_id") if best else False
+                ),
+                "best_programme": (
+                    best.get("programme_name") if best else False
+                ),
+                "best_academic_year": (
+                    best.get("academic_year") if best else False
+                ),
+                "best_unit_id": best.get("unit_id") if best else False,
+                "best_unit_code": best.get("unit_code") if best else False,
+                "best_unit_name": best.get("unit_name") if best else False,
+                "title_similarity": round(
+                    float(best.get("title_similarity") or 0.0), 4
+                )
+                if best
+                else 0.0,
+                "approved_coverage_strength": round(
+                    float(
+                        best.get("approved_coverage_strength") or 0.0
+                    ),
+                    4,
+                )
+                if best
+                else 0.0,
+                "uncovered_gap": round(
+                    float(best.get("uncovered_gap") or 0.0), 4
+                )
+                if best
+                else 0.0,
+            },
+        }
+
     best = None
     best_need = -1.0
     for unit in units:
-        similarity = course_title_similarity(candidate_name, unit.get("unit_name"))
+        similarity = course_title_similarity(
+            candidate_name, unit.get("unit_name")
+        )
         strength = max(
             0.0,
             min(float(unit.get("approved_coverage_strength") or 0.0), 1.0),
@@ -164,7 +274,9 @@ def score_candidate_curriculum_gap(candidate_name, context):
         "best_unit_id": best.get("unit_id") if best else False,
         "best_unit_code": best.get("unit_code") if best else False,
         "best_unit_name": best.get("unit_name") if best else False,
-        "title_similarity": round(float(best.get("title_similarity") or 0.0), 4)
+        "title_similarity": round(
+            float(best.get("title_similarity") or 0.0), 4
+        )
         if best
         else 0.0,
         "approved_coverage_strength": round(
@@ -172,7 +284,9 @@ def score_candidate_curriculum_gap(candidate_name, context):
         )
         if best
         else 0.0,
-        "uncovered_gap": round(float(best.get("uncovered_gap") or 0.0), 4)
+        "uncovered_gap": round(
+            float(best.get("uncovered_gap") or 0.0), 4
+        )
         if best
         else 0.0,
     }
