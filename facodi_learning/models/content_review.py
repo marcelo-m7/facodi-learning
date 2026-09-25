@@ -372,29 +372,36 @@ class Website(models.Model):
     )
 
     def _facodi_backfill_legacy_publications(self):
-        for website in self:
-            public_slides = self.env["slide.slide"].search(
-                [
-                    "&",
-                    "|",
-                    ("is_published", "=", True),
-                    ("website_published", "=", True),
-                    "|",
-                    ("website_id", "=", website.id),
-                    "&",
-                    ("website_id", "=", False),
-                    ("channel_id.website_id", "=", website.id),
-                ]
-            )
-            approved_slide_ids = public_slides._facodi_current_approved_slide_ids()
-            slides_to_flag = self.env["slide.slide"]
-            for slide in public_slides:
-                if (
-                    slide._facodi_review_website() == website
-                    and slide.id not in approved_slide_ids
-                    and not slide.facodi_legacy_review_pending
-                ):
-                    slides_to_flag |= slide
+        if not self:
+            return
+        website_by_id = {website.id: website for website in self}
+        public_slides = self.env["slide.slide"].search(
+            [
+                "&",
+                "|",
+                ("is_published", "=", True),
+                ("website_published", "=", True),
+                "|",
+                ("website_id", "in", self.ids),
+                "&",
+                ("website_id", "=", False),
+                ("channel_id.website_id", "in", self.ids),
+            ]
+        )
+        approved_slide_ids = public_slides._facodi_current_approved_slide_ids()
+        slides_to_flag_by_website = {
+            website_id: self.env["slide.slide"] for website_id in website_by_id
+        }
+        for slide in public_slides:
+            review_website = slide._facodi_review_website()
+            if (
+                review_website
+                and review_website.id in website_by_id
+                and slide.id not in approved_slide_ids
+                and not slide.facodi_legacy_review_pending
+            ):
+                slides_to_flag_by_website[review_website.id] |= slide
+        for slides_to_flag in slides_to_flag_by_website.values():
             if slides_to_flag:
                 slides_to_flag.write({"facodi_legacy_review_pending": True})
 
