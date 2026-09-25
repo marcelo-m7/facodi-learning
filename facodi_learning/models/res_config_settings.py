@@ -7,7 +7,7 @@ class ResConfigSettings(models.TransientModel):
     facodi_learning_analysis_provider = fields.Selection(
         [
             ("supabase_edge", "Supabase Edge Functions"),
-            ("local_metadata", "Local Odoo metadata (fallback)"),
+            ("local_metadata", "Local Odoo metadata"),
         ],
         string="FACODI analysis provider",
         required=True,
