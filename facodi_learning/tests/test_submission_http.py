@@ -48,6 +48,26 @@ class TestResourceSubmissionMetadataHttp(HttpCase):
         payload = response.json()
         self.assertFalse(payload["success"])
 
+    def test_metadata_endpoint_rejects_over_limit_url(self):
+        with (
+            patch.object(
+                submission_controller,
+                "_METADATA_MIN_INTERVAL_SECONDS",
+                0,
+            ),
+            patch.object(
+                submission_controller,
+                "discover_resource_metadata",
+            ) as discover,
+        ):
+            response = self._post(
+                "https://example.org/" + ("x" * 2100)
+            )
+
+        self.assertEqual(response.status_code, 400)
+        self.assertFalse(response.json()["success"])
+        discover.assert_not_called()
+
     def test_metadata_endpoint_requires_csrf(self):
         # Establish a public session, then deliberately omit the token.
         self.url_open("/contribuir/recurso")
