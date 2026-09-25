@@ -154,6 +154,109 @@ class TestSupabaseEdgeAnalysis(TransactionCase):
             )
 
 
+    def test_metadata_discovery_uses_dedicated_supabase_function(self):
+        from facodi_learning.services.supabase_edge import discover_resource_metadata
+
+        response_payload = {
+            "success": True,
+            "metadata": {
+                "provider": "youtube",
+                "external_id": "w9gb71ZUJDs",
+                "canonical_url": "https://www.youtube.com/watch?v=w9gb71ZUJDs",
+                "title": "Introdução à Pré-Cálculo",
+                "author_name": "Canal Exemplo",
+                "author_url": "https://www.youtube.com/@exemplo",
+                "thumbnail_url": "https://i.ytimg.com/vi/w9gb71ZUJDs/hqdefault.jpg",
+                "duration_seconds": 754,
+                "published_at": "2026-01-12",
+                "language": "pt-BR",
+                "metadata_source": "youtube_public",
+            },
+        }
+        captured = {}
+
+        def fake_urlopen(request, timeout=0):
+            captured["request"] = request
+            captured["timeout"] = timeout
+            return _FakeResponse(response_payload)
+
+        with (
+            patch.dict(
+                os.environ,
+                {
+                    "SUPABASE_URL": "https://example.supabase.co",
+                    "SUPABASE_SECRET_KEY": "sb_secret_test",
+                },
+                clear=False,
+            ),
+            patch(
+                "facodi_learning.services.supabase_edge._open_endpoint",
+                side_effect=fake_urlopen,
+            ),
+        ):
+            metadata = discover_resource_metadata(
+                "https://www.youtube.com/watch?v=w9gb71ZUJDs&list=playlist"
+            )
+
+        self.assertEqual(metadata["provider"], "youtube")
+        self.assertEqual(metadata["external_id"], "w9gb71ZUJDs")
+        self.assertEqual(metadata["language"], "pt-BR")
+        self.assertEqual(metadata["duration_seconds"], 754)
+        self.assertEqual(
+            metadata["canonical_url"],
+            "https://www.youtube.com/watch?v=w9gb71ZUJDs",
+        )
+
+        request = captured["request"]
+        self.assertTrue(
+            request.full_url.endswith(
+                "/functions/v1/v3_discover_resource_metadata"
+            )
+        )
+        self.assertEqual(request.get_header("Apikey"), "sb_secret_test")
+        self.assertIsNone(request.get_header("X-facodi-gemini-key"))
+        self.assertEqual(captured["timeout"], 15)
+        self.assertEqual(
+            json.loads(request.data.decode("utf-8")),
+            {
+                "source_url": (
+                    "https://www.youtube.com/watch?v=w9gb71ZUJDs&list=playlist"
+                )
+            },
+        )
+
+    def test_metadata_discovery_rejects_unbounded_duration(self):
+        from facodi_learning.services.supabase_edge import discover_resource_metadata
+
+        response_payload = {
+            "success": True,
+            "metadata": {
+                "provider": "youtube",
+                "canonical_url": "https://www.youtube.com/watch?v=w9gb71ZUJDs",
+                "duration_seconds": 999999999,
+            },
+        }
+
+        with (
+            patch.dict(
+                os.environ,
+                {
+                    "SUPABASE_URL": "https://example.supabase.co",
+                    "SUPABASE_SECRET_KEY": "sb_secret_test",
+                },
+                clear=False,
+            ),
+            patch(
+                "facodi_learning.services.supabase_edge._open_endpoint",
+                return_value=_FakeResponse(response_payload),
+            ),
+        ):
+            metadata = discover_resource_metadata(
+                "https://www.youtube.com/watch?v=w9gb71ZUJDs"
+            )
+
+        self.assertFalse(metadata["duration_seconds"])
+
     def test_url_less_manual_article_is_not_queued_for_supabase(self):
         with patch.dict(
             os.environ,
