@@ -11,6 +11,7 @@ from odoo import tools
 
 DEFAULT_FUNCTION = "v3_analyze_learning_resource"
 DEFAULT_METADATA_FUNCTION = "v3_discover_resource_metadata"
+MAX_PROCESSING_RESPONSE_BYTES = 1024 * 1024
 _FUNCTION_RE = re.compile(r"^[A-Za-z0-9_-]+$")
 
 
@@ -102,7 +103,19 @@ def _source_url_for_slide(slide):
 def _read_json_response(request, *, timeout, operation):
     try:
         with _open_endpoint(request, timeout=timeout) as response:
-            raw = response.read().decode("utf-8", "replace")
+            declared_length = response.headers.get("Content-Length")
+            if declared_length:
+                try:
+                    if int(declared_length) > MAX_PROCESSING_RESPONSE_BYTES:
+                        raise ValueError(f"{operation} response is too large.")
+                except ValueError as exc:
+                    if "too large" in str(exc):
+                        raise
+                    # Ignore malformed Content-Length and rely on the bounded read.
+            raw_bytes = response.read(MAX_PROCESSING_RESPONSE_BYTES + 1)
+            if len(raw_bytes) > MAX_PROCESSING_RESPONSE_BYTES:
+                raise ValueError(f"{operation} response is too large.")
+            raw = raw_bytes.decode("utf-8", "replace")
     except urllib.error.HTTPError as exc:
         raise ValueError(f"{operation} returned HTTP {exc.code}.") from exc
     except urllib.error.URLError as exc:
