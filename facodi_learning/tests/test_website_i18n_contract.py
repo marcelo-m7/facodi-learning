@@ -184,6 +184,40 @@ class TestWebsiteI18nContract(unittest.TestCase):
                 self.assertIn(f'msgid "{source}"', catalogue)
                 self.assertIn(f'msgstr "{translated}"', catalogue)
 
+    def test_submission_processing_trace_labels_are_translated(self):
+        expected = {
+            "pt": {
+                "Source Status": "Estado da fonte",
+                "Learning Content": "Conteúdo de aprendizagem",
+                "Analysis Job": "Trabalho de análise",
+                "Analysis Result": "Resultado da análise",
+                "Processing Status": "Estado do processamento",
+                "Not Queued": "Não enfileirado",
+            },
+            "es": {
+                "Source Status": "Estado de la fuente",
+                "Learning Content": "Contenido de aprendizaje",
+                "Analysis Job": "Trabajo de análisis",
+                "Analysis Result": "Resultado del análisis",
+                "Processing Status": "Estado del procesamiento",
+                "Not Queued": "No en cola",
+            },
+            "fr": {
+                "Source Status": "État de la source",
+                "Learning Content": "Contenu d’apprentissage",
+                "Analysis Job": "Tâche d’analyse",
+                "Analysis Result": "Résultat de l’analyse",
+                "Processing Status": "État du traitement",
+                "Not Queued": "Non mis en file d’attente",
+            },
+        }
+
+        for language, translations in expected.items():
+            catalogue = (I18N_DIR / f"{language}.po").read_text()
+            for source, translated in translations.items():
+                self.assertIn(f'msgid "{source}"', catalogue)
+                self.assertIn(f'msgstr "{translated}"', catalogue)
+
     def test_public_curriculum_academic_boundary_is_fully_translated(self):
         source_entry = (
             'msgid ""\n'

@@ -2944,3 +2944,33 @@ msgstr "Não foi possível detetar os detalhes automaticamente. Pode continuar m
 #: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_form
 msgid "Automatic discovery is currently available for public YouTube videos. You can continue manually."
 msgstr "A descoberta automática está atualmente disponível para vídeos públicos do YouTube. Pode continuar manualmente."
+
+#. module: facodi_learning
+#: model:ir.model.fields,field_description:facodi_learning.field_facodi_learning_submission__source_state
+msgid "Source Status"
+msgstr "Estado da fonte"
+
+#. module: facodi_learning
+#: model:ir.model.fields,field_description:facodi_learning.field_facodi_learning_submission__slide_id
+msgid "Learning Content"
+msgstr "Conteúdo de aprendizagem"
+
+#. module: facodi_learning
+#: model:ir.model.fields,field_description:facodi_learning.field_facodi_learning_submission__analysis_job_id
+msgid "Analysis Job"
+msgstr "Trabalho de análise"
+
+#. module: facodi_learning
+#: model:ir.model.fields,field_description:facodi_learning.field_facodi_learning_submission__analysis_result_id
+msgid "Analysis Result"
+msgstr "Resultado da análise"
+
+#. module: facodi_learning
+#: model:ir.model.fields,field_description:facodi_learning.field_facodi_learning_submission__processing_state
+msgid "Processing Status"
+msgstr "Estado do processamento"
+
+#. module: facodi_learning
+#: model:ir.model.fields.selection,name:facodi_learning.selection__facodi_learning_submission__processing_state__not_queued
+msgid "Not Queued"
+msgstr "Não enfileirado"

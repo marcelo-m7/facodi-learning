@@ -110,6 +110,45 @@ class FacodiLearningSubmission(models.Model):
         string="Canonical Source",
         ondelete="restrict",
     )
+    source_state = fields.Selection(
+        related="source_id.state",
+        string="Source Status",
+        readonly=True,
+        compute_sudo=True,
+    )
+    slide_id = fields.Many2one(
+        related="source_id.slide_id",
+        string="Learning Content",
+        readonly=True,
+        compute_sudo=True,
+    )
+    analysis_job_id = fields.Many2one(
+        "facodi.learning.analysis.job",
+        string="Analysis Job",
+        compute="_compute_processing_trace",
+        readonly=True,
+        compute_sudo=True,
+    )
+    analysis_result_id = fields.Many2one(
+        "facodi.learning.analysis.result",
+        string="Analysis Result",
+        compute="_compute_processing_trace",
+        readonly=True,
+        compute_sudo=True,
+    )
+    processing_state = fields.Selection(
+        [
+            ("not_queued", "Not Queued"),
+            ("pending", "Pending"),
+            ("processing", "Processing"),
+            ("completed", "Completed"),
+            ("failed", "Failed"),
+        ],
+        string="Processing Status",
+        compute="_compute_processing_trace",
+        readonly=True,
+        compute_sudo=True,
+    )
 
     _token_unique = models.Constraint(
         "unique(access_token)",
@@ -166,6 +205,88 @@ class FacodiLearningSubmission(models.Model):
             submission.normalized_source_url = self._normalize_source_url(
                 submission.source_url
             )
+
+    @api.depends(
+        "source_id",
+        "source_id.slide_id",
+        "source_id.slide_id.facodi_analysis_job_ids.state",
+        "source_id.slide_id.facodi_analysis_job_ids.provider",
+        "source_id.slide_id.facodi_analysis_job_ids.result_id",
+    )
+    def _compute_processing_trace(self):
+        for submission in self:
+            submission.analysis_job_id = False
+            submission.analysis_result_id = False
+            submission.processing_state = "not_queued"
+
+            slide = submission.source_id.slide_id
+            if not slide:
+                continue
+
+            jobs = slide.facodi_analysis_job_ids
+            job = jobs.sorted(
+                key=lambda item: item.id,
+                reverse=True,
+            )[:1]
+            if not job:
+                continue
+
+            submission.analysis_job_id = job
+            submission.analysis_result_id = job.result_id
+            submission.processing_state = job.state
+
+    def _link_canonical_source(self, source, candidate=None):
+        """Link reviewed submission audit records to their canonical source.
+
+        Candidate ingestion owns this transition. It is intentionally separate
+        from ordinary editorial writes so resolved submissions remain immutable
+        while downstream processing provenance can still be completed.
+        """
+        source = source.exists()
+        if len(source) != 1:
+            raise ValidationError("An existing canonical source is required.")
+
+        candidate = candidate.exists() if candidate else source.candidate_id
+        if candidate and len(candidate) != 1:
+            raise ValidationError("An existing course candidate is required.")
+
+        if candidate:
+            expected = candidate._get_ingestion_identity()
+            if (
+                source.provider != expected["provider"]
+                or source.external_id != expected["external_id"]
+                or source.channel_id != candidate.resolved_channel_id
+            ):
+                raise ValidationError(
+                    "Canonical source identity does not match the submission candidate."
+                )
+
+        locked = self.try_lock_for_update()
+        locked.invalidate_recordset()
+        if len(locked) != len(self):
+            raise ValidationError(
+                "This submission is being updated; retry shortly."
+            )
+
+        for submission in locked:
+            if submission.state not in {"accepted", "resolved"}:
+                raise ValidationError(
+                    "Only accepted or resolved submissions can link a canonical source."
+                )
+            if candidate and submission.candidate_id != candidate:
+                raise ValidationError(
+                    "The canonical source does not belong to this submission candidate."
+                )
+            if submission.source_id:
+                if submission.source_id != source:
+                    raise ValidationError(
+                        "This submission is already linked to another canonical source."
+                    )
+                continue
+            super(FacodiLearningSubmission, submission).write(
+                {"source_id": source.id}
+            )
+        return True
 
     @api.model_create_multi
     def create(self, vals_list):
