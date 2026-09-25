@@ -5,6 +5,7 @@ MODULE_ROOT = Path(__file__).resolve().parents[1]
 CURRICULUM = MODULE_ROOT / "views" / "website_curriculum.xml"
 SLIDES = MODULE_ROOT / "views" / "website_slides.xml"
 MANIFEST = MODULE_ROOT / "__manifest__.py"
+SLIDE_CHANNEL_MODEL = MODULE_ROOT / "models" / "slide_channel.py"
 
 
 class TestLearningInterfacesContract(unittest.TestCase):
@@ -45,6 +46,17 @@ class TestLearningInterfacesContract(unittest.TestCase):
         self.assertIn("unit_matrix_groups", self.curriculum)
         self.assertIn("learning['modules']", self.curriculum)
         self.assertIn("learning['next_item']", self.curriculum)
+
+    def test_course_alignment_and_contribution_expose_d1_hooks(self):
+        self.assertIn("facodi-course-alignment-sheet", self.curriculum)
+        self.assertIn("facodi-open-callout", self.slides)
+        self.assertIn("/contribuir/recurso", self.slides)
+
+        model_source = SLIDE_CHANNEL_MODEL.read_text(encoding="utf-8")
+        self.assertIn(
+            "Content correspondence - not academic equivalence",
+            model_source,
+        )
 
     def test_stitch_only_features_are_not_rendered(self):
         for source in (self.curriculum, self.slides):
