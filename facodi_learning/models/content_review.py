@@ -269,19 +269,27 @@ class SlideSlide(models.Model):
         evidence.
         """
         self.ensure_one()
-        current_hash = _slide_hash(self)
-        return bool(
+        return self.id in self._facodi_current_approved_slide_ids()
+
+    def _facodi_current_approved_slide_ids(self):
+        if not self:
+            return set()
+        current_hashes = {slide.id: _slide_hash(slide) for slide in self}
+        approved_reviews = (
             self.env["facodi.learning.content.review"]
             .sudo()
             .search(
                 [
-                    ("slide_id", "=", self.id),
+                    ("slide_id", "in", list(current_hashes)),
                     ("state", "=", "approved"),
-                    ("content_hash", "=", current_hash),
-                ],
-                limit=1,
+                ]
             )
         )
+        return {
+            review.slide_id.id
+            for review in approved_reviews
+            if review.content_hash == current_hashes.get(review.slide_id.id)
+        }
 
     def _facodi_is_public(self):
         self.ensure_one()
@@ -378,11 +386,12 @@ class Website(models.Model):
                     ("channel_id.website_id", "=", website.id),
                 ]
             )
+            approved_slide_ids = public_slides._facodi_current_approved_slide_ids()
             slides_to_flag = self.env["slide.slide"]
             for slide in public_slides:
                 if (
                     slide._facodi_review_website() == website
-                    and not slide._facodi_has_approved_review()
+                    and slide.id not in approved_slide_ids
                     and not slide.facodi_legacy_review_pending
                 ):
                     slides_to_flag |= slide
