@@ -148,6 +148,25 @@ class FacodiSubmissionController(http.Controller):
         raw_curriculum_unit_id = post.get("curriculum_unit_id")
         curriculum_unit = self._public_curriculum_unit(raw_curriculum_unit_id)
 
+        youtube_identity = youtube_video_identity(source_url)
+        if youtube_identity and (
+            not name
+            or not language
+            or source_url != youtube_identity["source_url"]
+        ):
+            try:
+                discovered = discover_supabase_resource_metadata(source_url)
+            except Exception as exc:
+                _logger.info(
+                    "FACODI submission enrichment unavailable (%s)",
+                    type(exc).__name__,
+                )
+            else:
+                if discovered.get("supported"):
+                    source_url = discovered.get("canonical_url") or source_url
+                    name = name or (discovered.get("title") or "")
+                    language = language or (discovered.get("language") or "")
+
         values = {
             "name": name,
             "source_url": source_url,
