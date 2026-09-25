@@ -476,6 +476,13 @@ class FacodiLearningCourseCandidate(models.Model):
                     "metadata": candidate.metadata or {},
                 }
             )
+            submissions = self.env["facodi.learning.submission"].search(
+                [
+                    ("candidate_id", "=", candidate.id),
+                    ("state", "in", ("accepted", "resolved")),
+                ]
+            )
+            submissions._link_canonical_source(source, candidate=candidate)
             sources |= source
         return sources
 
