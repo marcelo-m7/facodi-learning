@@ -122,7 +122,7 @@ class TestSupabaseEdgeAnalysis(TransactionCase):
                 return _FakeResponse(response_payload)
 
             with patch(
-                "facodi_learning.services.supabase_edge._open_endpoint",
+                "odoo.addons.facodi_learning.services.supabase_edge._open_endpoint",
                 side_effect=fake_urlopen,
             ):
                 job.action_process()
@@ -186,7 +186,7 @@ class TestSupabaseEdgeAnalysis(TransactionCase):
             )
 
     def test_manual_source_url_is_used_when_article_has_no_slide_url(self):
-        from facodi_learning.services.supabase_edge import _source_url_for_slide
+        from odoo.addons.facodi_learning.services.supabase_edge import _source_url_for_slide
 
         with patch.dict(
             os.environ,
@@ -220,7 +220,7 @@ class TestSupabaseEdgeAnalysis(TransactionCase):
             self.assertTrue(job)
 
     def test_supabase_endpoint_rejects_non_https_origin(self):
-        from facodi_learning.services.supabase_edge import _analysis_endpoint
+        from odoo.addons.facodi_learning.services.supabase_edge import _analysis_endpoint
 
         with patch.dict(
             os.environ,
@@ -231,7 +231,7 @@ class TestSupabaseEdgeAnalysis(TransactionCase):
                 _analysis_endpoint()
 
     def test_supabase_redirect_handler_never_forwards_credentials(self):
-        from facodi_learning.services.supabase_edge import _RejectRedirects
+        from odoo.addons.facodi_learning.services.supabase_edge import _RejectRedirects
 
         handler = _RejectRedirects()
         request = urllib.request.Request(
@@ -252,7 +252,7 @@ class TestSupabaseEdgeAnalysis(TransactionCase):
             )
 
     def test_supabase_response_must_match_requested_idempotency_key(self):
-        from facodi_learning.services.supabase_edge import _validate_response_correlation
+        from odoo.addons.facodi_learning.services.supabase_edge import _validate_response_correlation
 
         payload = {
             "success": True,
@@ -274,7 +274,7 @@ class TestSupabaseEdgeAnalysis(TransactionCase):
 
 
     def test_resource_metadata_discovery_uses_dedicated_edge_function(self):
-        from facodi_learning.services.supabase_edge import (
+        from odoo.addons.facodi_learning.services.supabase_edge import (
             discover_supabase_resource_metadata,
         )
 
@@ -308,7 +308,7 @@ class TestSupabaseEdgeAnalysis(TransactionCase):
             },
             clear=False,
         ), patch(
-            "facodi_learning.services.supabase_edge._open_endpoint",
+            "odoo.addons.facodi_learning.services.supabase_edge._open_endpoint",
             side_effect=fake_open,
         ):
             metadata = discover_supabase_resource_metadata(
@@ -337,7 +337,7 @@ class TestSupabaseEdgeAnalysis(TransactionCase):
         )
 
     def test_resource_metadata_discovery_does_not_promote_generic_provider(self):
-        from facodi_learning.services.supabase_edge import (
+        from odoo.addons.facodi_learning.services.supabase_edge import (
             discover_supabase_resource_metadata,
         )
 
@@ -365,7 +365,7 @@ class TestSupabaseEdgeAnalysis(TransactionCase):
             },
             clear=False,
         ), patch(
-            "facodi_learning.services.supabase_edge._open_endpoint",
+            "odoo.addons.facodi_learning.services.supabase_edge._open_endpoint",
             return_value=_FakeResponse(response_payload),
         ):
             metadata = discover_supabase_resource_metadata(
@@ -377,7 +377,7 @@ class TestSupabaseEdgeAnalysis(TransactionCase):
 
 
     def test_metadata_response_read_is_bounded(self):
-        from facodi_learning.services.supabase_edge import (
+        from odoo.addons.facodi_learning.services.supabase_edge import (
             MAX_METADATA_RESPONSE_BYTES,
             _read_bounded_response,
         )
@@ -426,7 +426,7 @@ class TestSupabaseEdgeAnalysis(TransactionCase):
             )
 
             with patch(
-                "facodi_learning.services.supabase_edge._open_endpoint",
+                "odoo.addons.facodi_learning.services.supabase_edge._open_endpoint",
                 side_effect=http_error,
             ):
                 job.action_process()
@@ -441,7 +441,7 @@ class TestSupabaseEdgeAnalysis(TransactionCase):
             self.assertNotIn("must-not-enter-odoo", job.attempt_ids.error)
 
     def test_invalid_supabase_failure_correlation_is_ignored(self):
-        from facodi_learning.services.supabase_edge import (
+        from odoo.addons.facodi_learning.services.supabase_edge import (
             _safe_processing_correlation,
         )
 
@@ -460,7 +460,7 @@ class TestSupabaseEdgeAnalysis(TransactionCase):
         self.assertFalse(_safe_processing_correlation(error))
 
     def test_supabase_failure_correlation_body_is_bounded(self):
-        from facodi_learning.services.supabase_edge import (
+        from odoo.addons.facodi_learning.services.supabase_edge import (
             MAX_ERROR_RESPONSE_BYTES,
             _safe_processing_correlation,
         )
@@ -476,8 +476,8 @@ class TestSupabaseEdgeAnalysis(TransactionCase):
 
 
     def test_analysis_audit_accepts_only_trusted_supabase_uuid_correlation(self):
-        from facodi_learning.models.analysis_job import _validated_correlation_id
-        from facodi_learning.services.supabase_edge import SupabaseAnalysisError
+        from odoo.addons.facodi_learning.models.analysis_job import _validated_correlation_id
+        from odoo.addons.facodi_learning.services.supabase_edge import SupabaseAnalysisError
 
         class ProviderFailure(ValueError):
             correlation_id = "11111111-1111-1111-1111-111111111111"
