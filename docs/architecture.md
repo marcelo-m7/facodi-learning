@@ -349,7 +349,10 @@ and an Odoo analysis-job idempotency key. `GEMINI_API_KEY`, when present in the
 Odoo runtime, is forwarded only as a server-to-server fallback until the same secret
 is configured directly in the Supabase project. Secrets are never persisted in
 analysis payloads or error text. Replayed ingestion does not queue duplicate
-Supabase jobs for the same canonical slide.
+Supabase jobs for the same canonical slide. When Supabase returns a failed
+processing response, Odoo extracts only a validated opaque processing-job UUID
+and appends that correlation identifier to the sanitized job/attempt audit error;
+provider messages and response bodies are never persisted in Odoo.
 
 Return a dictionary with any of:
 
