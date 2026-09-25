@@ -185,6 +185,10 @@
         };
 
         const discover = async ({ force = false } = {}) => {
+            if (timer) {
+                clearTimeout(timer);
+                timer = null;
+            }
             const requestedUrl = urlInput.value.trim();
             if (!isHttpUrl(requestedUrl)) {
                 return;
@@ -271,7 +275,10 @@
             if (!isHttpUrl(value)) {
                 return;
             }
-            timer = setTimeout(() => discover(), 750);
+            timer = setTimeout(() => {
+                timer = null;
+                discover();
+            }, 750);
         };
 
         titleInput.addEventListener("input", () => {
@@ -303,7 +310,10 @@
         });
 
         if (isHttpUrl(urlInput.value.trim())) {
-            timer = setTimeout(() => discover(), 250);
+            timer = setTimeout(() => {
+                timer = null;
+                discover();
+            }, 250);
         }
     };
 
