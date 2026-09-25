@@ -214,6 +214,11 @@ class ContentReview(models.Model):
             missing.append("permitted-use evidence")
         if not (self.purpose or "").strip():
             missing.append("editorial purpose")
+        if self.source_id and (
+            self.source_id.state != "imported"
+            or self.source_id.slide_id != self.slide_id
+        ):
+            missing.append("canonical source imported for this content")
         if self.rights_mode in {"licensed", "external"} and not (
             self.source_id or (self.source_url or "").strip()
         ):
