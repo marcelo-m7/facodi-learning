@@ -94,9 +94,9 @@
                             <field name="source_id"
                                    readonly="state in ('rejected', 'resolved')"
                                    groups="website_slides.group_website_slides_manager"/>
-                            <field name="source_state" readonly="1" invisible="not source_id"/>
+                            <field name="source_state" readonly="1" invisible="not source_state"/>
                             <field name="slide_id" readonly="1" invisible="not slide_id"/>
-                            <field name="processing_state" readonly="1" invisible="not source_id"/>
+                            <field name="processing_state" readonly="1"/>
                             <field name="analysis_job_id" readonly="1" invisible="not analysis_job_id"/>
                             <field name="analysis_result_id" readonly="1" invisible="not analysis_result_id"/>
                             <field name="reviewed_by_id" readonly="1"/>
