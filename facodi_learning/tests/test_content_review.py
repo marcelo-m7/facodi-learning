@@ -127,6 +127,68 @@ class TestContentPublicationGovernance(TransactionCase):
         review.with_user(self.manager).action_approve()
         self.assertEqual(review.state, "approved")
 
+    def test_pending_same_course_source_cannot_authorize_publication(self):
+        slide = self._slide("Pending-source reviewed content")
+        source = self.env["facodi.learning.source"].create(
+            {
+                "name": "Unimported same-course source",
+                "provider": "manual",
+                "external_id": "pending-source-review-boundary",
+                "channel_id": self.channel.id,
+                "url": "https://example.org/pending-source",
+            }
+        )
+        review = self._complete_review(
+            slide,
+            source_id=source.id,
+            source_url="https://example.org/snapshotted-source-url",
+            rights_mode="external",
+            usage_basis="External resource proposed for FACODI linking.",
+        )
+
+        with self.assertRaises(ValidationError):
+            review.with_user(self.manager).action_approve()
+
+        self.assertEqual(review.state, "pending")
+        self.assertEqual(source.state, "pending")
+        self.assertFalse(source.slide_id)
+
+    def test_imported_source_must_be_linked_to_reviewed_content_for_approval(self):
+        slide = self._slide("Imported-source reviewed content")
+        source = self.env["facodi.learning.source"].ingest_manual(
+            {
+                "name": "Imported canonical source",
+                "external_id": "imported-source-review-boundary",
+                "channel_id": self.channel.id,
+                "url": "https://example.org/imported-source",
+            },
+            slide_id=slide.id,
+        )
+        review = self.env["facodi.learning.content.review"].search(
+            [
+                ("slide_id", "=", slide.id),
+                ("source_id", "=", source.id),
+                ("state", "=", "pending"),
+            ],
+            limit=1,
+        )
+        review.write(
+            {
+                "author": "External contributor",
+                "rights_mode": "external",
+                "usage_basis": "Canonical source imported and linked to this content.",
+                "purpose": "Open educational resource for the FACODI catalogue.",
+            }
+        )
+
+        review.with_user(self.manager).action_approve()
+
+        self.assertEqual(source.state, "imported")
+        self.assertEqual(source.slide_id, slide)
+        self.assertEqual(review.state, "approved")
+        with self.assertRaises(AccessError):
+            source.write({"url": "https://example.org/mutated-after-approval"})
+
     def test_legacy_public_content_remains_public_and_is_flagged(self):
         self.website.sudo().write({"facodi_publication_review_enabled": False})
         slide = self._slide("Legacy public content")
