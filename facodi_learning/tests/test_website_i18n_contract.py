@@ -6,6 +6,9 @@ MODULE_ROOT = Path(__file__).resolve().parents[1]
 WEBSITE_TEMPLATE = MODULE_ROOT / "views" / "website_curriculum.xml"
 WEBSITE_SLIDES_TEMPLATE = MODULE_ROOT / "views" / "website_slides.xml"
 SUBMISSION_TEMPLATE = MODULE_ROOT / "views" / "website_submission.xml"
+SUBMISSION_CONTROLLER = MODULE_ROOT / "controllers" / "submission.py"
+SUBMISSION_JS = MODULE_ROOT / "static" / "src" / "js" / "resource_submission.js"
+MANIFEST = MODULE_ROOT / "__manifest__.py"
 I18N_DIR = MODULE_ROOT / "i18n"
 
 
@@ -79,6 +82,26 @@ class TestWebsiteI18nContract(unittest.TestCase):
                         f"#: model_terms:ir.ui.view,arch_db:{view_ref}",
                         references,
                     )
+
+    def test_public_submission_metadata_discovery_contract(self):
+        template = SUBMISSION_TEMPLATE.read_text()
+        controller = SUBMISSION_CONTROLLER.read_text()
+        javascript = SUBMISSION_JS.read_text()
+        manifest = MANIFEST.read_text()
+
+        self.assertIn('data-metadata-endpoint="/contribuir/recurso/metadata"', template)
+        self.assertIn('data-facodi-discover-button="1"', template)
+        self.assertIn('data-facodi-metadata-preview="1"', template)
+        self.assertIn("Detecting title and language…", template)
+        self.assertIn('"/contribuir/recurso/metadata"', controller)
+        self.assertIn("youtube_video_identity(source_url)", controller)
+        self.assertIn("discover_supabase_resource_metadata(source_url)", controller)
+        self.assertIn("fetch(endpoint", javascript)
+        self.assertIn("primaryLanguage", javascript)
+        self.assertIn(
+            '"facodi_learning/static/src/js/resource_submission.js"',
+            manifest,
+        )
 
     def test_public_submission_copy_uses_english_source_strings(self):
         template = SUBMISSION_TEMPLATE.read_text()
