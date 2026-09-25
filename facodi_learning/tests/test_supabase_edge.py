@@ -270,3 +270,106 @@ class TestSupabaseEdgeAnalysis(TransactionCase):
                 payload,
                 "odoo-analysis-job-123",
             )
+
+
+    def test_resource_metadata_discovery_uses_dedicated_edge_function(self):
+        from facodi_learning.services.supabase_edge import (
+            discover_supabase_resource_metadata,
+        )
+
+        response_payload = {
+            "success": True,
+            "metadata": {
+                "provider": "youtube",
+                "external_id": "w9gb71ZUJDs",
+                "canonical_url": "https://www.youtube.com/watch?v=w9gb71ZUJDs",
+                "title": "Pré-Cálculo",
+                "author_name": "Canal FACODI",
+                "thumbnail_url": "https://i.ytimg.com/vi/w9gb71ZUJDs/hqdefault.jpg",
+                "duration_seconds": 372,
+                "published_at": "2026-01-01",
+                "language": "pt-BR",
+                "metadata_source": "youtube_public",
+            },
+        }
+        captured = {}
+
+        def fake_open(request, timeout=0):
+            captured["request"] = request
+            captured["timeout"] = timeout
+            return _FakeResponse(response_payload)
+
+        with patch.dict(
+            os.environ,
+            {
+                "SUPABASE_URL": "https://example.supabase.co",
+                "SUPABASE_SECRET_KEY": "sb_secret_test",
+            },
+            clear=False,
+        ), patch(
+            "facodi_learning.services.supabase_edge._open_endpoint",
+            side_effect=fake_open,
+        ):
+            metadata = discover_supabase_resource_metadata(
+                "https://www.youtube.com/watch?v=w9gb71ZUJDs&list=playlist"
+            )
+
+        self.assertTrue(metadata["supported"])
+        self.assertEqual(metadata["provider"], "youtube")
+        self.assertEqual(metadata["title"], "Pré-Cálculo")
+        self.assertEqual(metadata["language"], "pt-BR")
+        self.assertEqual(
+            metadata["canonical_url"],
+            "https://www.youtube.com/watch?v=w9gb71ZUJDs",
+        )
+        self.assertEqual(captured["timeout"], 15)
+        request = captured["request"]
+        self.assertEqual(request.get_header("Apikey"), "sb_secret_test")
+        self.assertTrue(
+            request.full_url.endswith(
+                "/functions/v1/v3_discover_resource_metadata"
+            )
+        )
+        self.assertEqual(
+            json.loads(request.data.decode("utf-8"))["source_url"],
+            "https://www.youtube.com/watch?v=w9gb71ZUJDs&list=playlist",
+        )
+
+    def test_resource_metadata_discovery_does_not_promote_generic_provider(self):
+        from facodi_learning.services.supabase_edge import (
+            discover_supabase_resource_metadata,
+        )
+
+        response_payload = {
+            "success": True,
+            "metadata": {
+                "provider": "generic",
+                "external_id": None,
+                "canonical_url": "https://example.org/resource",
+                "title": None,
+                "author_name": None,
+                "thumbnail_url": None,
+                "duration_seconds": None,
+                "published_at": None,
+                "language": None,
+                "metadata_source": "odoo_submission",
+            },
+        }
+
+        with patch.dict(
+            os.environ,
+            {
+                "SUPABASE_URL": "https://example.supabase.co",
+                "SUPABASE_SECRET_KEY": "sb_secret_test",
+            },
+            clear=False,
+        ), patch(
+            "facodi_learning.services.supabase_edge._open_endpoint",
+            return_value=_FakeResponse(response_payload),
+        ):
+            metadata = discover_supabase_resource_metadata(
+                "https://example.org/resource"
+            )
+
+        self.assertFalse(metadata["supported"])
+        self.assertEqual(metadata["provider"], "generic")
