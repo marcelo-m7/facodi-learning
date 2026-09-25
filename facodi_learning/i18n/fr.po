@@ -989,11 +989,13 @@ msgstr "Explorer les contenus"
 
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_detail
 msgid "Explore FACODI courses"
 msgstr "Explorer les cours FACODI"
 
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_index
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_map
 msgid "Explore curricular units"
 msgstr "Explorer les unités d'enseignement"
 
@@ -2686,12 +2688,18 @@ msgstr "Unités d’enseignement"
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_form
 #: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_status
+#: model_terms:ir.ui.view,arch_db:facodi_learning.course_contribution_cta
 msgid "Contribute to FACODI"
 msgstr "Contribuer à FACODI"
 
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_form
 #: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_status
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_index
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_map
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit_index
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_detail
+#: model_terms:ir.ui.view,arch_db:facodi_learning.course_contribution_cta
 msgid "Suggest a learning resource"
 msgstr "Suggérer une ressource d’apprentissage"
 
@@ -2764,6 +2772,7 @@ msgstr "Envoyer pour examen"
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_form
 #: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_status
+#: model_terms:ir.ui.view,arch_db:facodi_learning.course_contribution_cta
 msgid "Other contribution"
 msgstr "Autre contribution"
 
@@ -2859,5 +2868,8 @@ msgstr "Accepté"
 
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_catalog_navigation
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit_index
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_status
 msgid "Suggest a resource"
 msgstr "Suggérer une ressource"

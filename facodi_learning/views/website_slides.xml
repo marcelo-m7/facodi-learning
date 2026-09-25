@@ -8,6 +8,7 @@
                     <a href="/unidades-curriculares" class="text-decoration-none">Curricular Units</a>
                     <a href="/roadmaps" class="text-decoration-none">Roadmaps</a>
                     <a href="/slides" class="text-decoration-none">Explore Content</a>
+                    <a href="/contribuir/recurso" class="text-decoration-none">Suggest a resource</a>
                 </nav>
             </section>
         </xpath>
@@ -24,6 +25,20 @@
                     </li>
                 </ul>
             </aside>
+        </xpath>
+    </template>
+
+    <template id="course_contribution_cta" inherit_id="website_slides.course_main" name="Course contribution CTA">
+        <xpath expr="//div[@id='home']" position="inside">
+            <section class="mt-5 pt-4 border-top" aria-label="Contribute to FACODI">
+                <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
+                    <strong>Contribute to FACODI</strong>
+                    <div class="d-flex flex-wrap gap-2">
+                        <a href="/contribuir/recurso" class="btn btn-outline-primary">Suggest a learning resource</a>
+                        <a href="/contactus" class="btn btn-link">Other contribution</a>
+                    </div>
+                </div>
+            </section>
         </xpath>
     </template>
 

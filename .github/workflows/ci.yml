@@ -52,6 +52,9 @@ jobs:
       - name: Validate curated curriculum fixture
         run: python scripts/validate_curriculum_fixture.py
 
+      - name: Validate website and translation contracts
+        run: python facodi_learning/tests/test_website_i18n_contract.py
+
       - name: Start PostgreSQL 16
         run: |
           docker network create facodi-learning-ci

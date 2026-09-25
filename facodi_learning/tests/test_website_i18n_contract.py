@@ -4,6 +4,7 @@ import unittest
 
 MODULE_ROOT = Path(__file__).resolve().parents[1]
 WEBSITE_TEMPLATE = MODULE_ROOT / "views" / "website_curriculum.xml"
+WEBSITE_SLIDES_TEMPLATE = MODULE_ROOT / "views" / "website_slides.xml"
 SUBMISSION_TEMPLATE = MODULE_ROOT / "views" / "website_submission.xml"
 I18N_DIR = MODULE_ROOT / "i18n"
 
@@ -19,6 +20,65 @@ class TestWebsiteI18nContract(unittest.TestCase):
         self.assertIn("related courses", template)
         self.assertNotIn("Aplicar filtros", template)
         self.assertNotIn("Ligação a currículos oficiais", template)
+
+    def test_contextual_resource_contribution_ctas_use_canonical_route(self):
+        curriculum = WEBSITE_TEMPLATE.read_text()
+        slides = WEBSITE_SLIDES_TEMPLATE.read_text()
+        submission = SUBMISSION_TEMPLATE.read_text()
+
+        self.assertGreaterEqual(curriculum.count("/contribuir/recurso"), 6)
+        self.assertIn(
+            "/contribuir/recurso?curriculum_unit_id=%s",
+            curriculum,
+        )
+        self.assertGreaterEqual(slides.count("/contribuir/recurso"), 2)
+        self.assertIn("/contactus", slides)
+        self.assertIn(
+            "'/contribuir/recurso?curriculum_unit_id=%s' % curriculum_unit.id",
+            submission,
+        )
+        self.assertIn('t-else="" href="/contribuir/recurso"', submission)
+
+    def test_contribution_cta_translation_entries_reference_each_view(self):
+        expected_refs = {
+            "Suggest a learning resource": {
+                "facodi_learning.curriculum_public_index",
+                "facodi_learning.curriculum_public_map",
+                "facodi_learning.curriculum_public_unit_index",
+                "facodi_learning.curriculum_public_detail",
+                "facodi_learning.course_contribution_cta",
+                "facodi_learning.resource_submission_form",
+            },
+            "Suggest a resource": {
+                "facodi_learning.curriculum_catalog_navigation",
+                "facodi_learning.curriculum_public_unit_index",
+                "facodi_learning.curriculum_public_unit",
+                "facodi_learning.resource_submission_status",
+            },
+            "Contribute to FACODI": {
+                "facodi_learning.course_contribution_cta",
+                "facodi_learning.resource_submission_form",
+            },
+            "Other contribution": {
+                "facodi_learning.course_contribution_cta",
+                "facodi_learning.resource_submission_form",
+            },
+        }
+
+        for catalogue_name in ("facodi_learning.pot", "pt.po", "es.po", "fr.po"):
+            catalogue = (I18N_DIR / catalogue_name).read_text()
+            for source, view_refs in expected_refs.items():
+                marker = f'msgid "{source}"'
+                message_index = catalogue.index(marker)
+                block_start = catalogue.rfind(
+                    "#. module: facodi_learning", 0, message_index
+                )
+                references = catalogue[block_start:message_index]
+                for view_ref in view_refs:
+                    self.assertIn(
+                        f"#: model_terms:ir.ui.view,arch_db:{view_ref}",
+                        references,
+                    )
 
     def test_public_submission_copy_uses_english_source_strings(self):
         template = SUBMISSION_TEMPLATE.read_text()

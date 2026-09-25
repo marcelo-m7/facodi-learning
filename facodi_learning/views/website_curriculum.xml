@@ -14,7 +14,8 @@
                                 Explore each structured learning journey from curricular unit to module, course and learning content.
                             </p>
                             <div class="d-flex flex-wrap gap-2 mb-5">
-                                <a href="/unidades-curriculares" class="btn btn-outline-primary">Explore curricular units</a>
+                                <a href="/unidades-curriculares" class="btn btn-primary">Explore curricular units</a>
+                                <a href="/contribuir/recurso" class="btn btn-outline-primary">Suggest a learning resource</a>
                             </div>
                             <div t-if="not references" class="alert alert-info">
                                 There are no published roadmaps yet.
@@ -60,9 +61,13 @@
                             </nav>
                             <p class="text-uppercase small text-muted mb-2">FACODI · Roadmaps</p>
                             <h1 class="display-5 mb-3">Published learning roadmaps</h1>
-                            <p class="lead text-muted mb-5">
+                            <p class="lead text-muted mb-4">
                                 Follow each published path from curriculum reference to curricular unit, learning module and public FACODI course or content.
                             </p>
+                            <div class="d-flex flex-wrap gap-2 mb-5">
+                                <a href="/unidades-curriculares" class="btn btn-primary">Explore curricular units</a>
+                                <a href="/contribuir/recurso" class="btn btn-outline-primary">Suggest a learning resource</a>
+                            </div>
                             <div t-if="not curriculum_map" class="alert alert-info" role="status">
                                 There are no published roadmaps yet.
                             </div>
@@ -124,9 +129,12 @@
                             </nav>
                             <p class="text-uppercase small text-muted mb-2">FACODI · Roadmaps</p>
                             <h1 class="display-5 mb-3">Curricular units</h1>
-                            <p class="lead text-muted mb-4">
+                            <p class="lead text-muted mb-3">
                                 Explore units from validated programmes and their published FACODI editorial coverage.
                             </p>
+                            <div class="d-flex flex-wrap gap-2 mb-4">
+                                <a href="/contribuir/recurso" class="btn btn-outline-primary">Suggest a learning resource</a>
+                            </div>
 
                             <form action="/unidades-curriculares" method="get" class="row g-3 border rounded p-3 mb-5" aria-label="Filter curricular units">
                                 <div class="col-12 col-md-6">
@@ -181,12 +189,17 @@
                                             </p>
                                             <h2 class="h5"><a t-att-href="entry['unit_url']" class="text-decoration-none"><t t-esc="entry['unit'].name"/></a></h2>
                                             <p class="mb-3"><code t-esc="entry['unit'].external_unit_code"/> · Year <t t-esc="entry['unit'].curricular_year"/> · <t t-esc="('%g' % entry['unit'].credits) if entry['unit'].credits else '—'"/> ECTS</p>
-                                            <div class="mt-auto d-flex justify-content-between align-items-center gap-2">
+                                            <div class="mt-auto d-flex flex-wrap justify-content-between align-items-center gap-2">
                                                 <span t-if="entry['coverage_status'] == 'covered'" class="badge text-bg-success">Covered</span>
                                                 <span t-elif="entry['coverage_status'] == 'partial'" class="badge text-bg-warning">Partial</span>
                                                 <span t-else="" class="badge text-bg-light">No published coverage</span>
                                                 <span t-if="entry['published_course_count']" class="badge text-bg-light"><t t-esc="entry['published_course_count']"/> related courses</span>
-                                                <a t-att-href="entry['unit_url']" class="btn btn-outline-primary btn-sm">Explore curricular unit</a>
+                                                <div class="d-flex flex-wrap gap-2 ms-auto">
+                                                    <a t-if="entry['coverage_status'] != 'covered'"
+                                                       t-att-href="'/contribuir/recurso?curriculum_unit_id=%s' % entry['unit'].id"
+                                                       class="btn btn-link btn-sm px-0">Suggest a resource</a>
+                                                    <a t-att-href="entry['unit_url']" class="btn btn-outline-primary btn-sm">Explore curricular unit</a>
+                                                </div>
                                             </div>
                                         </div>
                                     </article>
@@ -219,10 +232,14 @@
                                 </span>
                                 <span class="badge text-bg-success">Validated reference</span>
                             </div>
-                            <div class="alert alert-light border mb-5">
+                            <div class="alert alert-light border mb-4">
                                 <strong>Provenance.</strong>
                                 This page reproduces a versioned external reference. FACODI does not award academic credits or replace the institutional source.
                                 <a t-if="reference.source_url" t-att-href="reference.source_url" target="_blank" rel="noopener noreferrer">View official source</a>.
+                            </div>
+                            <div class="d-flex flex-wrap gap-2 mb-5">
+                                <a href="/contribuir/recurso" class="btn btn-outline-primary">Suggest a learning resource</a>
+                                <a href="/slides" class="btn btn-link">Explore FACODI courses</a>
                             </div>
 
                             <section t-foreach="unit_matrix_groups" t-as="group" class="mb-5">
@@ -461,6 +478,10 @@
                                             </div>
                                         </article>
                                     </div>
+                                </div>
+                                <div t-if="coverage_rows" class="mt-3">
+                                    <a t-att-href="'/contribuir/recurso?curriculum_unit_id=%s' % unit.id"
+                                       class="btn btn-outline-primary btn-sm">Suggest a resource</a>
                                 </div>
                                 <div t-else="" class="border rounded p-4 bg-light">
                                     <p class="mb-2"><strong>There is no published course with reviewed coverage for this unit yet.</strong></p>
