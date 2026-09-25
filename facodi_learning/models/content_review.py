@@ -1,4 +1,5 @@
 import hashlib
+import json
 
 from odoo import api, fields, models
 from odoo.exceptions import AccessError, ValidationError
@@ -12,24 +13,44 @@ _CONTENT_HASH_FIELD_ORDER = (
     "binary_content",
     "slide_category",
     "source_type",
+    "channel_id",
 )
 _CONTENT_HASH_FIELDS = frozenset(_CONTENT_HASH_FIELD_ORDER)
 _PUBLICATION_FIELDS = frozenset({"is_published", "website_published"})
-_PUBLICATION_SCOPE_FIELDS = frozenset({"channel_id", "website_id"})
+_PUBLICATION_SCOPE_FIELDS = frozenset({"channel_id"})
+
+
+def _field_hash_payload(slide, field_name):
+    """Return a language-independent, deterministic payload for one field."""
+    field = slide._fields[field_name]
+
+    # Odoo stores translated textual fields as their complete JSONB translation
+    # mapping. Hash that canonical mapping instead of the caller-language value.
+    if field.translate and field.store:
+        translations = field._get_stored_translations(slide) or {}
+        return json.dumps(
+            translations,
+            ensure_ascii=False,
+            sort_keys=True,
+            separators=(",", ":"),
+        ).encode("utf-8")
+
+    value = slide[field_name]
+    if field.type == "many2one":
+        return str(value.id if value else 0).encode("ascii")
+    if isinstance(value, bytes):
+        return value
+    return str(value or "").encode("utf-8")
 
 
 def _slide_hash(slide):
-    """Hash the learner-visible payload covered by a publication decision."""
+    """Hash the reviewed payload, translations and publication scope."""
+    slide.ensure_one()
     digest = hashlib.sha256()
     for field_name in _CONTENT_HASH_FIELD_ORDER:
-        value = getattr(slide, field_name, False)
-        if isinstance(value, bytes):
-            payload = value
-        else:
-            payload = str(value or "").encode("utf-8")
         digest.update(field_name.encode("utf-8"))
         digest.update(b"\0")
-        digest.update(payload)
+        digest.update(_field_hash_payload(slide, field_name))
         digest.update(b"\0")
     return digest.hexdigest()
 
@@ -295,6 +316,25 @@ class SlideSlide(models.Model):
             return super().write(vals)
         with self.env.cr.savepoint():
             result = super().write(vals)
+            self._facodi_check_publication_review()
+        return result
+
+    def update_field_translations(self, field_name, translations, source_lang=""):
+        if field_name not in _CONTENT_HASH_FIELDS:
+            return super().update_field_translations(
+                field_name,
+                translations,
+                source_lang=source_lang,
+            )
+        # Base Odoo updates the JSONB translation payload before it re-enters
+        # write(). Start the savepoint here so a rejected public-content change
+        # rolls back the translation SQL as well.
+        with self.env.cr.savepoint():
+            result = super().update_field_translations(
+                field_name,
+                translations,
+                source_lang=source_lang,
+            )
             self._facodi_check_publication_review()
         return result
 
