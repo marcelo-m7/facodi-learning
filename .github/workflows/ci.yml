@@ -55,6 +55,9 @@ jobs:
       - name: Validate website and translation contracts
         run: python facodi_learning/tests/test_website_i18n_contract.py
 
+      - name: Validate submission JavaScript syntax
+        run: node --check facodi_learning/static/src/js/resource_submission.js
+
       - name: Start PostgreSQL 16
         run: |
           docker network create facodi-learning-ci
@@ -164,7 +167,7 @@ jobs:
             --without-demo=True \
             -d facodi_learning_ci \
             -i facodi_learning \
-            --test-tags /facodi_learning:TestCurriculumModule,/facodi_learning:TestProbabilityStatisticsMapping,/facodi_learning:TestResourceSubmissionModel,/facodi_learning:TestResourceSubmissionWebsite \
+            --test-tags /facodi_learning:TestCurriculumModule,/facodi_learning:TestProbabilityStatisticsMapping,/facodi_learning:TestResourceSubmissionModel,/facodi_learning:TestResourceSubmissionWebsite,/facodi_learning:TestSupabaseEdgeAnalysis,/facodi_learning:TestResourceSubmissionMetadataHttp \
             --stop-after-init \
             2>&1 | tee /tmp/facodi-current-install.log
 
