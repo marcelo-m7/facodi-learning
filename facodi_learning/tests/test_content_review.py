@@ -1,6 +1,7 @@
 import base64
 from unittest.mock import patch
 
+from odoo import Command
 from odoo.exceptions import AccessError, ValidationError
 from odoo.tests import TransactionCase
 
@@ -351,6 +352,125 @@ class TestContentPublicationGovernance(TransactionCase):
             self.fail("Moving reviewed sourced content must require a new review.")
         slide.invalidate_recordset()
         self.assertEqual(slide.channel_id, self.channel)
+
+    def _reviewed_public_quiz(self):
+        slide = self._slide("Governed quiz", slide_category="quiz")
+        question = self.env["slide.question"].create(
+            {
+                "slide_id": slide.id,
+                "sequence": 10,
+                "question": "Which option is correct?",
+                "answer_ids": [
+                    Command.create(
+                        {
+                            "sequence": 10,
+                            "text_value": "Correct answer",
+                            "is_correct": True,
+                            "comment": "Correct feedback",
+                        }
+                    ),
+                    Command.create(
+                        {
+                            "sequence": 20,
+                            "text_value": "Incorrect answer",
+                            "is_correct": False,
+                            "comment": "Incorrect feedback",
+                        }
+                    ),
+                    Command.create(
+                        {
+                            "sequence": 30,
+                            "text_value": "Another incorrect answer",
+                            "is_correct": False,
+                            "comment": "Alternative feedback",
+                        }
+                    ),
+                ],
+            }
+        )
+        review = self._complete_review(slide)
+        review.with_user(self.manager).action_approve()
+        slide.write({"is_published": True})
+        return slide, question
+
+    def test_public_quiz_question_write_requires_new_review(self):
+        slide, question = self._reviewed_public_quiz()
+
+        with self.assertRaises(ValidationError):
+            question.write({"question": "Changed after Manager approval"})
+
+        question.invalidate_recordset(["question"])
+        self.assertEqual(question.question, "Which option is correct?")
+        self.assertTrue(slide.is_published)
+
+    def test_public_quiz_answer_crud_requires_new_review_atomically(self):
+        slide, question = self._reviewed_public_quiz()
+        answers = question.answer_ids.sorted("sequence")
+        edited = answers[0]
+        removable = answers[-1]
+
+        with self.assertRaises(ValidationError):
+            edited.write({"text_value": "Changed reviewed answer"})
+        edited.invalidate_recordset(["text_value"])
+        self.assertEqual(edited.text_value, "Correct answer")
+
+        before = self.env["slide.answer"].search_count(
+            [("question_id", "=", question.id)]
+        )
+        with self.assertRaises(ValidationError):
+            self.env["slide.answer"].create(
+                {
+                    "question_id": question.id,
+                    "sequence": 40,
+                    "text_value": "Unreviewed extra answer",
+                    "is_correct": False,
+                }
+            )
+        self.assertEqual(
+            self.env["slide.answer"].search_count(
+                [("question_id", "=", question.id)]
+            ),
+            before,
+        )
+
+        with self.assertRaises(ValidationError):
+            removable.unlink()
+        self.assertTrue(removable.exists())
+        self.assertTrue(slide.is_published)
+
+    def test_public_quiz_question_create_and_unlink_require_new_review(self):
+        slide, question = self._reviewed_public_quiz()
+
+        with self.assertRaises(ValidationError):
+            self.env["slide.question"].create(
+                {
+                    "slide_id": slide.id,
+                    "sequence": 20,
+                    "question": "Unreviewed new question",
+                    "answer_ids": [
+                        Command.create(
+                            {"text_value": "Yes", "is_correct": True}
+                        ),
+                        Command.create(
+                            {"text_value": "No", "is_correct": False}
+                        ),
+                    ],
+                }
+            )
+        self.assertFalse(
+            self.env["slide.question"].search(
+                [
+                    ("slide_id", "=", slide.id),
+                    ("question", "=", "Unreviewed new question"),
+                ],
+                limit=1,
+            )
+        )
+
+        with self.assertRaises(ValidationError):
+            question.unlink()
+        self.assertTrue(question.exists())
+        self.assertTrue(slide.is_published)
 
     def test_replacing_public_document_payload_invalidates_review(self):
         slide = self._slide(
