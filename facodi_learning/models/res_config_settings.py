@@ -5,12 +5,19 @@ class ResConfigSettings(models.TransientModel):
     _inherit = "res.config.settings"
 
     facodi_learning_analysis_provider = fields.Selection(
-        [("local_metadata", "Local Odoo metadata")],
+        [
+            ("supabase_edge", "Supabase Edge Functions"),
+            ("local_metadata", "Local Odoo metadata (fallback)"),
+        ],
         string="FACODI analysis provider",
         required=True,
         default="local_metadata",
         config_parameter="facodi_learning.analysis_provider",
-        help="Provider used for new FACODI analysis jobs. Provider addons may extend this selection.",
+        help=(
+            "Provider used for new FACODI analysis jobs. Production processing "
+            "should use Supabase Edge Functions; local metadata is a deterministic "
+            "development/test fallback."
+        ),
     )
     facodi_learning_analysis_batch_size = fields.Integer(
         string="FACODI analysis batch size",
