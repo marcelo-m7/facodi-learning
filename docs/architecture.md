@@ -336,7 +336,21 @@ provenance cannot be edited; new revisions use new source identities.
 ## Analysis contract
 
 `job._get_provider_registry()` maps provider names to callables receiving one
-standard slide. The default `local_metadata` adapter is deterministic and offline.
+standard slide. Production ingestion queues `supabase_edge` when
+`SUPABASE_URL` and `SUPABASE_SECRET_KEY` are present. That adapter is deliberately
+transport-only: Odoo sends the canonical source plus bounded editorial metadata to
+the versioned Supabase Edge Function and persists only the normalized response.
+Provider-specific metadata enrichment, language detection and AI inference execute
+in Supabase. `local_metadata` remains a deterministic offline development/test
+fallback.
+
+Supabase requests use the project secret key in the server-only `apikey` header
+and an Odoo analysis-job idempotency key. `GEMINI_API_KEY`, when present in the
+Odoo runtime, is forwarded only as a server-to-server fallback until the same secret
+is configured directly in the Supabase project. Secrets are never persisted in
+analysis payloads or error text. Replayed ingestion does not queue duplicate
+Supabase jobs for the same canonical slide.
+
 Return a dictionary with any of:
 
 - `summary`, `transcript`, `detected_language`, `model_name`: text;
