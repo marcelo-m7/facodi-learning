@@ -12,3 +12,5 @@ Task 4: Ruling: enabling the previously unexecuted public-unit suite exposed a s
 Task 4: complete (CI run 36188839045 → success; D1 Roadmap/UC/module detail, lifecycle regression, real upgrade and 123-test current-install gates passed).
 
 Task 5: Ruling: the reviewed course-to-curriculum block is owned by website_curriculum.xml in the current repository, while the generic course contribution CTA is in website_slides.xml. Keep that ownership and add semantic hooks in place rather than moving markup. Cost if wrong: styling spans two QWeb files, but data queries and view inheritance remain unchanged and are covered by the static/Odoo gates.
+
+Task 5: complete (CI run 36189366107 → success; reviewed course curriculum sheet, contribution callout, i18n, real upgrade and current-install gates passed).
