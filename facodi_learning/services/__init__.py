@@ -1,5 +1,6 @@
 from .analysis import analyze_local_metadata
 from .analysis import normalize_output
+from .supabase_edge import analyze_supabase_edge
 from .course_mapping import (
     COURSE_MAPPING_RANKING_VERSION,
     PROPOSAL_MIN_CONFIDENCE,
