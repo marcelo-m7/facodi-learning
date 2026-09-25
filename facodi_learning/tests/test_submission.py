@@ -1,3 +1,4 @@
+import os
 from unittest.mock import patch
 
 from lxml import html
@@ -134,6 +135,53 @@ class TestResourceSubmissionModel(TransactionCase):
         self.assertIn("youtube.com/watch?v=w9gb71ZUJDs", candidate.source_url)
         self.assertEqual(candidate.language, "pt")
         self.assertEqual(candidate.metadata["submission_id"], submission.id)
+
+    def test_candidate_ingestion_links_submission_and_analysis_trace(self):
+        submission = self._submission(
+            name="Pré-Cálculo",
+            source_url="https://www.youtube.com/watch?v=w9gb71ZUJDs",
+            language="pt",
+        )
+        submission.action_accept()
+        submission.action_handoff_candidate()
+        candidate = submission.candidate_id
+
+        channel = self.env["slide.channel"].create(
+            {"name": "Submission processing target"}
+        )
+        candidate.action_evaluate()
+        candidate.write({"matched_channel_id": channel.id})
+        candidate.action_resolve_existing()
+
+        with patch.dict(
+            os.environ,
+            {
+                "SUPABASE_URL": "https://example.supabase.co",
+                "SUPABASE_SECRET_KEY": "sb_secret_test",
+            },
+            clear=False,
+        ):
+            source = candidate.action_ingest_source()
+            replay = candidate.action_ingest_source()
+
+        submission.invalidate_recordset()
+        self.assertEqual(replay, source)
+        self.assertEqual(submission.source_id, source)
+        self.assertEqual(submission.slide_id, source.slide_id)
+        self.assertEqual(submission.source_state, "imported")
+        self.assertTrue(submission.analysis_job_id)
+        self.assertEqual(submission.analysis_job_id.provider, "supabase_edge")
+        self.assertEqual(submission.processing_state, "pending")
+        self.assertFalse(submission.analysis_result_id)
+        self.assertEqual(
+            self.env["facodi.learning.analysis.job"].search_count(
+                [
+                    ("slide_id", "=", source.slide_id.id),
+                    ("provider", "=", "supabase_edge"),
+                ]
+            ),
+            1,
+        )
 
     def test_only_manager_can_take_terminal_review_actions(self):
         submission = self._submission()
