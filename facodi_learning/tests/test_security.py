@@ -460,7 +460,10 @@ class TestPipelineSecurity(TransactionCase):
                 "is_published": True,
             }
         )
+        self.target.write({"is_published": False, "website_published": False})
         self.target.channel_id = hidden
+        self._approve_publication_reviews(self.target)
+        self.target.write({"is_published": True, "is_preview": True})
         self.assertFalse(public._facodi_related_slides(website))
 
     def test_context_cannot_forge_result_review(self):
