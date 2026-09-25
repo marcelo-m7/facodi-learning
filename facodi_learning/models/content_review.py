@@ -371,16 +371,23 @@ class Website(models.Model):
                     "|",
                     ("is_published", "=", True),
                     ("website_published", "=", True),
+                    "|",
+                    ("website_id", "=", website.id),
+                    "&",
+                    ("website_id", "=", False),
                     ("channel_id.website_id", "=", website.id),
                 ]
             )
+            slides_to_flag = self.env["slide.slide"]
             for slide in public_slides:
                 if (
                     slide._facodi_review_website() == website
                     and not slide._facodi_has_approved_review()
                     and not slide.facodi_legacy_review_pending
                 ):
-                    slide.write({"facodi_legacy_review_pending": True})
+                    slides_to_flag |= slide
+            if slides_to_flag:
+                slides_to_flag.write({"facodi_legacy_review_pending": True})
 
     def write(self, vals):
         enabling = (
