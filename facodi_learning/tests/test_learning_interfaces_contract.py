@@ -30,6 +30,22 @@ class TestLearningInterfacesContract(unittest.TestCase):
         for value in ("published_course_count", "coverage_status", "unit_url"):
             self.assertIn(value, self.curriculum)
 
+    def test_detail_views_expose_d1_semantic_structure(self):
+        for hook in (
+            "facodi-roadmap-study-path",
+            "facodi-unit-layout",
+            "facodi-unit-main",
+            "facodi-reference-rail",
+            "facodi-module-stack",
+            "facodi-module-detail",
+            "facodi-open-callout",
+        ):
+            self.assertIn(hook, self.curriculum)
+
+        self.assertIn("unit_matrix_groups", self.curriculum)
+        self.assertIn("learning['modules']", self.curriculum)
+        self.assertIn("learning['next_item']", self.curriculum)
+
     def test_stitch_only_features_are_not_rendered(self):
         for source in (self.curriculum, self.slides):
             for forbidden in (
