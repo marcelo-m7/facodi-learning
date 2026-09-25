@@ -99,7 +99,7 @@ class FacodiSubmissionController(http.Controller):
                 {
                     "success": False,
                     "message": request.env._(
-                        "Automatic resource details are temporarily unavailable. You can continue manually."
+                        "Automatic details are temporarily unavailable. You can continue manually."
                     ),
                 },
                 status=503,
@@ -134,7 +134,7 @@ class FacodiSubmissionController(http.Controller):
                     request.env._("Resource details found.")
                     if available
                     else request.env._(
-                        "No automatic details were found for this URL. Please complete the fields manually."
+                        "No automatic details were found. Complete the fields manually."
                     )
                 ),
             }
