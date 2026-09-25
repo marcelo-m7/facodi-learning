@@ -364,15 +364,20 @@ class Website(models.Model):
     )
 
     def _facodi_backfill_legacy_publications(self):
-        Slide = self.env["slide.slide"]
-        public_slides = Slide.search(
-            [
-                "|",
-                ("is_published", "=", True),
-                ("website_published", "=", True),
-            ]
-        )
         for website in self:
+            public_slides = self.env["slide.slide"].search(
+                [
+                    "&",
+                    "|",
+                    ("is_published", "=", True),
+                    ("website_published", "=", True),
+                    "|",
+                    ("website_id", "=", website.id),
+                    "&",
+                    ("website_id", "=", False),
+                    ("channel_id.website_id", "=", website.id),
+                ]
+            )
             for slide in public_slides:
                 if (
                     slide._facodi_review_website() == website
