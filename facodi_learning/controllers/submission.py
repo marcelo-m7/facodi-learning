@@ -2,8 +2,17 @@ from odoo import http
 from odoo.exceptions import ValidationError
 from odoo.http import request
 
+from ..services import discover_resource_metadata
+
 
 class FacodiSubmissionController(http.Controller):
+    _SUPPORTED_FORM_LANGUAGES = {"pt", "en", "es", "fr"}
+
+    @classmethod
+    def _supported_form_language(cls, value):
+        normalized = (value or "").strip().lower().replace("_", "-")
+        base = normalized.split("-", 1)[0]
+        return base if base in cls._SUPPORTED_FORM_LANGUAGES else False
     @staticmethod
     def _public_curriculum_unit(raw_id):
         try:
@@ -58,6 +67,77 @@ class FacodiSubmissionController(http.Controller):
                 values=values,
                 curriculum_unit=curriculum_unit,
             ),
+        )
+
+    @http.route(
+        "/contribuir/recurso/metadata",
+        type="http",
+        auth="public",
+        website=True,
+        methods=["POST"],
+        sitemap=False,
+        csrf=True,
+    )
+    def resource_submission_metadata(self, **post):
+        source_url = (post.get("source_url") or "").strip()[:2048]
+        Submission = request.env["facodi.learning.submission"]
+        if not Submission._is_valid_source_url(source_url):
+            return request.make_json_response(
+                {
+                    "success": False,
+                    "message": request.env._(
+                        "Enter a valid public HTTP or HTTPS URL."
+                    ),
+                },
+                status=400,
+            )
+
+        try:
+            metadata = discover_resource_metadata(source_url)
+        except ValueError:
+            return request.make_json_response(
+                {
+                    "success": False,
+                    "message": request.env._(
+                        "Automatic resource details are temporarily unavailable. You can continue manually."
+                    ),
+                },
+                status=503,
+            )
+
+        canonical_url = metadata.get("canonical_url")
+        if canonical_url and not Submission._is_valid_source_url(canonical_url):
+            canonical_url = False
+
+        language = self._supported_form_language(metadata.get("language"))
+        available = bool(
+            metadata.get("title")
+            or metadata.get("author_name")
+            or metadata.get("thumbnail_url")
+            or language
+        )
+        return request.make_json_response(
+            {
+                "success": True,
+                "available": available,
+                "metadata": {
+                    "provider": metadata.get("provider") or "generic",
+                    "canonical_url": canonical_url,
+                    "title": metadata.get("title") or False,
+                    "author_name": metadata.get("author_name") or False,
+                    "thumbnail_url": metadata.get("thumbnail_url") or False,
+                    "duration_seconds": metadata.get("duration_seconds") or False,
+                    "published_at": metadata.get("published_at") or False,
+                    "language": language,
+                },
+                "message": (
+                    request.env._("Resource details found.")
+                    if available
+                    else request.env._(
+                        "No automatic details were found for this URL. Please complete the fields manually."
+                    )
+                ),
+            }
         )
 
     @http.route(
