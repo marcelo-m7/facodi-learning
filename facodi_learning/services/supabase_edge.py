@@ -68,7 +68,7 @@ class _RejectRedirects(urllib.request.HTTPRedirectHandler):
         raise urllib.error.HTTPError(
             req.full_url,
             code,
-            "Supabase analysis redirects are not allowed.",
+            "Supabase processing redirects are not allowed.",
             headers,
             fp,
         )
