@@ -2,6 +2,7 @@ import json
 from pathlib import Path
 
 from odoo import fields
+from odoo.exceptions import ValidationError
 
 
 _FIXTURE = Path(__file__).resolve().parents[1] / "data" / "lesti_2026_27.json"
@@ -58,7 +59,12 @@ def ensure_lesti_2026_27(env):
             and reference.academic_year == reference_values["academic_year"]
             and reference.source_url == reference_values["source_url"]
         )
-        if identity_matches and reference.state == "draft" and not reference._has_terminal_coverage():
+        if not identity_matches:
+            raise ValidationError(
+                "Curated curriculum identity does not match the existing curriculum reference."
+            )
+
+        if reference.state == "draft" and not reference._has_terminal_coverage():
             source_updates = {}
             for field_name in (
                 "source_title",
