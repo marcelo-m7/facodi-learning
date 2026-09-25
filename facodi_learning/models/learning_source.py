@@ -1,7 +1,13 @@
+import logging
+import os
+
 from odoo import api, fields, models
 from odoo.exceptions import AccessError, ValidationError
 
 from ..services.youtube import build_youtube_slide_values
+
+
+_logger = logging.getLogger(__name__)
 
 
 class LearningSource(models.Model):
@@ -104,6 +110,7 @@ class LearningSource(models.Model):
         for source in self.try_lock_for_update():
             source.invalidate_recordset()
             if source.slide_id:
+                source._queue_supabase_analysis()
                 continue
             source.channel_id.check_access("write")
             try:
@@ -136,6 +143,7 @@ class LearningSource(models.Model):
                             "last_error": False,
                         }
                     )
+                source._queue_supabase_analysis()
             except Exception as exc:
                 super(LearningSource, source).write(
                     {
@@ -144,6 +152,48 @@ class LearningSource(models.Model):
                     }
                 )
         return True
+
+    def _queue_supabase_analysis(self):
+        """Queue one production analysis job after canonical content exists.
+
+        The queue is enabled only when the server-to-server Supabase credentials
+        are present. Replaying ingestion does not create duplicate analysis jobs.
+        """
+        if not (
+            (os.environ.get("SUPABASE_URL") or "").strip()
+            and (os.environ.get("SUPABASE_SECRET_KEY") or "").strip()
+        ):
+            return self.env["facodi.learning.analysis.job"]
+
+        jobs = self.env["facodi.learning.analysis.job"]
+        for source in self.filtered("slide_id"):
+            existing = jobs.search(
+                [
+                    ("slide_id", "=", source.slide_id.id),
+                    ("provider", "=", "supabase_edge"),
+                    ("state", "in", ("pending", "processing", "completed")),
+                ],
+                order="id desc",
+                limit=1,
+            )
+            if existing:
+                jobs |= existing
+                continue
+            try:
+                with self.env.cr.savepoint():
+                    jobs |= jobs.create(
+                        {
+                            "slide_id": source.slide_id.id,
+                            "provider": "supabase_edge",
+                        }
+                    )
+            except Exception as exc:
+                _logger.warning(
+                    "FACODI Supabase analysis queue failed for source %s (%s)",
+                    source.id,
+                    type(exc).__name__,
+                )
+        return jobs
 
     def action_ingest(self):
         return self._ingest()
