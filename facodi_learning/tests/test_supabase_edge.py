@@ -473,3 +473,20 @@ class TestSupabaseEdgeAnalysis(TransactionCase):
             io.BytesIO(b"x" * (MAX_ERROR_RESPONSE_BYTES + 1)),
         )
         self.assertFalse(_safe_processing_correlation(error))
+
+
+    def test_analysis_audit_revalidates_extension_correlation(self):
+        from facodi_learning.models.analysis_job import _validated_correlation_id
+
+        class ProviderFailure(ValueError):
+            correlation_id = "secret-shaped-provider-detail"
+
+        self.assertFalse(_validated_correlation_id(ProviderFailure("boom")))
+
+        class ValidProviderFailure(ValueError):
+            correlation_id = "11111111-1111-1111-1111-111111111111"
+
+        self.assertEqual(
+            _validated_correlation_id(ValidProviderFailure("boom")),
+            "11111111-1111-1111-1111-111111111111",
+        )
