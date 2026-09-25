@@ -449,6 +449,17 @@ class FacodiLearningCourseCandidate(models.Model):
                 channels |= channel
         return channels
 
+    def _get_ingestion_identity(self):
+        self.ensure_one()
+        identity = {
+            "provider": self.provider,
+            "external_id": self.external_id,
+            "source_url": self.source_url,
+        }
+        if self.provider == "facodi-submission":
+            identity = youtube_video_identity(self.source_url) or identity
+        return identity
+
     def action_ingest_source(self):
         if not self._is_manager():
             raise AccessError("Only eLearning Managers can ingest candidate sources.")
@@ -457,13 +468,7 @@ class FacodiLearningCourseCandidate(models.Model):
             if candidate.state != "resolved" or not candidate.resolved_channel_id:
                 raise ValidationError("Resolve the candidate to a course before ingestion.")
 
-            ingestion_identity = {
-                "provider": candidate.provider,
-                "external_id": candidate.external_id,
-                "source_url": candidate.source_url,
-            }
-            if candidate.provider == "facodi-submission":
-                ingestion_identity = youtube_video_identity(candidate.source_url) or ingestion_identity
+            ingestion_identity = candidate._get_ingestion_identity()
 
             source = self.env["facodi.learning.source"].ingest(
                 {
@@ -476,6 +481,15 @@ class FacodiLearningCourseCandidate(models.Model):
                     "metadata": candidate.metadata or {},
                 }
             )
+            if (
+                source.provider != ingestion_identity["provider"]
+                or source.external_id != ingestion_identity["external_id"]
+                or source.channel_id != candidate.resolved_channel_id
+            ):
+                raise ValidationError(
+                    "Canonical source identity does not match the resolved candidate."
+                )
+
             submissions = self.env["facodi.learning.submission"].search(
                 [
                     ("candidate_id", "=", candidate.id),
