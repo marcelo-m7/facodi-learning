@@ -30,3 +30,5 @@ from . import test_submission
 from . import test_submission_context
 from . import test_submission_candidate_handoff
 from . import test_submission_targeted_evaluation
+
+from . import test_supabase_edge
