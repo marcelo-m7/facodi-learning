@@ -112,8 +112,8 @@ msgid ""
 "                                FACODI does not grant credits, enrolment, academic equivalence, or replace the institution."
 msgstr ""
 "<strong>Provenance et limites.</strong>\n"
-"                                ECTS and the curricular structure shown are facts from the external source.\n"
-"                                FACODI does not grant credits, enrolment, academic equivalence, or replace the institution."
+"                                Les ECTS et la structure du cursus présentés sont des faits provenant de la source externe.\n"
+"                                FACODI n'accorde pas de crédits, d'inscription ni d'équivalence académique et ne remplace pas l'établissement."
 
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_detail
@@ -505,7 +505,7 @@ msgstr ""
 #: code:addons/facodi_learning/models/curriculum_reference.py:0
 #: code:addons/facodi_learning/models/slide_channel.py:0
 msgid "Content correspondence - not academic equivalence"
-msgstr ""
+msgstr "Correspondance de contenu — pas une équivalence académique"
 
 #. module: facodi_learning
 #: model:ir.model,name:facodi_learning.model_facodi_learning_content_review

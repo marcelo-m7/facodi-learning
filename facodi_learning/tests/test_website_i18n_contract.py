@@ -37,6 +37,7 @@ class TestWebsiteI18nContract(unittest.TestCase):
                 "Explore Content": "Explorar conteúdos",
                 "Apply filters": "Aplicar filtros",
                 "Official curriculum alignment": "Ligação a currículos oficiais",
+                "Content correspondence - not academic equivalence": "Correspondência de conteúdo — não equivalência académica",
                 "Explore this course": "Explorar este curso",
                 "Explore curricular unit": "Explorar unidade curricular",
                 "related courses": "cursos relacionados",
@@ -52,6 +53,7 @@ class TestWebsiteI18nContract(unittest.TestCase):
                 "Explore Content": "Explorar contenidos",
                 "Apply filters": "Aplicar filtros",
                 "Official curriculum alignment": "Vinculación con planes de estudio oficiales",
+                "Content correspondence - not academic equivalence": "Correspondencia de contenido — no equivalencia académica",
                 "Explore this course": "Explorar este curso",
                 "Explore curricular unit": "Explorar unidad curricular",
                 "related courses": "cursos relacionados",
@@ -67,6 +69,7 @@ class TestWebsiteI18nContract(unittest.TestCase):
                 "Explore Content": "Explorer les contenus",
                 "Apply filters": "Appliquer les filtres",
                 "Official curriculum alignment": "Correspondance avec les cursus officiels",
+                "Content correspondence - not academic equivalence": "Correspondance de contenu — pas une équivalence académique",
                 "Explore this course": "Explorer ce cours",
                 "Explore curricular unit": "Explorer l'unite d'enseignement",
                 "related courses": "cours associes",
@@ -83,6 +86,39 @@ class TestWebsiteI18nContract(unittest.TestCase):
             for source, translated in translations.items():
                 self.assertIn(f'msgid "{source}"', catalogue)
                 self.assertIn(f'msgstr "{translated}"', catalogue)
+
+    def test_public_curriculum_academic_boundary_is_fully_translated(self):
+        source_entry = (
+            'msgid ""\n'
+            '"<strong>Provenance and limits.</strong>\\n"\n'
+            '"                                ECTS and the curricular structure shown are facts from the external source.\\n"\n'
+            '"                                FACODI does not grant credits, enrolment, academic equivalence, or replace the institution."\n'
+        )
+        expected_msgstr = {
+            "pt": (
+                'msgstr ""\n'
+                '"<strong>Proveniência e limites.</strong>\\n"\n'
+                '"                                Os ECTS e a estrutura curricular apresentada são factos da fonte externa.\\n"\n'
+                '"                                A FACODI não atribui créditos, matrícula, equivalência académica nem substitui a instituição."'
+            ),
+            "es": (
+                'msgstr ""\n'
+                '"<strong>Procedencia y límites.</strong>\\n"\n'
+                '"                                Los ECTS y la estructura curricular mostrados son datos de la fuente externa.\\n"\n'
+                '"                                FACODI no otorga créditos, matrícula, equivalencia académica ni sustituye a la institución."'
+            ),
+            "fr": (
+                'msgstr ""\n'
+                '"<strong>Provenance et limites.</strong>\\n"\n'
+                '"                                Les ECTS et la structure du cursus présentés sont des faits provenant de la source externe.\\n"\n'
+                '"                                FACODI n\'accorde pas de crédits, d\'inscription ni d\'équivalence académique et ne remplace pas l\'établissement."'
+            ),
+        }
+
+        for language, translated_entry in expected_msgstr.items():
+            catalogue = (I18N_DIR / f"{language}.po").read_text()
+            complete_entry = f"{source_entry}{translated_entry}"
+            self.assertIn(complete_entry, catalogue)
 
 
 if __name__ == "__main__":
