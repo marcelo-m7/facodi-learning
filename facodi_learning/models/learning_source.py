@@ -110,6 +110,7 @@ class LearningSource(models.Model):
         for source in self.try_lock_for_update():
             source.invalidate_recordset()
             if source.slide_id:
+                source._ensure_pending_publication_review()
                 source._queue_supabase_analysis()
                 continue
             source.channel_id.check_access("write")
@@ -143,6 +144,7 @@ class LearningSource(models.Model):
                             "last_error": False,
                         }
                     )
+                source._ensure_pending_publication_review()
                 source._queue_supabase_analysis()
             except Exception as exc:
                 super(LearningSource, source).write(
@@ -151,6 +153,36 @@ class LearningSource(models.Model):
                         "last_error": f"{type(exc).__name__}: operation failed; inspect the provider configuration.",
                     }
                 )
+        return True
+
+    def _ensure_pending_publication_review(self):
+        """Make missing provenance explicit without inventing editorial evidence."""
+        Review = self.env["facodi.learning.content.review"]
+        for source in self.filtered("slide_id"):
+            slide = source.slide_id
+            if slide._facodi_has_approved_review():
+                continue
+            pending = Review.search(
+                [("slide_id", "=", slide.id), ("state", "=", "pending")],
+                limit=1,
+            )
+            if pending:
+                if not pending.source_id:
+                    pending.write(
+                        {
+                            "source_id": source.id,
+                            "source_url": source.url or slide.url or False,
+                        }
+                    )
+                continue
+            Review.create(
+                {
+                    "slide_id": slide.id,
+                    "source_id": source.id,
+                    "origin": "source_ingestion",
+                    "source_url": source.url or slide.url or False,
+                }
+            )
         return True
 
     def _queue_supabase_analysis(self):
