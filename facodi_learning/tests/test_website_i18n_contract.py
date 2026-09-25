@@ -93,6 +93,10 @@ class TestWebsiteI18nContract(unittest.TestCase):
         self.assertIn('data-facodi-discover-button="1"', template)
         self.assertIn('data-facodi-metadata-preview="1"', template)
         self.assertIn("Detecting title and language…", template)
+        title_field = template.split('id="facodi_submission_name"', 1)[1].split(
+            "</div>", 1
+        )[0]
+        self.assertNotIn('required="required"', title_field)
         self.assertIn('"/contribuir/recurso/metadata"', controller)
         self.assertIn("youtube_video_identity(source_url)", controller)
         self.assertIn("discover_supabase_resource_metadata(source_url)", controller)
