@@ -167,7 +167,7 @@ jobs:
             --without-demo=True \
             -d facodi_learning_ci \
             -i facodi_learning \
-            --test-tags /facodi_learning:TestCurriculumModule,/facodi_learning:TestProbabilityStatisticsMapping,/facodi_learning:TestResourceSubmissionModel,/facodi_learning:TestResourceSubmissionWebsite,/facodi_learning:TestPipelineSecurity,/facodi_learning:TestSupabaseEdgeAnalysis,/facodi_learning:TestContentPublicationGovernance \
+            --test-tags /facodi_learning:TestCurriculumUI,/facodi_learning:TestCurriculumPublicUnits,/facodi_learning:TestCurriculumModule,/facodi_learning:TestProbabilityStatisticsMapping,/facodi_learning:TestResourceSubmissionModel,/facodi_learning:TestResourceSubmissionWebsite,/facodi_learning:TestPipelineSecurity,/facodi_learning:TestSupabaseEdgeAnalysis,/facodi_learning:TestContentPublicationGovernance \
             --stop-after-init \
             2>&1 | tee /tmp/facodi-current-install.log
 
