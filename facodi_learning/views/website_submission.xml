@@ -36,24 +36,15 @@
                                 </ul>
                             </div>
 
-                            <form action="/contribuir/recurso" method="post" class="mt-4">
+                            <form action="/contribuir/recurso"
+                                  method="post"
+                                  class="mt-4"
+                                  data-facodi-resource-submission="1">
                                 <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
                                 <input t-if="curriculum_unit"
                                        type="hidden"
                                        name="curriculum_unit_id"
                                        t-att-value="curriculum_unit.id"/>
-
-                                <div class="mb-3">
-                                    <label class="form-label" for="facodi_submission_name">Resource title</label>
-                                    <input id="facodi_submission_name"
-                                           name="name"
-                                           type="text"
-                                           required="required"
-                                           maxlength="200"
-                                           class="form-control"
-                                           t-att-value="form_values.get('name', '')"
-                                           placeholder="Example: Introduction to Operating Systems"/>
-                                </div>
 
                                 <div class="mb-3">
                                     <label class="form-label" for="facodi_submission_url">Public resource URL</label>
@@ -62,11 +53,54 @@
                                            type="url"
                                            required="required"
                                            maxlength="2048"
+                                           autocomplete="url"
                                            class="form-control"
                                            t-att-value="form_values.get('source_url', '')"
                                            placeholder="https://..."/>
                                     <div class="form-text">
-                                        Use the canonical public HTTP or HTTPS page. Do not upload passwords, private links or credentials.
+                                        Paste the public URL first. For supported sources such as YouTube, FACODI can discover the title, language and other public details automatically.
+                                    </div>
+                                    <div class="d-flex flex-wrap align-items-center gap-2 mt-2">
+                                        <button id="facodi_submission_detect_metadata"
+                                                type="button"
+                                                class="btn btn-outline-secondary btn-sm">
+                                            Detect details
+                                        </button>
+                                        <span id="facodi_submission_metadata_status"
+                                              class="small text-muted"
+                                              role="status"
+                                              aria-live="polite"></span>
+                                    </div>
+                                </div>
+
+                                <div id="facodi_submission_metadata_preview"
+                                     class="card border-light-subtle bg-light mb-3 d-none">
+                                    <div class="card-body d-flex gap-3 align-items-start">
+                                        <img id="facodi_submission_metadata_thumbnail"
+                                             class="rounded d-none"
+                                             width="128"
+                                             height="72"
+                                             alt="Resource thumbnail"/>
+                                        <div class="min-w-0">
+                                            <strong id="facodi_submission_metadata_title" class="d-block"></strong>
+                                            <span id="facodi_submission_metadata_details" class="small text-muted"></span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label" for="facodi_submission_name">Resource title</label>
+                                    <input id="facodi_submission_name"
+                                           name="name"
+                                           type="text"
+                                           required="required"
+                                           maxlength="200"
+                                           autocomplete="off"
+                                           class="form-control"
+                                           t-att-value="form_values.get('name', '')"
+                                           placeholder="Example: Introduction to Operating Systems"/>
+                                    <div class="form-text">
+                                        Filled automatically when public metadata is available. You can edit it before submitting.
                                     </div>
                                 </div>
 
@@ -79,6 +113,19 @@
                                         <option value="es" t-att-selected="form_values.get('language') == 'es'">Spanish</option>
                                         <option value="fr" t-att-selected="form_values.get('language') == 'fr'">French</option>
                                     </select>
+                                    <div class="form-text">
+                                        FACODI will preselect the language when it can be detected reliably.
+                                    </div>
+                                </div>
+
+                                <div id="facodi_submission_metadata_messages" class="d-none" aria-hidden="true">
+                                    <span data-key="loading">Looking up resource details…</span>
+                                    <span data-key="found">Resource details found.</span>
+                                    <span data-key="not_found">No automatic details were found. Complete the fields manually.</span>
+                                    <span data-key="unavailable">Automatic details are temporarily unavailable. You can continue manually.</span>
+                                    <span data-key="author_prefix">By</span>
+                                    <span data-key="duration_prefix">Duration</span>
+                                    <span data-key="published_prefix">Published</span>
                                 </div>
 
                                 <div class="mb-4">
