@@ -1,8 +1,46 @@
+from collections import OrderedDict
+import threading
+import time
+
 from odoo import http
 from odoo.exceptions import ValidationError
 from odoo.http import request
 
 from ..services import discover_resource_metadata
+
+
+_METADATA_CACHE_TTL_SECONDS = 15 * 60
+_METADATA_CACHE_MAX_ITEMS = 256
+_METADATA_MIN_INTERVAL_SECONDS = 1.5
+_METADATA_CACHE = OrderedDict()
+_METADATA_CACHE_LOCK = threading.Lock()
+_METADATA_LOOKUP_SLOTS = threading.BoundedSemaphore(4)
+
+
+def _metadata_cache_get(key):
+    now = time.time()
+    with _METADATA_CACHE_LOCK:
+        cached = _METADATA_CACHE.get(key)
+        if not cached:
+            return False
+        expires_at, metadata = cached
+        if expires_at <= now:
+            _METADATA_CACHE.pop(key, None)
+            return False
+        _METADATA_CACHE.move_to_end(key)
+        return dict(metadata)
+
+
+def _metadata_cache_put(keys, metadata):
+    expires_at = time.time() + _METADATA_CACHE_TTL_SECONDS
+    with _METADATA_CACHE_LOCK:
+        for key in keys:
+            if not key:
+                continue
+            _METADATA_CACHE[key] = (expires_at, dict(metadata))
+            _METADATA_CACHE.move_to_end(key)
+        while len(_METADATA_CACHE) > _METADATA_CACHE_MAX_ITEMS:
+            _METADATA_CACHE.popitem(last=False)
 
 
 class FacodiSubmissionController(http.Controller):
@@ -13,6 +51,57 @@ class FacodiSubmissionController(http.Controller):
         normalized = (value or "").strip().lower().replace("_", "-")
         base = normalized.split("-", 1)[0]
         return base if base in cls._SUPPORTED_FORM_LANGUAGES else False
+
+    @staticmethod
+    def _metadata_rate_limited():
+        now = time.time()
+        try:
+            last_request = float(
+                request.session.get("facodi_resource_metadata_last_request", 0)
+            )
+        except (TypeError, ValueError):
+            last_request = 0
+        if last_request and now - last_request < _METADATA_MIN_INTERVAL_SECONDS:
+            return True
+        request.session["facodi_resource_metadata_last_request"] = now
+        return False
+
+    def _resource_metadata_response(self, Submission, metadata):
+        canonical_url = metadata.get("canonical_url")
+        if canonical_url and not Submission._is_valid_source_url(canonical_url):
+            canonical_url = False
+
+        language = self._supported_form_language(metadata.get("language"))
+        available = bool(
+            canonical_url
+            or metadata.get("title")
+            or metadata.get("author_name")
+            or metadata.get("thumbnail_url")
+            or language
+        )
+        return request.make_json_response(
+            {
+                "success": True,
+                "available": available,
+                "metadata": {
+                    "provider": metadata.get("provider") or "generic",
+                    "canonical_url": canonical_url,
+                    "title": metadata.get("title") or False,
+                    "author_name": metadata.get("author_name") or False,
+                    "thumbnail_url": metadata.get("thumbnail_url") or False,
+                    "duration_seconds": metadata.get("duration_seconds") or False,
+                    "published_at": metadata.get("published_at") or False,
+                    "language": language,
+                },
+                "message": (
+                    request.env._("Resource details found.")
+                    if available
+                    else request.env._(
+                        "No automatic details were found. Complete the fields manually."
+                    )
+                ),
+            }
+        )
 
     @staticmethod
     def _public_curriculum_unit(raw_id):
@@ -80,9 +169,9 @@ class FacodiSubmissionController(http.Controller):
         csrf=True,
     )
     def resource_submission_metadata(self, **post):
-        source_url = (post.get("source_url") or "").strip()[:2048]
+        source_url = (post.get("source_url") or "").strip()
         Submission = request.env["facodi.learning.submission"]
-        if not Submission._is_valid_source_url(source_url):
+        if len(source_url) > 2048 or not Submission._is_valid_source_url(source_url):
             return request.make_json_response(
                 {
                     "success": False,
@@ -91,6 +180,35 @@ class FacodiSubmissionController(http.Controller):
                     ),
                 },
                 status=400,
+            )
+
+        cache_key = Submission._normalize_source_url(source_url)
+        cached = _metadata_cache_get(cache_key)
+        if cached:
+            return self._resource_metadata_response(Submission, cached)
+
+        if self._metadata_rate_limited():
+            return request.make_json_response(
+                {
+                    "success": False,
+                    "message": request.env._(
+                        "Automatic details are temporarily unavailable. You can continue manually."
+                    ),
+                },
+                headers=[("Retry-After", "2")],
+                status=429,
+            )
+
+        if not _METADATA_LOOKUP_SLOTS.acquire(blocking=False):
+            return request.make_json_response(
+                {
+                    "success": False,
+                    "message": request.env._(
+                        "Automatic details are temporarily unavailable. You can continue manually."
+                    ),
+                },
+                headers=[("Retry-After", "2")],
+                status=429,
             )
 
         try:
@@ -105,41 +223,20 @@ class FacodiSubmissionController(http.Controller):
                 },
                 status=503,
             )
+        finally:
+            _METADATA_LOOKUP_SLOTS.release()
 
         canonical_url = metadata.get("canonical_url")
-        if canonical_url and not Submission._is_valid_source_url(canonical_url):
-            canonical_url = False
-
-        language = self._supported_form_language(metadata.get("language"))
-        available = bool(
-            metadata.get("title")
-            or metadata.get("author_name")
-            or metadata.get("thumbnail_url")
-            or language
+        canonical_key = (
+            Submission._normalize_source_url(canonical_url)
+            if canonical_url
+            else False
         )
-        return request.make_json_response(
-            {
-                "success": True,
-                "available": available,
-                "metadata": {
-                    "provider": metadata.get("provider") or "generic",
-                    "canonical_url": canonical_url,
-                    "title": metadata.get("title") or False,
-                    "author_name": metadata.get("author_name") or False,
-                    "thumbnail_url": metadata.get("thumbnail_url") or False,
-                    "duration_seconds": metadata.get("duration_seconds") or False,
-                    "published_at": metadata.get("published_at") or False,
-                    "language": language,
-                },
-                "message": (
-                    request.env._("Resource details found.")
-                    if available
-                    else request.env._(
-                        "No automatic details were found. Complete the fields manually."
-                    )
-                ),
-            }
+        _metadata_cache_put(
+            {cache_key, canonical_key},
+            metadata,
         )
+        return self._resource_metadata_response(Submission, metadata)
 
     @http.route(
         "/contribuir/recurso",
