@@ -10,3 +10,5 @@ Task 4: Ruling: enabling TestCurriculumPublicUnits exposed a preexisting bootstr
 Task 4: Ruling: enabling the previously unexecuted public-unit suite exposed a stale assertion comparing a Python list to an Odoo recordset. Compare the list to [self.reference] so the test still proves exactly one public validated reference. Cost if wrong: public-map visibility regression; the same suite covers hidden-reference exclusion and exact URL/coverage values.
 
 Task 4: complete (CI run 36188839045 → success; D1 Roadmap/UC/module detail, lifecycle regression, real upgrade and 123-test current-install gates passed).
+
+Task 5: Ruling: the reviewed course-to-curriculum block is owned by website_curriculum.xml in the current repository, while the generic course contribution CTA is in website_slides.xml. Keep that ownership and add semantic hooks in place rather than moving markup. Cost if wrong: styling spans two QWeb files, but data queries and view inheritance remain unchanged and are covered by the static/Odoo gates.
