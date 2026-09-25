@@ -171,12 +171,13 @@ class LearningSource(models.Model):
                 [
                     ("slide_id", "=", source.slide_id.id),
                     ("provider", "=", "supabase_edge"),
-                    ("state", "in", ("pending", "processing", "completed")),
                 ],
                 order="id desc",
                 limit=1,
             )
             if existing:
+                if existing.state == "failed":
+                    existing.action_retry()
                 jobs |= existing
                 continue
             try:
