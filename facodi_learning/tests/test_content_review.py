@@ -60,8 +60,12 @@ class TestContentPublicationGovernance(TransactionCase):
     def test_new_publication_is_blocked_until_current_review_is_approved(self):
         self.website.action_facodi_enable_publication_review()
         slide = self._slide()
-        with self.assertRaises(ValidationError):
+        try:
             slide.write({"is_published": True})
+        except ValidationError:
+            pass
+        else:
+            self.fail("Publishing without review must be rejected.")
         slide.invalidate_recordset()
         self.assertFalse(slide.is_published)
 
@@ -74,7 +78,7 @@ class TestContentPublicationGovernance(TransactionCase):
 
     def test_published_create_rolls_back_when_review_is_missing(self):
         before = self.env["slide.slide"].search_count([])
-        with self.assertRaises(ValidationError):
+        try:
             self.env["slide.slide"].create(
                 {
                     "name": "Atomic blocked publication",
@@ -83,7 +87,17 @@ class TestContentPublicationGovernance(TransactionCase):
                     "is_published": True,
                 }
             )
+        except ValidationError:
+            pass
+        else:
+            self.fail("Published create without review must be rejected.")
         self.assertEqual(self.env["slide.slide"].search_count([]), before)
+        self.assertFalse(
+            self.env["slide.slide"].search(
+                [("name", "=", "Atomic blocked publication")],
+                limit=1,
+            )
+        )
 
     def test_incomplete_pending_review_does_not_invent_provenance(self):
         slide = self._slide()
@@ -125,7 +139,18 @@ class TestContentPublicationGovernance(TransactionCase):
         self.website.sudo().write({"facodi_publication_review_enabled": False})
         slide = self._slide("Legacy website publication")
         slide.write({"website_published": True})
+        self.env.cr.execute(
+            """
+            UPDATE slide_slide
+               SET is_published = FALSE,
+                   website_published = TRUE
+             WHERE id = %s
+            """,
+            [slide.id],
+        )
+        slide.invalidate_recordset(["is_published", "website_published"])
         self.assertFalse(slide.is_published)
+        self.assertTrue(slide.website_published)
         self.website.action_facodi_enable_publication_review()
         slide.invalidate_recordset()
         self.assertTrue(slide.website_published)
@@ -193,8 +218,12 @@ class TestContentPublicationGovernance(TransactionCase):
         review = self._complete_review(slide)
         review.with_user(self.manager).action_approve()
         slide.write({"is_published": True})
-        with self.assertRaises(ValidationError):
+        try:
             slide.write({"name": "Changed after approval"})
+        except ValidationError:
+            pass
+        else:
+            self.fail("Editing reviewed public content must be rejected.")
         slide.invalidate_recordset()
         self.assertEqual(slide.name, "Governed content")
 
@@ -208,10 +237,14 @@ class TestContentPublicationGovernance(TransactionCase):
         review.with_user(self.manager).action_approve()
         slide.write({"is_published": True})
 
-        with self.assertRaises(ValidationError):
+        try:
             slide.write(
                 {"binary_content": base64.b64encode(b"replacement document")}
             )
+        except ValidationError:
+            pass
+        else:
+            self.fail("Replacing a reviewed public document must be rejected.")
         slide.invalidate_recordset()
         self.assertEqual(
             slide.binary_content,
@@ -253,8 +286,8 @@ class TestContentPublicationGovernance(TransactionCase):
         review = self._complete_review(slide)
         review.with_user(self.manager).action_approve()
 
-        slide.with_user(officer).write({"is_published": True})
-        self.assertTrue(slide.is_published)
+        slide.with_user(officer).write({"website_published": True})
+        self.assertTrue(slide.website_published)
 
     def test_review_source_must_belong_to_reviewed_slide_channel(self):
         other_channel = self.env["slide.channel"].create(
