@@ -10,6 +10,7 @@ from odoo import tools
 
 
 DEFAULT_FUNCTION = "v3_analyze_learning_resource"
+DEFAULT_METADATA_FUNCTION = "v3_discover_resource_metadata"
 _FUNCTION_RE = re.compile(r"^[A-Za-z0-9_-]+$")
 
 
@@ -17,7 +18,7 @@ def _env(name):
     return (os.environ.get(name) or "").strip()
 
 
-def _analysis_endpoint():
+def _function_endpoint(function_env, default_function):
     raw = _env("SUPABASE_URL")
     if not raw:
         raise ValueError("SUPABASE_URL is not configured.")
@@ -40,12 +41,26 @@ def _analysis_endpoint():
     ):
         raise ValueError("SUPABASE_URL must be a credential-free HTTPS origin.")
 
-    function = _env("FACODI_SUPABASE_ANALYSIS_FUNCTION") or DEFAULT_FUNCTION
+    function = _env(function_env) or default_function
     if not _FUNCTION_RE.fullmatch(function):
         raise ValueError("FACODI Supabase function name is invalid.")
 
     origin = urlunsplit(("https", parsed.netloc, "", "", "")).rstrip("/")
     return f"{origin}/functions/v1/{function}"
+
+
+def _analysis_endpoint():
+    return _function_endpoint(
+        "FACODI_SUPABASE_ANALYSIS_FUNCTION",
+        DEFAULT_FUNCTION,
+    )
+
+
+def _metadata_endpoint():
+    return _function_endpoint(
+        "FACODI_SUPABASE_METADATA_FUNCTION",
+        DEFAULT_METADATA_FUNCTION,
+    )
 
 
 class _RejectRedirects(urllib.request.HTTPRedirectHandler):
@@ -82,6 +97,94 @@ def _source_url_for_slide(slide):
         )
     )
     return (source.url or "").strip() if source else ""
+
+
+def _read_json_response(request, *, timeout, operation):
+    try:
+        with _open_endpoint(request, timeout=timeout) as response:
+            raw = response.read().decode("utf-8", "replace")
+    except urllib.error.HTTPError as exc:
+        raise ValueError(f"{operation} returned HTTP {exc.code}.") from exc
+    except urllib.error.URLError as exc:
+        raise ValueError(f"{operation} endpoint is unavailable.") from exc
+
+    try:
+        result = json.loads(raw)
+    except json.JSONDecodeError as exc:
+        raise ValueError(f"{operation} returned invalid JSON.") from exc
+    if not isinstance(result, dict) or result.get("success") is not True:
+        raise ValueError(f"{operation} did not complete successfully.")
+    return result
+
+
+def _clean_metadata_text(value, limit):
+    if not isinstance(value, str):
+        return False
+    value = value.strip()
+    return value[:limit] if value else False
+
+
+def discover_resource_metadata(source_url):
+    """Return bounded public metadata for a submitted learning-resource URL.
+
+    Odoo only proxies the request and validates the response contract. Provider-
+    specific network discovery remains in the Supabase processing plane.
+    """
+
+    secret = _env("SUPABASE_SECRET_KEY")
+    if not secret:
+        raise ValueError("SUPABASE_SECRET_KEY is not configured.")
+
+    source_url = (source_url or "").strip()
+    if not source_url:
+        raise ValueError("Resource metadata discovery requires a source URL.")
+
+    request = urllib.request.Request(
+        _metadata_endpoint(),
+        data=json.dumps(
+            {"source_url": source_url},
+            ensure_ascii=False,
+        ).encode("utf-8"),
+        headers={
+            "apikey": secret,
+            "content-type": "application/json",
+            "user-agent": "FACODI-Odoo/19 MetadataDiscovery",
+        },
+        method="POST",
+    )
+    result = _read_json_response(
+        request,
+        timeout=15,
+        operation="Supabase metadata discovery",
+    )
+    metadata = result.get("metadata")
+    if not isinstance(metadata, dict):
+        raise ValueError("Supabase metadata response is missing metadata.")
+
+    duration = metadata.get("duration_seconds")
+    if isinstance(duration, bool) or not isinstance(duration, (int, float)):
+        duration = False
+    elif duration < 0 or duration > 604800:
+        duration = False
+    else:
+        duration = int(duration)
+
+    return {
+        "provider": _clean_metadata_text(metadata.get("provider"), 32) or "generic",
+        "external_id": _clean_metadata_text(metadata.get("external_id"), 128),
+        "canonical_url": _clean_metadata_text(metadata.get("canonical_url"), 4096),
+        "title": _clean_metadata_text(metadata.get("title"), 500),
+        "author_name": _clean_metadata_text(metadata.get("author_name"), 300),
+        "author_url": _clean_metadata_text(metadata.get("author_url"), 4096),
+        "thumbnail_url": _clean_metadata_text(metadata.get("thumbnail_url"), 4096),
+        "duration_seconds": duration,
+        "published_at": _clean_metadata_text(metadata.get("published_at"), 64),
+        "language": _clean_metadata_text(metadata.get("language"), 32),
+        "metadata_source": _clean_metadata_text(
+            metadata.get("metadata_source"),
+            64,
+        ),
+    }
 
 
 def _validate_response_correlation(result, idempotency_key):
@@ -170,22 +273,9 @@ def analyze_supabase_edge(slide):
         method="POST",
     )
 
-    try:
-        with _open_endpoint(request, timeout=60) as response:
-            raw = response.read().decode("utf-8", "replace")
-    except urllib.error.HTTPError as exc:
-        # Do not propagate response bodies: provider responses can contain
-        # operational details that should stay out of Odoo user-facing errors.
-        raise ValueError(f"Supabase analysis returned HTTP {exc.code}.") from exc
-    except urllib.error.URLError as exc:
-        raise ValueError("Supabase analysis endpoint is unavailable.") from exc
-
-    try:
-        result = json.loads(raw)
-    except json.JSONDecodeError as exc:
-        raise ValueError("Supabase analysis returned invalid JSON.") from exc
-
-    if not isinstance(result, dict) or result.get("success") is not True:
-        raise ValueError("Supabase analysis did not complete successfully.")
-
+    result = _read_json_response(
+        request,
+        timeout=60,
+        operation="Supabase analysis",
+    )
     return _validate_response_correlation(result, idempotency_key)
