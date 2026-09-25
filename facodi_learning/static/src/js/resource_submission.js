@@ -159,6 +159,31 @@
             renderPreview(metadata);
         };
 
+        const invalidateDiscoveredMetadata = () => {
+            if (timer) {
+                clearTimeout(timer);
+                timer = null;
+            }
+            if (controller) {
+                controller.abort();
+                controller = null;
+            }
+
+            lastLookupUrl = "";
+            renderPreview({});
+            setStatus("");
+
+            if (autoTitle && titleInput.value === autoTitle) {
+                titleInput.value = "";
+            }
+            if (autoLanguage && languageInput.value === autoLanguage) {
+                languageInput.value = "";
+            }
+            autoTitle = "";
+            autoLanguage = "";
+            detectButton.disabled = false;
+        };
+
         const discover = async ({ force = false } = {}) => {
             const requestedUrl = urlInput.value.trim();
             if (!isHttpUrl(requestedUrl)) {
@@ -171,7 +196,8 @@
             if (controller) {
                 controller.abort();
             }
-            controller = new AbortController();
+            const activeController = new AbortController();
+            controller = activeController;
             detectButton.disabled = true;
             setStatus(message("loading", "Looking up resource details…"), "muted");
 
@@ -188,7 +214,7 @@
                         "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8",
                         "X-Requested-With": "XMLHttpRequest",
                     },
-                    signal: controller.signal,
+                    signal: activeController.signal,
                 });
                 const payload = await response.json();
                 if (!response.ok || payload.success !== true) {
@@ -230,7 +256,10 @@
                     "warning"
                 );
             } finally {
-                detectButton.disabled = false;
+                if (controller === activeController) {
+                    controller = null;
+                    detectButton.disabled = false;
+                }
             }
         };
 
@@ -255,9 +284,17 @@
                 autoLanguage = "";
             }
         });
-        urlInput.addEventListener("input", scheduleDiscovery);
-        urlInput.addEventListener("change", () => discover());
-        urlInput.addEventListener("paste", () => setTimeout(scheduleDiscovery, 0));
+        urlInput.addEventListener("input", () => {
+            invalidateDiscoveredMetadata();
+            scheduleDiscovery();
+        });
+        urlInput.addEventListener("change", () => {
+            if (timer) {
+                clearTimeout(timer);
+                timer = null;
+            }
+            discover();
+        });
         detectButton.addEventListener("click", () => discover({ force: true }));
         form.addEventListener("submit", () => {
             if (controller) {
