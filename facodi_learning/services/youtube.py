@@ -202,6 +202,39 @@ def _watch_url(video_id):
     return f"{YOUTUBE_BASE_URL}/watch?v={video_id}"
 
 
+def youtube_video_identity(url):
+    """Return canonical YouTube ingestion identity for a public watch URL.
+
+    This intentionally performs no network access. It is used to route submitted
+    YouTube URLs to the installed YouTube ingestion adapter before any metadata
+    enrichment or content analysis occurs.
+    """
+    value = (url or "").strip()
+    if not value:
+        return False
+
+    try:
+        parsed = urllib.parse.urlsplit(value)
+    except ValueError:
+        return False
+
+    host = (parsed.hostname or "").lower().rstrip(".")
+    video_id = False
+    if host in _YOUTUBE_ALLOWED_HOSTS and (parsed.path or "/") == "/watch":
+        video_id = urllib.parse.parse_qs(parsed.query).get("v", [False])[0]
+    elif host == "youtu.be":
+        video_id = (parsed.path or "").strip("/").split("/", 1)[0] or False
+
+    if not video_id or not re.fullmatch(r"[A-Za-z0-9_-]{11}", video_id):
+        return False
+
+    return {
+        "provider": "youtube",
+        "external_id": video_id,
+        "source_url": _watch_url(video_id),
+    }
+
+
 def _oembed_video_metadata(video_url):
     video_url = _validated_youtube_url(video_url, kind="watch")
     query_url = (
