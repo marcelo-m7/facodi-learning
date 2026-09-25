@@ -1,3 +1,5 @@
+from unittest.mock import patch
+
 from lxml import html
 
 from odoo.exceptions import AccessError, ValidationError
@@ -198,6 +200,56 @@ class TestResourceSubmissionWebsite(HttpCase):
         self.assertIn("Submission received", response.text)
         self.assertIn(submission.name, response.text)
         self.assertNotIn("decision_note", response.text)
+
+    def test_no_javascript_youtube_submission_is_enriched_server_side(self):
+        context_marker = "CI no-JavaScript URL-first discovery"
+        discovered = {
+            "supported": True,
+            "provider": "youtube",
+            "external_id": "w9gb71ZUJDs",
+            "canonical_url": "https://www.youtube.com/watch?v=w9gb71ZUJDs",
+            "title": "Pré-Cálculo",
+            "language": "pt-BR",
+            "author_name": "FACODI Test Channel",
+            "thumbnail_url": "https://i.ytimg.com/vi/w9gb71ZUJDs/hqdefault.jpg",
+            "duration_seconds": 372,
+            "published_at": "2026-01-01",
+        }
+
+        with patch(
+            "odoo.addons.facodi_learning.controllers.submission."
+            "_discover_public_youtube_metadata",
+            return_value=discovered,
+        ):
+            response = self.url_open(
+                "/contribuir/recurso",
+                data={
+                    "csrf_token": self._csrf_token(),
+                    "name": "",
+                    "source_url": (
+                        "https://www.youtube.com/watch?v=w9gb71ZUJDs"
+                        "&list=PLa_2246N48_rlbheR_al4oqeFCP8dHoQR"
+                    ),
+                    "context": context_marker,
+                    "language": "",
+                },
+            )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Submission received", response.text)
+
+        submission = (
+            self.env["facodi.learning.submission"]
+            .sudo()
+            .search([("context", "=", context_marker)], limit=1)
+        )
+        self.assertTrue(submission)
+        self.assertEqual(submission.name, "Pré-Cálculo")
+        self.assertEqual(
+            submission.source_url,
+            "https://www.youtube.com/watch?v=w9gb71ZUJDs",
+        )
+        self.assertEqual(submission.language, "pt")
 
     def test_invalid_url_is_rejected_without_creating_submission(self):
         before = self.env["facodi.learning.submission"].sudo().search_count([])
