@@ -186,6 +186,15 @@ class TestCurriculumPublicUnits(TransactionCase):
         self.assertEqual(programming["coverage_rows"][0]["coverage_type"], "covers")
 
 
+    def test_unit_detail_omits_missing_optional_metadata(self):
+        view = self.env.ref("facodi_learning.curriculum_public_unit")
+        self.assertIn('t-if="unit.credits"', view.arch_db)
+        self.assertIn('t-if="unit.option_group"', view.arch_db)
+        self.assertIn('t-if="unit.classification"', view.arch_db)
+        self.assertNotIn("My Notebook", view.arch_db)
+        self.assertNotIn("Class Questions", view.arch_db)
+        self.assertNotIn("Open Bibliography", view.arch_db)
+
     def test_gap_state_offers_contextual_resource_submission(self):
         view = self.env.ref("facodi_learning.curriculum_public_unit")
         self.assertIn("curriculum_unit_id", view.arch_db)
