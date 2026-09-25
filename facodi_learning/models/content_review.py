@@ -387,9 +387,9 @@ class Website(models.Model):
             "facodi_publication_review_enabled" in vals
             and vals["facodi_publication_review_enabled"]
         )
-        disabled_before = self.filtered(
+        disabled_before_ids = self.filtered(
             lambda website: not website.facodi_publication_review_enabled
-        )
+        ).ids
         if (
             "facodi_publication_review_enabled" in vals
             and not vals["facodi_publication_review_enabled"]
@@ -399,8 +399,10 @@ class Website(models.Model):
                 "FACODI publication review cannot be disabled through ordinary writes."
             )
         result = super().write(vals)
-        if enabling and disabled_before:
-            disabled_before._facodi_backfill_legacy_publications()
+        if enabling and disabled_before_ids:
+            self.browse(disabled_before_ids).filtered(
+                "facodi_publication_review_enabled"
+            )._facodi_backfill_legacy_publications()
         return result
 
     def action_facodi_enable_publication_review(self):
