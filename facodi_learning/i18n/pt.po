@@ -2909,3 +2909,66 @@ msgstr "Contexto da Unidade Curricular"
 #. module: facodi_learning
 msgid "Optional contributor context only. This relation does not create curriculum coverage or an approved academic mapping."
 msgstr "Contexto opcional fornecido pelo contribuidor. Esta relação não cria cobertura curricular nem um mapeamento académico aprovado."
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_form
+msgid "Paste the public URL first. For supported sources such as YouTube, FACODI can discover the title, language and other public details automatically."
+msgstr "Cole primeiro o URL público. Para fontes compatíveis, como o YouTube, a FACODI pode identificar automaticamente o título, o idioma e outros detalhes públicos."
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_form
+msgid "Detect details"
+msgstr "Detetar detalhes"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_form
+msgid "Resource thumbnail"
+msgstr "Miniatura do recurso"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_form
+msgid "Filled automatically when public metadata is available. You can edit it before submitting."
+msgstr "Preenchido automaticamente quando existirem metadados públicos. Pode editá-lo antes de enviar."
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_form
+msgid "FACODI will preselect the language when it can be detected reliably."
+msgstr "A FACODI pré-selecionará o idioma quando este puder ser detetado de forma fiável."
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_form
+msgid "Looking up resource details…"
+msgstr "A procurar detalhes do recurso…"
+
+#. module: facodi_learning
+#: code:addons/facodi_learning/controllers/submission.py:0
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_form
+msgid "Resource details found."
+msgstr "Detalhes do recurso encontrados."
+
+#. module: facodi_learning
+#: code:addons/facodi_learning/controllers/submission.py:0
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_form
+msgid "No automatic details were found. Complete the fields manually."
+msgstr "Não foram encontrados detalhes automáticos. Preencha os campos manualmente."
+
+#. module: facodi_learning
+#: code:addons/facodi_learning/controllers/submission.py:0
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_form
+msgid "Automatic details are temporarily unavailable. You can continue manually."
+msgstr "Os detalhes automáticos estão temporariamente indisponíveis. Pode continuar manualmente."
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_form
+msgid "By"
+msgstr "Por"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_form
+msgid "Duration"
+msgstr "Duração"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_form
+msgid "Published"
+msgstr "Publicado"
