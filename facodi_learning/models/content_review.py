@@ -388,8 +388,8 @@ class Website(models.Model):
                 ("channel_id.website_id", "in", self.ids),
             ]
         )
-        approved_slide_ids = public_slides._facodi_current_approved_slide_ids()
-        slides_to_flag_by_website = {
+        candidate_slides = self.env["slide.slide"]
+        candidate_slides_by_website = {
             website_id: self.env["slide.slide"] for website_id in website_by_id
         }
         for slide in public_slides:
@@ -397,11 +397,15 @@ class Website(models.Model):
             if (
                 review_website
                 and review_website.id in website_by_id
-                and slide.id not in approved_slide_ids
                 and not slide.facodi_legacy_review_pending
             ):
-                slides_to_flag_by_website[review_website.id] |= slide
-        for slides_to_flag in slides_to_flag_by_website.values():
+                candidate_slides |= slide
+                candidate_slides_by_website[review_website.id] |= slide
+        approved_slide_ids = candidate_slides._facodi_current_approved_slide_ids()
+        for candidate_slides in candidate_slides_by_website.values():
+            slides_to_flag = candidate_slides.filtered(
+                lambda slide: slide.id not in approved_slide_ids
+            )
             if slides_to_flag:
                 slides_to_flag.write({"facodi_legacy_review_pending": True})
 
