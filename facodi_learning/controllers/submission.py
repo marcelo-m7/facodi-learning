@@ -13,6 +13,7 @@ class FacodiSubmissionController(http.Controller):
         normalized = (value or "").strip().lower().replace("_", "-")
         base = normalized.split("-", 1)[0]
         return base if base in cls._SUPPORTED_FORM_LANGUAGES else False
+
     @staticmethod
     def _public_curriculum_unit(raw_id):
         try:
