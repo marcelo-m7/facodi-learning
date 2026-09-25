@@ -186,6 +186,8 @@ class TestContentPublicationGovernance(TransactionCase):
         self.assertEqual(source.state, "imported")
         self.assertEqual(source.slide_id, slide)
         self.assertEqual(review.state, "approved")
+        with self.assertRaises(AccessError):
+            source.write({"url": "https://example.org/mutated-after-approval"})
 
     def test_legacy_public_content_remains_public_and_is_flagged(self):
         self.website.sudo().write({"facodi_publication_review_enabled": False})
