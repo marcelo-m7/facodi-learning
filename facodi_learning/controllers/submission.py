@@ -1,6 +1,14 @@
+import logging
+
 from odoo import http
 from odoo.exceptions import ValidationError
 from odoo.http import request
+
+from ..services.supabase_edge import discover_supabase_resource_metadata
+from ..services.youtube import youtube_video_identity
+
+
+_logger = logging.getLogger(__name__)
 
 
 class FacodiSubmissionController(http.Controller):
@@ -59,6 +67,69 @@ class FacodiSubmissionController(http.Controller):
                 curriculum_unit=curriculum_unit,
             ),
         )
+
+    @http.route(
+        "/contribuir/recurso/metadata",
+        type="http",
+        auth="public",
+        website=True,
+        methods=["POST"],
+        sitemap=False,
+        csrf=True,
+    )
+    def resource_submission_metadata(self, **post):
+        source_url = (post.get("source_url") or "").strip()[:2048]
+        Submission = request.env["facodi.learning.submission"]
+
+        if not Submission._is_valid_source_url(source_url):
+            return request.make_json_response(
+                {
+                    "success": False,
+                    "supported": False,
+                    "error": "invalid_source_url",
+                },
+                status=400,
+            )
+
+        # Keep the public discovery surface intentionally narrow. Generic URLs
+        # remain valid submissions, but only recognized YouTube videos trigger
+        # server-side network enrichment.
+        identity = youtube_video_identity(source_url)
+        if not identity:
+            return request.make_json_response(
+                {
+                    "success": True,
+                    "supported": False,
+                    "provider": "generic",
+                }
+            )
+
+        try:
+            metadata = discover_supabase_resource_metadata(source_url)
+        except Exception as exc:
+            _logger.warning(
+                "FACODI public metadata discovery failed (%s)",
+                type(exc).__name__,
+            )
+            return request.make_json_response(
+                {
+                    "success": False,
+                    "supported": True,
+                    "provider": "youtube",
+                    "error": "metadata_unavailable",
+                },
+                status=502,
+            )
+
+        response = request.make_json_response(
+            {
+                "success": True,
+                **metadata,
+            }
+        )
+        response.headers["Cache-Control"] = "no-store"
+        response.headers["X-Robots-Tag"] = "noindex, nofollow"
+        return response
 
     @http.route(
         "/contribuir/recurso",
