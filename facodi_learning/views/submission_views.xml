@@ -36,7 +36,9 @@
                 <field name="language" optional="show"/>
                 <field name="submitted_by_id" optional="show"/>
                 <field name="state"/>
-                <field name="source_id" optional="hide"/>
+                <field name="source_id"
+                       optional="hide"
+                       groups="website_slides.group_website_slides_manager"/>
                 <field name="processing_state" optional="show"/>
                 <field name="create_date"/>
                 <field name="reviewed_by_id" optional="hide"/>
@@ -89,7 +91,9 @@
                         </group>
                         <group>
                             <field name="candidate_id" readonly="state in ('rejected', 'resolved')"/>
-                            <field name="source_id" readonly="state in ('rejected', 'resolved')"/>
+                            <field name="source_id"
+                                   readonly="state in ('rejected', 'resolved')"
+                                   groups="website_slides.group_website_slides_manager"/>
                             <field name="source_state" readonly="1" invisible="not source_id"/>
                             <field name="slide_id" readonly="1" invisible="not slide_id"/>
                             <field name="processing_state" readonly="1" invisible="not source_id"/>
