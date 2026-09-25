@@ -475,18 +475,28 @@ class TestSupabaseEdgeAnalysis(TransactionCase):
         self.assertFalse(_safe_processing_correlation(error))
 
 
-    def test_analysis_audit_revalidates_extension_correlation(self):
+    def test_analysis_audit_accepts_only_trusted_supabase_uuid_correlation(self):
         from facodi_learning.models.analysis_job import _validated_correlation_id
+        from facodi_learning.services.supabase_edge import SupabaseAnalysisError
 
         class ProviderFailure(ValueError):
-            correlation_id = "secret-shaped-provider-detail"
-
-        self.assertFalse(_validated_correlation_id(ProviderFailure("boom")))
-
-        class ValidProviderFailure(ValueError):
             correlation_id = "11111111-1111-1111-1111-111111111111"
 
+        self.assertFalse(_validated_correlation_id(ProviderFailure("boom")))
+        self.assertFalse(
+            _validated_correlation_id(
+                SupabaseAnalysisError(
+                    "boom",
+                    correlation_id="secret-shaped-provider-detail",
+                )
+            )
+        )
         self.assertEqual(
-            _validated_correlation_id(ValidProviderFailure("boom")),
+            _validated_correlation_id(
+                SupabaseAnalysisError(
+                    "boom",
+                    correlation_id="11111111-1111-1111-1111-111111111111",
+                )
+            ),
             "11111111-1111-1111-1111-111111111111",
         )
