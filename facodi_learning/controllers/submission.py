@@ -147,8 +147,13 @@ class FacodiSubmissionController(http.Controller):
         language = (post.get("language") or "").strip().lower()[:16]
         raw_curriculum_unit_id = post.get("curriculum_unit_id")
         curriculum_unit = self._public_curriculum_unit(raw_curriculum_unit_id)
+        Submission = request.env["facodi.learning.submission"]
 
-        youtube_identity = youtube_video_identity(source_url)
+        youtube_identity = (
+            youtube_video_identity(source_url)
+            if Submission._is_valid_source_url(source_url)
+            else False
+        )
         if youtube_identity and (
             not name
             or not language
@@ -165,7 +170,9 @@ class FacodiSubmissionController(http.Controller):
                 if discovered.get("supported"):
                     source_url = discovered.get("canonical_url") or source_url
                     name = name or (discovered.get("title") or "")
-                    language = language or (discovered.get("language") or "")
+                    detected_language = (discovered.get("language") or "").lower()
+                    detected_language = detected_language.replace("_", "-").split("-", 1)[0]
+                    language = language or detected_language[:16]
 
         values = {
             "name": name,
@@ -180,7 +187,6 @@ class FacodiSubmissionController(http.Controller):
         if not name:
             errors.append(request.env._("Enter a short title for the resource."))
 
-        Submission = request.env["facodi.learning.submission"]
         if not Submission._is_valid_source_url(source_url):
             errors.append(request.env._("Enter a valid public HTTP or HTTPS URL."))
 
