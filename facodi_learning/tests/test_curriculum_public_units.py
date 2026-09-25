@@ -174,7 +174,7 @@ class TestCurriculumPublicUnits(TransactionCase):
             "facodi.learning.curriculum.reference"
         ]._facodi_public_curriculum_map()
 
-        self.assertEqual([entry["reference"] for entry in entries], self.reference)
+        self.assertEqual([entry["reference"] for entry in entries], [self.reference])
         self.assertNotIn(hidden_reference, [entry["reference"] for entry in entries])
         self.assertEqual(entries[0]["reference_url"], f"/roadmaps/{self.reference.id}")
         programming = next(
