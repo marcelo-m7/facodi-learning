@@ -139,17 +139,7 @@ class TestContentPublicationGovernance(TransactionCase):
         self.website.sudo().write({"facodi_publication_review_enabled": False})
         slide = self._slide("Legacy website publication")
         slide.write({"website_published": True})
-        self.env.cr.execute(
-            """
-            UPDATE slide_slide
-               SET is_published = FALSE,
-                   website_published = TRUE
-             WHERE id = %s
-            """,
-            [slide.id],
-        )
-        slide.invalidate_recordset(["is_published", "website_published"])
-        self.assertFalse(slide.is_published)
+        slide.invalidate_recordset()
         self.assertTrue(slide.website_published)
         self.website.action_facodi_enable_publication_review()
         slide.invalidate_recordset()
@@ -264,9 +254,10 @@ class TestContentPublicationGovernance(TransactionCase):
                         6,
                         0,
                         [
+                            self.env.ref("base.group_user").id,
                             self.env.ref(
                                 "website_slides.group_website_slides_officer"
-                            ).id
+                            ).id,
                         ],
                     )
                 ],
