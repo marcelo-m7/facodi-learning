@@ -8,8 +8,9 @@ from odoo.tests import TransactionCase
 
 
 class _FakeResponse:
-    def __init__(self, payload):
+    def __init__(self, payload, headers=None):
         self._payload = json.dumps(payload).encode("utf-8")
+        self.headers = headers or {}
 
     def __enter__(self):
         return self
@@ -17,8 +18,10 @@ class _FakeResponse:
     def __exit__(self, exc_type, exc, tb):
         return False
 
-    def read(self):
-        return self._payload
+    def read(self, size=-1):
+        if size is None or size < 0:
+            return self._payload
+        return self._payload[:size]
 
 
 class TestSupabaseEdgeAnalysis(TransactionCase):
@@ -256,6 +259,38 @@ class TestSupabaseEdgeAnalysis(TransactionCase):
             )
 
         self.assertFalse(metadata["duration_seconds"])
+
+    def test_metadata_discovery_rejects_oversized_response_before_parsing(self):
+        from facodi_learning.services.supabase_edge import (
+            MAX_PROCESSING_RESPONSE_BYTES,
+            discover_resource_metadata,
+        )
+
+        response = _FakeResponse(
+            {
+                "success": True,
+                "metadata": {"title": "x" * (MAX_PROCESSING_RESPONSE_BYTES + 1024)},
+            }
+        )
+
+        with (
+            patch.dict(
+                os.environ,
+                {
+                    "SUPABASE_URL": "https://example.supabase.co",
+                    "SUPABASE_SECRET_KEY": "sb_secret_test",
+                },
+                clear=False,
+            ),
+            patch(
+                "facodi_learning.services.supabase_edge._open_endpoint",
+                return_value=response,
+            ),
+        ):
+            with self.assertRaisesRegex(ValueError, "response is too large"):
+                discover_resource_metadata(
+                    "https://www.youtube.com/watch?v=w9gb71ZUJDs"
+                )
 
     def test_url_less_manual_article_is_not_queued_for_supabase(self):
         with patch.dict(
