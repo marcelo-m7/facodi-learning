@@ -113,7 +113,7 @@ class TestResourceSubmissionModel(TransactionCase):
         self.assertEqual(submission.state, "resolved")
         self.assertEqual(submission.source_id, source)
 
-    def test_youtube_submission_handoff_uses_installed_youtube_provider(self):
+    def test_youtube_submission_handoff_preserves_submission_provenance(self):
         submission = self._submission(
             name="Pré-Cálculo",
             source_url=(
@@ -127,12 +127,9 @@ class TestResourceSubmissionModel(TransactionCase):
         candidate = submission.candidate_id
 
         self.assertEqual(action["res_id"], candidate.id)
-        self.assertEqual(candidate.provider, "youtube")
-        self.assertEqual(candidate.external_id, "w9gb71ZUJDs")
-        self.assertEqual(
-            candidate.source_url,
-            "https://www.youtube.com/watch?v=w9gb71ZUJDs",
-        )
+        self.assertEqual(candidate.provider, "facodi-submission")
+        self.assertEqual(candidate.external_id, f"submission-{submission.id}")
+        self.assertIn("youtube.com/watch?v=w9gb71ZUJDs", candidate.source_url)
         self.assertEqual(candidate.language, "pt")
         self.assertEqual(candidate.metadata["submission_id"], submission.id)
 
