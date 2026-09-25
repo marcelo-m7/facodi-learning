@@ -4,7 +4,7 @@ from odoo import api, fields, models
 from odoo.exceptions import AccessError
 from ..services.analysis import normalize_output
 
-from ..services import analyze_local_metadata
+from ..services import analyze_local_metadata, analyze_supabase_edge
 
 _logger = logging.getLogger(__name__)
 
@@ -49,6 +49,7 @@ class FacodiLearningAnalysisJob(models.Model):
         """
         return {
             "local_metadata": analyze_local_metadata,
+            "supabase_edge": analyze_supabase_edge,
         }
 
     attempt_ids = fields.One2many(
@@ -112,7 +113,10 @@ class FacodiLearningAnalysisJob(models.Model):
                     provider = job._get_provider_registry().get(job.provider)
                     if not provider:
                         raise ValueError(f"Unknown analysis provider: {job.provider}")
-                    normalized = normalize_output(provider(job.slide_id), self.env)
+                    provider_slide = job.slide_id.with_context(
+                        facodi_analysis_job_id=job.id
+                    )
+                    normalized = normalize_output(provider(provider_slide), self.env)
                     result = result._record_output(
                         dict(
                             normalized,
