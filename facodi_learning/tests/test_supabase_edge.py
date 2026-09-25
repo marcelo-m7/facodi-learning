@@ -17,8 +17,8 @@ class _FakeResponse:
     def __exit__(self, exc_type, exc, tb):
         return False
 
-    def read(self):
-        return self._payload
+    def read(self, size=-1):
+        return self._payload if size is None or size < 0 else self._payload[:size]
 
 
 class TestSupabaseEdgeAnalysis(TransactionCase):
@@ -373,3 +373,16 @@ class TestSupabaseEdgeAnalysis(TransactionCase):
 
         self.assertFalse(metadata["supported"])
         self.assertEqual(metadata["provider"], "generic")
+
+
+    def test_metadata_response_read_is_bounded(self):
+        from facodi_learning.services.supabase_edge import (
+            MAX_METADATA_RESPONSE_BYTES,
+            _read_bounded_response,
+        )
+
+        oversized = _FakeResponse(
+            {"padding": "x" * (MAX_METADATA_RESPONSE_BYTES + 1024)}
+        )
+        with self.assertRaisesRegex(ValueError, "size limit"):
+            _read_bounded_response(oversized, MAX_METADATA_RESPONSE_BYTES)
