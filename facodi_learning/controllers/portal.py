@@ -200,4 +200,4 @@ class FacodiPortalAliases(http.Controller):
         sitemap=False,
     )
     def minha_facodi(self, **kwargs):
-        return request.redirect("/my/home", code=302)
+        return request.redirect("/my/home", code=301)

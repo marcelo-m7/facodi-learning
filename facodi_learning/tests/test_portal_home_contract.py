@@ -61,7 +61,7 @@ class TestPortalHomeContract(unittest.TestCase):
         )
 
     def test_minha_facodi_has_single_standard_portal_destination(self):
-        self.assertIn('return request.redirect("/my/home", code=302)', self.controller)
+        self.assertIn('return request.redirect("/my/home", code=301)', self.controller)
         self.assertNotIn('id="my_facodi_dashboard"', self.submission)
 
 
