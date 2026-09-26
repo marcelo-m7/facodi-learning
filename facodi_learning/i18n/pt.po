@@ -97,7 +97,7 @@ msgstr "<span class=\"text-muted\"> — </span>"
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_catalog_navigation
 msgid "<strong>Learning</strong>"
-msgstr ""
+msgstr "<strong>Aprendizagem</strong>"
 
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit
@@ -520,7 +520,7 @@ msgstr ""
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.approved_course_relations
 msgid "Continue exploring reviewed FACODI course connections."
-msgstr ""
+msgstr "Continua a explorar ligações entre cursos revistas pela FACODI."
 
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_module
@@ -1010,7 +1010,7 @@ msgstr ""
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.approved_learning_resources
 msgid "Explore further"
-msgstr ""
+msgstr "Explorar mais"
 
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_map
@@ -1533,7 +1533,7 @@ msgstr "Percurso de aprendizagem"
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.approved_learning_resources
 msgid "Learning resources"
-msgstr ""
+msgstr "Recursos de aprendizagem"
 
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_index
@@ -2127,7 +2127,7 @@ msgstr ""
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.approved_course_relations
 msgid "Related courses"
-msgstr ""
+msgstr "Cursos relacionados"
 
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.view_facodi_course_mapping_search
@@ -3314,3 +3314,99 @@ msgstr "Áreas"
 #: model:website.menu,name:facodi_learning.menu_public_explore_videos
 msgid "Community videos"
 msgstr "Vídeos da comunidade"
+
+#. module: facodi_learning
+msgid "Explore open learning"
+msgstr "Explorar aprendizagem aberta"
+
+#. module: facodi_learning
+msgid "Discover learning areas, individual resources and complete courses through the public FACODI catalogue."
+msgstr "Descobre áreas de aprendizagem, recursos individuais e cursos completos através do catálogo público da FACODI."
+
+#. module: facodi_learning
+msgid "Learning areas"
+msgstr "Áreas de aprendizagem"
+
+#. module: facodi_learning
+msgid "Browse public courses by their curated learning area."
+msgstr "Explora cursos públicos pela respetiva área de aprendizagem curada."
+
+#. module: facodi_learning
+msgid "Search public videos, articles and documents by topic, language and format."
+msgstr "Pesquisa vídeos, artigos e documentos públicos por tema, idioma e formato."
+
+#. module: facodi_learning
+msgid "Submitted videos"
+msgstr "Vídeos submetidos"
+
+#. module: facodi_learning
+msgid "See public YouTube videos shared by the community, including items still waiting for editorial review."
+msgstr "Vê vídeos públicos do YouTube partilhados pela comunidade, incluindo itens ainda a aguardar revisão editorial."
+
+#. module: facodi_learning
+msgid "Continue to the canonical Odoo eLearning course catalogue."
+msgstr "Continua para o catálogo canónico de cursos eLearning do Odoo."
+
+#. module: facodi_learning
+msgid "Only areas represented by publicly available courses on this website are shown."
+msgstr "São apresentadas apenas áreas representadas por cursos públicos disponíveis neste website."
+
+#. module: facodi_learning
+msgid "Back to Explore"
+msgstr "Voltar a Explorar"
+
+#. module: facodi_learning
+msgid "Search areas"
+msgstr "Pesquisar áreas"
+
+#. module: facodi_learning
+msgid "No public learning areas match this search."
+msgstr "Nenhuma área pública de aprendizagem corresponde a esta pesquisa."
+
+#. module: facodi_learning
+msgid "Find your next useful tab."
+msgstr "Encontra o teu próximo separador útil."
+
+#. module: facodi_learning
+msgid "Search title or description"
+msgstr "Pesquisar título ou descrição"
+
+#. module: facodi_learning
+msgid "All areas"
+msgstr "Todas as áreas"
+
+#. module: facodi_learning
+msgid "All languages"
+msgstr "Todos os idiomas"
+
+#. module: facodi_learning
+msgid "All formats"
+msgstr "Todos os formatos"
+
+#. module: facodi_learning
+msgid "Clear the desk"
+msgstr "Limpar a mesa"
+
+#. module: facodi_learning
+msgid "Browse areas"
+msgstr "Explorar áreas"
+
+#. module: facodi_learning
+msgid "Videos shared by the community"
+msgstr "Vídeos partilhados pela comunidade"
+
+#. module: facodi_learning
+msgid "Community submissions"
+msgstr "Submissões da comunidade"
+
+#. module: facodi_learning
+msgid "Search submitted videos"
+msgstr "Pesquisar vídeos submetidos"
+
+#. module: facodi_learning
+msgid "Watch on YouTube"
+msgstr "Ver no YouTube"
+
+#. module: facodi_learning
+msgid "Clear filters"
+msgstr "Limpar filtros"
