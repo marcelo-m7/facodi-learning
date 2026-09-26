@@ -64,13 +64,20 @@ class TestLearningInterfacesContract(unittest.TestCase):
         self.assertIn("/unidades-curriculares", self.curriculum)
 
     def test_unit_catalogue_gap_cta_uses_entry_unit_context(self):
+        unit_index = self.curriculum.split(
+            '<template id="curriculum_public_unit_index"',
+            1,
+        )[1].split(
+            '<template id="curriculum_public_unit"',
+            1,
+        )[0]
         self.assertNotIn(
             "'/contribuir/recurso?curriculum_unit_id=%s' % unit.id",
-            self.curriculum,
+            unit_index,
         )
         self.assertIn(
             "'/contribuir/recurso?curriculum_unit_id=%s' % entry['unit'].id",
-            self.curriculum,
+            unit_index,
         )
 
     def test_unit_catalogue_preserves_real_filters_and_d1_structure(self):
