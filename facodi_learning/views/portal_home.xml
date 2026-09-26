@@ -243,6 +243,38 @@
                 </div>
             </div>
 
+            <section class="facodi-latest-wins mb-5" data-facodi-latest-wins="1">
+                <div class="d-flex flex-wrap justify-content-between align-items-end gap-3 mb-3">
+                    <div>
+                        <p class="facodi-kicker mb-1">Latest wins</p>
+                        <h2 class="h3 mb-0">What you finished lately</h2>
+                        <p class="small text-muted mb-0">Pulled from your native Odoo eLearning completion history.</p>
+                    </div>
+                    <a href="/slides" class="btn btn-sm btn-outline-secondary">Keep moving</a>
+                </div>
+
+                <div t-if="facodi_recent_learning_rows" class="facodi-latest-wins__grid">
+                    <a t-foreach="facodi_recent_learning_rows" t-as="row"
+                       t-att-href="row['slide'].website_url"
+                       class="facodi-latest-win text-decoration-none">
+                        <span class="facodi-latest-win__check fa fa-check" aria-hidden="true"></span>
+                        <div class="min-w-0">
+                            <span class="facodi-latest-win__course" t-esc="row['course'].name"/>
+                            <strong class="facodi-latest-win__title" t-esc="row['slide'].name"/>
+                            <small class="facodi-latest-win__date" t-field="row['completed_at']" t-options='{"widget": "datetime", "format": "medium"}'/>
+                        </div>
+                        <span class="facodi-latest-win__arrow" aria-hidden="true">↗</span>
+                    </a>
+                </div>
+
+                <div t-else="" class="facodi-empty-state facodi-empty-state--compact" data-facodi-empty-state="1">
+                    <span class="facodi-empty-icon fa fa-check-circle-o" aria-hidden="true"></span>
+                    <h3 class="h4">No finished tabs yet. Good place to start.</h3>
+                    <p class="text-muted">Complete your first lesson and it will show up here as part of your real learning trail.</p>
+                    <a href="/slides" class="btn btn-primary">Find something to finish</a>
+                </div>
+            </section>
+
             <div class="facodi-portal-toolbox-heading mb-2">
                 <p class="facodi-kicker mb-1">Standard Odoo, FACODI energy</p>
                 <h2 class="h3 mb-0">Your FACODI toolbox</h2>
