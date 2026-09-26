@@ -261,7 +261,7 @@
                         <div class="min-w-0">
                             <span class="facodi-latest-win__course" t-esc="row['course'].name"/>
                             <strong class="facodi-latest-win__title" t-esc="row['slide'].name"/>
-                            <small class="facodi-latest-win__date" t-field="row['completed_at']" t-options='{"widget": "datetime", "format": "medium"}'/>
+                            <small class="facodi-latest-win__date" t-out="row['completed_at']" t-options='{"widget": "datetime", "format": "medium"}'/>
                         </div>
                         <span class="facodi-latest-win__arrow" aria-hidden="true">↗</span>
                     </a>
