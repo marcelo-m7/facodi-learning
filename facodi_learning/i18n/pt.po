@@ -3304,3 +3304,192 @@ msgstr "Conclui a tua primeira aula e ela aparecerá aqui como parte do teu perc
 #: model_terms:ir.ui.view,arch_db:facodi_learning.portal_my_home_facodi
 msgid "Find something to finish"
 msgstr "Encontrar algo para concluir"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_content
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_detail
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit
+msgid "Explore · discovery desk"
+msgstr "Explorar · mesa de descoberta"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_content
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_detail
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit
+msgid "Find your next useful tab."
+msgstr "Encontra o teu próximo separador útil."
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_content
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_detail
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit
+msgid "public resources in this view. Filter hard, wander freely."
+msgstr "recursos públicos nesta vista. Filtra a sério, explora à vontade."
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_content
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_detail
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit
+msgid "On your desk:"
+msgstr "Na tua mesa:"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_content
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_detail
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit
+msgid "Clear the desk"
+msgstr "Limpar a mesa"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_content
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_detail
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit
+msgid "Open the tab →"
+msgstr "Abrir o separador →"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_content
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_detail
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit
+msgid "That shelf is empty. The campus isn't."
+msgstr "Esta estante está vazia. O campus não."
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_content
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_detail
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit
+msgid "No public resource matches this exact combination. Clear the desk, browse learning areas or drop a useful resource for the community."
+msgstr "Nenhum recurso público corresponde exatamente a esta combinação. Limpa a mesa, explora áreas de aprendizagem ou partilha um recurso útil com a comunidade."
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_content
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_detail
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit
+msgid "Browse areas"
+msgstr "Explorar áreas"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_content
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_detail
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit
+msgid "Campus map"
+msgstr "Mapa do campus"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_content
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_detail
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit
+msgid "See the path. Spot the gaps."
+msgstr "Vê o percurso. Encontra os gaps."
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_content
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_detail
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit
+msgid "Each unit is a stop: green is covered, orange is partial and pink marks an open learning gap the community can help fill."
+msgstr "Cada UC é uma paragem: verde indica cobertura, laranja cobertura parcial e rosa marca um gap de aprendizagem aberto que a comunidade pode ajudar a preencher."
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_content
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_detail
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit
+msgid "covered"
+msgstr "cobertas"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_content
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_detail
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit
+msgid "partial"
+msgstr "parciais"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_content
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_detail
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit
+msgid "open gaps"
+msgstr "gaps abertos"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_content
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_detail
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit
+msgid "UC stops"
+msgstr "paragens de UC"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_content
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_detail
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit
+msgid "Open gap"
+msgstr "Gap aberto"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_content
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_detail
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit
+msgid "Help fill this stop →"
+msgstr "Ajuda a preencher esta paragem →"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_content
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_detail
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit
+msgid "Your route through this UC"
+msgstr "O teu percurso nesta UC"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_content
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_detail
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit
+msgid "Move module by module. Start where it makes sense, continue where you paused, and keep the finished stops visible."
+msgstr "Avança módulo a módulo. Começa onde fizer sentido, continua de onde paraste e mantém as paragens concluídas visíveis."
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_content
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_detail
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit
+msgid "Continue →"
+msgstr "Continuar →"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_content
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_detail
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit
+msgid "Start here →"
+msgstr "Começar aqui →"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_content
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_detail
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit
+msgid "Ready when you are"
+msgstr "Pronto quando estiveres"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_content
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_detail
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit
+msgid "Community margin"
+msgstr "Margem da comunidade"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_content
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_detail
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit
+msgid "Got a question? Drop it on the forum."
+msgstr "Tens uma dúvida? Deixa-a no fórum."
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_content
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_detail
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit
+msgid "Use the FACODI community to compare notes, ask for explanations and share study approaches around this curricular unit."
+msgstr "Usa a comunidade FACODI para comparar apontamentos, pedir explicações e partilhar formas de estudar esta unidade curricular."
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_content
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_detail
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit
+msgid "Open the forum"
+msgstr "Abrir o fórum"
