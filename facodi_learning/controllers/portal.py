@@ -89,7 +89,7 @@ class FacodiCustomerPortal(CustomerPortal):
             }
 
         forum_posts = []
-        if "forum.post" in request.env:
+        if "forum.post" in request.env.registry.models:
             forum_posts = request.env["forum.post"].search(
                 [
                     ("parent_id", "=", False),
