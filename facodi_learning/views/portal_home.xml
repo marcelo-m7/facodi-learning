@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="portal_my_home_facodi" inherit_id="portal.portal_my_home" name="FACODI Portal Home">
+        <xpath expr="//div[hasclass('o_portal_my_home')]" position="attributes">
+            <attribute name="data-facodi-portal-home">1</attribute>
+        </xpath>
+
+        <xpath expr="//div[hasclass('o_portal_docs')]" position="before">
+            <section class="facodi-portal-campus mb-4" data-facodi-campus-card="1">
+                <div class="facodi-portal-campus__eyebrow">
+                    <span>MINHA FACODI</span>
+                    <span aria-hidden="true">//</span>
+                    <span>OPEN CAMPUS DESK</span>
+                </div>
+
+                <div class="facodi-portal-campus__hero">
+                    <div>
+                        <p class="facodi-kicker mb-2">Your campus // your tabs // your pace</p>
+                        <h1 class="facodi-portal-campus__title mb-2">
+                            Hey, <t t-esc="user_id.name"/>. Your desk is open.
+                        </h1>
+                        <p class="text-muted mb-0">
+                            Continue learning, check what you shared with the community and jump back into the FACODI campus.
+                        </p>
+                    </div>
+                    <div class="facodi-portal-campus__status facodi-highlight-lime">
+                        <span class="fa fa-circle" aria-hidden="true"></span>
+                        CAMPUS ACCESS ACTIVE
+                    </div>
+                </div>
+
+                <div class="facodi-momentum-strip mt-4" aria-label="Learning pulse">
+                    <a href="/slides" class="facodi-momentum-card facodi-highlight-lime text-decoration-none">
+                        <span class="facodi-momentum-card__value" t-esc="facodi_learning_stats['courses']"/>
+                        <span class="facodi-momentum-card__label">courses on your desk</span>
+                    </a>
+                    <a href="/minhas-contribuicoes" class="facodi-momentum-card facodi-highlight-cyan text-decoration-none">
+                        <span class="facodi-momentum-card__value" t-esc="facodi_learning_stats['contributions']"/>
+                        <span class="facodi-momentum-card__label">community drops</span>
+                    </a>
+                    <a href="/minhas-contribuicoes" class="facodi-momentum-card facodi-highlight-pink text-decoration-none">
+                        <span class="facodi-momentum-card__value" t-esc="facodi_learning_stats['in_review']"/>
+                        <span class="facodi-momentum-card__label">on the review desk</span>
+                    </a>
+                    <a href="/minhas-contribuicoes" class="facodi-momentum-card facodi-highlight-mint text-decoration-none">
+                        <span class="facodi-momentum-card__value" t-esc="facodi_learning_stats['accepted']"/>
+                        <span class="facodi-momentum-card__label">accepted / routed</span>
+                    </a>
+                </div>
+            </section>
+
+            <section class="facodi-portal-board mb-4" aria-label="FACODI quick actions">
+                <a href="/slides" class="facodi-dashboard-action text-decoration-none">
+                    <span class="facodi-dashboard-action__icon fa fa-graduation-cap" aria-hidden="true"></span>
+                    <div><strong>Keep learning</strong><small>Courses, lessons and your next study stop</small></div>
+                </a>
+                <a href="/unidades-curriculares" class="facodi-dashboard-action text-decoration-none">
+                    <span class="facodi-dashboard-action__icon fa fa-map-o" aria-hidden="true"></span>
+                    <div><strong>Academic map</strong><small>Explore UCs and their open-learning coverage</small></div>
+                </a>
+                <a href="/contribuir/recurso" class="facodi-dashboard-action text-decoration-none">
+                    <span class="facodi-dashboard-action__icon fa fa-plus" aria-hidden="true"></span>
+                    <div><strong>Drop a resource</strong><small>Put something useful on the community desk</small></div>
+                </a>
+                <a href="/forum" class="facodi-dashboard-action text-decoration-none">
+                    <span class="facodi-dashboard-action__icon fa fa-comments" aria-hidden="true"></span>
+                    <div><strong>Community</strong><small>Ask, compare notes and help another learner</small></div>
+                </a>
+            </section>
+
+            <div class="row g-4 mb-5">
+                <div class="col-12 col-xl-7">
+                    <div class="d-flex justify-content-between align-items-end gap-3 mb-3">
+                        <div>
+                            <p class="facodi-kicker mb-1">Pick up where you left off</p>
+                            <h2 class="h3 mb-0">Your learning shelf</h2>
+                        </div>
+                        <a href="/slides" class="btn btn-sm btn-outline-secondary">Browse all</a>
+                    </div>
+                    <div t-if="facodi_enrolled_courses" class="row g-3">
+                        <div t-foreach="facodi_enrolled_courses" t-as="course" class="col-12 col-md-6">
+                            <article class="card h-100 o_wslides_course_card facodi-portal-course-card">
+                                <div class="facodi-resource-card__tape" aria-hidden="true"></div>
+                                <div class="card-body d-flex flex-column">
+                                    <span class="facodi-resource-pill facodi-resource-pill--course align-self-start mb-2">Course</span>
+                                    <h3 class="h5 card-title"><span t-field="course.name"/></h3>
+                                    <p t-if="course.description_short" class="small text-muted flex-grow-1">
+                                        <t t-esc="course.description_short"/>
+                                    </p>
+                                    <a t-att-href="course.website_url" class="btn btn-sm btn-primary align-self-start mt-auto">Continue</a>
+                                </div>
+                            </article>
+                        </div>
+                    </div>
+                    <div t-else="" class="facodi-empty-state" data-facodi-empty-state="1">
+                        <span class="facodi-empty-icon fa fa-compass" aria-hidden="true"></span>
+                        <h3 class="h4">Your desk is still clean. Nice.</h3>
+                        <p class="text-muted">Pick something worth learning and build your first FACODI shelf.</p>
+                        <a href="/slides" class="btn btn-primary">Browse courses</a>
+                    </div>
+                </div>
+
+                <div class="col-12 col-xl-5">
+                    <div class="d-flex justify-content-between align-items-end gap-3 mb-3">
+                        <div>
+                            <p class="facodi-kicker mb-1">Community desk</p>
+                            <h2 class="h3 mb-0">Your latest drops</h2>
+                        </div>
+                        <a href="/minhas-contribuicoes" class="btn btn-sm btn-outline-secondary">View all</a>
+                    </div>
+                    <div t-if="facodi_submission_rows" class="d-grid gap-2">
+                        <a t-foreach="facodi_submission_rows" t-as="row"
+                           t-att-href="'/minhas-contribuicoes/%s' % row['submission'].id"
+                           class="facodi-dashboard-submission text-decoration-none">
+                            <span class="facodi-dashboard-submission__state" t-esc="row['state_label']"/>
+                            <strong t-esc="row['submission'].name"/>
+                            <small>
+                                <t t-esc="row['submission'].language or '—'"/>
+                                <span aria-hidden="true"> · </span>
+                                <span>open details →</span>
+                            </small>
+                        </a>
+                    </div>
+                    <div t-else="" class="facodi-empty-state" data-facodi-empty-state="1">
+                        <span class="facodi-empty-icon fa fa-lightbulb-o" aria-hidden="true"></span>
+                        <h3 class="h4">Found something worth sharing?</h3>
+                        <p class="text-muted">Put it on the community desk and let FACODI take it through review.</p>
+                        <a href="/contribuir/recurso" class="btn btn-primary">Drop a resource</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="facodi-portal-toolbox-heading mb-2">
+                <p class="facodi-kicker mb-1">Standard Odoo, FACODI energy</p>
+                <h2 class="h3 mb-0">Your FACODI toolbox</h2>
+                <p class="small text-muted mb-0">Account, security and any other portal tools enabled for you stay right here.</p>
+            </div>
+        </xpath>
+    </template>
+</odoo>
