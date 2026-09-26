@@ -20,7 +20,7 @@ class TestLearningInterfacesContract(unittest.TestCase):
 
     def test_d1_release_version(self):
         manifest = MANIFEST.read_text(encoding="utf-8")
-        self.assertIn('"version": "19.0.1.46.0"', manifest)
+        self.assertIn('"version": "19.0.1.47.0"', manifest)
 
     def test_portal_progress_avoids_old_style_percent_formatting(self):
         portal_home = PORTAL_HOME.read_text(encoding="utf-8")
@@ -62,6 +62,23 @@ class TestLearningInterfacesContract(unittest.TestCase):
         self.assertIn("facodi-record-card--roadmap", self.curriculum)
         self.assertIn("/roadmaps", self.curriculum)
         self.assertIn("/unidades-curriculares", self.curriculum)
+
+    def test_unit_catalogue_gap_cta_uses_entry_unit_context(self):
+        unit_index = self.curriculum.split(
+            '<template id="curriculum_public_unit_index"',
+            1,
+        )[1].split(
+            '<template id="curriculum_public_unit"',
+            1,
+        )[0]
+        self.assertNotIn(
+            "'/contribuir/recurso?curriculum_unit_id=%s' % unit.id",
+            unit_index,
+        )
+        self.assertIn(
+            "'/contribuir/recurso?curriculum_unit_id=%s' % entry['unit'].id",
+            unit_index,
+        )
 
     def test_unit_catalogue_preserves_real_filters_and_d1_structure(self):
         self.assertIn('id="curriculum_public_unit_index"', self.curriculum)
