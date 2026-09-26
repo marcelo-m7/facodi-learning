@@ -30,6 +30,13 @@ class TestPortalHomeContract(unittest.TestCase):
         self.assertIn("facodi-course-progress", self.portal)
         self.assertIn("facodi_course_rows", self.portal)
 
+    def test_academic_map_uses_standard_membership_course_ids(self):
+        self.assertIn(
+            'enrolled_course_ids = set(memberships.mapped("channel_id").ids)',
+            self.controller,
+        )
+        self.assertNotIn("set(enrolled_courses.ids)", self.controller)
+
     def test_recent_learning_uses_native_completion_records(self):
         self.assertIn('request.env["slide.slide.partner"].sudo()', self.controller)
         self.assertIn('("completed", "=", True)', self.controller)
