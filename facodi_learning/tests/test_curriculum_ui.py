@@ -120,7 +120,22 @@ class TestCurriculumUI(TransactionCase):
         self.assertNotIn("facodi.learning.curriculum.coverage", detail.arch_db)
 
     def test_public_roadmaps_menu_uses_the_canonical_route(self):
-        menu = self.env.ref("facodi_learning.menu_public_curriculum_map")
+        website = self.env["website"].search([], order="id", limit=1)
+        self.assertTrue(website)
+        website.domain = "https://facodi.com"
 
+        self.assertTrue(self.env["website.menu"].facodi_reconcile_navigation())
+
+        menus = self.env["website.menu"].search(
+            [
+                ("website_id", "=", website.id),
+                ("url", "=", "/roadmaps"),
+            ]
+        )
+        self.assertEqual(len(menus), 1)
+        menu = menus[0]
         self.assertEqual(menu.name, "Roadmaps")
         self.assertEqual(menu.url, "/roadmaps")
+        self.assertEqual(menu.parent_id.name, "Explore")
+        self.assertEqual(menu.parent_id.parent_id, website.menu_id)
+        self.assertEqual(menu.parent_id.url, "#")

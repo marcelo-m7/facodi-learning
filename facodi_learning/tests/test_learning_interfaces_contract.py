@@ -5,6 +5,7 @@ MODULE_ROOT = Path(__file__).resolve().parents[1]
 CURRICULUM = MODULE_ROOT / "views" / "website_curriculum.xml"
 SLIDES = MODULE_ROOT / "views" / "website_slides.xml"
 WEBSITE_MENU = MODULE_ROOT / "data" / "website_menu.xml"
+WEBSITE_MENU_MODEL = MODULE_ROOT / "models" / "website_menu.py"
 PORTAL_HOME = MODULE_ROOT / "views" / "portal_home.xml"
 MANIFEST = MODULE_ROOT / "__manifest__.py"
 SLIDE_CHANNEL_MODEL = MODULE_ROOT / "models" / "slide_channel.py"
@@ -19,7 +20,7 @@ class TestLearningInterfacesContract(unittest.TestCase):
 
     def test_d1_release_version(self):
         manifest = MANIFEST.read_text(encoding="utf-8")
-        self.assertIn('"version": "19.0.1.40.0"', manifest)
+        self.assertIn('"version": "19.0.1.45.0"', manifest)
 
     def test_portal_progress_avoids_old_style_percent_formatting(self):
         portal_home = PORTAL_HOME.read_text(encoding="utf-8")
@@ -28,23 +29,37 @@ class TestLearningInterfacesContract(unittest.TestCase):
         self.assertIn('t-attf-style="width: #{row[\'completion\']}%"', portal_home)
         self.assertIn('t-att-aria-valuenow="round(row[\'completion\'])"', portal_home)
 
-    def test_explore_menu_groups_discovery_routes_under_one_parent(self):
-        menu = WEBSITE_MENU.read_text(encoding="utf-8")
-        for menu_id, route in (
-            ("menu_public_explore_courses", "/slides"),
-            ("menu_public_explore_areas", "/explorar/areas"),
-            ("menu_public_explore_contents", "/explorar/conteudos"),
-            ("menu_public_explore_videos", "/explorar/videos"),
-            ("menu_public_curriculum_map", "/roadmaps"),
-            ("menu_public_curricular_units", "/unidades-curriculares"),
+    def test_explore_menu_reconciles_only_facodi_website_root(self):
+        menu_data = WEBSITE_MENU.read_text(encoding="utf-8")
+        menu_model = WEBSITE_MENU_MODEL.read_text(encoding="utf-8")
+
+        self.assertIn('name="facodi_reconcile_navigation"', menu_data)
+        self.assertNotIn('id="menu_public_explore"', menu_data)
+        self.assertIn('("domain", "ilike", "facodi.com")', menu_model)
+        self.assertIn('("website_id", "=", facodi.id)', menu_model)
+        self.assertIn('("parent_id", "=", root.id)', menu_model)
+
+        for route in (
+            "/slides",
+            "/explorar/areas",
+            "/explorar/conteudos",
+            "/explorar/videos",
+            "/roadmaps",
+            "/unidades-curriculares",
         ):
-            self.assertIn(f'id="{menu_id}"', menu)
-            self.assertIn(f"<field name=\"url\">{route}</field>", menu)
+            self.assertIn(f'"{route}"', menu_model)
 
         self.assertGreaterEqual(
             menu.count('<field name="parent_id" ref="facodi_learning.menu_public_explore"/>'),
             6,
         )
+        self.assertEqual(
+            menu.count('<field name="website_id" ref="website.default_website"/>'),
+            7,
+        )
+        self.assertNotIn('<field name="website_id" ref="website.website_2"/>', menu)
+        self.assertIn('("website_id", "=", False)', menu_model)
+        self.assertIn("set(children.mapped(\"url\")).issubset(target_urls)", menu_model)
 
     def test_roadmap_catalogue_exposes_d1_structure(self):
         self.assertIn('id="curriculum_public_index"', self.curriculum)

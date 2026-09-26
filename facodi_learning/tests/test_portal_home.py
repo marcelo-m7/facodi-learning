@@ -96,10 +96,13 @@ class TestFacodiPortalHome(HttpCase):
         owner = self._portal_user("facodi-portal-alias")
         self.authenticate(owner.login, "facodi-test-pass")
 
-        response = self.url_open("/minha-facodi")
-        self.assertEqual(response.status_code, 200)
-        self.assertTrue(response.url.endswith("/my/home"))
-        self.assertIn('data-facodi-portal-home="1"', response.text)
+        response = self.url_open("/minha-facodi", allow_redirects=False)
+        self.assertEqual(response.status_code, 301)
+        self.assertTrue(response.headers["Location"].endswith("/my/home"))
+
+        canonical = self.url_open("/my/home")
+        self.assertEqual(canonical.status_code, 200)
+        self.assertIn('data-facodi-portal-home="1"', canonical.text)
 
     def test_public_portal_home_requires_authentication(self):
         response = self.url_open("/my/home")
