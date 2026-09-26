@@ -419,8 +419,9 @@
                                     <section t-if="learning['modules']" class="mb-5" aria-labelledby="facodi-unit-modules-heading">
                                         <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
                                             <div>
+                                                <p class="facodi-kicker mb-1">Your route through this UC</p>
                                                 <h2 id="facodi-unit-modules-heading" class="h3 mb-1">Learning pathway</h2>
-                                                <p class="text-muted mb-0">Editorial modules with existing FACODI courses and content.</p>
+                                                <p class="text-muted mb-0">Move module by module. Start where it makes sense, continue where you paused, and keep the finished stops visible.</p>
                                             </div>
                                             <span t-if="show_learning_progress and learning['progress'] is not None" class="badge text-bg-light fs-6">
                                                 <t t-esc="'%.0f' % learning['progress']"/>% complete
@@ -431,8 +432,14 @@
                                            class="btn btn-primary btn-sm mb-3">
                                             Continue: <t t-esc="learning['next_item']['name']"/>
                                         </a>
-                                        <div class="facodi-module-stack">
-                                            <article t-foreach="learning['modules']" t-as="module_row" class="facodi-module-stack__item">
+                                        <div class="facodi-module-stack facodi-learning-journey" data-facodi-learning-journey="1">
+                                            <article t-foreach="learning['modules']" t-as="module_row"
+                                                     t-attf-class="facodi-module-stack__item facodi-learning-stop facodi-learning-stop--#{module_row['journey_state']}"
+                                                     t-att-data-facodi-journey-state="module_row['journey_state']">
+                                                <div class="facodi-learning-stop__rail">
+                                                    <span class="facodi-learning-stop__number" t-esc="module_row['journey_index']"/>
+                                                </div>
+                                                <div class="facodi-learning-stop__content">
                                                 <div class="d-flex flex-wrap align-items-baseline justify-content-between gap-2">
                                                     <h3 class="h5 mb-0">
                                                         <a t-att-href="module_row['module_url']" class="text-decoration-none"><t t-esc="module_row['module'].name"/></a>
@@ -446,6 +453,16 @@
                                                     </div>
                                                 </div>
                                                 <p t-else="" class="text-muted mb-0 mt-3">There is no published content in this module yet.</p>
+                                                <div class="facodi-learning-stop__status mt-3">
+                                                    <span t-if="module_row['journey_state'] == 'done'" class="facodi-journey-label facodi-journey-label--done">Done ✓</span>
+                                                    <a t-elif="module_row['next_item']" t-att-href="module_row['next_item']['url']"
+                                                       t-attf-class="facodi-journey-label facodi-journey-label--#{module_row['journey_state']}">
+                                                        <t t-if="module_row['journey_state'] == 'continue'">Continue →</t>
+                                                        <t t-else="">Start here →</t>
+                                                    </a>
+                                                    <span t-else="" class="facodi-journey-label facodi-journey-label--start">Ready when you are</span>
+                                                </div>
+                                                </div>
                                             </article>
                                         </div>
                                     </section>
