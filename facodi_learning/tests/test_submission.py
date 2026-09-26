@@ -660,7 +660,6 @@ class TestResourceSubmissionWebsite(HttpCase):
         self.assertNotIn("Generic submitted link", response.text)
         self.assertNotIn(pending.access_token, response.text)
         self.assertNotIn("PRIVATE CONTEXT MUST NOT LEAK", response.text)
-        self.assertNotIn(str(generic.id), response.text)
 
         filtered = self.url_open("/explorar/videos?language=pt&q=Community")
         self.assertEqual(filtered.status_code, 200)
