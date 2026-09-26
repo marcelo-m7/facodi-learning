@@ -18,7 +18,7 @@ class TestLearningInterfacesContract(unittest.TestCase):
 
     def test_d1_release_version(self):
         manifest = MANIFEST.read_text(encoding="utf-8")
-        self.assertIn('"version": "19.0.1.40.0"', manifest)
+        self.assertIn('"version": "19.0.1.41.0"', manifest)
 
     def test_portal_progress_avoids_old_style_percent_formatting(self):
         portal_home = PORTAL_HOME.read_text(encoding="utf-8")
@@ -44,6 +44,11 @@ class TestLearningInterfacesContract(unittest.TestCase):
             menu.count('<field name="parent_id" ref="facodi_learning.menu_public_explore"/>'),
             6,
         )
+        self.assertEqual(
+            menu.count('<field name="website_id" ref="website.default_website"/>'),
+            7,
+        )
+        self.assertNotIn('<field name="website_id" ref="website.website_2"/>', menu)
 
     def test_roadmap_catalogue_exposes_d1_structure(self):
         self.assertIn('id="curriculum_public_index"', self.curriculum)
