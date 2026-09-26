@@ -3278,3 +3278,13 @@ msgstr "Terminez votre première leçon et elle apparaîtra ici dans votre parco
 #: model_terms:ir.ui.view,arch_db:facodi_learning.portal_my_home_facodi
 msgid "Find something to finish"
 msgstr "Trouver quelque chose à terminer"
+
+#. module: facodi_learning
+#: model:website.menu,name:facodi_learning.menu_public_explore_areas
+msgid "Areas"
+msgstr "Domaines"
+
+#. module: facodi_learning
+#: model:website.menu,name:facodi_learning.menu_public_explore_videos
+msgid "Community videos"
+msgstr "Vidéos de la communauté"
