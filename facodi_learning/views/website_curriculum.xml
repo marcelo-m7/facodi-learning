@@ -224,7 +224,10 @@
                                             <div class="mt-auto d-flex flex-wrap justify-content-between align-items-center gap-2 facodi-learning-meta">
                                                 <span t-if="entry['coverage_status'] == 'covered'" class="badge text-bg-success">Covered</span>
                                                 <span t-elif="entry['coverage_status'] == 'partial'" class="badge text-bg-warning">Partial</span>
-                                                <span t-else="" class="badge text-bg-light">No published coverage</span>
+                                                <span t-else="" class="badge text-bg-light">Open gap</span>
+                                                        <a t-if="entry['coverage_status'] == 'gap'"
+                                                           t-att-href="'/contribuir/recurso?curriculum_unit_id=%s' % unit.id"
+                                                           class="d-block small fw-semibold mt-2 text-decoration-none">Help fill this stop →</a>
                                                 <span t-if="entry['published_course_count']" class="badge text-bg-light"><t t-esc="entry['published_course_count']"/> related courses</span>
                                                 <div class="d-flex flex-wrap gap-2 ms-auto">
                                                     <a t-if="entry['coverage_status'] != 'covered'"
@@ -278,6 +281,20 @@
                                 </div>
                             </header>
 
+                            <section class="facodi-roadmap-campus-summary mb-5" data-facodi-roadmap-campus="1" aria-label="Roadmap coverage snapshot">
+                                <div class="facodi-roadmap-campus-summary__intro">
+                                    <p class="facodi-kicker mb-1">Campus map</p>
+                                    <h2 class="h3 mb-2">See the path. Spot the gaps.</h2>
+                                    <p class="text-muted mb-0">Each unit is a stop: green is covered, orange is partial and pink marks an open learning gap the community can help fill.</p>
+                                </div>
+                                <div class="facodi-roadmap-campus-summary__stats">
+                                    <div class="facodi-campus-stat facodi-highlight-lime"><strong t-esc="roadmap_stats['covered']"/><span>covered</span></div>
+                                    <div class="facodi-campus-stat facodi-highlight-orange"><strong t-esc="roadmap_stats['partial']"/><span>partial</span></div>
+                                    <div class="facodi-campus-stat facodi-highlight-pink"><strong t-esc="roadmap_stats['gaps']"/><span>open gaps</span></div>
+                                    <div class="facodi-campus-stat facodi-highlight-cyan"><strong t-esc="roadmap_stats['units']"/><span>UC stops</span></div>
+                                </div>
+                            </section>
+
                             <div class="facodi-roadmap-study-path">
                                 <section t-foreach="unit_matrix_groups" t-as="group" class="mb-5 facodi-roadmap-study-path__year">
                                     <h2 class="h3 mb-3">Year <t t-esc="group[0]"/></h2>
@@ -300,7 +317,9 @@
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                <tr t-foreach="period_group[1]" t-as="entry" class="facodi-roadmap-study-path__unit">
+                                                <tr t-foreach="period_group[1]" t-as="entry"
+                                                    t-attf-class="facodi-roadmap-study-path__unit facodi-roadmap-stop facodi-roadmap-stop--#{entry['coverage_status']}"
+                                                    t-att-data-facodi-coverage="entry['coverage_status']">
                                                     <t t-set="unit" t-value="entry['unit']"/>
                                                     <td>
                                                         <a t-att-href="entry['unit_url']" class="fw-semibold text-decoration-none">
