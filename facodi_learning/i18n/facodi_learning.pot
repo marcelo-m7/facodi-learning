@@ -3241,3 +3241,13 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:facodi_learning.portal_my_home_facodi
 msgid "Find something to finish"
 msgstr ""
+
+#. module: facodi_learning
+#: model:website.menu,name:facodi_learning.menu_public_explore_areas
+msgid "Areas"
+msgstr ""
+
+#. module: facodi_learning
+#: model:website.menu,name:facodi_learning.menu_public_explore_videos
+msgid "Community videos"
+msgstr ""

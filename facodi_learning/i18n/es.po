@@ -3273,3 +3273,13 @@ msgstr "Completa tu primera lección y aparecerá aquí como parte de tu recorri
 #: model_terms:ir.ui.view,arch_db:facodi_learning.portal_my_home_facodi
 msgid "Find something to finish"
 msgstr "Encontrar algo para terminar"
+
+#. module: facodi_learning
+#: model:website.menu,name:facodi_learning.menu_public_explore_areas
+msgid "Areas"
+msgstr "Áreas"
+
+#. module: facodi_learning
+#: model:website.menu,name:facodi_learning.menu_public_explore_videos
+msgid "Community videos"
+msgstr "Vídeos de la comunidad"

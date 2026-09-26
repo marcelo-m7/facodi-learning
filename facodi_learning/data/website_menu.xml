@@ -6,18 +6,75 @@
         <field name="parent_id" ref="website.main_menu"/>
         <field name="sequence">40</field>
     </record>
+
+    <record id="menu_public_explore_courses" model="website.menu">
+        <field name="name">Courses</field>
+        <field name="url">/slides</field>
+        <field name="parent_id" ref="facodi_learning.menu_public_explore"/>
+        <field name="sequence">10</field>
+    </record>
+
+    <record id="menu_public_explore_areas" model="website.menu">
+        <field name="name">Areas</field>
+        <field name="url">/explorar/areas</field>
+        <field name="parent_id" ref="facodi_learning.menu_public_explore"/>
+        <field name="sequence">20</field>
+    </record>
+
+    <record id="menu_public_explore_contents" model="website.menu">
+        <field name="name">Learning resources</field>
+        <field name="url">/explorar/conteudos</field>
+        <field name="parent_id" ref="facodi_learning.menu_public_explore"/>
+        <field name="sequence">30</field>
+    </record>
+
+    <record id="menu_public_explore_videos" model="website.menu">
+        <field name="name">Community videos</field>
+        <field name="url">/explorar/videos</field>
+        <field name="parent_id" ref="facodi_learning.menu_public_explore"/>
+        <field name="sequence">40</field>
+    </record>
+
     <record id="menu_public_curriculum_map" model="website.menu">
         <field name="name">Roadmaps</field>
         <field name="url">/roadmaps</field>
-        <field name="parent_id" ref="website.main_menu"/>
-        <field name="sequence">45</field>
+        <field name="parent_id" ref="facodi_learning.menu_public_explore"/>
+        <field name="sequence">50</field>
     </record>
+
+    <record id="menu_public_curricular_units" model="website.menu">
+        <field name="name">Curricular units</field>
+        <field name="url">/unidades-curriculares</field>
+        <field name="parent_id" ref="facodi_learning.menu_public_explore"/>
+        <field name="sequence">60</field>
+    </record>
+
     <function model="website.menu" name="write">
         <value eval="[ref('facodi_learning.menu_public_explore')]"/>
-        <value eval="{'name': 'Explore', 'url': '/explorar'}"/>
+        <value eval="{'name': 'Explore', 'url': '/explorar', 'parent_id': ref('website.main_menu'), 'sequence': 40}"/>
+    </function>
+    <function model="website.menu" name="write">
+        <value eval="[ref('facodi_learning.menu_public_explore_courses')]"/>
+        <value eval="{'name': 'Courses', 'url': '/slides', 'parent_id': ref('facodi_learning.menu_public_explore'), 'sequence': 10}"/>
+    </function>
+    <function model="website.menu" name="write">
+        <value eval="[ref('facodi_learning.menu_public_explore_areas')]"/>
+        <value eval="{'name': 'Areas', 'url': '/explorar/areas', 'parent_id': ref('facodi_learning.menu_public_explore'), 'sequence': 20}"/>
+    </function>
+    <function model="website.menu" name="write">
+        <value eval="[ref('facodi_learning.menu_public_explore_contents')]"/>
+        <value eval="{'name': 'Learning resources', 'url': '/explorar/conteudos', 'parent_id': ref('facodi_learning.menu_public_explore'), 'sequence': 30}"/>
+    </function>
+    <function model="website.menu" name="write">
+        <value eval="[ref('facodi_learning.menu_public_explore_videos')]"/>
+        <value eval="{'name': 'Community videos', 'url': '/explorar/videos', 'parent_id': ref('facodi_learning.menu_public_explore'), 'sequence': 40}"/>
     </function>
     <function model="website.menu" name="write">
         <value eval="[ref('facodi_learning.menu_public_curriculum_map')]"/>
-        <value eval="{'name': 'Roadmaps', 'url': '/roadmaps'}"/>
+        <value eval="{'name': 'Roadmaps', 'url': '/roadmaps', 'parent_id': ref('facodi_learning.menu_public_explore'), 'sequence': 50}"/>
+    </function>
+    <function model="website.menu" name="write">
+        <value eval="[ref('facodi_learning.menu_public_curricular_units')]"/>
+        <value eval="{'name': 'Curricular units', 'url': '/unidades-curriculares', 'parent_id': ref('facodi_learning.menu_public_explore'), 'sequence': 60}"/>
     </function>
 </odoo>
