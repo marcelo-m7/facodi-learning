@@ -476,7 +476,7 @@ class FacodiLearningSubmission(models.Model):
             if not candidate:
                 candidate = Candidate.search(
                     [
-                        ("source_url", "in", [canonical_url, self.source_url]),
+                        ("source_url", "in", [canonical_url, submission.source_url]),
                         ("state", "!=", "rejected"),
                     ],
                     order="id",
@@ -485,8 +485,8 @@ class FacodiLearningSubmission(models.Model):
 
             if not candidate:
                 metadata = {
-                    "submission_id": self.id,
-                    "submission_context": self.context or False,
+                    "submission_id": submission.id,
+                    "submission_context": submission.context or False,
                 }
                 institution = False
                 if submission.curriculum_unit_id:
