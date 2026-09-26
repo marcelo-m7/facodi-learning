@@ -81,6 +81,8 @@
                                            placeholder="https://..."/>
                                     <div class="form-text">
                                         Use the canonical public HTTP or HTTPS page. Do not upload passwords, private links or credentials.
+                                        Public YouTube submissions may appear immediately in the Community videos section before editorial review.
+                                        FACODI does not publish your account identity, private tracking token or review notes there.
                                     </div>
                                     <div class="d-flex flex-wrap align-items-center gap-2 mt-2">
                                         <button type="button"
@@ -207,6 +209,7 @@
                                     Back to curricular unit
                                 </a>
                                 <a href="/slides" class="btn btn-outline-primary">Explore learning content</a>
+                                <a href="/explorar/videos" class="btn btn-outline-secondary">Community videos</a>
                                 <a t-if="curriculum_unit"
                                    t-att-href="'/contribuir/recurso?curriculum_unit_id=%s' % curriculum_unit.id"
                                    class="btn btn-link">Suggest a resource</a>

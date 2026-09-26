@@ -10,7 +10,7 @@
                             <h1 class="display-5 fw-bold mb-3">Explore open learning</h1>
                             <p class="lead text-muted mb-4">Discover learning areas, individual resources and complete courses through the public FACODI catalogue.</p>
                             <div class="row g-3">
-                                <div class="col-12 col-md-4">
+                                <div class="col-12 col-md-6 col-xl-3">
                                     <a href="/explorar/areas" class="card h-100 text-decoration-none">
                                         <div class="card-body">
                                             <h2 class="h4">Learning areas</h2>
@@ -18,7 +18,7 @@
                                         </div>
                                     </a>
                                 </div>
-                                <div class="col-12 col-md-4">
+                                <div class="col-12 col-md-6 col-xl-3">
                                     <a href="/explorar/conteudos" class="card h-100 text-decoration-none">
                                         <div class="card-body">
                                             <h2 class="h4">Learning resources</h2>
@@ -26,7 +26,16 @@
                                         </div>
                                     </a>
                                 </div>
-                                <div class="col-12 col-md-4">
+                                <div class="col-12 col-md-6 col-xl-3">
+                                    <a href="/explorar/videos" class="card h-100 text-decoration-none">
+                                        <div class="card-body">
+                                            <div class="small text-uppercase fw-semibold text-muted mb-2">Community</div>
+                                            <h2 class="h4">Submitted videos</h2>
+                                            <p class="text-muted mb-0">See public YouTube videos shared by the community, including items still waiting for editorial review.</p>
+                                        </div>
+                                    </a>
+                                </div>
+                                <div class="col-12 col-md-6 col-xl-3">
                                     <a href="/explorar/cursos" class="card h-100 text-decoration-none">
                                         <div class="card-body">
                                             <h2 class="h4">Courses</h2>
@@ -162,4 +171,97 @@
             </div>
         </t>
     </template>
+    <template id="explore_community_videos" name="FACODI Community Videos">
+        <t t-call="website.layout">
+            <div id="wrap" class="oe_structure">
+                <section class="container py-5" data-facodi-community-videos="1">
+                    <div class="d-flex flex-wrap justify-content-between align-items-end gap-3 mb-4">
+                        <div>
+                            <p class="text-uppercase small fw-semibold text-muted mb-2">Community submissions</p>
+                            <h1 class="h2 mb-1">Videos shared by the community</h1>
+                            <p class="text-muted mb-0"><t t-esc="total"/> public YouTube submissions found.</p>
+                        </div>
+                        <div class="d-flex gap-2">
+                            <a href="/contribuir/recurso" class="btn btn-primary">Share a video</a>
+                            <a href="/explorar" class="btn btn-outline-secondary">Back to Explore</a>
+                        </div>
+                    </div>
+
+                    <div class="alert alert-warning" role="note">
+                        <strong>Community queue.</strong>
+                        Videos can appear here immediately after submission, before FACODI reviews their relevance, accuracy, provenance or publication rights.
+                        A listing here is not an endorsement or an approved learning-resource publication.
+                    </div>
+
+                    <form method="get" action="/explorar/videos" class="card card-body mb-4" role="search">
+                        <div class="row g-3 align-items-end">
+                            <div class="col-12 col-lg-7">
+                                <label for="facodi-community-video-query" class="form-label">Search submitted videos</label>
+                                <input id="facodi-community-video-query"
+                                       type="search"
+                                       name="q"
+                                       class="form-control"
+                                       t-att-value="query"
+                                       placeholder="Search by submitted title"/>
+                            </div>
+                            <div class="col-12 col-md-6 col-lg-3">
+                                <label for="facodi-community-video-language" class="form-label">Language</label>
+                                <select id="facodi-community-video-language" name="language" class="form-select">
+                                    <option value="">All languages</option>
+                                    <option t-foreach="language_options"
+                                            t-as="language"
+                                            t-att-value="language"
+                                            t-att-selected="selected_language == language">
+                                        <t t-esc="language"/>
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="col-12 col-md-6 col-lg-2">
+                                <button type="submit" class="btn btn-outline-primary w-100">Filter</button>
+                            </div>
+                        </div>
+                    </form>
+
+                    <div t-if="videos" class="row g-3">
+                        <div t-foreach="videos" t-as="video" class="col-12 col-md-6 col-xl-4">
+                            <article class="card h-100" data-facodi-community-video="1">
+                                <div class="card-body d-flex flex-column">
+                                    <div class="d-flex flex-wrap gap-2 align-items-center mb-3">
+                                        <span class="badge text-bg-light border">YouTube</span>
+                                        <span t-attf-class="badge #{'text-bg-success' if video['state'] in ('accepted', 'resolved') else 'text-bg-warning'}"
+                                              t-esc="video['state_label']"/>
+                                        <span t-if="video['language']" class="small text-muted" t-esc="video['language']"/>
+                                    </div>
+                                    <h2 class="h5 card-title" t-esc="video['name']"/>
+                                    <p class="text-muted small flex-grow-1">
+                                        Submitted by the community. Contributor identity and private review details are not published.
+                                    </p>
+                                    <a t-att-href="video['source_url']"
+                                       target="_blank"
+                                       rel="noopener noreferrer nofollow"
+                                       class="btn btn-outline-primary align-self-start">
+                                        Watch on YouTube
+                                    </a>
+                                </div>
+                            </article>
+                        </div>
+                    </div>
+                    <div t-else="" class="alert alert-light border">
+                        No community video submissions match these filters yet.
+                    </div>
+
+                    <nav t-if="page_count &gt; 1"
+                         class="d-flex justify-content-between align-items-center mt-4"
+                         aria-label="Community video pagination">
+                        <a t-if="previous_url" t-att-href="previous_url" class="btn btn-outline-secondary">Previous</a>
+                        <span t-else=""></span>
+                        <span class="small text-muted">Page <t t-esc="page"/> of <t t-esc="page_count"/></span>
+                        <a t-if="next_url" t-att-href="next_url" class="btn btn-outline-secondary">Next</a>
+                        <span t-else=""></span>
+                    </nav>
+                </section>
+            </div>
+        </t>
+    </template>
+
 </odoo>

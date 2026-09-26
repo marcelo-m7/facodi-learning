@@ -3,10 +3,18 @@ from urllib.parse import urlencode
 from odoo import http
 from odoo.http import request
 
+from ..services.youtube import youtube_video_identity
+
 
 class FacodiExploreController(http.Controller):
     PAGE_SIZE = 12
     LANGUAGE_PREFIX = "lang:"
+    COMMUNITY_STATES = {
+        "submitted": "Awaiting review",
+        "reviewing": "Under review",
+        "accepted": "Accepted for curation",
+        "resolved": "Routed to FACODI",
+    }
 
     @staticmethod
     def _positive_integer(value, default=False):
@@ -115,7 +123,7 @@ class FacodiExploreController(http.Controller):
         sitemap=True,
     )
     def explore_content(self, page=1, **kwargs):
-        page = self._positive_integer(page, default=1)
+        page = self._positive_integer(kwargs.get("page") or page, default=1)
         query = (kwargs.get("q") or "").strip()
         area_id = self._positive_integer(kwargs.get("area"))
         language = (kwargs.get("language") or "").strip()
@@ -186,6 +194,93 @@ class FacodiExploreController(http.Controller):
                 "selected_area_id": area_id,
                 "selected_language": language,
                 "selected_format": content_format,
+                "page": page,
+                "page_count": page_count,
+                "total": total,
+                "previous_url": previous_url,
+                "next_url": next_url,
+            },
+        )
+
+    @classmethod
+    def _community_video_rows(cls, query=None, language=None):
+        submissions = (
+            request.env["facodi.learning.submission"]
+            .sudo()
+            .search(
+                [("state", "in", list(cls.COMMUNITY_STATES))],
+                order="create_date desc, id desc",
+            )
+        )
+        rows = []
+        needle = (query or "").strip().casefold()
+        selected_language = (language or "").strip().lower()
+        for submission in submissions:
+            identity = youtube_video_identity(
+                submission.normalized_source_url or submission.source_url
+            )
+            if not identity:
+                continue
+            if needle and needle not in (submission.name or "").casefold():
+                continue
+            submission_language = (submission.language or "").strip().lower()
+            if selected_language and submission_language != selected_language:
+                continue
+            rows.append(
+                {
+                    "name": submission.name,
+                    "source_url": identity["source_url"],
+                    "language": submission_language,
+                    "state": submission.state,
+                    "state_label": cls.COMMUNITY_STATES[submission.state],
+                }
+            )
+        return rows
+
+    @http.route(
+        ["/explorar/videos", "/explorar/videos/page/<int:page>"],
+        type="http",
+        auth="public",
+        website=True,
+        sitemap=True,
+    )
+    def explore_community_videos(self, page=1, **kwargs):
+        page = self._positive_integer(kwargs.get("page") or page, default=1)
+        query = (kwargs.get("q") or "").strip()
+        language = (kwargs.get("language") or "").strip().lower()
+
+        all_rows = self._community_video_rows()
+        language_options = sorted(
+            {row["language"] for row in all_rows if row["language"]}
+        )
+        rows = self._community_video_rows(query=query, language=language)
+
+        total = len(rows)
+        page_count = max(1, (total + self.PAGE_SIZE - 1) // self.PAGE_SIZE)
+        if page > page_count:
+            page = page_count
+        start = (page - 1) * self.PAGE_SIZE
+        rows = rows[start : start + self.PAGE_SIZE]
+
+        params = {"q": query, "language": language}
+        previous_url = False
+        next_url = False
+        if page > 1:
+            previous_url = "/explorar/videos?" + self._query_string(
+                {**params, "page": page - 1}
+            )
+        if page < page_count:
+            next_url = "/explorar/videos?" + self._query_string(
+                {**params, "page": page + 1}
+            )
+
+        return request.render(
+            "facodi_learning.explore_community_videos",
+            {
+                "videos": rows,
+                "query": query,
+                "selected_language": language,
+                "language_options": language_options,
                 "page": page,
                 "page_count": page_count,
                 "total": total,

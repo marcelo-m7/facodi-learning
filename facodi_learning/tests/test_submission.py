@@ -466,6 +466,56 @@ class TestResourceSubmissionWebsite(HttpCase):
         )
         self.assertEqual(submission.language, "pt")
 
+    def test_community_video_wall_is_public_before_review_without_private_fields(self):
+        Submission = self.env["facodi.learning.submission"].sudo()
+        pending = Submission.create(
+            {
+                "name": "Community pending video",
+                "source_url": "https://youtu.be/w9gb71ZUJDs",
+                "context": "PRIVATE CONTEXT MUST NOT LEAK",
+                "language": "pt",
+            }
+        )
+        rejected = Submission.create(
+            {
+                "name": "Rejected community video",
+                "source_url": "https://www.youtube.com/watch?v=SNma-fAeMzA",
+                "language": "en",
+            }
+        )
+        generic = Submission.create(
+            {
+                "name": "Generic submitted link",
+                "source_url": "https://example.org/not-a-video",
+                "language": "en",
+            }
+        )
+
+        manager = self.env.ref("base.user_admin")
+        manager_group = self.env.ref("website_slides.group_website_slides_manager")
+        if manager_group not in manager.group_ids:
+            manager.write({"group_ids": [(4, manager_group.id)]})
+        rejected.with_user(manager).action_reject()
+
+        response = self.url_open("/explorar/videos")
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Community pending video", response.text)
+        self.assertIn("Awaiting review", response.text)
+        self.assertIn(
+            "https://www.youtube.com/watch?v=w9gb71ZUJDs",
+            response.text,
+        )
+        self.assertNotIn("Rejected community video", response.text)
+        self.assertNotIn("Generic submitted link", response.text)
+        self.assertNotIn(pending.access_token, response.text)
+        self.assertNotIn("PRIVATE CONTEXT MUST NOT LEAK", response.text)
+        self.assertNotIn(str(generic.id), response.text)
+
+        filtered = self.url_open("/explorar/videos?language=pt&q=Community")
+        self.assertEqual(filtered.status_code, 200)
+        self.assertIn("Community pending video", filtered.text)
+        self.assertNotIn("Rejected community video", filtered.text)
+
     def test_invalid_url_is_rejected_without_creating_submission(self):
         before = self.env["facodi.learning.submission"].sudo().search_count([])
         response = self.url_open(
