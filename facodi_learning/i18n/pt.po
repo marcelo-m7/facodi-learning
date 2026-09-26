@@ -97,7 +97,7 @@ msgstr "<span class=\"text-muted\"> — </span>"
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_catalog_navigation
 msgid "<strong>Learning</strong>"
-msgstr ""
+msgstr "<strong>Aprendizagem</strong>"
 
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit
