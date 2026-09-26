@@ -63,6 +63,16 @@ class TestLearningInterfacesContract(unittest.TestCase):
         self.assertIn("/roadmaps", self.curriculum)
         self.assertIn("/unidades-curriculares", self.curriculum)
 
+    def test_unit_catalogue_gap_cta_uses_entry_unit_context(self):
+        self.assertNotIn(
+            "'/contribuir/recurso?curriculum_unit_id=%s' % unit.id",
+            self.curriculum,
+        )
+        self.assertIn(
+            "'/contribuir/recurso?curriculum_unit_id=%s' % entry['unit'].id",
+            self.curriculum,
+        )
+
     def test_unit_catalogue_preserves_real_filters_and_d1_structure(self):
         self.assertIn('id="curriculum_public_unit_index"', self.curriculum)
         self.assertIn("facodi-filter-sheet", self.curriculum)
