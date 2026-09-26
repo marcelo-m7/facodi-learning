@@ -35,3 +35,5 @@ from . import test_supabase_edge
 
 from . import test_content_review
 from . import test_explore_learning
+
+from . import test_portal_home
