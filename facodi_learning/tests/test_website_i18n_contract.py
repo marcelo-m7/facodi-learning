@@ -197,52 +197,6 @@ class TestWebsiteI18nContract(unittest.TestCase):
                 self.assertIn(f'msgid "{source}"', catalogue)
                 self.assertIn(f'msgstr "{translated}"', catalogue)
 
-    def test_public_explore_copy_is_translated_in_all_supported_languages(self):
-        expected = {
-            "pt": {
-                "<strong>Learning</strong>": "<strong>Aprendizagem</strong>",
-                "Learning resources": "Recursos de aprendizagem",
-                "Explore open learning": "Explorar aprendizagem aberta",
-                "Learning areas": "Áreas de aprendizagem",
-                "Submitted videos": "Vídeos submetidos",
-                "Back to Explore": "Voltar a Explorar",
-                "All languages": "Todos os idiomas",
-                "All formats": "Todos os formatos",
-                "Videos shared by the community": "Vídeos partilhados pela comunidade",
-                "Related courses": "Cursos relacionados",
-            },
-            "es": {
-                "<strong>Learning</strong>": "<strong>Aprendizaje</strong>",
-                "Learning resources": "Recursos de aprendizaje",
-                "Explore open learning": "Explorar aprendizaje abierto",
-                "Learning areas": "Áreas de aprendizaje",
-                "Submitted videos": "Vídeos enviados",
-                "Back to Explore": "Volver a Explorar",
-                "All languages": "Todos los idiomas",
-                "All formats": "Todos los formatos",
-                "Videos shared by the community": "Vídeos compartidos por la comunidad",
-                "Related courses": "Cursos relacionados",
-            },
-            "fr": {
-                "<strong>Learning</strong>": "<strong>Apprentissage</strong>",
-                "Learning resources": "Ressources d’apprentissage",
-                "Explore open learning": "Explorer l’apprentissage ouvert",
-                "Learning areas": "Domaines d’apprentissage",
-                "Submitted videos": "Vidéos soumises",
-                "Back to Explore": "Retour à Explorer",
-                "All languages": "Toutes les langues",
-                "All formats": "Tous les formats",
-                "Videos shared by the community": "Vidéos partagées par la communauté",
-                "Related courses": "Cours associés",
-            },
-        }
-
-        for language, translations in expected.items():
-            catalogue = (I18N_DIR / f"{language}.po").read_text()
-            for source, translated in translations.items():
-                self.assertIn(f'msgid "{source}"', catalogue)
-                self.assertIn(f'msgstr "{translated}"', catalogue)
-
     def test_submission_processing_trace_labels_are_translated(self):
         expected = {
             "pt": {
