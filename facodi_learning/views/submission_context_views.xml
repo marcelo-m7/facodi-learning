@@ -34,7 +34,7 @@
         <field name="arch" type="xml">
             <field name="language" position="after">
                 <field name="curriculum_unit_id"
-                       readonly="state in ('rejected', 'resolved')"/>
+                       readonly="state in ('rejected', 'resolved', 'withdrawn')"/>
             </field>
             <field name="source_id" position="after">
                 <field name="normalized_source_url" readonly="1"/>
