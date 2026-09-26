@@ -137,4 +137,5 @@ class TestCurriculumUI(TransactionCase):
         self.assertEqual(menu.name, "Roadmaps")
         self.assertEqual(menu.url, "/roadmaps")
         self.assertEqual(menu.parent_id.name, "Explore")
-        self.assertEqual(menu.parent_id.url, "/explorar")
+        self.assertEqual(menu.parent_id.parent_id, website.menu_id)
+        self.assertEqual(menu.parent_id.url, "#")
