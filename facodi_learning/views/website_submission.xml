@@ -139,6 +139,9 @@
                                 </div>
 
                                 <button type="submit" class="btn btn-primary">Submit for review</button>
+                                <a t-if="not request.env.user._is_public()"
+                                   href="/minhas-contribuicoes"
+                                   class="btn btn-outline-secondary">My submissions</a>
                                 <a href="/contactus" class="btn btn-link">Other contribution</a>
                             </form>
                         </div>
@@ -198,6 +201,9 @@
                             <div t-elif="submission.state == 'resolved'" class="alert alert-success">
                                 The suggestion has been routed into the canonical FACODI content workflow.
                             </div>
+                            <div t-elif="submission.state == 'withdrawn'" class="alert alert-secondary">
+                                You withdrew this submission. It is retained only as audit history and is no longer shown in the public community queue.
+                            </div>
 
                             <p class="text-muted small">
                                 Keep this private status link if you want to check the editorial state later.
@@ -210,6 +216,9 @@
                                 </a>
                                 <a href="/slides" class="btn btn-outline-primary">Explore learning content</a>
                                 <a href="/explorar/videos" class="btn btn-outline-secondary">Community videos</a>
+                                <a t-if="not request.env.user._is_public() and submission.submitted_by_id == request.env.user"
+                                   t-att-href="'/minhas-contribuicoes/%s' % submission.id"
+                                   class="btn btn-outline-secondary">Manage submission</a>
                                 <a t-if="curriculum_unit"
                                    t-att-href="'/contribuir/recurso?curriculum_unit_id=%s' % curriculum_unit.id"
                                    class="btn btn-link">Suggest a resource</a>
@@ -221,4 +230,168 @@
             </div>
         </t>
     </template>
+    <template id="resource_submission_my_list" name="FACODI My Resource Submissions">
+        <t t-call="website.layout">
+            <div id="wrap" class="oe_structure">
+                <section class="container py-5" data-facodi-my-submissions="1">
+                    <div class="d-flex flex-wrap justify-content-between align-items-end gap-3 mb-4">
+                        <div>
+                            <p class="text-uppercase small fw-semibold text-muted mb-2">Your FACODI contributions</p>
+                            <h1 class="h2 mb-1">My submissions</h1>
+                            <p class="text-muted mb-0">Track, edit or withdraw resources submitted while signed in.</p>
+                        </div>
+                        <a href="/contribuir/recurso" class="btn btn-primary">Submit another resource</a>
+                    </div>
+
+                    <div t-if="rows" class="row g-3">
+                        <div t-foreach="rows" t-as="row" class="col-12">
+                            <article class="card">
+                                <div class="card-body">
+                                    <div class="d-flex flex-column flex-lg-row justify-content-between gap-3">
+                                        <div class="min-w-0">
+                                            <div class="d-flex flex-wrap gap-2 align-items-center mb-2">
+                                                <span class="badge text-bg-light border" t-esc="row['state_label']"/>
+                                                <span t-if="row['submission'].language"
+                                                      class="small text-muted"
+                                                      t-esc="row['submission'].language"/>
+                                            </div>
+                                            <h2 class="h5 mb-2" t-esc="row['submission'].name"/>
+                                            <a t-att-href="row['submission'].source_url"
+                                               target="_blank"
+                                               rel="noopener noreferrer"
+                                               class="small text-break"
+                                               t-esc="row['submission'].source_url"/>
+                                        </div>
+                                        <div class="d-flex flex-wrap gap-2 align-items-start">
+                                            <a t-att-href="'/minhas-contribuicoes/%s' % row['submission'].id"
+                                               class="btn btn-outline-primary">Manage</a>
+                                            <span t-if="row['can_edit']" class="badge text-bg-info align-self-center">Editable</span>
+                                            <span t-elif="row['can_withdraw']" class="badge text-bg-warning align-self-center">Withdrawal available</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </article>
+                        </div>
+                    </div>
+                    <div t-else="" class="alert alert-light border">
+                        You have no account-linked submissions yet. Anonymous submissions remain accessible only through their private tracking link.
+                    </div>
+                </section>
+            </div>
+        </t>
+    </template>
+
+    <template id="resource_submission_manage" name="FACODI Manage Resource Submission">
+        <t t-call="website.layout">
+            <div id="wrap" class="oe_structure">
+                <section class="container py-5" data-facodi-manage-submission="1">
+                    <div class="row justify-content-center">
+                        <div class="col-lg-9 col-xl-8">
+                            <div class="d-flex flex-wrap justify-content-between align-items-start gap-3 mb-4">
+                                <div>
+                                    <p class="text-uppercase small fw-semibold text-muted mb-2">Your contribution</p>
+                                    <h1 class="h2 mb-2" t-esc="submission.name"/>
+                                    <span class="badge text-bg-light border" t-esc="state_label"/>
+                                </div>
+                                <a href="/minhas-contribuicoes" class="btn btn-outline-secondary">Back to my submissions</a>
+                            </div>
+
+                            <div t-if="errors" class="alert alert-danger" role="alert">
+                                <ul class="mb-0">
+                                    <li t-foreach="errors" t-as="error"><t t-esc="error"/></li>
+                                </ul>
+                            </div>
+
+                            <div t-if="can_edit" class="alert alert-info">
+                                You can edit this submission until FACODI starts editorial review. Changes are reflected in the public Community videos queue when applicable.
+                            </div>
+                            <div t-elif="submission.state == 'reviewing'" class="alert alert-warning">
+                                Editorial review has started, so the submitted details are locked. You can still withdraw the submission.
+                            </div>
+                            <div t-elif="submission.state in ('accepted', 'resolved')" class="alert alert-success">
+                                This submission has progressed into FACODI curation. Its original contribution record is now preserved as audit history.
+                            </div>
+                            <div t-elif="submission.state == 'rejected'" class="alert alert-secondary">
+                                This submission was not accepted in its current form.
+                            </div>
+                            <div t-elif="submission.state == 'withdrawn'" class="alert alert-secondary">
+                                You withdrew this submission. It is no longer displayed in the public Community videos queue.
+                            </div>
+
+                            <form t-if="can_edit"
+                                  t-att-action="'/minhas-contribuicoes/%s/editar' % submission.id"
+                                  method="post"
+                                  class="card card-body mb-4">
+                                <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                <div class="mb-3">
+                                    <label class="form-label" for="facodi_manage_name">Title</label>
+                                    <input id="facodi_manage_name"
+                                           type="text"
+                                           name="name"
+                                           maxlength="200"
+                                           required="required"
+                                           class="form-control"
+                                           t-att-value="(form_values or {}).get('name', submission.name)"/>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label" for="facodi_manage_url">Public resource URL</label>
+                                    <input id="facodi_manage_url"
+                                           type="url"
+                                           name="source_url"
+                                           maxlength="2048"
+                                           required="required"
+                                           class="form-control"
+                                           t-att-value="(form_values or {}).get('source_url', submission.source_url)"/>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label" for="facodi_manage_language">Language</label>
+                                    <select id="facodi_manage_language" name="language" class="form-select">
+                                        <t t-set="current_language" t-value="(form_values or {}).get('language', submission.language or '')"/>
+                                        <option value="" t-att-selected="not current_language">Not specified</option>
+                                        <option value="pt" t-att-selected="current_language == 'pt'">Portuguese</option>
+                                        <option value="en" t-att-selected="current_language == 'en'">English</option>
+                                        <option value="es" t-att-selected="current_language == 'es'">Spanish</option>
+                                        <option value="fr" t-att-selected="current_language == 'fr'">French</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label" for="facodi_manage_context">Contribution context</label>
+                                    <textarea id="facodi_manage_context"
+                                              name="context"
+                                              rows="5"
+                                              maxlength="4000"
+                                              class="form-control"><t t-esc="(form_values or {}).get('context', submission.context or '')"/></textarea>
+                                </div>
+                                <button type="submit" class="btn btn-primary align-self-start">Save changes</button>
+                            </form>
+
+                            <div t-if="not can_edit" class="card card-body mb-4">
+                                <dl class="row mb-0">
+                                    <dt class="col-sm-3">Resource</dt>
+                                    <dd class="col-sm-9"><a t-att-href="submission.source_url" target="_blank" rel="noopener noreferrer" t-esc="submission.source_url"/></dd>
+                                    <dt class="col-sm-3">Language</dt>
+                                    <dd class="col-sm-9" t-esc="submission.language or 'Not specified'"/>
+                                    <dt class="col-sm-3">Context</dt>
+                                    <dd class="col-sm-9 mb-0" t-esc="submission.context or 'No additional context.'"/>
+                                </dl>
+                            </div>
+
+                            <form t-if="can_withdraw"
+                                  t-att-action="'/minhas-contribuicoes/%s/retirar' % submission.id"
+                                  method="post"
+                                  class="border rounded p-3">
+                                <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                <p class="mb-2"><strong>Withdraw this submission?</strong></p>
+                                <p class="text-muted small">
+                                    Withdrawal removes the item from the public Community videos queue and prevents it from continuing through the contribution workflow. The record is retained as audit history.
+                                </p>
+                                <button type="submit" class="btn btn-outline-danger">Withdraw submission</button>
+                            </form>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </t>
+    </template>
+
 </odoo>

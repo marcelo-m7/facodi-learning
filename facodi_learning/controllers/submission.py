@@ -108,6 +108,32 @@ def _discover_public_youtube_metadata(source_url):
 
 class FacodiSubmissionController(http.Controller):
     @staticmethod
+    def _owned_submission(raw_id):
+        try:
+            submission_id = int(raw_id or 0)
+        except (TypeError, ValueError):
+            return request.env["facodi.learning.submission"].browse()
+        if submission_id <= 0 or request.env.user._is_public():
+            return request.env["facodi.learning.submission"].browse()
+        return (
+            request.env["facodi.learning.submission"]
+            .sudo()
+            .search(
+                [
+                    ("id", "=", submission_id),
+                    ("submitted_by_id", "=", request.env.user.id),
+                ],
+                limit=1,
+            )
+        )
+
+    @staticmethod
+    def _submission_state_label(submission):
+        return dict(
+            submission._fields["state"]._description_selection(request.env)
+        ).get(submission.state, submission.state)
+
+    @staticmethod
     def _public_curriculum_unit(raw_id):
         try:
             unit_id = int(raw_id or 0)
@@ -403,3 +429,164 @@ class FacodiSubmissionController(http.Controller):
         )
         response.headers["X-Robots-Tag"] = "noindex, nofollow"
         return response
+
+    @http.route(
+        "/minhas-contribuicoes",
+        type="http",
+        auth="user",
+        website=True,
+        methods=["GET"],
+        sitemap=False,
+    )
+    def my_submissions(self, **kwargs):
+        submissions = (
+            request.env["facodi.learning.submission"]
+            .sudo()
+            .search(
+                [("submitted_by_id", "=", request.env.user.id)],
+                order="create_date desc, id desc",
+            )
+        )
+        rows = [
+            {
+                "submission": submission,
+                "state_label": self._submission_state_label(submission),
+                "can_edit": submission.state == "submitted",
+                "can_withdraw": submission.state in {"submitted", "reviewing"},
+            }
+            for submission in submissions
+        ]
+        response = request.render(
+            "facodi_learning.resource_submission_my_list",
+            {"rows": rows},
+        )
+        response.headers["X-Robots-Tag"] = "noindex, nofollow"
+        return response
+
+    @http.route(
+        "/minhas-contribuicoes/<int:submission_id>",
+        type="http",
+        auth="user",
+        website=True,
+        methods=["GET"],
+        sitemap=False,
+    )
+    def my_submission_detail(self, submission_id, **kwargs):
+        submission = self._owned_submission(submission_id)
+        if not submission:
+            return request.not_found()
+        response = request.render(
+            "facodi_learning.resource_submission_manage",
+            {
+                "submission": submission,
+                "state_label": self._submission_state_label(submission),
+                "can_edit": submission.state == "submitted",
+                "can_withdraw": submission.state in {"submitted", "reviewing"},
+                "errors": [],
+                "form_values": {},
+            },
+        )
+        response.headers["X-Robots-Tag"] = "noindex, nofollow"
+        return response
+
+    @http.route(
+        "/minhas-contribuicoes/<int:submission_id>/editar",
+        type="http",
+        auth="user",
+        website=True,
+        methods=["POST"],
+        sitemap=False,
+        csrf=True,
+    )
+    def my_submission_edit(self, submission_id, **post):
+        submission = self._owned_submission(submission_id)
+        if not submission:
+            return request.not_found()
+
+        values = {
+            "name": (post.get("name") or "").strip()[:200],
+            "source_url": (post.get("source_url") or "").strip()[:2048],
+            "context": (post.get("context") or "").strip()[:4000],
+            "language": (post.get("language") or "").strip().lower()[:16],
+        }
+        errors = []
+        if not values["name"]:
+            errors.append(request.env._("Enter a short title for the resource."))
+        if not request.env["facodi.learning.submission"]._is_valid_source_url(
+            values["source_url"]
+        ):
+            errors.append(request.env._("Enter a valid public HTTP or HTTPS URL."))
+
+        normalized_source_url = (
+            request.env["facodi.learning.submission"]._normalize_source_url(
+                values["source_url"]
+            )
+        )
+        if not errors:
+            duplicate = (
+                request.env["facodi.learning.submission"]
+                .sudo()
+                .search(
+                    [
+                        ("id", "!=", submission.id),
+                        ("normalized_source_url", "=", normalized_source_url),
+                        ("state", "in", ("submitted", "reviewing", "accepted")),
+                        ("curriculum_unit_id", "=", submission.curriculum_unit_id.id or False),
+                    ],
+                    limit=1,
+                )
+            )
+            if duplicate:
+                errors.append(
+                    request.env._(
+                        "This resource is already under editorial review for this context."
+                    )
+                )
+
+        if not errors:
+            try:
+                submission.action_update_by_contributor(request.env.user, values)
+            except ValidationError as exc:
+                errors.append(str(exc))
+
+        if errors:
+            response = request.render(
+                "facodi_learning.resource_submission_manage",
+                {
+                    "submission": submission,
+                    "state_label": self._submission_state_label(submission),
+                    "can_edit": submission.state == "submitted",
+                    "can_withdraw": submission.state in {"submitted", "reviewing"},
+                    "errors": errors,
+                    "form_values": values,
+                },
+            )
+            response.headers["X-Robots-Tag"] = "noindex, nofollow"
+            return response
+
+        return request.redirect(
+            f"/minhas-contribuicoes/{submission.id}?updated=1",
+            code=303,
+        )
+
+    @http.route(
+        "/minhas-contribuicoes/<int:submission_id>/retirar",
+        type="http",
+        auth="user",
+        website=True,
+        methods=["POST"],
+        sitemap=False,
+        csrf=True,
+    )
+    def my_submission_withdraw(self, submission_id, **post):
+        submission = self._owned_submission(submission_id)
+        if not submission:
+            return request.not_found()
+        try:
+            submission.action_withdraw_by_contributor(request.env.user)
+        except ValidationError:
+            return request.redirect(
+                f"/minhas-contribuicoes/{submission.id}?withdraw_error=1",
+                code=303,
+            )
+        return request.redirect("/minhas-contribuicoes?withdrawn=1", code=303)

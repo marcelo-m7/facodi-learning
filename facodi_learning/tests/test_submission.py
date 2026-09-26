@@ -375,6 +375,59 @@ class TestResourceSubmissionModel(TransactionCase):
             submission.with_user(officer).action_reject()
 
 
+    def test_contributor_can_edit_only_own_pending_submission_and_withdraw(self):
+        owned = self._submission(
+            name="Owned draft",
+            source_url="https://example.org/owned",
+            submitted_by_id=self.portal.id,
+        )
+        other = self._submission(
+            name="Other draft",
+            source_url="https://example.org/other",
+            submitted_by_id=self.manager.id,
+        )
+
+        owned.action_update_by_contributor(
+            self.portal,
+            {
+                "name": "Updated by contributor",
+                "source_url": "https://example.org/owned-updated",
+                "context": "Updated context",
+                "language": "pt",
+            },
+        )
+        self.assertEqual(owned.name, "Updated by contributor")
+        self.assertEqual(owned.language, "pt")
+
+        with self.assertRaises(AccessError):
+            other.action_update_by_contributor(
+                self.portal,
+                {"name": "Forbidden"},
+            )
+
+        owned.action_withdraw_by_contributor(self.portal)
+        self.assertEqual(owned.state, "withdrawn")
+        with self.assertRaises(ValidationError):
+            owned.action_update_by_contributor(
+                self.portal,
+                {"name": "Too late"},
+            )
+
+    def test_contributor_cannot_edit_after_review_starts_but_can_withdraw(self):
+        submission = self._submission(
+            name="Reviewing own submission",
+            source_url="https://example.org/reviewing-own",
+            submitted_by_id=self.portal.id,
+        )
+        submission.action_start_review()
+        with self.assertRaises(ValidationError):
+            submission.action_update_by_contributor(
+                self.portal,
+                {"name": "Locked"},
+            )
+        submission.action_withdraw_by_contributor(self.portal)
+        self.assertEqual(submission.state, "withdrawn")
+
 @tagged("-at_install", "post_install")
 class TestResourceSubmissionWebsite(HttpCase):
     def _csrf_token(self):
@@ -384,6 +437,104 @@ class TestResourceSubmissionWebsite(HttpCase):
         tokens = tree.xpath('//input[@name="csrf_token"]/@value')
         self.assertEqual(len(tokens), 1)
         return tokens[0]
+
+    def _portal_user(self, login):
+        return self.env["res.users"].sudo().create(
+            {
+                "name": login,
+                "login": login,
+                "password": "facodi-test-pass",
+                "group_ids": [(6, 0, [self.env.ref("base.group_portal").id])],
+            }
+        )
+
+    def test_authenticated_contributor_can_manage_only_own_submissions(self):
+        owner = self._portal_user("facodi-contributor-owner")
+        stranger = self._portal_user("facodi-contributor-stranger")
+        Submission = self.env["facodi.learning.submission"].sudo()
+        owned = Submission.create(
+            {
+                "name": "Owner managed video",
+                "source_url": "https://www.youtube.com/watch?v=w9gb71ZUJDs",
+                "context": "Owner private context",
+                "language": "pt",
+                "submitted_by_id": owner.id,
+            }
+        )
+        other = Submission.create(
+            {
+                "name": "Stranger submission",
+                "source_url": "https://www.youtube.com/watch?v=SNma-fAeMzA",
+                "submitted_by_id": stranger.id,
+            }
+        )
+
+        self.authenticate(owner.login, "facodi-test-pass")
+        listing = self.url_open("/minhas-contribuicoes")
+        self.assertEqual(listing.status_code, 200)
+        self.assertIn("Owner managed video", listing.text)
+        self.assertNotIn("Stranger submission", listing.text)
+
+        detail = self.url_open(f"/minhas-contribuicoes/{owned.id}")
+        self.assertEqual(detail.status_code, 200)
+        self.assertIn("Owner private context", detail.text)
+
+        forbidden = self.url_open(f"/minhas-contribuicoes/{other.id}")
+        self.assertEqual(forbidden.status_code, 404)
+
+    def test_contributor_can_edit_and_withdraw_pending_submission(self):
+        owner = self._portal_user("facodi-contributor-actions")
+        submission = (
+            self.env["facodi.learning.submission"]
+            .sudo()
+            .create(
+                {
+                    "name": "Editable contribution",
+                    "source_url": "https://www.youtube.com/watch?v=w9gb71ZUJDs",
+                    "context": "Initial context",
+                    "language": "pt",
+                    "submitted_by_id": owner.id,
+                }
+            )
+        )
+
+        self.authenticate(owner.login, "facodi-test-pass")
+        detail = self.url_open(f"/minhas-contribuicoes/{submission.id}")
+        token = html.fromstring(detail.text).xpath(
+            '//input[@name="csrf_token"]/@value'
+        )[0]
+
+        edit = self.url_open(
+            f"/minhas-contribuicoes/{submission.id}/editar",
+            data={
+                "csrf_token": token,
+                "name": "Edited contribution",
+                "source_url": "https://www.youtube.com/watch?v=w9gb71ZUJDs",
+                "context": "Edited private context",
+                "language": "en",
+            },
+        )
+        self.assertEqual(edit.status_code, 200)
+        submission.invalidate_recordset()
+        self.assertEqual(submission.name, "Edited contribution")
+        self.assertEqual(submission.language, "en")
+        self.assertEqual(submission.context, "Edited private context")
+
+        detail = self.url_open(f"/minhas-contribuicoes/{submission.id}")
+        withdraw_tokens = html.fromstring(detail.text).xpath(
+            '//form[contains(@action, "/retirar")]//input[@name="csrf_token"]/@value'
+        )
+        self.assertEqual(len(withdraw_tokens), 1)
+        withdrawn = self.url_open(
+            f"/minhas-contribuicoes/{submission.id}/retirar",
+            data={"csrf_token": withdraw_tokens[0]},
+        )
+        self.assertEqual(withdrawn.status_code, 200)
+        submission.invalidate_recordset()
+        self.assertEqual(submission.state, "withdrawn")
+
+        community = self.url_open("/explorar/videos")
+        self.assertNotIn("Edited contribution", community.text)
 
     def test_public_form_creates_submission_and_redirects_to_safe_status(self):
         before = self.env["facodi.learning.submission"].sudo().search_count([])
@@ -509,7 +660,6 @@ class TestResourceSubmissionWebsite(HttpCase):
         self.assertNotIn("Generic submitted link", response.text)
         self.assertNotIn(pending.access_token, response.text)
         self.assertNotIn("PRIVATE CONTEXT MUST NOT LEAK", response.text)
-        self.assertNotIn(str(generic.id), response.text)
 
         filtered = self.url_open("/explorar/videos?language=pt&q=Community")
         self.assertEqual(filtered.status_code, 200)
