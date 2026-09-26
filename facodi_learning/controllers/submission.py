@@ -483,6 +483,7 @@ class FacodiSubmissionController(http.Controller):
                 "can_edit": submission.state == "submitted",
                 "can_withdraw": submission.state in {"submitted", "reviewing"},
                 "errors": [],
+                "form_values": {},
             },
         )
         response.headers["X-Robots-Tag"] = "noindex, nofollow"
