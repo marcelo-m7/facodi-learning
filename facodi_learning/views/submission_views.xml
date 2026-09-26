@@ -14,6 +14,7 @@
                 <filter name="accepted" string="Accepted" domain="[('state', '=', 'accepted')]"/>
                 <filter name="rejected" string="Rejected" domain="[('state', '=', 'rejected')]"/>
                 <filter name="resolved" string="Resolved" domain="[('state', '=', 'resolved')]"/>
+                <filter name="withdrawn" string="Withdrawn" domain="[('state', '=', 'withdrawn')]"/>
                 <group>
                     <filter name="group_state" string="Status" context="{'group_by': 'state'}"/>
                     <filter name="group_language" string="Language" context="{'group_by': 'language'}"/>
@@ -78,21 +79,21 @@
                             groups="website_slides.group_website_slides_manager"/>
                     <field name="state"
                            widget="statusbar"
-                           statusbar_visible="submitted,reviewing,accepted,rejected,resolved"/>
+                           statusbar_visible="submitted,reviewing,accepted,rejected,resolved,withdrawn"/>
                 </header>
                 <sheet>
                     <group>
                         <group>
-                            <field name="name" readonly="state in ('rejected', 'resolved')"/>
-                            <field name="source_url" widget="url" readonly="state in ('rejected', 'resolved')"/>
-                            <field name="language" readonly="state in ('rejected', 'resolved')"/>
+                            <field name="name" readonly="state in ('rejected', 'resolved', 'withdrawn')"/>
+                            <field name="source_url" widget="url" readonly="state in ('rejected', 'resolved', 'withdrawn')"/>
+                            <field name="language" readonly="state in ('rejected', 'resolved', 'withdrawn')"/>
                             <field name="submitted_by_id" readonly="1"/>
                             <field name="create_date" readonly="1"/>
                         </group>
                         <group>
-                            <field name="candidate_id" readonly="state in ('rejected', 'resolved')"/>
+                            <field name="candidate_id" readonly="state in ('rejected', 'resolved', 'withdrawn')"/>
                             <field name="source_id"
-                                   readonly="state in ('rejected', 'resolved')"
+                                   readonly="state in ('rejected', 'resolved', 'withdrawn')"
                                    groups="website_slides.group_website_slides_manager"/>
                             <field name="source_state" readonly="1" invisible="not source_state"/>
                             <field name="slide_id" readonly="1" invisible="not slide_id"/>
@@ -104,10 +105,10 @@
                         </group>
                     </group>
                     <group>
-                        <field name="context" readonly="state in ('rejected', 'resolved')"/>
+                        <field name="context" readonly="state in ('rejected', 'resolved', 'withdrawn')"/>
                         <field name="decision_note"
                                placeholder="Internal editorial note; never shown on the public status page."
-                               readonly="state == 'resolved'"/>
+                               readonly="state in ('resolved', 'withdrawn')"/>
                     </group>
                 </sheet>
             </form>
