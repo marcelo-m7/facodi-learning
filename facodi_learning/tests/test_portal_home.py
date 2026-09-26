@@ -23,7 +23,12 @@ class TestFacodiPortalHome(HttpCase):
             {
                 "name": "FACODI Portal Course",
                 "is_published": True,
-                "partner_ids": [(4, owner.partner_id.id)],
+            }
+        )
+        self.env["slide.channel.partner"].sudo().create(
+            {
+                "channel_id": course.id,
+                "partner_id": owner.partner_id.id,
             }
         )
         self.env["facodi.learning.submission"].sudo().create(
