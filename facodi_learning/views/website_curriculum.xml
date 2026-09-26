@@ -154,7 +154,7 @@
                                 </div>
                             </div>
 
-                            <form action="/unidades-curriculares" method="get" class="row g-3 border rounded p-3 mb-5 facodi-filter-sheet" aria-label="Filter curricular units">
+                            <form action="/unidades-curriculares" method="get" class="row g-3 border rounded p-3 mb-5 facodi-filter-sheet facodi-filter-panel" role="search" aria-label="Filter curricular units">
                                 <div class="col-12 col-md-6">
                                     <label for="curriculum-reference" class="form-label">Roadmap</label>
                                     <select id="curriculum-reference" name="reference_id" class="form-select">
@@ -197,17 +197,22 @@
                             </form>
 
                             <p class="text-muted small mb-3"><t t-esc="len(entries)"/> curricular unit(s) found.</p>
-                            <div t-if="not entries" class="alert alert-info">There are no curricular units for the selected filters.</div>
+                            <div t-if="not entries" class="facodi-empty-state mb-4" data-facodi-empty-state="1">
+                                <span class="facodi-empty-icon fa fa-book" aria-hidden="true"></span>
+                                <h2 class="h4">No curricular units on this page</h2>
+                                <p class="text-muted">There are no curricular units for the selected filters. Clear the filters to return to the full academic index.</p>
+                                <a href="/unidades-curriculares" class="btn btn-primary">Clear filters</a>
+                            </div>
                             <div class="row g-3">
                                 <div t-foreach="entries" t-as="entry" class="col-12 col-lg-6">
-                                    <article class="card h-100 shadow-sm facodi-record-card facodi-record-card--unit">
+                                    <article class="card h-100 shadow-sm facodi-record-card facodi-record-card--unit" data-facodi-uc-card="1">
                                         <div class="card-body d-flex flex-column facodi-record-card__body">
                                             <p class="small text-muted mb-2 facodi-record-card__meta">
                                                 <t t-esc="entry['reference'].institution"/> · <t t-esc="entry['reference'].programme_name"/>
                                             </p>
                                             <h2 class="h5 facodi-record-card__title"><a t-att-href="entry['unit_url']" class="text-decoration-none"><t t-esc="entry['unit'].name"/></a></h2>
                                             <p class="mb-3"><code t-esc="entry['unit'].external_unit_code"/> · Year <t t-esc="entry['unit'].curricular_year"/> · <t t-esc="('%g' % entry['unit'].credits) if entry['unit'].credits else '—'"/> ECTS</p>
-                                            <div class="mt-auto d-flex flex-wrap justify-content-between align-items-center gap-2">
+                                            <div class="mt-auto d-flex flex-wrap justify-content-between align-items-center gap-2 facodi-learning-meta">
                                                 <span t-if="entry['coverage_status'] == 'covered'" class="badge text-bg-success">Covered</span>
                                                 <span t-elif="entry['coverage_status'] == 'partial'" class="badge text-bg-warning">Partial</span>
                                                 <span t-else="" class="badge text-bg-light">No published coverage</span>

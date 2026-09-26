@@ -456,9 +456,15 @@ class FacodiSubmissionController(http.Controller):
             }
             for submission in submissions
         ]
+        state_counts = {
+            "total": len(submissions),
+            "active": len(submissions.filtered(lambda item: item.state in {"submitted", "reviewing"})),
+            "accepted": len(submissions.filtered(lambda item: item.state in {"accepted", "resolved"})),
+            "closed": len(submissions.filtered(lambda item: item.state in {"rejected", "withdrawn"})),
+        }
         response = request.render(
             "facodi_learning.resource_submission_my_list",
-            {"rows": rows},
+            {"rows": rows, "state_counts": state_counts},
         )
         response.headers["X-Robots-Tag"] = "noindex, nofollow"
         return response
