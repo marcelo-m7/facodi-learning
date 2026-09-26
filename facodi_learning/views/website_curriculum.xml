@@ -197,11 +197,20 @@
                             </form>
 
                             <p class="text-muted small mb-3"><t t-esc="len(entries)"/> curricular unit(s) found.</p>
-                            <div t-if="not entries" class="facodi-empty-state mb-4" data-facodi-empty-state="1">
-                                <span class="facodi-empty-icon fa fa-book" aria-hidden="true"></span>
-                                <h2 class="h4">No curricular units on this page</h2>
-                                <p class="text-muted">There are no curricular units for the selected filters. Clear the filters to return to the full academic index.</p>
+                            <div t-if="not entries and has_available_units and has_active_filters" class="facodi-empty-state mb-4" data-facodi-empty-state="1">
+                                <span class="facodi-empty-icon fa fa-search" aria-hidden="true"></span>
+                                <h2 class="h4">No curricular units match these filters</h2>
+                                <p class="text-muted">Try a broader combination or return to the complete academic index.</p>
                                 <a href="/unidades-curriculares" class="btn btn-primary">Clear filters</a>
+                            </div>
+                            <div t-elif="not entries" class="facodi-empty-state mb-4" data-facodi-empty-state="1">
+                                <span class="facodi-empty-icon fa fa-book" aria-hidden="true"></span>
+                                <h2 class="h4">The curricular-unit shelf is being prepared</h2>
+                                <p class="text-muted">There are no published curricular units yet. Explore the available roadmaps or help the community with an open learning resource.</p>
+                                <div class="d-flex flex-wrap justify-content-center gap-2">
+                                    <a href="/roadmaps" class="btn btn-primary">Explore roadmaps</a>
+                                    <a href="/contribuir/recurso" class="btn btn-outline-primary">Suggest a resource</a>
+                                </div>
                             </div>
                             <div class="row g-3">
                                 <div t-foreach="entries" t-as="entry" class="col-12 col-lg-6">

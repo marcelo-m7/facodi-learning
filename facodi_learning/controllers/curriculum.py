@@ -92,6 +92,8 @@ class FacodiCurriculumController(http.Controller):
                 "selected_year": curricular_year,
                 "selected_period": period,
                 "selected_credits": credits,
+                "has_available_units": bool(available_entries),
+                "has_active_filters": bool(reference_id or curricular_year or period or credits is not None),
             },
         )
 
