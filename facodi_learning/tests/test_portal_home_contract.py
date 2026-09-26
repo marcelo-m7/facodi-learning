@@ -1,0 +1,39 @@
+from pathlib import Path
+import unittest
+
+MODULE_ROOT = Path(__file__).resolve().parents[1]
+PORTAL_CONTROLLER = MODULE_ROOT / "controllers" / "portal.py"
+PORTAL_VIEW = MODULE_ROOT / "views" / "portal_home.xml"
+SUBMISSION_VIEW = MODULE_ROOT / "views" / "website_submission.xml"
+
+
+class TestPortalHomeContract(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.controller = PORTAL_CONTROLLER.read_text(encoding="utf-8")
+        cls.portal = PORTAL_VIEW.read_text(encoding="utf-8")
+        cls.submission = SUBMISSION_VIEW.read_text(encoding="utf-8")
+
+    def test_learning_shelf_uses_standard_membership_model(self):
+        self.assertIn('request.env["slide.channel.partner"]', self.controller)
+        self.assertIn('("member_status", "!=", "invited")', self.controller)
+        self.assertNotIn('("partner_ids", "in"', self.controller)
+
+    def test_learning_shelf_is_website_scoped(self):
+        self.assertIn('("channel_id.website_id", "=", request.website.id)', self.controller)
+        self.assertIn('("channel_id.website_published", "=", True)', self.controller)
+        self.assertIn('("channel_id.visibility", "=", "public")', self.controller)
+
+    def test_portal_exposes_native_progress_without_parallel_tracking(self):
+        self.assertIn('"completion": min(max(completion, 0.0), 100.0)', self.controller)
+        self.assertIn('"is_completed": membership.member_status == "completed"', self.controller)
+        self.assertIn("facodi-course-progress", self.portal)
+        self.assertIn("facodi_course_rows", self.portal)
+
+    def test_minha_facodi_has_single_standard_portal_destination(self):
+        self.assertIn('return request.redirect("/my/home", code=302)', self.controller)
+        self.assertNotIn('id="my_facodi_dashboard"', self.submission)
+
+
+if __name__ == "__main__":
+    unittest.main()
