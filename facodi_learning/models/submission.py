@@ -325,10 +325,20 @@ class FacodiLearningSubmission(models.Model):
             source_url = (vals.get("source_url") or "").strip()
             curriculum_unit_id = vals.get("curriculum_unit_id") or False
             identities.append((source_url, curriculum_unit_id))
+        seen_identity_keys = set()
         for source_url, curriculum_unit_id in sorted(
             identities,
             key=lambda item: self._active_identity_key(item[0], item[1]),
         ):
+            identity_key = self._active_identity_key(
+                source_url,
+                curriculum_unit_id,
+            )
+            if identity_key in seen_identity_keys:
+                raise ValidationError(
+                    "This resource is already under editorial review for this context."
+                )
+            seen_identity_keys.add(identity_key)
             self._lock_active_identity(source_url, curriculum_unit_id)
             if self._active_duplicate(source_url, curriculum_unit_id):
                 raise ValidationError(
