@@ -19,7 +19,7 @@ class TestLearningInterfacesContract(unittest.TestCase):
 
     def test_d1_release_version(self):
         manifest = MANIFEST.read_text(encoding="utf-8")
-        self.assertIn('"version": "19.0.1.41.0"', manifest)
+        self.assertIn('"version": "19.0.1.42.0"', manifest)
 
     def test_portal_progress_avoids_old_style_percent_formatting(self):
         portal_home = PORTAL_HOME.read_text(encoding="utf-8")
