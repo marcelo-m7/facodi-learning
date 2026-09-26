@@ -1,11 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+    <record id="menu_public_explore" model="website.menu">
+        <field name="name">Explore</field>
+        <field name="url">/explorar</field>
+        <field name="parent_id" ref="website.main_menu"/>
+        <field name="sequence">40</field>
+    </record>
     <record id="menu_public_curriculum_map" model="website.menu">
         <field name="name">Roadmaps</field>
         <field name="url">/roadmaps</field>
         <field name="parent_id" ref="website.main_menu"/>
         <field name="sequence">45</field>
     </record>
+    <function model="website.menu" name="write">
+        <value eval="[ref('facodi_learning.menu_public_explore')]"/>
+        <value eval="{'name': 'Explore', 'url': '/explorar'}"/>
+    </function>
     <function model="website.menu" name="write">
         <value eval="[ref('facodi_learning.menu_public_curriculum_map')]"/>
         <value eval="{'name': 'Roadmaps', 'url': '/roadmaps'}"/>
