@@ -43,6 +43,49 @@ class FacodiCustomerPortal(CustomerPortal):
                 }
             )
 
+        SlidePartner = request.env["slide.slide.partner"].sudo()
+        completion_rows = SlidePartner.search(
+            [
+                ("partner_id", "=", user.partner_id.id),
+                ("completed", "=", True),
+            ],
+            order="write_date desc, id desc",
+            limit=12,
+        )
+        completion_by_slide = {
+            row.slide_id.id: row
+            for row in completion_rows
+            if row.slide_id
+        }
+        visible_slides = request.env["slide.slide"].search(
+            [
+                ("id", "in", list(completion_by_slide)),
+                ("active", "=", True),
+                ("website_published", "=", True),
+                ("channel_id.active", "=", True),
+                ("channel_id.website_published", "=", True),
+                ("channel_id.visibility", "=", "public"),
+                "|",
+                ("channel_id.website_id", "=", False),
+                ("channel_id.website_id", "=", request.website.id),
+            ]
+        )
+        visible_by_id = {slide.id: slide for slide in visible_slides}
+        recent_learning_rows = []
+        for completion in completion_rows:
+            slide = visible_by_id.get(completion.slide_id.id)
+            if not slide:
+                continue
+            recent_learning_rows.append(
+                {
+                    "slide": slide,
+                    "course": slide.channel_id,
+                    "completed_at": completion.write_date,
+                }
+            )
+            if len(recent_learning_rows) >= 5:
+                break
+
         state_labels = dict(
             Submission._fields["state"]._description_selection(request.env)
         )
@@ -122,6 +165,7 @@ class FacodiCustomerPortal(CustomerPortal):
             {
                 "facodi_course_rows": course_rows,
                 "facodi_submission_rows": submission_rows,
+                "facodi_recent_learning_rows": recent_learning_rows,
                 "facodi_academic_map": academic_map,
                 "facodi_forum_posts": forum_posts,
                 "facodi_learning_stats": {
