@@ -317,15 +317,20 @@ class FacodiLearningSubmission(models.Model):
             raise AccessError(
                 "Submission audit state is managed by FACODI review actions."
             )
-        if any(record.state in {"rejected", "resolved", "withdrawn"} for record in self):
+        locked = self._lock_for_state_transition()
+        if any(
+            record.state in {"rejected", "resolved", "withdrawn"}
+            for record in locked
+        ):
             raise AccessError("Terminal submissions are audit history.")
-        return super().write(vals)
+        return super(FacodiLearningSubmission, locked).write(vals)
 
     def unlink(self):
         self._require_manager()
-        if any(record.state != "submitted" for record in self):
+        locked = self._lock_for_state_transition()
+        if any(record.state != "submitted" for record in locked):
             raise AccessError("Reviewed submissions are audit history.")
-        return super().unlink()
+        return super(FacodiLearningSubmission, locked).unlink()
 
     @api.constrains("name")
     def _check_name(self):
