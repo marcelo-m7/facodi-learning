@@ -3073,3 +3073,173 @@ msgstr "Aucune unité d’enseignement n’est encore publiée. Explorez les par
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit_index
 msgid "Explore roadmaps"
 msgstr "Explorer les parcours"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.portal_my_home_facodi
+msgid "Your campus // your tabs // your pace"
+msgstr "Votre campus // vos onglets // votre rythme"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.portal_my_home_facodi
+msgid "Continue learning, check what you shared with the community and jump back into the FACODI campus."
+msgstr "Continuez à apprendre, retrouvez ce que vous avez partagé avec la communauté et revenez sur le campus FACODI."
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.portal_my_home_facodi
+msgid "CAMPUS ACCESS ACTIVE"
+msgstr "ACCÈS AU CAMPUS ACTIF"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.portal_my_home_facodi
+msgid "courses on your desk"
+msgstr "cours sur votre bureau"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.portal_my_home_facodi
+msgid "done"
+msgstr "terminés"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.portal_my_home_facodi
+msgid "community drops"
+msgstr "partages à la communauté"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.portal_my_home_facodi
+msgid "on the review desk"
+msgstr "sur la table de révision"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.portal_my_home_facodi
+msgid "accepted / routed"
+msgstr "acceptés / orientés"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.portal_my_home_facodi
+msgid "Keep learning"
+msgstr "Continuer à apprendre"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.portal_my_home_facodi
+msgid "Courses, lessons and your next study stop"
+msgstr "Cours, leçons et votre prochaine étape d’étude"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.portal_my_home_facodi
+msgid "Academic map"
+msgstr "Carte académique"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.portal_my_home_facodi
+msgid "Explore UCs and their open-learning coverage"
+msgstr "Explorez les UE et leur couverture d’apprentissage ouvert"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.portal_my_home_facodi
+msgid "Drop a resource"
+msgstr "Partager une ressource"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.portal_my_home_facodi
+msgid "Put something useful on the community desk"
+msgstr "Déposez quelque chose d’utile sur la table de la communauté"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.portal_my_home_facodi
+msgid "Community"
+msgstr "Communauté"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.portal_my_home_facodi
+msgid "Ask, compare notes and help another learner"
+msgstr "Posez une question, comparez vos notes et aidez une autre personne à apprendre"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.portal_my_home_facodi
+msgid "Pick up where you left off"
+msgstr "Reprenez là où vous vous étiez arrêté"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.portal_my_home_facodi
+msgid "Your learning shelf"
+msgstr "Votre étagère d’apprentissage"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.portal_my_home_facodi
+msgid "Browse all"
+msgstr "Tout explorer"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.portal_my_home_facodi
+msgid "Done ✓"
+msgstr "Terminé ✓"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.portal_my_home_facodi
+msgid "Review course"
+msgstr "Revoir le cours"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.portal_my_home_facodi
+msgid "Continue course"
+msgstr "Continuer le cours"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.portal_my_home_facodi
+msgid "Your desk is still clean. Nice."
+msgstr "Votre bureau est encore vide. Parfait."
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.portal_my_home_facodi
+msgid "Pick something worth learning and build your first FACODI shelf."
+msgstr "Choisissez quelque chose qui mérite d’être appris et créez votre première étagère FACODI."
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.portal_my_home_facodi
+msgid "Browse courses"
+msgstr "Explorer les cours"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.portal_my_home_facodi
+msgid "Community desk"
+msgstr "Table de la communauté"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.portal_my_home_facodi
+msgid "Your latest drops"
+msgstr "Vos derniers partages"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.portal_my_home_facodi
+msgid "View all"
+msgstr "Tout voir"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.portal_my_home_facodi
+msgid "open details →"
+msgstr "ouvrir les détails →"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.portal_my_home_facodi
+msgid "Found something worth sharing?"
+msgstr "Vous avez trouvé quelque chose qui mérite d’être partagé ?"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.portal_my_home_facodi
+msgid "Put it on the community desk and let FACODI take it through review."
+msgstr "Déposez-le sur la table de la communauté et laissez FACODI le faire passer en révision."
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.portal_my_home_facodi
+msgid "Standard Odoo, FACODI energy"
+msgstr "Odoo standard, énergie FACODI"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.portal_my_home_facodi
+msgid "Your FACODI toolbox"
+msgstr "Votre boîte à outils FACODI"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.portal_my_home_facodi
+msgid "Account, security and any other portal tools enabled for you stay right here."
+msgstr "Compte, sécurité et tous les autres outils du portail disponibles pour vous restent ici."
