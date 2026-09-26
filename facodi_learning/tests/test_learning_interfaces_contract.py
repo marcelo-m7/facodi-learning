@@ -4,6 +4,7 @@ import unittest
 MODULE_ROOT = Path(__file__).resolve().parents[1]
 CURRICULUM = MODULE_ROOT / "views" / "website_curriculum.xml"
 SLIDES = MODULE_ROOT / "views" / "website_slides.xml"
+PORTAL_HOME = MODULE_ROOT / "views" / "portal_home.xml"
 MANIFEST = MODULE_ROOT / "__manifest__.py"
 SLIDE_CHANNEL_MODEL = MODULE_ROOT / "models" / "slide_channel.py"
 
@@ -16,7 +17,14 @@ class TestLearningInterfacesContract(unittest.TestCase):
 
     def test_d1_release_version(self):
         manifest = MANIFEST.read_text(encoding="utf-8")
-        self.assertIn('"version": "19.0.1.37.0"', manifest)
+        self.assertIn('"version": "19.0.1.38.0"', manifest)
+
+    def test_portal_progress_avoids_old_style_percent_formatting(self):
+        portal_home = PORTAL_HOME.read_text(encoding="utf-8")
+        self.assertNotIn("width: %.0f%%", portal_home)
+        self.assertNotIn("t-att-aria-valuenow=\"'%.0f' %", portal_home)
+        self.assertIn('t-attf-style="width: #{row[\'completion\']}%"', portal_home)
+        self.assertIn('t-att-aria-valuenow="round(row[\'completion\'])"', portal_home)
 
     def test_roadmap_catalogue_exposes_d1_structure(self):
         self.assertIn('id="curriculum_public_index"', self.curriculum)

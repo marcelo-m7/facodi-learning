@@ -87,16 +87,16 @@
                                     <div class="d-flex justify-content-between align-items-center gap-2 mb-2">
                                         <span class="facodi-resource-pill facodi-resource-pill--course">Course</span>
                                         <span t-if="row['is_completed']" class="facodi-journey-label facodi-journey-label--done">Done ✓</span>
-                                        <span t-else="" class="facodi-journey-label facodi-journey-label--continue"><t t-esc="'%.0f' % row['completion']"/>%</span>
+                                        <span t-else="" class="facodi-journey-label facodi-journey-label--continue"><t t-esc="round(row['completion'])"/>%</span>
                                     </div>
                                     <h3 class="h5 card-title"><span t-field="course.name"/></h3>
                                     <p t-if="course.description_short" class="small text-muted flex-grow-1">
                                         <t t-esc="course.description_short"/>
                                     </p>
                                     <div class="facodi-course-progress mb-3" role="progressbar"
-                                         t-att-aria-valuenow="'%.0f' % row['completion']"
+                                         t-att-aria-valuenow="round(row['completion'])"
                                          aria-valuemin="0" aria-valuemax="100">
-                                        <span t-att-style="'width: %.0f%%' % row['completion']"></span>
+                                        <span t-attf-style="width: #{row['completion']}%"></span>
                                     </div>
                                     <a t-att-href="course.website_url" class="btn btn-sm btn-primary align-self-start mt-auto">
                                         <t t-if="row['is_completed']">Review course</t>
