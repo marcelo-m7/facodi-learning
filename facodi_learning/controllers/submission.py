@@ -465,17 +465,28 @@ class FacodiSubmissionController(http.Controller):
             limit=6,
         )
 
+        completed_courses = enrolled_courses.filtered(
+            lambda course: getattr(course, "completed", False)
+        )
+        learning_stats = {
+            "courses": len(enrolled_courses),
+            "completed": len(completed_courses),
+            "contributions": len(submissions),
+            "in_review": len(
+                submissions.filtered(
+                    lambda item: item.state in {"submitted", "reviewing"}
+                )
+            ),
+        }
+
         return request.render(
             "facodi_learning.my_facodi_dashboard",
             {
                 "submission_rows": submission_rows,
                 "submission_count": len(submissions),
-                "active_submission_count": len(
-                    submissions.filtered(
-                        lambda item: item.state in {"submitted", "reviewing"}
-                    )
-                ),
+                "active_submission_count": learning_stats["in_review"],
                 "enrolled_courses": enrolled_courses,
+                "learning_stats": learning_stats,
             },
             headers={"X-Robots-Tag": "noindex, nofollow"},
         )
