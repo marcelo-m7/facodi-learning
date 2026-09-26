@@ -187,10 +187,12 @@
                         </div>
                     </div>
 
-                    <div class="alert alert-warning" role="note">
-                        <strong>Community queue.</strong>
-                        Videos can appear here immediately after submission, before FACODI reviews their relevance, accuracy, provenance or publication rights.
-                        A listing here is not an endorsement or an approved learning-resource publication.
+                    <div class="facodi-community-intro mb-4" role="note">
+                        <span class="fa fa-users" aria-hidden="true"></span>
+                        <div>
+                            <strong class="d-block mb-1">Community queue · shared first, curated next</strong>
+                            <span>Videos can appear here immediately after submission, before FACODI reviews their relevance, accuracy, provenance or publication rights. A listing here is not an endorsement or an approved learning-resource publication.</span>
+                        </div>
                     </div>
 
                     <form method="get" action="/explorar/videos" class="card card-body mb-4" role="search">
@@ -246,8 +248,14 @@
                             </article>
                         </div>
                     </div>
-                    <div t-else="" class="alert alert-light border">
-                        No community video submissions match these filters yet.
+                    <div t-else="" class="facodi-empty-state" data-facodi-empty-state="1">
+                        <span class="facodi-empty-icon fa fa-film" aria-hidden="true"></span>
+                        <h2 class="h4">Nothing on this shelf yet</h2>
+                        <p class="text-muted">No community video submissions match these filters. Try another language or search, or add a useful public video.</p>
+                        <div class="d-flex flex-wrap justify-content-center gap-2">
+                            <a href="/explorar/videos" class="btn btn-outline-secondary">Clear filters</a>
+                            <a href="/contribuir/recurso" class="btn btn-primary">Share a video</a>
+                        </div>
                     </div>
 
                     <nav t-if="page_count &gt; 1"
