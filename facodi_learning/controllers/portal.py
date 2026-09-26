@@ -40,10 +40,73 @@ class FacodiCustomerPortal(CustomerPortal):
             for submission in recent_submissions
         ]
 
+        enrolled_course_ids = set(enrolled_courses.ids)
+
+        Reference = request.env["facodi.learning.curriculum.reference"].sudo()
+        roadmap = Reference.search(
+            [
+                ("website_published", "=", True),
+                ("validated_at", "!=", False),
+                ("selection_enabled", "=", True),
+            ],
+            order="academic_year desc, id",
+            limit=1,
+        )
+        if not roadmap:
+            roadmap = Reference.search(
+                [
+                    ("website_published", "=", True),
+                    ("validated_at", "!=", False),
+                ],
+                order="academic_year desc, id",
+                limit=1,
+            )
+
+        academic_map = False
+        if roadmap:
+            matrix = roadmap._facodi_public_unit_matrix(website=request.website)
+            counts = {"covered": 0, "partial": 0, "gap": 0}
+            preview = []
+            for entry in matrix:
+                status = entry["coverage_status"]
+                counts[status] = counts.get(status, 0) + 1
+                on_desk = any(
+                    row["channel"].id in enrolled_course_ids
+                    for row in entry["coverage_rows"]
+                )
+                preview.append(
+                    {
+                        **entry,
+                        "on_desk": on_desk,
+                    }
+                )
+            academic_map = {
+                "reference": roadmap,
+                "url": f"/roadmaps/{roadmap.id}",
+                "counts": counts,
+                "preview": preview[:8],
+                "total": len(matrix),
+            }
+
+        forum_posts = request.env["forum.post"].browse()
+        if "forum.post" in request.env:
+            forum_posts = request.env["forum.post"].search(
+                [
+                    ("parent_id", "=", False),
+                    ("active", "=", True),
+                    ("state", "=", "active"),
+                    ("website_id", "in", [False, request.website.id]),
+                ],
+                order="last_activity_date desc, id desc",
+                limit=4,
+            )
+
         values.update(
             {
                 "facodi_enrolled_courses": enrolled_courses,
                 "facodi_submission_rows": submission_rows,
+                "facodi_academic_map": academic_map,
+                "facodi_forum_posts": forum_posts,
                 "facodi_learning_stats": {
                     "courses": len(enrolled_courses),
                     "contributions": len(submissions),
