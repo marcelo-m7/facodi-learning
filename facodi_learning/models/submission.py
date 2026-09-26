@@ -1,3 +1,4 @@
+import hashlib
 import ipaddress
 import secrets
 from urllib.parse import urlsplit, urlunsplit
@@ -289,8 +290,51 @@ class FacodiLearningSubmission(models.Model):
             )
         return True
 
+    @api.model
+    def _active_identity_key(self, source_url, curriculum_unit_id=False):
+        normalized = self._normalize_source_url(source_url)
+        payload = f"{normalized}\x1f{int(curriculum_unit_id or 0)}".encode("utf-8")
+        raw = int.from_bytes(
+            hashlib.blake2b(payload, digest_size=8).digest(),
+            byteorder="big",
+            signed=False,
+        )
+        return raw - (1 << 64) if raw >= (1 << 63) else raw
+
+    @api.model
+    def _lock_active_identity(self, source_url, curriculum_unit_id=False):
+        key = self._active_identity_key(source_url, curriculum_unit_id)
+        self.env.cr.execute("SELECT pg_advisory_xact_lock(%s)", [key])
+
+    @api.model
+    def _active_duplicate(self, source_url, curriculum_unit_id=False, exclude_id=False):
+        normalized = self._normalize_source_url(source_url)
+        domain = [
+            ("normalized_source_url", "=", normalized),
+            ("state", "in", ("submitted", "reviewing", "accepted")),
+            ("curriculum_unit_id", "=", curriculum_unit_id or False),
+        ]
+        if exclude_id:
+            domain.append(("id", "!=", exclude_id))
+        return self.search(domain, limit=1)
+
     @api.model_create_multi
     def create(self, vals_list):
+        identities = []
+        for vals in vals_list:
+            source_url = (vals.get("source_url") or "").strip()
+            curriculum_unit_id = vals.get("curriculum_unit_id") or False
+            identities.append((source_url, curriculum_unit_id))
+        for source_url, curriculum_unit_id in sorted(
+            identities,
+            key=lambda item: self._active_identity_key(item[0], item[1]),
+        ):
+            self._lock_active_identity(source_url, curriculum_unit_id)
+            if self._active_duplicate(source_url, curriculum_unit_id):
+                raise ValidationError(
+                    "This resource is already under editorial review for this context."
+                )
+
         for vals in vals_list:
             forged = self._audit_fields & vals.keys()
             if forged:
@@ -365,6 +409,20 @@ class FacodiLearningSubmission(models.Model):
         if submission.state != "submitted":
             raise ValidationError(
                 "Only submissions waiting for review can be edited."
+            )
+
+        candidate_source_url = (values.get("source_url") or submission.source_url).strip()
+        submission._lock_active_identity(
+            candidate_source_url,
+            submission.curriculum_unit_id.id or False,
+        )
+        if submission._active_duplicate(
+            candidate_source_url,
+            submission.curriculum_unit_id.id or False,
+            exclude_id=submission.id,
+        ):
+            raise ValidationError(
+                "This resource is already under editorial review for this context."
             )
 
         allowed = {"name", "source_url", "context", "language"}
