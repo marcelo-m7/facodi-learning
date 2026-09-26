@@ -88,7 +88,7 @@ class FacodiCustomerPortal(CustomerPortal):
                 "total": len(matrix),
             }
 
-        forum_posts = request.env["forum.post"].browse()
+        forum_posts = []
         if "forum.post" in request.env:
             forum_posts = request.env["forum.post"].search(
                 [
