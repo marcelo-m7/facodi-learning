@@ -586,6 +586,15 @@ class FacodiLearningCurriculumUnit(models.Model):
             else None
         )
         next_item = next((row["next_item"] for row in modules if row["next_item"]), False)
+        for index, row in enumerate(modules, start=1):
+            if row["progress"] is not None and row["progress"] >= 100:
+                journey_state = "done"
+            elif row["next_item"] or (row["progress"] is not None and row["progress"] > 0):
+                journey_state = "continue"
+            else:
+                journey_state = "start"
+            row["journey_index"] = index
+            row["journey_state"] = journey_state
         return {
             "modules": modules,
             "module_count": len(modules),
