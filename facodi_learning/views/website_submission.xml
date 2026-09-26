@@ -243,13 +243,22 @@
                         <a href="/contribuir/recurso" class="btn btn-primary">Submit another resource</a>
                     </div>
 
+                    <div class="facodi-contribution-dashboard" aria-label="Contribution summary">
+                        <div class="facodi-contribution-stat"><span>Total</span><strong t-esc="state_counts['total']"/></div>
+                        <div class="facodi-contribution-stat"><span>In review</span><strong t-esc="state_counts['active']"/></div>
+                        <div class="facodi-contribution-stat"><span>Accepted / routed</span><strong t-esc="state_counts['accepted']"/></div>
+                        <div class="facodi-contribution-stat"><span>Closed</span><strong t-esc="state_counts['closed']"/></div>
+                    </div>
+
                     <div t-if="rows" class="row g-3">
                         <div t-foreach="rows" t-as="row" class="col-12">
-                            <article class="card">
+                            <article class="card" data-facodi-submission-card="1"
+                                     t-att-data-facodi-state="row['submission'].state">
                                 <div class="card-body">
                                     <div class="d-flex flex-column flex-lg-row justify-content-between gap-3">
                                         <div class="min-w-0">
                                             <div class="d-flex flex-wrap gap-2 align-items-center mb-2">
+                                                <span class="facodi-submission-index">Submission #<t t-esc="row['submission'].id"/></span>
                                                 <span class="badge text-bg-light border" t-esc="row['state_label']"/>
                                                 <span t-if="row['submission'].language"
                                                       class="small text-muted"
@@ -273,8 +282,11 @@
                             </article>
                         </div>
                     </div>
-                    <div t-else="" class="alert alert-light border">
-                        You have no account-linked submissions yet. Anonymous submissions remain accessible only through their private tracking link.
+                    <div t-else="" class="facodi-empty-state" data-facodi-empty-state="1">
+                        <span class="facodi-empty-icon fa fa-paper-plane-o" aria-hidden="true"></span>
+                        <h2 class="h4">Your contribution desk is ready</h2>
+                        <p class="text-muted">You have no account-linked submissions yet. Anonymous submissions remain accessible only through their private tracking link.</p>
+                        <a href="/contribuir/recurso" class="btn btn-primary">Share your first resource</a>
                     </div>
                 </section>
             </div>
