@@ -6,6 +6,16 @@ from odoo.addons.portal.controllers.portal import CustomerPortal
 class FacodiCustomerPortal(CustomerPortal):
     def _prepare_home_portal_values(self, counters):
         values = super()._prepare_home_portal_values(counters)
+
+        # Odoo's native /my/counters JSON-RPC expects this method to return only
+        # values for data-placeholder_count entries requested by the Portal UI.
+        # Rich FACODI dashboard values belong to the initial /my/home render
+        # (which calls this method with an empty counters list). Returning them
+        # to /my/counters makes PortalHomeCounters query missing placeholders
+        # and write textContent on null.
+        if counters:
+            return values
+
         user = request.env.user
 
         Submission = request.env["facodi.learning.submission"].sudo()
