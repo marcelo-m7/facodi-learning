@@ -30,6 +30,12 @@ class TestPortalHomeContract(unittest.TestCase):
         self.assertIn("facodi-course-progress", self.portal)
         self.assertIn("facodi_course_rows", self.portal)
 
+    def test_recent_learning_uses_native_completion_records(self):
+        self.assertIn('request.env["slide.slide.partner"].sudo()', self.controller)
+        self.assertIn('("completed", "=", True)', self.controller)
+        self.assertIn('"facodi_recent_learning_rows": recent_learning_rows', self.controller)
+        self.assertIn('data-facodi-latest-wins="1"', self.portal)
+
     def test_minha_facodi_has_single_standard_portal_destination(self):
         self.assertIn('return request.redirect("/my/home", code=302)', self.controller)
         self.assertNotIn('id="my_facodi_dashboard"', self.submission)

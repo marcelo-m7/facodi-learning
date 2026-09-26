@@ -3269,3 +3269,38 @@ msgstr "A tua caixa de ferramentas FACODI"
 #: model_terms:ir.ui.view,arch_db:facodi_learning.portal_my_home_facodi
 msgid "Account, security and any other portal tools enabled for you stay right here."
 msgstr "Conta, segurança e todas as restantes ferramentas do portal disponíveis para ti ficam aqui."
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.portal_my_home_facodi
+msgid "Latest wins"
+msgstr "Últimas conquistas"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.portal_my_home_facodi
+msgid "What you finished lately"
+msgstr "O que concluíste recentemente"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.portal_my_home_facodi
+msgid "Pulled from your native Odoo eLearning completion history."
+msgstr "Obtido diretamente do teu histórico de conclusões do eLearning standard do Odoo."
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.portal_my_home_facodi
+msgid "Keep moving"
+msgstr "Continuar em movimento"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.portal_my_home_facodi
+msgid "No finished tabs yet. Good place to start."
+msgstr "Ainda não há separadores concluídos. Um bom sítio para começar."
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.portal_my_home_facodi
+msgid "Complete your first lesson and it will show up here as part of your real learning trail."
+msgstr "Conclui a tua primeira aula e ela aparecerá aqui como parte do teu percurso real de aprendizagem."
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.portal_my_home_facodi
+msgid "Find something to finish"
+msgstr "Encontrar algo para concluir"
