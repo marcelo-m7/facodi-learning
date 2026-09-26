@@ -2980,4 +2980,122 @@ msgstr "Não enfileirado"
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit_index
 msgid "Courses"
 msgstr "Cursos"
-\n#. module: facodi_learning\n#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_my_list\n#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_community_videos\n#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit_index\nmsgid "Contribution summary"\nmsgstr "Resumo das contribuições"\n\n#. module: facodi_learning\n#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_my_list\n#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_community_videos\n#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit_index\nmsgid "In review"\nmsgstr "Em revisão"\n\n#. module: facodi_learning\n#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_my_list\n#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_community_videos\n#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit_index\nmsgid "Accepted / routed"\nmsgstr "Aceites / encaminhadas"\n\n#. module: facodi_learning\n#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_my_list\n#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_community_videos\n#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit_index\nmsgid "Closed"\nmsgstr "Encerradas"\n\n#. module: facodi_learning\n#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_my_list\n#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_community_videos\n#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit_index\nmsgid "Your contribution desk is ready"\nmsgstr "A tua área de contribuições está pronta"\n\n#. module: facodi_learning\n#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_my_list\n#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_community_videos\n#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit_index\nmsgid "You have no account-linked submissions yet. Anonymous submissions remain accessible only through their private tracking link."\nmsgstr "Ainda não tens submissões associadas à tua conta. As submissões anónimas continuam acessíveis apenas através da respetiva ligação privada de acompanhamento."\n\n#. module: facodi_learning\n#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_my_list\n#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_community_videos\n#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit_index\nmsgid "Share your first resource"\nmsgstr "Partilhar o primeiro recurso"\n\n#. module: facodi_learning\n#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_my_list\n#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_community_videos\n#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit_index\nmsgid "Community queue · shared first, curated next"\nmsgstr "Fila da comunidade · primeiro partilhado, depois curado"\n\n#. module: facodi_learning\n#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_my_list\n#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_community_videos\n#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit_index\nmsgid "Videos can appear here immediately after submission, before FACODI reviews their relevance, accuracy, provenance or publication rights. A listing here is not an endorsement or an approved learning-resource publication."\nmsgstr "Os vídeos podem aparecer aqui imediatamente após a submissão, antes de a FACODI rever a relevância, exatidão, proveniência ou direitos de publicação. A presença nesta lista não constitui recomendação nem publicação aprovada como recurso de aprendizagem."\n\n#. module: facodi_learning\n#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_my_list\n#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_community_videos\n#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit_index\nmsgid "Nothing on this shelf yet"\nmsgstr "Ainda não há nada nesta prateleira"\n\n#. module: facodi_learning\n#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_my_list\n#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_community_videos\n#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit_index\nmsgid "No community video submissions match these filters. Try another language or search, or add a useful public video."\nmsgstr "Nenhuma submissão de vídeo da comunidade corresponde a estes filtros. Experimenta outro idioma ou pesquisa, ou adiciona um vídeo público útil."\n\n#. module: facodi_learning\n#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_my_list\n#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_community_videos\n#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit_index\nmsgid "Share a video"\nmsgstr "Partilhar um vídeo"\n\n#. module: facodi_learning\n#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_my_list\n#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_community_videos\n#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit_index\nmsgid "No curricular units match these filters"\nmsgstr "Nenhuma unidade curricular corresponde a estes filtros"\n\n#. module: facodi_learning\n#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_my_list\n#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_community_videos\n#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit_index\nmsgid "Try a broader combination or return to the complete academic index."\nmsgstr "Experimenta uma combinação mais ampla ou regressa ao índice académico completo."\n\n#. module: facodi_learning\n#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_my_list\n#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_community_videos\n#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit_index\nmsgid "The curricular-unit shelf is being prepared"\nmsgstr "A área de unidades curriculares está a ser preparada"\n\n#. module: facodi_learning\n#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_my_list\n#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_community_videos\n#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit_index\nmsgid "There are no published curricular units yet. Explore the available roadmaps or help the community with an open learning resource."\nmsgstr "Ainda não existem unidades curriculares publicadas. Explora os percursos disponíveis ou ajuda a comunidade com um recurso de aprendizagem aberto."\n\n#. module: facodi_learning\n#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_my_list\n#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_community_videos\n#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit_index\nmsgid "Explore roadmaps"\nmsgstr "Explorar percursos"\n
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_my_list
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_community_videos
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit_index
+msgid "Contribution summary"
+msgstr "Resumo das contribuições"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_my_list
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_community_videos
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit_index
+msgid "In review"
+msgstr "Em revisão"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_my_list
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_community_videos
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit_index
+msgid "Accepted / routed"
+msgstr "Aceites / encaminhadas"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_my_list
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_community_videos
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit_index
+msgid "Closed"
+msgstr "Encerradas"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_my_list
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_community_videos
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit_index
+msgid "Your contribution desk is ready"
+msgstr "A tua área de contribuições está pronta"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_my_list
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_community_videos
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit_index
+msgid "You have no account-linked submissions yet. Anonymous submissions remain accessible only through their private tracking link."
+msgstr "Ainda não tens submissões associadas à tua conta. As submissões anónimas continuam acessíveis apenas através da respetiva ligação privada de acompanhamento."
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_my_list
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_community_videos
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit_index
+msgid "Share your first resource"
+msgstr "Partilhar o primeiro recurso"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_my_list
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_community_videos
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit_index
+msgid "Community queue · shared first, curated next"
+msgstr "Fila da comunidade · primeiro partilhado, depois curado"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_my_list
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_community_videos
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit_index
+msgid "Videos can appear here immediately after submission, before FACODI reviews their relevance, accuracy, provenance or publication rights. A listing here is not an endorsement or an approved learning-resource publication."
+msgstr "Os vídeos podem aparecer aqui imediatamente após a submissão, antes de a FACODI rever a relevância, exatidão, proveniência ou direitos de publicação. A presença nesta lista não constitui recomendação nem publicação aprovada como recurso de aprendizagem."
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_my_list
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_community_videos
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit_index
+msgid "Nothing on this shelf yet"
+msgstr "Ainda não há nada nesta prateleira"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_my_list
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_community_videos
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit_index
+msgid "No community video submissions match these filters. Try another language or search, or add a useful public video."
+msgstr "Nenhuma submissão de vídeo da comunidade corresponde a estes filtros. Experimenta outro idioma ou pesquisa, ou adiciona um vídeo público útil."
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_my_list
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_community_videos
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit_index
+msgid "Share a video"
+msgstr "Partilhar um vídeo"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_my_list
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_community_videos
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit_index
+msgid "No curricular units match these filters"
+msgstr "Nenhuma unidade curricular corresponde a estes filtros"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_my_list
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_community_videos
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit_index
+msgid "Try a broader combination or return to the complete academic index."
+msgstr "Experimenta uma combinação mais ampla ou regressa ao índice académico completo."
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_my_list
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_community_videos
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit_index
+msgid "The curricular-unit shelf is being prepared"
+msgstr "A área de unidades curriculares está a ser preparada"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_my_list
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_community_videos
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit_index
+msgid "There are no published curricular units yet. Explore the available roadmaps or help the community with an open learning resource."
+msgstr "Ainda não existem unidades curriculares publicadas. Explora os percursos disponíveis ou ajuda a comunidade com um recurso de aprendizagem aberto."
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_my_list
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_community_videos
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit_index
+msgid "Explore roadmaps"
+msgstr "Explorar percursos"
