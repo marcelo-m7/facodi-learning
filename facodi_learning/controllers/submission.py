@@ -431,6 +431,56 @@ class FacodiSubmissionController(http.Controller):
         return response
 
     @http.route(
+        "/minha-facodi",
+        type="http",
+        auth="user",
+        website=True,
+        methods=["GET"],
+        sitemap=False,
+    )
+    def my_facodi(self, **kwargs):
+        user = request.env.user
+        Submission = request.env["facodi.learning.submission"].sudo()
+        submissions = Submission.search(
+            [("submitted_by_id", "=", user.id)],
+            order="create_date desc, id desc",
+        )
+        submission_rows = [
+            {
+                "submission": submission,
+                "state_label": self._submission_state_label(submission),
+            }
+            for submission in submissions[:5]
+        ]
+
+        channels = request.env["slide.channel"]
+        enrolled_courses = channels.search(
+            [
+                ("active", "=", True),
+                ("is_published", "=", True),
+                ("is_visible", "=", True),
+                ("partner_ids", "in", [user.partner_id.id]),
+            ],
+            order="write_date desc, id desc",
+            limit=6,
+        )
+
+        return request.render(
+            "facodi_learning.my_facodi_dashboard",
+            {
+                "submission_rows": submission_rows,
+                "submission_count": len(submissions),
+                "active_submission_count": len(
+                    submissions.filtered(
+                        lambda item: item.state in {"submitted", "reviewing"}
+                    )
+                ),
+                "enrolled_courses": enrolled_courses,
+            },
+            headers={"X-Robots-Tag": "noindex, nofollow"},
+        )
+
+    @http.route(
         "/minhas-contribuicoes",
         type="http",
         auth="user",

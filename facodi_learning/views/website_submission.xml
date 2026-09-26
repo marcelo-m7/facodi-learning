@@ -406,4 +406,96 @@
         </t>
     </template>
 
+
+    <template id="my_facodi_dashboard" name="Minha FACODI dashboard">
+        <t t-call="website.layout">
+            <div id="wrap" class="oe_structure">
+                <section class="container py-5" data-facodi-user-dashboard="1">
+                    <div class="d-flex flex-wrap justify-content-between align-items-end gap-3 mb-4">
+                        <div>
+                            <p class="text-uppercase small fw-semibold text-muted mb-2">Minha FACODI</p>
+                            <h1 class="display-6 fw-bold mb-2">Your learning desk</h1>
+                            <p class="lead text-muted mb-0">Continue learning, follow your contributions and find the next useful thing to do.</p>
+                        </div>
+                        <a href="/explorar" class="btn btn-primary">Explore learning</a>
+                    </div>
+
+                    <div class="facodi-dashboard-grid mb-5">
+                        <a href="/slides" class="facodi-dashboard-action text-decoration-none">
+                            <span class="facodi-dashboard-action__icon fa fa-graduation-cap" aria-hidden="true"></span>
+                            <div><strong>My learning</strong><small>Courses and learning progress</small></div>
+                        </a>
+                        <a href="/minhas-contribuicoes" class="facodi-dashboard-action text-decoration-none">
+                            <span class="facodi-dashboard-action__icon fa fa-paper-plane" aria-hidden="true"></span>
+                            <div><strong>My contributions</strong><small><t t-esc="submission_count"/> shared · <t t-esc="active_submission_count"/> in review</small></div>
+                        </a>
+                        <a href="/contribuir/recurso" class="facodi-dashboard-action text-decoration-none">
+                            <span class="facodi-dashboard-action__icon fa fa-plus" aria-hidden="true"></span>
+                            <div><strong>Share a resource</strong><small>Add a useful open learning source</small></div>
+                        </a>
+                        <a href="/forum" class="facodi-dashboard-action text-decoration-none">
+                            <span class="facodi-dashboard-action__icon fa fa-comments" aria-hidden="true"></span>
+                            <div><strong>Community</strong><small>Discuss, ask and help other learners</small></div>
+                        </a>
+                    </div>
+
+                    <div class="row g-4">
+                        <div class="col-12 col-xl-7">
+                            <div class="d-flex justify-content-between align-items-center gap-3 mb-3">
+                                <div>
+                                    <p class="facodi-kicker mb-1">Continue</p>
+                                    <h2 class="h3 mb-0">Your courses</h2>
+                                </div>
+                                <a href="/slides" class="btn btn-sm btn-outline-secondary">All courses</a>
+                            </div>
+                            <div t-if="enrolled_courses" class="row g-3">
+                                <div t-foreach="enrolled_courses" t-as="course" class="col-12 col-md-6">
+                                    <article class="card h-100 o_wslides_course_card">
+                                        <div class="card-body d-flex flex-column">
+                                            <div class="small text-uppercase fw-semibold text-muted mb-2">Course</div>
+                                            <h3 class="h5 card-title"><span t-field="course.name"/></h3>
+                                            <p t-if="course.description_short" class="small text-muted flex-grow-1"><t t-esc="course.description_short"/></p>
+                                            <a t-att-href="course.website_url" class="stretched-link">Continue course</a>
+                                        </div>
+                                    </article>
+                                </div>
+                            </div>
+                            <div t-else="" class="facodi-empty-state" data-facodi-empty-state="1">
+                                <span class="facodi-empty-icon fa fa-compass" aria-hidden="true"></span>
+                                <h3 class="h4">Build your learning shelf</h3>
+                                <p class="text-muted">You are not enrolled in a published FACODI course yet. Browse the catalogue and choose where to start.</p>
+                                <a href="/slides" class="btn btn-primary">Browse courses</a>
+                            </div>
+                        </div>
+
+                        <div class="col-12 col-xl-5">
+                            <div class="d-flex justify-content-between align-items-center gap-3 mb-3">
+                                <div>
+                                    <p class="facodi-kicker mb-1">Community</p>
+                                    <h2 class="h3 mb-0">Recent contributions</h2>
+                                </div>
+                                <a href="/minhas-contribuicoes" class="btn btn-sm btn-outline-secondary">View all</a>
+                            </div>
+                            <div t-if="submission_rows" class="d-grid gap-2">
+                                <a t-foreach="submission_rows" t-as="row"
+                                   t-att-href="'/minhas-contribuicoes/%s' % row['submission'].id"
+                                   class="facodi-dashboard-submission text-decoration-none">
+                                    <span class="facodi-dashboard-submission__state" t-esc="row['state_label']"/>
+                                    <strong t-esc="row['submission'].name"/>
+                                    <small t-esc="row['submission'].language or '—'"/>
+                                </a>
+                            </div>
+                            <div t-else="" class="facodi-empty-state" data-facodi-empty-state="1">
+                                <span class="facodi-empty-icon fa fa-lightbulb-o" aria-hidden="true"></span>
+                                <h3 class="h4">Share something useful</h3>
+                                <p class="text-muted">Found a strong open video, article or document? Put it on the community review desk.</p>
+                                <a href="/contribuir/recurso" class="btn btn-primary">Share a resource</a>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </t>
+    </template>
+
 </odoo>
