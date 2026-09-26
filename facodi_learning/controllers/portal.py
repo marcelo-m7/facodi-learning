@@ -100,7 +100,7 @@ class FacodiCustomerPortal(CustomerPortal):
             for submission in recent_submissions
         ]
 
-        enrolled_course_ids = set(enrolled_courses.ids)
+        enrolled_course_ids = set(memberships.mapped("channel_id").ids)
 
         Reference = request.env["facodi.learning.curriculum.reference"].sudo()
         roadmap = Reference.search(

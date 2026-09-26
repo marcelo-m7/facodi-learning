@@ -58,6 +58,9 @@ jobs:
       - name: Validate D1 learning interfaces contract
         run: python facodi_learning/tests/test_learning_interfaces_contract.py
 
+      - name: Validate portal home contract
+        run: python facodi_learning/tests/test_portal_home_contract.py
+
       - name: Start PostgreSQL 16
         run: |
           docker network create facodi-learning-ci
@@ -167,7 +170,7 @@ jobs:
             --without-demo=True \
             -d facodi_learning_ci \
             -i facodi_learning \
-            --test-tags /facodi_learning:TestCurriculumBootstrap,/facodi_learning:TestCurriculumUI,/facodi_learning:TestCurriculumPublicUnits,/facodi_learning:TestCurriculumModule,/facodi_learning:TestProbabilityStatisticsMapping,/facodi_learning:TestResourceSubmissionModel,/facodi_learning:TestResourceSubmissionWebsite,/facodi_learning:TestPipelineSecurity,/facodi_learning:TestSupabaseEdgeAnalysis,/facodi_learning:TestContentPublicationGovernance,/facodi_learning:TestExploreLearningWebsite \
+            --test-tags /facodi_learning:TestCurriculumBootstrap,/facodi_learning:TestCurriculumUI,/facodi_learning:TestCurriculumPublicUnits,/facodi_learning:TestCurriculumModule,/facodi_learning:TestProbabilityStatisticsMapping,/facodi_learning:TestResourceSubmissionModel,/facodi_learning:TestResourceSubmissionWebsite,/facodi_learning:TestPipelineSecurity,/facodi_learning:TestSupabaseEdgeAnalysis,/facodi_learning:TestContentPublicationGovernance,/facodi_learning:TestExploreLearningWebsite,/facodi_learning:TestFacodiPortalHome \
             --stop-after-init \
             2>&1 | tee /tmp/facodi-current-install.log
 
