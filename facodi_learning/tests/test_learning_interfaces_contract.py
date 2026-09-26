@@ -8,6 +8,7 @@ WEBSITE_MENU = MODULE_ROOT / "data" / "website_menu.xml"
 PORTAL_HOME = MODULE_ROOT / "views" / "portal_home.xml"
 MANIFEST = MODULE_ROOT / "__manifest__.py"
 SLIDE_CHANNEL_MODEL = MODULE_ROOT / "models" / "slide_channel.py"
+CURRICULUM_CONTROLLER = MODULE_ROOT / "controllers" / "curriculum.py"
 
 
 class TestLearningInterfacesContract(unittest.TestCase):
@@ -88,6 +89,11 @@ class TestLearningInterfacesContract(unittest.TestCase):
             "Content correspondence - not academic equivalence",
             model_source,
         )
+
+    def test_curriculum_forum_link_uses_odoo19_slug_route(self):
+        controller = CURRICULUM_CONTROLLER.read_text(encoding="utf-8")
+        self.assertIn('request.env["ir.http"]._slug(forum)', controller)
+        self.assertNotIn("forum.website_url", controller)
 
     def test_stitch_only_features_are_not_rendered(self):
         for source in (self.curriculum, self.slides):
