@@ -43,8 +43,25 @@ class TestPortalHomeContract(unittest.TestCase):
         self.assertIn('"facodi_recent_learning_rows": recent_learning_rows', self.controller)
         self.assertIn('data-facodi-latest-wins="1"', self.portal)
 
+    def test_portal_t_field_expressions_are_smart_record_fields(self):
+        import re
+
+        expressions = re.findall(r't-field="([^"]+)"', self.portal)
+        self.assertTrue(expressions)
+        invalid = [expression for expression in expressions if "." not in expression]
+        self.assertEqual(
+            invalid,
+            [],
+            "t-field is only valid for smart-record expressions like record.field",
+        )
+        self.assertIn(
+            't-out="row[\'completed_at\']"',
+            self.portal,
+            "computed completion timestamps must use t-out, not t-field",
+        )
+
     def test_minha_facodi_has_single_standard_portal_destination(self):
-        self.assertIn('return request.redirect("/my/home", code=302)', self.controller)
+        self.assertIn('return request.redirect("/my/home", code=301)', self.controller)
         self.assertNotIn('id="my_facodi_dashboard"', self.submission)
 
 

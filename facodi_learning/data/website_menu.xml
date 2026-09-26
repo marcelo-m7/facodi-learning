@@ -84,4 +84,10 @@
         <value eval="[ref('facodi_learning.menu_public_curricular_units')]"/>
         <value eval="{'name': 'Curricular units', 'url': '/unidades-curriculares', 'parent_id': ref('facodi_learning.menu_public_explore'), 'website_id': ref('website.default_website'), 'sequence': 60}"/>
     </function>
+    <!--
+        Reconcile against the FACODI website-specific root.  Do not declare
+        generic website.menu records here: in multi-website databases Odoo can
+        clone those records into unrelated websites.
+    -->
+    <function model="website.menu" name="facodi_reconcile_navigation"/>
 </odoo>
