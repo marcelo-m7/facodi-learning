@@ -1,3 +1,5 @@
+import json
+
 from odoo.tests import HttpCase, tagged
 
 
@@ -91,6 +93,43 @@ class TestFacodiPortalHome(HttpCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn('data-facodi-campus-pulse="1"', response.text)
         self.assertIn("Campus pulse", response.text)
+
+    def test_portal_counter_rpc_does_not_leak_dashboard_payload(self):
+        owner = self._portal_user("facodi-portal-counter-payload")
+        self.authenticate(owner.login, "facodi-test-pass")
+
+        response = self.url_open(
+            "/my/counters",
+            data=json.dumps(
+                {
+                    "jsonrpc": "2.0",
+                    "method": "call",
+                    "id": 1,
+                    "params": {"counters": ["__facodi_counter_probe__"]},
+                }
+            ).encode(),
+            headers={"Content-Type": "application/json"},
+        )
+        self.assertEqual(response.status_code, 200)
+        payload = response.json()
+        self.assertNotIn("error", payload)
+        result = payload["result"]
+
+        for key in (
+            "facodi_course_rows",
+            "facodi_submission_rows",
+            "facodi_recent_learning_rows",
+            "facodi_academic_map",
+            "facodi_forum_posts",
+            "facodi_learning_stats",
+        ):
+            self.assertNotIn(
+                key,
+                result,
+                "Portal counter RPC must return counter data only; rich dashboard values "
+                "make Odoo's native PortalHomeCounters interaction query a missing "
+                "data-placeholder_count element and write textContent on null.",
+            )
 
     def test_legacy_minha_facodi_alias_redirects_to_standard_portal_home(self):
         owner = self._portal_user("facodi-portal-alias")
