@@ -93,17 +93,24 @@
     <template id="explore_content" name="Explore learning content">
         <t t-call="website.layout">
             <div id="wrap" class="oe_structure">
-                <section class="container py-5">
+                <section class="container py-5" data-facodi-explore-workbench="1">
                     <div class="d-flex flex-wrap justify-content-between align-items-end gap-3 mb-4">
                         <div>
-                            <p class="text-uppercase small fw-semibold text-muted mb-2">Explore</p>
-                            <h1 class="h2 mb-1">Learning resources</h1>
-                            <p class="text-muted mb-0"><t t-esc="total"/> public resources found.</p>
+                            <p class="facodi-kicker mb-2">Explore · discovery desk</p>
+                            <h1 class="display-6 fw-bold mb-1">Find your next useful tab.</h1>
+                            <p class="text-muted mb-0"><t t-esc="total"/> public resources in this view. Filter hard, wander freely.</p>
                         </div>
                         <a href="/explorar" class="btn btn-outline-secondary">Back to Explore</a>
                     </div>
 
-                    <form method="get" action="/explorar/conteudos" class="card card-body mb-4">
+                    <div class="facodi-discovery-stats mb-4" aria-label="Catalogue snapshot">
+                        <div class="facodi-discovery-stat facodi-highlight-lime"><strong t-esc="discovery_stats['resources']"/><span>resources</span></div>
+                        <div class="facodi-discovery-stat facodi-highlight-mint"><strong t-esc="discovery_stats['areas']"/><span>areas</span></div>
+                        <div class="facodi-discovery-stat facodi-highlight-cyan"><strong t-esc="discovery_stats['languages']"/><span>languages</span></div>
+                        <div class="facodi-discovery-stat facodi-highlight-orange"><strong t-esc="discovery_stats['formats']"/><span>formats</span></div>
+                    </div>
+
+                    <form method="get" action="/explorar/conteudos" class="card card-body mb-3 facodi-filter-panel" role="search">
                         <div class="row g-3">
                             <div class="col-12 col-lg-4">
                                 <label for="facodi-content-query" class="form-label">Search</label>
@@ -142,23 +149,44 @@
                         </div>
                     </form>
 
+                    <div t-if="active_filters" class="facodi-filter-chips mb-4" aria-label="Active filters">
+                        <span class="facodi-filter-chips__label">On your desk:</span>
+                        <span t-foreach="active_filters" t-as="filter_row" class="facodi-filter-chip">
+                            <span t-esc="filter_row['label']"/>
+                        </span>
+                        <a href="/explorar/conteudos" class="facodi-filter-chip facodi-filter-chip--clear">Clear the desk</a>
+                    </div>
+
                     <div t-if="slides" class="row g-3">
                         <div t-foreach="slides" t-as="slide" class="col-12 col-md-6 col-xl-4">
-                            <article class="card h-100">
+                            <article class="card h-100 facodi-resource-card" data-facodi-resource-card="1">
+                                <div class="facodi-resource-card__tape" aria-hidden="true"></div>
                                 <div class="card-body d-flex flex-column">
-                                    <div class="small text-muted mb-2">
-                                        <span t-esc="slide.slide_category"/>
-                                        <span class="mx-1">·</span>
-                                        <span t-field="slide.channel_id.name"/>
+                                    <div class="d-flex flex-wrap gap-2 align-items-center mb-3">
+                                        <span class="facodi-resource-pill" t-esc="slide.slide_category"/>
+                                        <span class="facodi-resource-pill facodi-resource-pill--course" t-field="slide.channel_id.name"/>
                                     </div>
                                     <h2 class="h5 card-title"><span t-field="slide.name"/></h2>
                                     <p t-if="slide.description" class="text-muted small flex-grow-1"><t t-esc="slide.description"/></p>
-                                    <a t-att-href="slide.website_url" class="stretched-link">Open resource</a>
+                                    <div class="d-flex align-items-center justify-content-between gap-2 mt-3">
+                                        <span class="small fw-semibold">Open the tab →</span>
+                                        <span class="fa fa-external-link" aria-hidden="true"></span>
+                                    </div>
+                                    <a t-att-href="slide.website_url" class="stretched-link" t-att-aria-label="'Open resource: %s' % slide.name"></a>
                                 </div>
                             </article>
                         </div>
                     </div>
-                    <div t-else="" class="alert alert-light border">No public learning resources match these filters.</div>
+                    <div t-else="" class="facodi-empty-state" data-facodi-empty-state="1">
+                        <span class="facodi-empty-icon fa fa-search" aria-hidden="true"></span>
+                        <h2 class="h4">That shelf is empty. The campus isn't.</h2>
+                        <p class="text-muted">No public resource matches this exact combination. Clear the desk, browse learning areas or drop a useful resource for the community.</p>
+                        <div class="d-flex flex-wrap justify-content-center gap-2">
+                            <a href="/explorar/conteudos" class="btn btn-primary">Clear the desk</a>
+                            <a href="/explorar/areas" class="btn btn-outline-primary">Browse areas</a>
+                            <a href="/contribuir/recurso" class="btn btn-outline-secondary">Drop a resource</a>
+                        </div>
+                    </div>
 
                     <nav t-if="page_count &gt; 1" class="d-flex justify-content-between align-items-center mt-4" aria-label="Content pagination">
                         <a t-if="previous_url" t-att-href="previous_url" class="btn btn-outline-secondary">Previous</a>

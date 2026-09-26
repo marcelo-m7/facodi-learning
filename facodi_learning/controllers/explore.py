@@ -183,6 +183,26 @@ class FacodiExploreController(http.Controller):
                 {**params, "page": page + 1}
             )
 
+        active_filters = []
+        if query:
+            active_filters.append({"label": 'Search: "%s"' % query, "key": "q"})
+        if area_id:
+            area = self._visible_areas().filtered(lambda tag: tag.id == area_id)[:1]
+            if area:
+                active_filters.append({"label": "Area: %s" % area.name, "key": "area"})
+        if language:
+            active_filters.append({"label": "Language: %s" % language.upper(), "key": "language"})
+        if content_format:
+            format_label = dict(available_formats).get(content_format, content_format)
+            active_filters.append({"label": "Format: %s" % format_label, "key": "format"})
+
+        discovery_stats = {
+            "resources": len(all_slides),
+            "areas": len(self._visible_areas()),
+            "languages": len(self._language_options(all_slides)),
+            "formats": len(available_formats),
+        }
+
         return request.render(
             "facodi_learning.explore_content",
             {
@@ -199,6 +219,8 @@ class FacodiExploreController(http.Controller):
                 "total": total,
                 "previous_url": previous_url,
                 "next_url": next_url,
+                "active_filters": active_filters,
+                "discovery_stats": discovery_stats,
             },
         )
 
