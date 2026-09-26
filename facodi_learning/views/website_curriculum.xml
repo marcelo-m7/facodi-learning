@@ -513,6 +513,23 @@
                                         <strong>Optional group:</strong> <t t-esc="unit.option_group"/>
                                     </div>
 
+                                    <div class="facodi-community-note" data-facodi-uc-community="1">
+                                        <div class="facodi-community-note__marker facodi-highlight-pink">
+                                            <span class="fa fa-comments" aria-hidden="true"></span>
+                                        </div>
+                                        <div>
+                                            <p class="facodi-kicker mb-1">Community margin</p>
+                                            <h2 class="h5 mb-2">Got a question? Drop it on the forum.</h2>
+                                            <p class="small text-muted mb-3">
+                                                Use the FACODI community to compare notes, ask for explanations and share study approaches around this curricular unit.
+                                            </p>
+                                            <div class="d-flex flex-wrap gap-2">
+                                                <a t-att-href="community_forum_url" class="btn btn-primary btn-sm">Open the forum</a>
+                                                <a t-att-href="'/contribuir/recurso?curriculum_unit_id=%s' % unit.id" class="btn btn-outline-primary btn-sm">Drop a resource</a>
+                                            </div>
+                                        </div>
+                                    </div>
+
                                     <div class="facodi-sheet">
                                         <strong>Provenance and limits.</strong>
                                         ECTS and the curricular structure shown are facts from the external source.

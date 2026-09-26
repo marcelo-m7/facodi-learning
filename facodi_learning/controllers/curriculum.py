@@ -278,6 +278,17 @@ class FacodiCurriculumController(http.Controller):
             coverage_status = "partial"
         else:
             coverage_status = "gap"
+        forum = False
+        forum_url = "/forum"
+        if "forum.forum" in request.env:
+            forum = (
+                request.env["forum.forum"]
+                .sudo()
+                .search([("website_id", "in", [False, request.website.id])], order="id", limit=1)
+            )
+            if forum:
+                forum_url = forum.website_url or "/forum"
+
         return request.render(
             "facodi_learning.curriculum_public_unit",
             {
@@ -287,5 +298,7 @@ class FacodiCurriculumController(http.Controller):
                 "coverage_status": coverage_status,
                 "learning": learning,
                 "show_learning_progress": show_learning_progress,
+                "community_forum": forum,
+                "community_forum_url": forum_url,
             },
         )
