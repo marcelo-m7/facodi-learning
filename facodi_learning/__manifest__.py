@@ -1,12 +1,12 @@
 {
     "name": "FACODI Learning",
     "summary": "Standard-first analysis and educational mapping for Odoo eLearning",
-    "version": "19.0.1.33.0",
+    "version": "19.0.1.34.0",
     "category": "Website/eLearning",
     "author": "FACODI",
     "website": "https://facodi.com",
     "license": "LGPL-3",
-    "depends": ["website_slides"],
+    "depends": ["portal", "website_slides"],
     "data": [
         "security/ir.model.access.csv",
         "security/facodi_learning_security.xml",
@@ -26,6 +26,7 @@
         "views/website_curriculum.xml",
         "views/website_explore.xml",
         "views/website_submission.xml",
+        "views/portal_home.xml",
         "views/source_views.xml",
         "views/content_review_views.xml",
         "views/website_slides.xml",
