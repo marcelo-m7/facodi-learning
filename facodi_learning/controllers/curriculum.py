@@ -301,7 +301,10 @@ class FacodiCurriculumController(http.Controller):
                 .search([("website_id", "in", [False, request.website.id])], order="id", limit=1)
             )
             if forum:
-                forum_url = forum.website_url or "/forum"
+                # Odoo 19 forum.forum does not expose website_url. Build the
+                # canonical native Website Forum route with the same slug helper
+                # used by forum.post.
+                forum_url = "/forum/%s" % request.env["ir.http"]._slug(forum)
 
         return request.render(
             "facodi_learning.curriculum_public_unit",
