@@ -164,18 +164,16 @@ class FacodiExploreController(http.Controller):
             "language": language,
             "format": content_format,
         }
-        query_string = self._query_string(params)
-        base_page_url = "/explorar/conteudos/page/%s"
         previous_url = False
         next_url = False
         if page > 1:
-            previous_url = base_page_url % (page - 1)
-            if query_string:
-                previous_url += "?" + query_string
+            previous_url = "/explorar/conteudos?" + self._query_string(
+                {**params, "page": page - 1}
+            )
         if page < page_count:
-            next_url = base_page_url % (page + 1)
-            if query_string:
-                next_url += "?" + query_string
+            next_url = "/explorar/conteudos?" + self._query_string(
+                {**params, "page": page + 1}
+            )
 
         return request.render(
             "facodi_learning.explore_content",
