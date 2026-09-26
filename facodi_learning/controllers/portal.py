@@ -15,16 +15,33 @@ class FacodiCustomerPortal(CustomerPortal):
         )
         recent_submissions = submissions[:5]
 
-        enrolled_courses = request.env["slide.channel"].search(
+        Membership = request.env["slide.channel.partner"].sudo()
+        memberships = Membership.search(
             [
-                ("active", "=", True),
-                ("is_published", "=", True),
-                ("is_visible", "=", True),
-                ("partner_ids", "in", [user.partner_id.id]),
+                ("partner_id", "=", user.partner_id.id),
+                ("member_status", "!=", "invited"),
+                ("channel_id.active", "=", True),
+                ("channel_id.website_published", "=", True),
+                ("channel_id.visibility", "=", "public"),
+                "|",
+                ("channel_id.website_id", "=", False),
+                ("channel_id.website_id", "=", request.website.id),
             ],
             order="write_date desc, id desc",
             limit=6,
         )
+        course_rows = []
+        for membership in memberships:
+            completion = float(membership.completion or 0.0)
+            if completion <= 1:
+                completion *= 100
+            course_rows.append(
+                {
+                    "course": membership.channel_id,
+                    "completion": min(max(completion, 0.0), 100.0),
+                    "is_completed": membership.member_status == "completed" or completion >= 100,
+                }
+            )
 
         state_labels = dict(
             Submission._fields["state"]._description_selection(request.env)
@@ -42,10 +59,10 @@ class FacodiCustomerPortal(CustomerPortal):
 
         values.update(
             {
-                "facodi_enrolled_courses": enrolled_courses,
+                "facodi_course_rows": course_rows,
                 "facodi_submission_rows": submission_rows,
                 "facodi_learning_stats": {
-                    "courses": len(enrolled_courses),
+                    "courses": len(course_rows),
                     "contributions": len(submissions),
                     "in_review": len(
                         submissions.filtered(
@@ -56,6 +73,9 @@ class FacodiCustomerPortal(CustomerPortal):
                         submissions.filtered(
                             lambda item: item.state in {"accepted", "resolved"}
                         )
+                    ),
+                    "completed_courses": len(
+                        [row for row in course_rows if row["is_completed"]]
                     ),
                 },
             }
