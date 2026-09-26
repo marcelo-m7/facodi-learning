@@ -414,10 +414,29 @@
                     <div class="d-flex flex-wrap justify-content-between align-items-end gap-3 mb-4">
                         <div>
                             <p class="text-uppercase small fw-semibold text-muted mb-2">Minha FACODI</p>
-                            <h1 class="display-6 fw-bold mb-2">Your learning desk</h1>
-                            <p class="lead text-muted mb-0">Continue learning, follow your contributions and find the next useful thing to do.</p>
+                            <h1 class="display-6 fw-bold mb-2">Your campus, your tabs.</h1>
+                            <p class="lead text-muted mb-0">Pick up where you left off, drop something useful for the community and keep your learning momentum visible.</p>
                         </div>
                         <a href="/explorar" class="btn btn-primary">Explore learning</a>
+                    </div>
+
+                    <div class="facodi-momentum-strip mb-4" aria-label="Learning momentum">
+                        <div class="facodi-momentum-card facodi-highlight-lime">
+                            <span class="facodi-momentum-card__value" t-esc="learning_stats['courses']"/>
+                            <span class="facodi-momentum-card__label">courses on your desk</span>
+                        </div>
+                        <div class="facodi-momentum-card facodi-highlight-mint">
+                            <span class="facodi-momentum-card__value" t-esc="learning_stats['completed']"/>
+                            <span class="facodi-momentum-card__label">courses completed</span>
+                        </div>
+                        <div class="facodi-momentum-card facodi-highlight-cyan">
+                            <span class="facodi-momentum-card__value" t-esc="learning_stats['contributions']"/>
+                            <span class="facodi-momentum-card__label">community drops</span>
+                        </div>
+                        <div class="facodi-momentum-card facodi-highlight-pink">
+                            <span class="facodi-momentum-card__value" t-esc="learning_stats['in_review']"/>
+                            <span class="facodi-momentum-card__label">on the review desk</span>
+                        </div>
                     </div>
 
                     <div class="facodi-dashboard-grid mb-5">
