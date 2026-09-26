@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="explore_landing" name="Explore FACODI">
+        <t t-call="website.layout">
+            <div id="wrap" class="oe_structure">
+                <section class="container py-5">
+                    <div class="row justify-content-center">
+                        <div class="col-12 col-xl-10">
+                            <p class="text-uppercase small fw-semibold text-muted mb-2">FACODI Learning</p>
+                            <h1 class="display-5 fw-bold mb-3">Explore open learning</h1>
+                            <p class="lead text-muted mb-4">Discover learning areas, individual resources and complete courses through the public FACODI catalogue.</p>
+                            <div class="row g-3">
+                                <div class="col-12 col-md-4">
+                                    <a href="/explorar/areas" class="card h-100 text-decoration-none">
+                                        <div class="card-body">
+                                            <h2 class="h4">Learning areas</h2>
+                                            <p class="text-muted mb-0">Browse public courses by their curated learning area.</p>
+                                        </div>
+                                    </a>
+                                </div>
+                                <div class="col-12 col-md-4">
+                                    <a href="/explorar/conteudos" class="card h-100 text-decoration-none">
+                                        <div class="card-body">
+                                            <h2 class="h4">Learning resources</h2>
+                                            <p class="text-muted mb-0">Search public videos, articles and documents by topic, language and format.</p>
+                                        </div>
+                                    </a>
+                                </div>
+                                <div class="col-12 col-md-4">
+                                    <a href="/explorar/cursos" class="card h-100 text-decoration-none">
+                                        <div class="card-body">
+                                            <h2 class="h4">Courses</h2>
+                                            <p class="text-muted mb-0">Continue to the canonical Odoo eLearning course catalogue.</p>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </t>
+    </template>
+
+    <template id="explore_areas" name="Explore learning areas">
+        <t t-call="website.layout">
+            <div id="wrap" class="oe_structure">
+                <section class="container py-5">
+                    <div class="d-flex flex-wrap justify-content-between align-items-end gap-3 mb-4">
+                        <div>
+                            <p class="text-uppercase small fw-semibold text-muted mb-2">Explore</p>
+                            <h1 class="h2 mb-1">Learning areas</h1>
+                            <p class="text-muted mb-0">Only areas represented by publicly available courses on this website are shown.</p>
+                        </div>
+                        <a href="/explorar" class="btn btn-outline-secondary">Back to Explore</a>
+                    </div>
+
+                    <form method="get" action="/explorar/areas" class="row g-2 mb-4" role="search">
+                        <div class="col-12 col-md-8 col-lg-6">
+                            <label for="facodi-area-query" class="form-label">Search areas</label>
+                            <input id="facodi-area-query" type="search" name="q" class="form-control" t-att-value="query" placeholder="e.g. Mathematics"/>
+                        </div>
+                        <div class="col-auto align-self-end">
+                            <button type="submit" class="btn btn-primary">Search</button>
+                        </div>
+                    </form>
+
+                    <div t-if="areas" class="row g-3">
+                        <div t-foreach="areas" t-as="area" class="col-12 col-sm-6 col-lg-4">
+                            <a t-att-href="'/explorar/conteudos?area=%s' % area.id" class="card h-100 text-decoration-none">
+                                <div class="card-body">
+                                    <div t-if="area.group_id" class="small text-muted mb-1"><span t-field="area.group_id.name"/></div>
+                                    <h2 class="h5 mb-0"><span t-field="area.name"/></h2>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                    <div t-else="" class="alert alert-light border">No public learning areas match this search.</div>
+                </section>
+            </div>
+        </t>
+    </template>
+
+    <template id="explore_content" name="Explore learning content">
+        <t t-call="website.layout">
+            <div id="wrap" class="oe_structure">
+                <section class="container py-5">
+                    <div class="d-flex flex-wrap justify-content-between align-items-end gap-3 mb-4">
+                        <div>
+                            <p class="text-uppercase small fw-semibold text-muted mb-2">Explore</p>
+                            <h1 class="h2 mb-1">Learning resources</h1>
+                            <p class="text-muted mb-0"><t t-esc="total"/> public resources found.</p>
+                        </div>
+                        <a href="/explorar" class="btn btn-outline-secondary">Back to Explore</a>
+                    </div>
+
+                    <form method="get" action="/explorar/conteudos" class="card card-body mb-4">
+                        <div class="row g-3">
+                            <div class="col-12 col-lg-4">
+                                <label for="facodi-content-query" class="form-label">Search</label>
+                                <input id="facodi-content-query" type="search" name="q" class="form-control" t-att-value="query" placeholder="Search title or description"/>
+                            </div>
+                            <div class="col-12 col-md-4 col-lg-3">
+                                <label for="facodi-area-filter" class="form-label">Area</label>
+                                <select id="facodi-area-filter" name="area" class="form-select">
+                                    <option value="">All areas</option>
+                                    <option t-foreach="areas" t-as="area" t-att-value="area.id" t-att-selected="selected_area_id == area.id">
+                                        <t t-esc="area.name"/>
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="col-12 col-md-4 col-lg-2">
+                                <label for="facodi-language-filter" class="form-label">Language</label>
+                                <select id="facodi-language-filter" name="language" class="form-select">
+                                    <option value="">All languages</option>
+                                    <option t-foreach="language_options" t-as="language" t-att-value="language" t-att-selected="selected_language == language">
+                                        <t t-esc="language"/>
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="col-12 col-md-4 col-lg-2">
+                                <label for="facodi-format-filter" class="form-label">Format</label>
+                                <select id="facodi-format-filter" name="format" class="form-select">
+                                    <option value="">All formats</option>
+                                    <option t-foreach="format_options" t-as="format_row" t-att-value="format_row[0]" t-att-selected="selected_format == format_row[0]">
+                                        <t t-esc="format_row[1]"/>
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="col-12 col-lg-1 d-flex align-items-end">
+                                <button type="submit" class="btn btn-primary w-100">Filter</button>
+                            </div>
+                        </div>
+                    </form>
+
+                    <div t-if="slides" class="row g-3">
+                        <div t-foreach="slides" t-as="slide" class="col-12 col-md-6 col-xl-4">
+                            <article class="card h-100">
+                                <div class="card-body d-flex flex-column">
+                                    <div class="small text-muted mb-2">
+                                        <span t-esc="dict(slide._fields['slide_category'].selection).get(slide.slide_category, slide.slide_category)"/>
+                                        <span class="mx-1">·</span>
+                                        <span t-field="slide.channel_id.name"/>
+                                    </div>
+                                    <h2 class="h5 card-title"><span t-field="slide.name"/></h2>
+                                    <p t-if="slide.description" class="text-muted small flex-grow-1"><t t-esc="slide.description"/></p>
+                                    <a t-att-href="slide.website_url" class="stretched-link">Open resource</a>
+                                </div>
+                            </article>
+                        </div>
+                    </div>
+                    <div t-else="" class="alert alert-light border">No public learning resources match these filters.</div>
+
+                    <nav t-if="page_count &gt; 1" class="d-flex justify-content-between align-items-center mt-4" aria-label="Content pagination">
+                        <a t-if="previous_url" t-att-href="previous_url" class="btn btn-outline-secondary">Previous</a>
+                        <span t-else=""></span>
+                        <span class="small text-muted">Page <t t-esc="page"/> of <t t-esc="page_count"/></span>
+                        <a t-if="next_url" t-att-href="next_url" class="btn btn-outline-secondary">Next</a>
+                        <span t-else=""></span>
+                    </nav>
+                </section>
+            </div>
+        </t>
+    </template>
+</odoo>
