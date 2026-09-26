@@ -132,6 +132,7 @@ class TestExploreLearningWebsite(HttpCase):
         self.assertEqual(landing.status_code, 200)
         self.assertIn("/explorar/areas", landing.text)
         self.assertIn("/explorar/conteudos", landing.text)
+        self.assertIn("/explorar/videos", landing.text)
         self.assertIn("/explorar/cursos", landing.text)
 
         courses = self.url_open("/explorar/cursos", allow_redirects=False)
