@@ -337,6 +337,15 @@ class FacodiLearningSubmission(models.Model):
         if any(not _is_public_http_url(record.source_url) for record in self):
             raise ValidationError("Enter a valid public HTTP or HTTPS URL.")
 
+    def _lock_for_state_transition(self):
+        locked = self.try_lock_for_update()
+        locked.invalidate_recordset()
+        if len(locked) != len(self):
+            raise ValidationError(
+                "This submission is being updated; retry shortly."
+            )
+        return locked
+
     def _require_contributor(self, user):
         self.ensure_one()
         user = user.exists()
@@ -346,8 +355,9 @@ class FacodiLearningSubmission(models.Model):
 
     def action_update_by_contributor(self, user, values):
         self.ensure_one()
-        self._require_contributor(user)
-        if self.state != "submitted":
+        submission = self._lock_for_state_transition()
+        submission._require_contributor(user)
+        if submission.state != "submitted":
             raise ValidationError(
                 "Only submissions waiting for review can be edited."
             )
@@ -367,22 +377,23 @@ class FacodiLearningSubmission(models.Model):
         if "language" in values:
             cleaned["language"] = (values.get("language") or "").strip().lower()[:16]
 
-        if not cleaned.get("name", self.name):
+        if not cleaned.get("name", submission.name):
             raise ValidationError("A submission title is required.")
         if "source_url" in cleaned and not _is_public_http_url(cleaned["source_url"]):
             raise ValidationError("Enter a valid public HTTP or HTTPS URL.")
 
-        super(FacodiLearningSubmission, self).write(cleaned)
+        super(FacodiLearningSubmission, submission).write(cleaned)
         return True
 
     def action_withdraw_by_contributor(self, user):
         self.ensure_one()
-        self._require_contributor(user)
-        if self.state not in {"submitted", "reviewing"}:
+        submission = self._lock_for_state_transition()
+        submission._require_contributor(user)
+        if submission.state not in {"submitted", "reviewing"}:
             raise ValidationError(
                 "Only pending or reviewing submissions can be withdrawn."
             )
-        super(FacodiLearningSubmission, self).write({"state": "withdrawn"})
+        super(FacodiLearningSubmission, submission).write({"state": "withdrawn"})
         return True
 
     def _require_manager(self):
@@ -395,7 +406,8 @@ class FacodiLearningSubmission(models.Model):
 
     def action_start_review(self):
         self._require_manager()
-        for submission in self:
+        locked = self._lock_for_state_transition()
+        for submission in locked:
             if submission.state != "submitted":
                 raise ValidationError(
                     "Only submitted resources can enter editorial review."
@@ -407,8 +419,9 @@ class FacodiLearningSubmission(models.Model):
 
     def action_accept(self):
         self._require_manager()
+        locked = self._lock_for_state_transition()
         now = fields.Datetime.now()
-        for submission in self:
+        for submission in locked:
             if submission.state not in {"submitted", "reviewing"}:
                 raise ValidationError(
                     "Only submitted or reviewing resources can be accepted."
@@ -424,8 +437,9 @@ class FacodiLearningSubmission(models.Model):
 
     def action_reject(self):
         self._require_manager()
+        locked = self._lock_for_state_transition()
         now = fields.Datetime.now()
-        for submission in self:
+        for submission in locked:
             if submission.state not in {"submitted", "reviewing"}:
                 raise ValidationError(
                     "Only submitted or reviewing resources can be rejected."
@@ -442,22 +456,23 @@ class FacodiLearningSubmission(models.Model):
     def action_handoff_candidate(self):
         self.ensure_one()
         self._require_manager()
+        submission = self._lock_for_state_transition()
 
-        if self.state == "resolved" and self.candidate_id:
-            candidate = self.candidate_id
+        if submission.state == "resolved" and submission.candidate_id:
+            candidate = submission.candidate_id
         else:
-            if self.state != "accepted":
+            if submission.state != "accepted":
                 raise ValidationError(
                     "Accept the submission before routing it to the candidate pipeline."
                 )
-            if self.source_id:
+            if submission.source_id:
                 raise ValidationError(
                     "This submission is already linked to a canonical source."
                 )
 
             Candidate = self.env["facodi.learning.course.candidate"]
-            canonical_url = self.normalized_source_url or self.source_url
-            candidate = self.candidate_id
+            canonical_url = submission.normalized_source_url or submission.source_url
+            candidate = submission.candidate_id
             if not candidate:
                 candidate = Candidate.search(
                     [
@@ -474,34 +489,34 @@ class FacodiLearningSubmission(models.Model):
                     "submission_context": self.context or False,
                 }
                 institution = False
-                if self.curriculum_unit_id:
+                if submission.curriculum_unit_id:
                     metadata.update(
                         {
-                            "curriculum_unit_id": self.curriculum_unit_id.id,
+                            "curriculum_unit_id": submission.curriculum_unit_id.id,
                             "curriculum_unit_code": (
-                                self.curriculum_unit_id.external_unit_code
+                                submission.curriculum_unit_id.external_unit_code
                             ),
                             "curriculum_reference_id": (
-                                self.curriculum_unit_id.reference_id.id
+                                submission.curriculum_unit_id.reference_id.id
                             ),
                         }
                     )
-                    institution = self.curriculum_unit_id.reference_id.institution
+                    institution = submission.curriculum_unit_id.reference_id.institution
 
                 candidate = Candidate.create(
                     {
                         "provider": "facodi-submission",
-                        "external_id": f"submission-{self.id}",
+                        "external_id": f"submission-{submission.id}",
                         "source_url": canonical_url,
-                        "name": self.name,
-                        "description": self.context or False,
+                        "name": submission.name,
+                        "description": submission.context or False,
                         "institution": institution,
-                        "language": self.language or False,
+                        "language": submission.language or False,
                         "metadata": metadata,
                     }
                 )
 
-            super(FacodiLearningSubmission, self).write(
+            super(FacodiLearningSubmission, submission).write(
                 {
                     "candidate_id": candidate.id,
                     "state": "resolved",
@@ -519,7 +534,8 @@ class FacodiLearningSubmission(models.Model):
 
     def action_resolve(self):
         self._require_manager()
-        for submission in self:
+        locked = self._lock_for_state_transition()
+        for submission in locked:
             if submission.state != "accepted":
                 raise ValidationError(
                     "Only accepted submissions can be resolved."
