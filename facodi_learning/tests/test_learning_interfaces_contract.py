@@ -49,15 +49,9 @@ class TestLearningInterfacesContract(unittest.TestCase):
         ):
             self.assertIn(f'"{route}"', menu_model)
 
-        self.assertGreaterEqual(
-            menu.count('<field name="parent_id" ref="facodi_learning.menu_public_explore"/>'),
-            6,
-        )
-        self.assertEqual(
-            menu.count('<field name="website_id" ref="website.default_website"/>'),
-            7,
-        )
-        self.assertNotIn('<field name="website_id" ref="website.website_2"/>', menu)
+        self.assertNotIn('<record ', menu_data)
+        self.assertNotIn('ref="website.default_website"', menu_data)
+        self.assertNotIn('ref="website.website_2"', menu_data)
         self.assertIn('("website_id", "=", False)', menu_model)
         self.assertIn("set(children.mapped(\"url\")).issubset(target_urls)", menu_model)
 
