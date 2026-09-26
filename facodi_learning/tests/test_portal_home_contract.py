@@ -14,6 +14,14 @@ class TestPortalHomeContract(unittest.TestCase):
         cls.portal = PORTAL_VIEW.read_text(encoding="utf-8")
         cls.submission = SUBMISSION_VIEW.read_text(encoding="utf-8")
 
+    def test_counter_rpc_returns_before_facodi_dashboard_queries(self):
+        guard = "if counters:\n            return values"
+        self.assertIn(guard, self.controller)
+        self.assertLess(
+            self.controller.index(guard),
+            self.controller.index('request.env["facodi.learning.submission"].sudo()'),
+        )
+
     def test_learning_shelf_uses_standard_membership_model(self):
         self.assertIn('request.env["slide.channel.partner"]', self.controller)
         self.assertIn('("member_status", "!=", "invited")', self.controller)
