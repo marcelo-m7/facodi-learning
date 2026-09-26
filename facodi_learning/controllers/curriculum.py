@@ -135,6 +135,19 @@ class FacodiCurriculumController(http.Controller):
                         partner=partner,
                         viewer_env=request.env,
                     )
+        flat_entries = [
+            entry
+            for _year, period_groups in unit_matrix_groups
+            for _period, entries in period_groups
+            for entry in entries
+        ]
+        roadmap_stats = {
+            "units": len(flat_entries),
+            "covered": len([entry for entry in flat_entries if entry["coverage_status"] == "covered"]),
+            "partial": len([entry for entry in flat_entries if entry["coverage_status"] == "partial"]),
+            "gaps": len([entry for entry in flat_entries if entry["coverage_status"] == "gap"]),
+        }
+
         return request.render(
             "facodi_learning.curriculum_public_detail",
             {
@@ -144,6 +157,7 @@ class FacodiCurriculumController(http.Controller):
                 "coverage_links": reference._facodi_public_coverage_links(
                     website=website
                 ),
+                "roadmap_stats": roadmap_stats,
             },
         )
 

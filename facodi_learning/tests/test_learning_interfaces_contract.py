@@ -16,7 +16,7 @@ class TestLearningInterfacesContract(unittest.TestCase):
 
     def test_d1_release_version(self):
         manifest = MANIFEST.read_text(encoding="utf-8")
-        self.assertIn('"version": "19.0.1.31.0"', manifest)
+        self.assertIn('"version": "19.0.1.32.0"', manifest)
 
     def test_roadmap_catalogue_exposes_d1_structure(self):
         self.assertIn('id="curriculum_public_index"', self.curriculum)
