@@ -79,6 +79,7 @@ class FacodiLearningSubmission(models.Model):
             ("accepted", "Accepted"),
             ("rejected", "Rejected"),
             ("resolved", "Resolved"),
+            ("withdrawn", "Withdrawn"),
         ],
         required=True,
         default="submitted",
@@ -316,7 +317,7 @@ class FacodiLearningSubmission(models.Model):
             raise AccessError(
                 "Submission audit state is managed by FACODI review actions."
             )
-        if any(record.state in {"rejected", "resolved"} for record in self):
+        if any(record.state in {"rejected", "resolved", "withdrawn"} for record in self):
             raise AccessError("Terminal submissions are audit history.")
         return super().write(vals)
 
@@ -335,6 +336,54 @@ class FacodiLearningSubmission(models.Model):
     def _check_source_url(self):
         if any(not _is_public_http_url(record.source_url) for record in self):
             raise ValidationError("Enter a valid public HTTP or HTTPS URL.")
+
+    def _require_contributor(self, user):
+        self.ensure_one()
+        user = user.exists()
+        if not user or self.submitted_by_id != user:
+            raise AccessError("You can manage only your own submissions.")
+        return True
+
+    def action_update_by_contributor(self, user, values):
+        self.ensure_one()
+        self._require_contributor(user)
+        if self.state != "submitted":
+            raise ValidationError(
+                "Only submissions waiting for review can be edited."
+            )
+
+        allowed = {"name", "source_url", "context", "language"}
+        unknown = set(values) - allowed
+        if unknown:
+            raise AccessError("Only contributor-editable fields may be changed.")
+
+        cleaned = {}
+        if "name" in values:
+            cleaned["name"] = (values.get("name") or "").strip()[:200]
+        if "source_url" in values:
+            cleaned["source_url"] = (values.get("source_url") or "").strip()[:2048]
+        if "context" in values:
+            cleaned["context"] = (values.get("context") or "").strip()[:4000]
+        if "language" in values:
+            cleaned["language"] = (values.get("language") or "").strip().lower()[:16]
+
+        if not cleaned.get("name", self.name):
+            raise ValidationError("A submission title is required.")
+        if "source_url" in cleaned and not _is_public_http_url(cleaned["source_url"]):
+            raise ValidationError("Enter a valid public HTTP or HTTPS URL.")
+
+        super(FacodiLearningSubmission, self).write(cleaned)
+        return True
+
+    def action_withdraw_by_contributor(self, user):
+        self.ensure_one()
+        self._require_contributor(user)
+        if self.state not in {"submitted", "reviewing"}:
+            raise ValidationError(
+                "Only pending or reviewing submissions can be withdrawn."
+            )
+        super(FacodiLearningSubmission, self).write({"state": "withdrawn"})
+        return True
 
     def _require_manager(self):
         if not self.env.user.has_group(
