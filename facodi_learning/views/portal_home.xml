@@ -144,6 +144,105 @@
                 </div>
             </div>
 
+            <div class="row g-4 mb-5">
+                <div class="col-12 col-xl-7">
+                    <section class="facodi-academic-map" data-facodi-academic-map="1">
+                        <div class="d-flex flex-wrap justify-content-between align-items-end gap-3 mb-3">
+                            <div>
+                                <p class="facodi-kicker mb-1">Academic map // coverage, not equivalence</p>
+                                <h2 class="h3 mb-1">See where FACODI can take you next</h2>
+                                <p t-if="facodi_academic_map" class="small text-muted mb-0">
+                                    <t t-esc="facodi_academic_map['reference'].programme_name"/>
+                                    <span aria-hidden="true"> · </span>
+                                    <t t-esc="facodi_academic_map['reference'].academic_year"/>
+                                </p>
+                            </div>
+                            <a t-if="facodi_academic_map"
+                               t-att-href="facodi_academic_map['url']"
+                               class="btn btn-sm btn-outline-secondary">Open full roadmap</a>
+                        </div>
+
+                        <t t-if="facodi_academic_map">
+                            <div class="facodi-academic-map__stats mb-3">
+                                <div class="facodi-highlight-mint">
+                                    <strong t-esc="facodi_academic_map['counts']['covered']"/>
+                                    <span>covered</span>
+                                </div>
+                                <div class="facodi-highlight-orange">
+                                    <strong t-esc="facodi_academic_map['counts']['partial']"/>
+                                    <span>partial</span>
+                                </div>
+                                <div class="facodi-highlight-pink">
+                                    <strong t-esc="facodi_academic_map['counts']['gap']"/>
+                                    <span>open gaps</span>
+                                </div>
+                            </div>
+
+                            <div class="facodi-academic-map__grid">
+                                <a t-foreach="facodi_academic_map['preview']"
+                                   t-as="entry"
+                                   t-att-href="entry['unit_url']"
+                                   t-att-data-facodi-coverage="entry['coverage_status']"
+                                   class="facodi-academic-map__unit text-decoration-none">
+                                    <div class="d-flex justify-content-between gap-2 align-items-start">
+                                        <span class="facodi-academic-map__code" t-esc="entry['unit'].external_unit_code"/>
+                                        <span t-if="entry['on_desk']" class="facodi-academic-map__desk">ON YOUR DESK</span>
+                                    </div>
+                                    <strong t-esc="entry['unit'].name"/>
+                                    <small>
+                                        <span t-esc="entry['coverage_status']"/>
+                                        <span aria-hidden="true"> · </span>
+                                        <t t-esc="entry['published_course_count']"/> course<t t-if="entry['published_course_count'] != 1">s</t>
+                                    </small>
+                                </a>
+                            </div>
+                        </t>
+                        <div t-else="" class="facodi-empty-state" data-facodi-empty-state="1">
+                            <span class="facodi-empty-icon fa fa-map-signs" aria-hidden="true"></span>
+                            <h3 class="h4">No academic map pinned yet</h3>
+                            <p class="text-muted">The campus is still open. Browse the public Roadmaps and pick a path worth exploring.</p>
+                            <a href="/roadmaps" class="btn btn-primary">Explore roadmaps</a>
+                        </div>
+                    </section>
+                </div>
+
+                <div class="col-12 col-xl-5">
+                    <section class="facodi-campus-pulse" data-facodi-campus-pulse="1">
+                        <div class="d-flex flex-wrap justify-content-between align-items-end gap-3 mb-3">
+                            <div>
+                                <p class="facodi-kicker mb-1">Campus pulse</p>
+                                <h2 class="h3 mb-0">What people are talking about</h2>
+                            </div>
+                            <a href="/forum" class="btn btn-sm btn-outline-secondary">Open community</a>
+                        </div>
+
+                        <div t-if="facodi_forum_posts" class="d-grid gap-2">
+                            <a t-foreach="facodi_forum_posts"
+                               t-as="post"
+                               t-att-href="post.website_url"
+                               class="facodi-campus-pulse__post text-decoration-none">
+                                <div class="d-flex justify-content-between gap-2">
+                                    <span class="facodi-campus-pulse__tag">FORUM</span>
+                                    <small><t t-esc="post.child_count"/> replies</small>
+                                </div>
+                                <strong t-esc="post.name"/>
+                                <small>
+                                    <t t-esc="post.vote_count"/> votes
+                                    <span aria-hidden="true"> · </span>
+                                    <t t-esc="post.forum_id.name"/>
+                                </small>
+                            </a>
+                        </div>
+                        <div t-else="" class="facodi-empty-state" data-facodi-empty-state="1">
+                            <span class="facodi-empty-icon fa fa-comments-o" aria-hidden="true"></span>
+                            <h3 class="h4">Campus is quiet on your side — for now.</h3>
+                            <p class="text-muted">Open the Forum, ask something useful or help another learner move forward.</p>
+                            <a href="/forum" class="btn btn-primary">Start a conversation</a>
+                        </div>
+                    </section>
+                </div>
+            </div>
+
             <div class="facodi-portal-toolbox-heading mb-2">
                 <p class="facodi-kicker mb-1">Standard Odoo, FACODI energy</p>
                 <h2 class="h3 mb-0">Your FACODI toolbox</h2>

@@ -49,6 +49,49 @@ class TestFacodiPortalHome(HttpCase):
         self.assertNotIn("Stranger portal contribution", response.text)
         self.assertIn("Your FACODI toolbox", response.text)
 
+    def test_portal_home_projects_public_academic_map_without_claiming_completion(self):
+        owner = self._portal_user("facodi-portal-roadmap")
+        reference = self.env["facodi.learning.curriculum.reference"].sudo().create(
+            {
+                "institution": "Open University",
+                "programme_name": "Open Computing",
+                "academic_year": "2026/27",
+                "provider": "portal-test",
+                "external_id": "portal-roadmap-2026",
+                "website_published": True,
+                "validated_at": "2026-09-26 12:00:00",
+                "selection_enabled": True,
+            }
+        )
+        unit = self.env["facodi.learning.curriculum.unit"].sudo().create(
+            {
+                "reference_id": reference.id,
+                "external_unit_code": "OC101",
+                "name": "Open Algorithms",
+                "curricular_year": 1,
+                "period": "semester_1",
+                "sequence": 10,
+            }
+        )
+
+        self.authenticate(owner.login, "facodi-test-pass")
+        response = self.url_open("/my/home")
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('data-facodi-academic-map="1"', response.text)
+        self.assertIn(reference.programme_name, response.text)
+        self.assertIn(unit.name, response.text)
+        self.assertIn("open gaps", response.text)
+        self.assertNotIn("completed UC", response.text)
+
+    def test_portal_home_keeps_campus_pulse_available_without_forum_dependency(self):
+        owner = self._portal_user("facodi-portal-pulse")
+        self.authenticate(owner.login, "facodi-test-pass")
+
+        response = self.url_open("/my/home")
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('data-facodi-campus-pulse="1"', response.text)
+        self.assertIn("Campus pulse", response.text)
+
     def test_legacy_minha_facodi_alias_redirects_to_standard_portal_home(self):
         owner = self._portal_user("facodi-portal-alias")
         self.authenticate(owner.login, "facodi-test-pass")
