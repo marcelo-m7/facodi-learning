@@ -226,7 +226,7 @@
                                                 <span t-elif="entry['coverage_status'] == 'partial'" class="badge text-bg-warning">Partial</span>
                                                 <span t-else="" class="badge text-bg-light">Open gap</span>
                                                         <a t-if="entry['coverage_status'] == 'gap'"
-                                                           t-att-href="'/contribuir/recurso?curriculum_unit_id=%s' % unit.id"
+                                                           t-att-href="'/contribuir/recurso?curriculum_unit_id=%s' % entry['unit'].id"
                                                            class="d-block small fw-semibold mt-2 text-decoration-none">Help fill this stop →</a>
                                                 <span t-if="entry['published_course_count']" class="badge text-bg-light"><t t-esc="entry['published_course_count']"/> related courses</span>
                                                 <div class="d-flex flex-wrap gap-2 ms-auto">
