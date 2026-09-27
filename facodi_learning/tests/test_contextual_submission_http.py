@@ -11,6 +11,7 @@ class TestContextualSubmissionHttp(HttpCase):
             "&section=explore-videos&resource_type=video&language=pt"
         )
         self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.headers.get("X-Robots-Tag"), "noindex, follow")
         tree = html.fromstring(response.text)
 
         self.assertEqual(

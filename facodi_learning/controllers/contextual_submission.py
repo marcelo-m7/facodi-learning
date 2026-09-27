@@ -371,13 +371,15 @@ class FacodiContextualSubmissionController(FacodiSubmissionController):
         auth="public",
         website=True,
         methods=["GET"],
-        sitemap=True,
+        sitemap=False,
     )
     def contextual_submission_form(self, **kwargs):
-        return request.render(
+        response = request.render(
             "facodi_learning.contextual_submission_form",
             self._submission_context_from_kwargs(kwargs),
         )
+        response.headers["X-Robots-Tag"] = "noindex, follow"
+        return response
 
     def _submission_values_from_post(self, post):
         context = self._submission_context_from_kwargs(post)
