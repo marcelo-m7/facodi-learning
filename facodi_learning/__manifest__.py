@@ -26,6 +26,7 @@
         "views/website_curriculum.xml",
         "views/website_explore.xml",
         "views/website_submission.xml",
+        "views/website_contextual_submission.xml",
         "views/portal_home.xml",
         "views/source_views.xml",
         "views/content_review_views.xml",
