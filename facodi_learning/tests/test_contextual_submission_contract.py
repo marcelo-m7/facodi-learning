@@ -1,0 +1,81 @@
+from pathlib import Path
+
+from odoo.tests.common import TransactionCase
+
+
+MODULE_ROOT = Path(__file__).resolve().parents[1]
+
+
+class TestContextualSubmissionModelContract(TransactionCase):
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls.Submission = cls.env["facodi.learning.submission"]
+
+    def test_normalize_submission_type_falls_back_to_resource(self):
+        self.assertEqual(self.Submission._normalize_submission_type("nonsense"), "resource")
+        self.assertEqual(self.Submission._normalize_submission_type("CONTACT"), "contact")
+
+    def test_context_slug_rejects_long_or_unsafe_values(self):
+        self.assertTrue(self.Submission._is_valid_context_slug("unit_resource_cta"))
+        self.assertFalse(self.Submission._is_valid_context_slug("../../etc/passwd"))
+        self.assertFalse(self.Submission._is_valid_context_slug("x" * 80))
+
+    def test_resource_url_validation_still_rejects_private_urls(self):
+        self.assertFalse(self.Submission._is_valid_source_url("http://127.0.0.1/private"))
+        self.assertFalse(self.Submission._is_valid_source_url("https://user:pass@example.com"))
+
+    def test_new_fields_exist_on_submission_model(self):
+        for field_name in (
+            "submission_type",
+            "source_cta",
+            "source_section",
+            "source_page_url",
+            "roadmap_id",
+            "course_id",
+            "suggested_slide_id",
+            "contact_name",
+            "contact_email",
+            "organization",
+            "resource_type",
+            "resource_level",
+            "permission_to_contact",
+        ):
+            self.assertIn(field_name, self.Submission._fields)
+
+
+class TestContextualSubmissionStaticContracts(TransactionCase):
+    def _read(self, relative_path):
+        return (MODULE_ROOT / relative_path).read_text(encoding="utf-8")
+
+    def test_controller_exposes_contextual_routes_and_aliases(self):
+        controller = self._read("controllers/contextual_submission.py")
+        self.assertIn('"/submissions/new"', controller)
+        self.assertIn('"/pt/submissions/new"', controller)
+        self.assertIn('"/en/submissions/new"', controller)
+        self.assertIn("unit_id", controller)
+        self.assertIn("_normalize_submission_type", controller)
+
+    def test_template_has_contextual_form_contract(self):
+        template = self._read("views/website_contextual_submission.xml")
+        self.assertIn('data-facodi-submission-form="1"', template)
+        self.assertIn('name="submission_type"', template)
+        self.assertIn('name="source_cta"', template)
+        self.assertIn('name="source_section"', template)
+        self.assertIn("You are contributing in this context", template)
+        self.assertIn('data-facodi-resource-submission', template)
+
+    def test_curriculum_ctas_pass_context(self):
+        template = self._read("views/website_curriculum_contextual_ctas.xml")
+        self.assertIn("/submissions/new?type=resource", template)
+        self.assertIn("unit_id=", template)
+        self.assertIn("source=unit_resource_cta", template)
+        self.assertIn("section=resources", template)
+        self.assertIn("source=community_margin", template)
+
+    def test_admin_views_expose_context(self):
+        arch = self._read("views/contextual_submission_admin_views.xml")
+        self.assertIn("submission_type", arch)
+        self.assertIn("source_cta", arch)
+        self.assertIn("source_section", arch)
+        self.assertIn("contact_email", arch)
