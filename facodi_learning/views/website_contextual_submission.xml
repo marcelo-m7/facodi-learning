@@ -42,10 +42,10 @@
                                         <dd t-if="course" class="col-sm-8"><t t-esc="course.name"/></dd>
                                         <dt t-if="suggested_slide" class="col-sm-4">Learning item</dt>
                                         <dd t-if="suggested_slide" class="col-sm-8"><t t-esc="suggested_slide.name"/></dd>
-                                        <dt t-if="source_cta" class="col-sm-4">CTA</dt>
-                                        <dd t-if="source_cta" class="col-sm-8"><code t-esc="source_cta"/></dd>
+                                        <dt t-if="source_cta" class="col-sm-4">Came from</dt>
+                                        <dd t-if="source_cta" class="col-sm-8"><t t-esc="source_cta_label"/></dd>
                                         <dt t-if="source_section" class="col-sm-4">Section</dt>
-                                        <dd t-if="source_section" class="col-sm-8"><code t-esc="source_section"/></dd>
+                                        <dd t-if="source_section" class="col-sm-8"><t t-esc="source_section_label"/></dd>
                                         <dt t-if="not curriculum_unit and not roadmap and not course and not suggested_slide and not source_cta and not source_section" class="col-sm-4">Context</dt>
                                         <dd t-if="not curriculum_unit and not roadmap and not course and not suggested_slide and not source_cta and not source_section" class="col-sm-8">General FACODI contribution</dd>
                                     </dl>
@@ -157,6 +157,20 @@
                                                 </div>
                                             </div>
                                         </t>
+
+                                        <div t-if="submission_type == 'contact'" class="mt-3">
+                                            <label class="form-label" for="facodi_contact_topic">What is this about?</label>
+                                            <select id="facodi_contact_topic" name="contact_topic" class="form-select" required="required">
+                                                <option value="" t-att-selected="'selected' if not form_values.get('contact_topic') else None">Choose a topic</option>
+                                                <option value="collaboration" t-att-selected="'selected' if form_values.get('contact_topic') == 'collaboration' else None">Collaboration</option>
+                                                <option value="partnership" t-att-selected="'selected' if form_values.get('contact_topic') == 'partnership' else None">Partnership</option>
+                                                <option value="content" t-att-selected="'selected' if form_values.get('contact_topic') == 'content' else None">Content / editorial</option>
+                                                <option value="technical" t-att-selected="'selected' if form_values.get('contact_topic') == 'technical' else None">Technical issue</option>
+                                                <option value="accessibility" t-att-selected="'selected' if form_values.get('contact_topic') == 'accessibility' else None">Accessibility</option>
+                                                <option value="other" t-att-selected="'selected' if form_values.get('contact_topic') == 'other' else None">Other</option>
+                                            </select>
+                                            <div class="form-text">We use this only to route your message to the right review desk.</div>
+                                        </div>
 
                                         <div class="mt-3">
                                             <label class="form-label" for="facodi_submission_context">
