@@ -411,7 +411,7 @@ class FacodiContextualSubmissionController(FacodiSubmissionController):
         }
 
     @http.route(
-        ["/submissions/new", "/pt/submissions/new", "/en/submissions/new", "/contribuir/recurso"],
+        ["/submissions/new", "/pt/submissions/new", "/en/submissions/new", "/es/submissions/new", "/fr/submissions/new", "/contribuir/recurso"],
         type="http",
         auth="public",
         website=True,
@@ -535,6 +535,11 @@ class FacodiContextualSubmissionController(FacodiSubmissionController):
         csrf=True,
     )
     def contextual_submission_create(self, **post):
+        # Low-friction spam trap: real users never interact with this visually
+        # hidden field. Do not persist its value or expose whether it fired.
+        if (post.get("facodi_company_website") or "").strip():
+            return request.redirect("/explore", code=303)
+
         context, values, errors = self._submission_values_from_post(post)
         if errors:
             context.update({"form_values": values, "errors": errors})
