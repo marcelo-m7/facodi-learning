@@ -3824,3 +3824,8 @@ msgstr "O que estás a enviar?"
 #: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
 msgid "Changing the type keeps the page, course, lesson or curricular-unit context you came from."
 msgstr "Ao mudar o tipo, mantemos o contexto da página, curso, aula ou unidade curricular de onde vieste."
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
+msgid "Leave this field empty"
+msgstr "Deixa este campo vazio"
