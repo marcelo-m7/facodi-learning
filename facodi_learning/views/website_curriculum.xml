@@ -23,7 +23,7 @@
                                 </nav>
                                 <div class="d-flex flex-wrap gap-2">
                                     <a href="/curricular-units" class="btn btn-primary">Explore curricular units</a>
-                                    <a href="/contribuir/recurso" data-facodi-roadmap-resource-cta="1" class="btn btn-outline-primary">Suggest a learning resource</a>
+                                    <a href="/submissions/new?type=resource&amp;source=roadmaps_catalog_cta&amp;section=roadmaps" data-facodi-roadmap-resource-cta="1" class="btn btn-outline-primary">Suggest a learning resource</a>
                                 </div>
                             </div>
                             <div t-if="not references" class="alert alert-info">
@@ -75,7 +75,7 @@
                             </p>
                             <div class="d-flex flex-wrap gap-2 mb-5">
                                 <a href="/curricular-units" class="btn btn-primary">Explore curricular units</a>
-                                <a href="/contribuir/recurso" data-facodi-roadmap-resource-cta="1" class="btn btn-outline-primary">Suggest a learning resource</a>
+                                <a href="/submissions/new?type=resource&amp;source=roadmaps_catalog_cta&amp;section=roadmaps" data-facodi-roadmap-resource-cta="1" class="btn btn-outline-primary">Suggest a learning resource</a>
                             </div>
                             <div t-if="not curriculum_map" class="alert alert-info" role="status">
                                 There are no published roadmaps yet.
@@ -152,7 +152,7 @@
                                     <a href="/curricular-units" aria-current="page">Curricular units</a>
                                 </nav>
                                 <div class="d-flex flex-wrap gap-2">
-                                    <a href="/contribuir/recurso" data-facodi-unit-catalogue-resource-cta="1" class="btn btn-outline-primary">Suggest a learning resource</a>
+                                    <a href="/submissions/new?type=resource&amp;source=curricular_units_catalog_cta&amp;section=curricular-units" data-facodi-unit-catalogue-resource-cta="1" class="btn btn-outline-primary">Suggest a learning resource</a>
                                 </div>
                             </div>
 
@@ -211,7 +211,7 @@
                                 <p class="text-muted">There are no published curricular units yet. Explore the available roadmaps or help the community with an open learning resource.</p>
                                 <div class="d-flex flex-wrap justify-content-center gap-2">
                                     <a href="/roadmaps" class="btn btn-primary">Explore roadmaps</a>
-                                    <a href="/contribuir/recurso" class="btn btn-outline-primary">Suggest a resource</a>
+                                    <a href="/submissions/new?type=resource&amp;source=curricular_units_empty_state&amp;section=curricular-units" class="btn btn-outline-primary">Suggest a resource</a>
                                 </div>
                             </div>
                             <div class="row g-3">
@@ -278,7 +278,7 @@
                                     <a t-if="reference.source_url" t-att-href="reference.source_url" target="_blank" rel="noopener noreferrer">View official source</a>.
                                 </div>
                                 <div class="d-flex flex-wrap gap-2">
-                                    <a href="/contribuir/recurso" data-facodi-roadmap-resource-cta="1" class="btn btn-outline-primary">Suggest a learning resource</a>
+                                    <a href="/submissions/new?type=resource&amp;source=roadmaps_catalog_cta&amp;section=roadmaps" data-facodi-roadmap-resource-cta="1" class="btn btn-outline-primary">Suggest a learning resource</a>
                                     <a href="/courses" class="btn btn-link">Explore FACODI courses</a>
                                 </div>
                             </header>

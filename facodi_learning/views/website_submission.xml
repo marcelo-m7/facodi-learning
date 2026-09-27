@@ -142,7 +142,7 @@
                                 <a t-if="not request.env.user._is_public()"
                                    href="/minhas-contribuicoes"
                                    class="btn btn-outline-secondary">My submissions</a>
-                                <a href="/contactus" class="btn btn-link">Other contribution</a>
+                                <a href="/submissions/new?type=contact&amp;source=legacy_submission_followup&amp;section=submission" class="btn btn-link">Other contribution</a>
                             </form>
                         </div>
                     </div>

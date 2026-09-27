@@ -145,6 +145,15 @@ class TestContextualSubmissionStaticContracts(TransactionCase):
         self.assertIn("resource_type=video", explore)
         self.assertIn("source=portal_resource_cta", portal)
 
+        curriculum = self._read("views/website_curriculum.xml")
+        legacy_submission = self._read("views/website_submission.xml")
+        self.assertNotIn('href="/contribuir/recurso"', curriculum)
+        self.assertIn("source=roadmaps_catalog_cta", curriculum)
+        self.assertIn("source=curricular_units_catalog_cta", curriculum)
+        self.assertIn("source=curricular_units_empty_state", curriculum)
+        self.assertNotIn('href="/contactus" class="btn btn-link">Other contribution', legacy_submission)
+        self.assertIn("source=legacy_submission_followup", legacy_submission)
+
     def test_submission_status_followup_preserves_full_context(self):
         template = self._read("views/website_submission.xml")
         controller = self._read("controllers/submission.py")
