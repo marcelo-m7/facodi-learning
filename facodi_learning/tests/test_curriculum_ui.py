@@ -139,3 +139,38 @@ class TestCurriculumUI(TransactionCase):
         self.assertEqual(menu.parent_id.name, "Explore")
         self.assertEqual(menu.parent_id.parent_id, website.menu_id)
         self.assertEqual(menu.parent_id.url, "#")
+
+        course_menus = self.env["website.menu"].search(
+            [
+                ("website_id", "=", website.id),
+                ("url", "=", "/courses"),
+            ]
+        )
+        self.assertEqual(len(course_menus), 1)
+        self.assertEqual(course_menus.parent_id, menu.parent_id)
+
+        # Reconciliation is idempotent and must not recreate legacy/duplicate
+        # Explore or Learn trees on every module update.
+        self.assertTrue(self.env["website.menu"].facodi_reconcile_navigation())
+        explore_menus = self.env["website.menu"].search(
+            [
+                ("website_id", "=", website.id),
+                ("parent_id", "=", website.menu_id.id),
+                ("name", "=", "Explore"),
+            ]
+        )
+        self.assertEqual(len(explore_menus), 1)
+        self.assertEqual(explore_menus.url, "#")
+        self.assertFalse(
+            self.env["website.menu"].search(
+                [
+                    ("website_id", "=", website.id),
+                    ("url", "in", [
+                        "/explorar/areas",
+                        "/explorar/conteudos",
+                        "/explorar/videos",
+                        "/unidades-curriculares",
+                    ]),
+                ]
+            )
+        )
