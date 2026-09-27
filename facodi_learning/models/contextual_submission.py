@@ -22,6 +22,14 @@ _RESOURCE_LEVELS = [
     ("intermediate", "Intermediate"),
     ("advanced", "Advanced"),
 ]
+_CONTACT_TOPICS = [
+    ("collaboration", "Collaboration"),
+    ("partnership", "Partnership"),
+    ("content", "Content / editorial"),
+    ("technical", "Technical issue"),
+    ("accessibility", "Accessibility"),
+    ("other", "Other"),
+]
 
 
 class FacodiLearningSubmissionContext(models.Model):
@@ -63,6 +71,7 @@ class FacodiLearningSubmissionContext(models.Model):
     contact_name = fields.Char()
     contact_email = fields.Char(index=True)
     organization = fields.Char()
+    contact_topic = fields.Selection(_CONTACT_TOPICS, string="Contact Topic", index=True)
     resource_type = fields.Selection(_RESOURCE_TYPES, default="video")
     resource_level = fields.Selection(_RESOURCE_LEVELS)
     permission_to_contact = fields.Boolean(default=False)
