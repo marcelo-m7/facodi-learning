@@ -3788,3 +3788,18 @@ msgstr "Mis envíos"
 #: code:addons/facodi_learning/controllers/contextual_submission.py:0
 msgid "My submissions empty state"
 msgstr "Estado vacío de mis envíos"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
+msgid "Choose contribution type"
+msgstr "Elegir tipo de contribución"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
+msgid "What are you sending?"
+msgstr "¿Qué estás enviando?"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
+msgid "Changing the type keeps the page, course, lesson or curricular-unit context you came from."
+msgstr "Al cambiar el tipo, conservamos el contexto de la página, curso, lección o unidad curricular de donde vienes."
