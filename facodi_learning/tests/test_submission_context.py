@@ -317,6 +317,28 @@ class TestSubmissionContextWebsite(HttpCase):
             )
         )
 
+        collaboration = self.url_open(
+            "/submissions/new?type=contact"
+            "&source=contribution_board_collaboration_cta&section=contribution-board"
+        )
+        self.assertEqual(collaboration.status_code, 200)
+        self.assertIn("Contribution board collaboration", collaboration.text)
+        collaboration_tree = html.fromstring(collaboration.text)
+        self.assertTrue(
+            collaboration_tree.xpath(
+                '//select[@name="contact_topic"]/option[@value="collaboration"][@selected]'
+            )
+        )
+
+        translation = self.url_open(
+            "/submissions/new?type=correction"
+            "&source=translation_correction_cta&section=translation"
+        )
+        self.assertEqual(translation.status_code, 200)
+        self.assertIn("Translation correction", translation.text)
+        self.assertIn(">Translation<", translation.text)
+        self.assertNotIn("Contextual action", translation.text)
+
     def test_contact_requires_message_and_email(self):
         response = self.url_open(
             "/submissions/new?type=contact&source=general_contact_cta&section=general"
