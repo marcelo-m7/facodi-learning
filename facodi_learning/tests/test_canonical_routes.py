@@ -5,6 +5,16 @@ from odoo.tests import HttpCase, tagged
 
 @tagged("post_install", "-at_install")
 class TestCanonicalRoutes(HttpCase):
+    def test_portuguese_learning_routes_render_without_inheritance_errors(self):
+        website = self.env["website"].get_current_website()
+        lang_pt = self.env["res.lang"]._activate_lang("pt_PT")
+        website.language_ids = self.env.ref("base.lang_en") + lang_pt
+
+        for route in ("/pt/roadmaps", "/pt/curricular-units", "/pt/courses"):
+            response = self.url_open(route, allow_redirects=True)
+            self.assertEqual(response.status_code, 200, route)
+            self.assertNotIn("Internal Server Error", response.text, route)
+
     def test_courses_entrypoint_keeps_native_elearning_owner(self):
         response = self.url_open("/courses", allow_redirects=False)
         self.assertEqual(response.status_code, 302)
