@@ -293,6 +293,52 @@ class TestSubmissionContextWebsite(HttpCase):
         self.assertIn(">Lesson<", correction.text)
         self.assertNotIn("Contextual action", correction.text)
 
+    def test_remaining_public_ctas_have_human_labels_and_prefill(self):
+        empty_shelf = self.url_open(
+            "/submissions/new?type=resource"
+            "&source=curricular_units_empty_state&section=curricular-units"
+        )
+        self.assertEqual(empty_shelf.status_code, 200)
+        self.assertIn("Curricular units · open shelf", empty_shelf.text)
+        self.assertIn("help start the curricular-unit shelf", empty_shelf.text)
+        self.assertNotIn("Contextual action", empty_shelf.text)
+
+        followup = self.url_open(
+            "/submissions/new?type=contact"
+            "&source=legacy_submission_followup&section=submission"
+        )
+        self.assertEqual(followup.status_code, 200)
+        self.assertIn("Submission follow-up", followup.text)
+        self.assertNotIn("Contextual action", followup.text)
+        tree = html.fromstring(followup.text)
+        self.assertTrue(
+            tree.xpath(
+                '//select[@name="contact_topic"]/option[@value="content"][@selected]'
+            )
+        )
+
+        collaboration = self.url_open(
+            "/submissions/new?type=contact"
+            "&source=contribution_board_collaboration_cta&section=contribution-board"
+        )
+        self.assertEqual(collaboration.status_code, 200)
+        self.assertIn("Contribution board collaboration", collaboration.text)
+        collaboration_tree = html.fromstring(collaboration.text)
+        self.assertTrue(
+            collaboration_tree.xpath(
+                '//select[@name="contact_topic"]/option[@value="collaboration"][@selected]'
+            )
+        )
+
+        translation = self.url_open(
+            "/submissions/new?type=correction"
+            "&source=translation_correction_cta&section=translation"
+        )
+        self.assertEqual(translation.status_code, 200)
+        self.assertIn("Translation correction", translation.text)
+        self.assertIn(">Translation<", translation.text)
+        self.assertNotIn("Contextual action", translation.text)
+
     def test_contact_requires_message_and_email(self):
         response = self.url_open(
             "/submissions/new?type=contact&source=general_contact_cta&section=general"
