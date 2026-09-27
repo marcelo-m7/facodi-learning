@@ -10,15 +10,16 @@ class WebsiteMenu(models.Model):
         Website = self.env["website"].sudo()
         Menu = self.sudo()
 
-        facodi = Website.search([("domain", "ilike", "facodi.com")], limit=1)
-        if not facodi:
+        context_website_id = self.env.context.get("website_id")
+        facodi = (
+            Website.browse(context_website_id).exists()
+            if context_website_id
+            else Website.search([("domain", "ilike", "facodi.com")], limit=1)
+        )
+        if not facodi or len(facodi) != 1:
             return False
 
-        root = Menu.search(
-            [("website_id", "=", facodi.id), ("parent_id", "=", False)],
-            order="id",
-            limit=1,
-        )
+        root = facodi.menu_id.sudo().exists()
         if not root:
             return False
 

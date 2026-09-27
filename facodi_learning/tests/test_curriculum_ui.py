@@ -198,3 +198,24 @@ class TestCurriculumUI(TransactionCase):
                 ]
             )
         )
+
+    def test_navigation_reconcile_accepts_explicit_domainless_website_context(self):
+        website = self.env["website"].search([], order="id", limit=1)
+        self.assertTrue(website)
+        website.domain = False
+
+        Menu = self.env["website.menu"]
+        self.assertFalse(Menu.facodi_reconcile_navigation())
+        self.assertTrue(
+            Menu.with_context(website_id=website.id).facodi_reconcile_navigation()
+        )
+        explore = Menu.search(
+            [
+                ("website_id", "=", website.id),
+                ("parent_id", "=", website.menu_id.id),
+                ("url", "=", "#"),
+            ],
+            limit=1,
+        )
+        self.assertTrue(explore)
+        self.assertEqual(explore.with_context(lang="en_US").name, "Explore")
