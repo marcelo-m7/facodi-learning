@@ -56,6 +56,14 @@
                                   data-facodi-submission-form="1"
                                   data-metadata-endpoint="/contribuir/recurso/metadata">
                                 <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                <div class="d-none"
+                                     aria-hidden="true"
+                                     data-facodi-discovery-messages="1">
+                                    <span data-facodi-message="discovering">Detecting title and language…</span>
+                                    <span data-facodi-message="detected">FACODI detected this YouTube resource.</span>
+                                    <span data-facodi-message="unavailable">Could not detect details automatically. You can continue manually.</span>
+                                    <span data-facodi-message="unsupported">Automatic discovery is currently available for public YouTube videos. You can continue manually.</span>
+                                </div>
                                 <input type="hidden" name="submission_type" t-att-value="submission_type"/>
                                 <input type="hidden" name="source_cta" t-att-value="source_cta"/>
                                 <input type="hidden" name="source_section" t-att-value="source_section"/>
