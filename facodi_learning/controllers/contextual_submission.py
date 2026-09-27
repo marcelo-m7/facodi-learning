@@ -206,6 +206,7 @@ class FacodiContextualSubmissionController(FacodiSubmissionController):
             "ecosystem_contact_cta": "partnership",
             "institutional_contact_cta": "partnership",
             "legacy_submission_followup": "content",
+            "contribution_board_collaboration_cta": "collaboration",
         }
         contact_topic = self._safe_selection(
             kwargs.get("contact_topic") or kwargs.get("topic"),
@@ -376,6 +377,8 @@ class FacodiContextualSubmissionController(FacodiSubmissionController):
             "contact_sheet_resource_cta": request.env._("Contact page resource"),
             "contribution_board_resource_cta": request.env._("Contribution board"),
             "contribution_board_correction_cta": request.env._("Contribution board correction"),
+            "contribution_board_collaboration_cta": request.env._("Contribution board collaboration"),
+            "translation_correction_cta": request.env._("Translation correction"),
             "folder_tabs_contribute": request.env._("Learning navigation"),
             "course_showcase_contribute": request.env._("Learning catalogue"),
             "submission_status_followup": request.env._("Submission follow-up"),
@@ -454,6 +457,7 @@ class FacodiContextualSubmissionController(FacodiSubmissionController):
             "curricular-units": request.env._("Curricular units"),
             "provenance": request.env._("Provenance"),
             "community": request.env._("Community"),
+            "translation": request.env._("Translation"),
             "faq": request.env._("FAQ"),
             "ecosystem": request.env._("Ecosystem"),
             "institutional": request.env._("Project"),
