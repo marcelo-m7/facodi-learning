@@ -77,6 +77,27 @@ class TestResourceSubmissionModel(TransactionCase):
             with self.assertRaises(ValidationError), self.env.cr.savepoint():
                 self._submission(source_url=source_url)
 
+    def test_source_page_url_is_normalized_to_safe_local_path(self):
+        local = self._submission(
+            source_url="https://example.org/local-origin",
+            source_page_url="/roadmaps/7?token=private#section",
+        )
+        self.assertEqual(local.source_page_url, "/roadmaps/7")
+
+        for index, unsafe in enumerate(
+            (
+                "https://evil.example/roadmaps/7",
+                "//evil.example/roadmaps/7",
+                r"\\evil.example\roadmaps\7",
+                "javascript:alert(1)",
+            )
+        ):
+            submission = self._submission(
+                source_url=f"https://example.org/unsafe-origin-{index}",
+                source_page_url=unsafe,
+            )
+            self.assertFalse(submission.source_page_url)
+
     def test_direct_audit_state_forgery_is_denied(self):
         submission = self._submission()
         with self.assertRaises(AccessError):
