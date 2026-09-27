@@ -22,30 +22,39 @@ class WebsiteMenu(models.Model):
         if not root:
             return False
 
-        explore = Menu.search(
+        explore_candidates = Menu.search(
             [
                 ("website_id", "=", facodi.id),
                 ("parent_id", "=", root.id),
+                "|",
                 ("url", "=", "/explore"),
+                "&",
+                ("url", "=", "#"),
+                ("name", "=", "Explore"),
             ],
             order="id",
-            limit=1,
         )
+        explore = explore_candidates[:1]
         if not explore:
             explore = Menu.create(
                 {
                     "name": "Explore",
-                    "url": "/explore",
+                    "url": "#",
                     "parent_id": root.id,
                     "website_id": facodi.id,
                     "sequence": 40,
                 }
             )
         else:
-            explore.write({"name": "Explore", "sequence": 40})
+            explore.write({"name": "Explore", "url": "#", "sequence": 40})
+
+        duplicate_explore = explore_candidates - explore
+        if duplicate_explore:
+            duplicate_explore.mapped("child_id").write({"parent_id": explore.id})
+            duplicate_explore.unlink()
 
         entries = (
-            ("Courses", "/slides", 10),
+            ("Courses", "/courses", 10),
             ("Areas", "/explore/areas", 20),
             ("Learning resources", "/explore/content", 30),
             ("Community videos", "/explore/videos", 40),
@@ -53,6 +62,13 @@ class WebsiteMenu(models.Model):
             ("Curricular units", "/curricular-units", 60),
         )
         target_urls = {url for _name, url, _sequence in entries}
+        legacy_urls = {
+            "/slides",
+            "/explorar/areas",
+            "/explorar/conteudos",
+            "/explorar/videos",
+            "/unidades-curriculares",
+        }
 
         for name, url, sequence in entries:
             matches = Menu.search(
@@ -100,6 +116,16 @@ class WebsiteMenu(models.Model):
             children = Menu.search([("parent_id", "=", learn.id)])
             if children and set(children.mapped("url")).issubset(target_urls):
                 learn.unlink()
+
+        stale_entries = Menu.search(
+            [
+                ("website_id", "=", facodi.id),
+                ("parent_id", "in", [explore.id, root.id]),
+                ("url", "in", list(legacy_urls)),
+            ]
+        )
+        if stale_entries:
+            stale_entries.unlink()
 
         # Remove only website-less legacy Explore trees from this module's
         # previous generic data. Other websites remain untouched.
