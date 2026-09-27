@@ -3575,3 +3575,94 @@ msgstr ""
 #: code:addons/facodi_learning/controllers/contextual_submission.py:0
 msgid "General"
 msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_status
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_my_list
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_manage
+msgid "Contact request"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_status
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_my_list
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_manage
+msgid "Correction suggestion"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_status
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_my_list
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_manage
+msgid "Community question"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_status
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_my_list
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_manage
+msgid "Message"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_status
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_my_list
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_manage
+msgid "FACODI is reviewing the details and deciding the right follow-up."
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_status
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_my_list
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_manage
+msgid "Accepted for follow-up. FACODI has kept this contribution in the editorial workflow."
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_status
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_my_list
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_manage
+msgid "The submission has been routed to the appropriate FACODI workflow."
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_status
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_my_list
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_manage
+msgid "Track, edit or withdraw your FACODI submissions while signed in."
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_status
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_my_list
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_manage
+msgid "New submission"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_status
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_my_list
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_manage
+msgid "Start your first submission"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_status
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_my_list
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_manage
+msgid "Write a short message so FACODI can review the submission."
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_status
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_my_list
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_manage
+msgid "Enter a short title for the submission."
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_status
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_my_list
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_manage
+msgid "Withdrawal stops this submission from continuing through the FACODI workflow. Resource submissions are also removed from public community queues. The record is retained as audit history."
+msgstr ""
