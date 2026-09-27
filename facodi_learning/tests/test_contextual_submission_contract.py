@@ -166,7 +166,10 @@ class TestContextualSubmissionStaticContracts(TransactionCase):
         self.assertIn("course_id=%s", slides)
         self.assertIn("type=contact", slides)
         self.assertIn("source=course_contact_cta", slides)
-        self.assertIn("source=explore_empty_shelf", explore)
+        explore_controller = self._read("controllers/explore.py")
+        self.assertIn('"source": "explore_empty_shelf"', explore_controller)
+        self.assertIn('"contribution_url": contribution_url', explore_controller)
+        self.assertIn('t-att-href="contribution_url"', explore)
         self.assertIn("source=area_resource_cta", explore)
         self.assertIn("section=explore-areas", explore)
         self.assertIn("source=community_video_cta", explore)
@@ -219,8 +222,9 @@ class TestContextualSubmissionStaticContracts(TransactionCase):
         )
 
     def test_learning_area_context_uses_native_course_tag_model(self):
+        submission = self.env["facodi.learning.submission"]
         self.assertEqual(
-            self.Submission._fields["area_tag_id"].comodel_name,
+            submission._fields["area_tag_id"].comodel_name,
             "slide.channel.tag",
         )
         controller = self._read("controllers/contextual_submission.py")
