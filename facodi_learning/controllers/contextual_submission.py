@@ -475,6 +475,28 @@ class FacodiContextualSubmissionController(FacodiSubmissionController):
             "my-submissions": request.env._("My submissions"),
             "general": request.env._("General"),
         }
+        brief_parts = []
+        if source_cta:
+            brief_parts.append(cta_labels.get(source_cta, request.env._("Contextual action")))
+        if source_section:
+            brief_parts.append(section_labels.get(source_section, source_section.replace("-", " ").title()))
+        if curriculum_unit:
+            brief_parts.append(curriculum_unit.name)
+        elif roadmap:
+            brief_parts.append(roadmap.display_name)
+        elif module:
+            brief_parts.append(module.name)
+        elif suggested_slide:
+            brief_parts.append(suggested_slide.name)
+        elif course:
+            brief_parts.append(course.name)
+        elif area_tag:
+            brief_parts.append(area_tag.name)
+
+        contribution_brief = " · ".join(part for part in brief_parts if part)
+        if not contribution_brief:
+            contribution_brief = request.env._("General FACODI contribution")
+
         return {
             "form_values": form_values,
             "errors": [],
@@ -491,6 +513,8 @@ class FacodiContextualSubmissionController(FacodiSubmissionController):
             "source_page_url": source_page_url,
             "source_cta_label": cta_labels.get(source_cta, request.env._("Contextual action") if source_cta else ""),
             "source_section_label": section_labels.get(source_section, source_section.replace("-", " ").title() if source_section else ""),
+            "contribution_brief": contribution_brief,
+            "context_is_prefilled": bool(source_cta or source_section or area_tag or curriculum_unit or roadmap or module or course or suggested_slide),
             "return_url": return_url,
             "return_label": return_label,
             "submission_type_options": submission_type_options,

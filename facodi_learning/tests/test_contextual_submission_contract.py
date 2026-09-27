@@ -243,3 +243,14 @@ class TestContextualSubmissionStaticContracts(TransactionCase):
         self.assertIn('"contribution_url": contribution_url', explore)
         self.assertIn('name="area_id"', template)
         self.assertIn("group_area_tag", admin)
+
+    def test_contribution_brief_is_context_aware(self):
+        controller = self._read("controllers/contextual_submission.py")
+        template = self._read("views/website_contextual_submission.xml")
+        self.assertIn('"contribution_brief": contribution_brief', controller)
+        self.assertIn('"context_is_prefilled": bool(', controller)
+        self.assertIn('data-facodi-contribution-brief="1"', template)
+        self.assertIn("Context carried over", template)
+        self.assertIn("Step 1 · Add the useful part", template)
+        self.assertIn("Step 2 · Optional follow-up", template)
+        self.assertIn("Send to the review desk", template)
