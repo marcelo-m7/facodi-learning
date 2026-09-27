@@ -3973,3 +3973,8 @@ msgstr "Corrección de traducción"
 #: code:addons/facodi_learning/controllers/contextual_submission.py:0
 msgid "Translation"
 msgstr "Traducción"
+
+#. module: facodi_learning
+#: code:addons/facodi_learning/controllers/contextual_submission.py:0
+msgid "Lesson question"
+msgstr "Pregunta de la lección"
