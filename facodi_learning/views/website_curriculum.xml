@@ -154,7 +154,7 @@
                                 </div>
                             </div>
 
-                            <form action="/unidades-curriculares" method="get" class="row g-3 border rounded p-3 mb-5 facodi-filter-sheet facodi-filter-panel" role="search" aria-label="Filter curricular units">
+                            <form action="/curricular-units" method="get" class="row g-3 border rounded p-3 mb-5 facodi-filter-sheet facodi-filter-panel" role="search" aria-label="Filter curricular units">
                                 <div class="col-12 col-md-6">
                                     <label for="curriculum-reference" class="form-label">Roadmap</label>
                                     <select id="curriculum-reference" name="reference_id" class="form-select">

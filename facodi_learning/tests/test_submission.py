@@ -533,7 +533,7 @@ class TestResourceSubmissionWebsite(HttpCase):
         submission.invalidate_recordset()
         self.assertEqual(submission.state, "withdrawn")
 
-        community = self.url_open("/explorar/videos")
+        community = self.url_open("/explore/videos")
         self.assertNotIn("Edited contribution", community.text)
 
     def test_public_form_creates_submission_and_redirects_to_safe_status(self):
@@ -648,7 +648,7 @@ class TestResourceSubmissionWebsite(HttpCase):
             manager.write({"group_ids": [(4, manager_group.id)]})
         rejected.with_user(manager).action_reject()
 
-        response = self.url_open("/explorar/videos")
+        response = self.url_open("/explore/videos")
         self.assertEqual(response.status_code, 200)
         self.assertIn("Community pending video", response.text)
         self.assertIn("Awaiting review", response.text)
@@ -661,7 +661,7 @@ class TestResourceSubmissionWebsite(HttpCase):
         self.assertNotIn(pending.access_token, response.text)
         self.assertNotIn("PRIVATE CONTEXT MUST NOT LEAK", response.text)
 
-        filtered = self.url_open("/explorar/videos?language=pt&q=Community")
+        filtered = self.url_open("/explore/videos?language=pt&q=Community")
         self.assertEqual(filtered.status_code, 200)
         self.assertIn("Community pending video", filtered.text)
         self.assertNotIn("Rejected community video", filtered.text)

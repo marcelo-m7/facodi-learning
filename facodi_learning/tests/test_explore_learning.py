@@ -128,31 +128,31 @@ class TestExploreLearningWebsite(HttpCase):
         )
 
     def test_explore_landing_and_courses_redirect(self):
-        landing = self.url_open("/explorar")
+        landing = self.url_open("/explore")
         self.assertEqual(landing.status_code, 200)
-        self.assertIn("/explorar/areas", landing.text)
-        self.assertIn("/explorar/conteudos", landing.text)
-        self.assertIn("/explorar/videos", landing.text)
-        self.assertIn("/explorar/cursos", landing.text)
+        self.assertIn("/explore/areas", landing.text)
+        self.assertIn("/explore/content", landing.text)
+        self.assertIn("/explore/videos", landing.text)
+        self.assertIn("/explore/courses", landing.text)
 
-        courses = self.url_open("/explorar/cursos", allow_redirects=False)
+        courses = self.url_open("/explore/courses", allow_redirects=False)
         self.assertIn(courses.status_code, (301, 302, 303, 307, 308))
         self.assertTrue(courses.headers["Location"].endswith("/courses"))
 
     def test_areas_expose_only_accessible_published_current_website_tags(self):
-        response = self.url_open("/explorar/areas")
+        response = self.url_open("/explore/areas")
         self.assertEqual(response.status_code, 200)
         self.assertIn("Mathematics", response.text)
         self.assertIn("Data", response.text)
         self.assertNotIn("Hidden Area", response.text)
         self.assertNotIn("Other Website Course", response.text)
 
-        filtered = self.url_open("/explorar/areas?" + urlencode({"q": "Math"}))
+        filtered = self.url_open("/explore/areas?" + urlencode({"q": "Math"}))
         self.assertIn("Mathematics", filtered.text)
         self.assertNotIn(">Data<", filtered.text)
 
     def test_content_search_filters_access_website_area_language_and_format(self):
-        response = self.url_open("/explorar/conteudos")
+        response = self.url_open("/explore/content")
         self.assertEqual(response.status_code, 200)
         self.assertIn("Algebra video", response.text)
         self.assertIn("SQL foundations", response.text)
@@ -161,24 +161,24 @@ class TestExploreLearningWebsite(HttpCase):
         self.assertNotIn("Other website secret", response.text)
 
         area = self.url_open(
-            "/explorar/conteudos?" + urlencode({"area": self.area_data.id})
+            "/explore/content?" + urlencode({"area": self.area_data.id})
         )
         self.assertIn("SQL foundations", area.text)
         self.assertNotIn("Algebra video", area.text)
 
         language = self.url_open(
-            "/explorar/conteudos?" + urlencode({"language": "pt_PT"})
+            "/explore/content?" + urlencode({"language": "pt_PT"})
         )
         self.assertIn("SQL foundations", language.text)
         self.assertNotIn("Algebra video", language.text)
 
         content_format = self.url_open(
-            "/explorar/conteudos?" + urlencode({"format": "video"})
+            "/explore/content?" + urlencode({"format": "video"})
         )
         self.assertIn("Algebra video", content_format.text)
         self.assertNotIn("SQL foundations", content_format.text)
 
-        search = self.url_open("/explorar/conteudos?" + urlencode({"q": "SQL"}))
+        search = self.url_open("/explore/content?" + urlencode({"q": "SQL"}))
         self.assertIn("SQL foundations", search.text)
         self.assertNotIn("Algebra video", search.text)
 
@@ -196,14 +196,14 @@ class TestExploreLearningWebsite(HttpCase):
             )
 
         first = self.url_open(
-            "/explorar/conteudos?" + urlencode({"q": "Pagination resource"})
+            "/explore/content?" + urlencode({"q": "Pagination resource"})
         )
         self.assertEqual(first.status_code, 200)
         self.assertIn("Pagination resource 00", first.text)
         self.assertIn("page=2", first.text)
 
         second = self.url_open(
-            "/explorar/conteudos/page/2?"
+            "/explore/content/page/2?"
             + urlencode({"q": "Pagination resource"})
         )
         self.assertEqual(second.status_code, 200)
@@ -222,7 +222,7 @@ class TestExploreLearningWebsite(HttpCase):
             }
         )
 
-        response = self.url_open("/explorar/conteudos")
+        response = self.url_open("/explore/content")
         self.assertIn('value="en_US"', response.text)
         self.assertIn('value="pt_PT"', response.text)
         self.assertNotIn('value="fr_FR"', response.text)

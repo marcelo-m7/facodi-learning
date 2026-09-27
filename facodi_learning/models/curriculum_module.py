@@ -23,7 +23,7 @@ class FacodiLearningCurriculumModule(models.Model):
 
     def _facodi_public_path(self):
         self.ensure_one()
-        return "/modulos/%s" % self.id if self.website_published else False
+        return "/modules/%s" % self.id if self.website_published else False
 
     def _facodi_public_items(self, website=None, partner=None, viewer_env=None):
         """Project published module items without exposing authoring records.

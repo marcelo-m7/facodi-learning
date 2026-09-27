@@ -94,12 +94,46 @@ class FacodiExploreController(http.Controller):
             }
         )
 
-    @http.route("/explorar", type="http", auth="public", website=True, sitemap=True)
+
+    @http.route(
+        [
+            "/explorar",
+            "/explorar/areas",
+            "/explorar/conteudos",
+            "/explorar/conteudos/page/<int:page>",
+            "/explorar/videos",
+            "/explorar/videos/page/<int:page>",
+            "/explorar/cursos",
+        ],
+        type="http",
+        auth="public",
+        website=True,
+        sitemap=False,
+    )
+    def legacy_explore_routes(self, page=None, **kwargs):
+        path = request.httprequest.path
+        replacements = (
+            ("/explorar/conteudos", "/explore/content"),
+            ("/explorar/videos", "/explore/videos"),
+            ("/explorar/areas", "/explore/areas"),
+            ("/explorar/cursos", "/explore/courses"),
+            ("/explorar", "/explore"),
+        )
+        for legacy, canonical in replacements:
+            if path == legacy or path.startswith(legacy + "/"):
+                target = canonical + path[len(legacy):]
+                query = request.httprequest.query_string.decode()
+                if query:
+                    target += "?" + query
+                return request.redirect(target, code=301)
+        return request.redirect("/explore", code=301)
+
+    @http.route("/explore", type="http", auth="public", website=True, sitemap=True)
     def explore_index(self, **kwargs):
         return request.render("facodi_learning.explore_landing")
 
     @http.route(
-        ["/explorar/areas"],
+        ["/explore/areas"],
         type="http",
         auth="public",
         website=True,
@@ -116,7 +150,7 @@ class FacodiExploreController(http.Controller):
         )
 
     @http.route(
-        ["/explorar/conteudos", "/explorar/conteudos/page/<int:page>"],
+        ["/explore/content", "/explore/content/page/<int:page>"],
         type="http",
         auth="public",
         website=True,
@@ -175,11 +209,11 @@ class FacodiExploreController(http.Controller):
         previous_url = False
         next_url = False
         if page > 1:
-            previous_url = "/explorar/conteudos?" + self._query_string(
+            previous_url = "/explore/content?" + self._query_string(
                 {**params, "page": page - 1}
             )
         if page < page_count:
-            next_url = "/explorar/conteudos?" + self._query_string(
+            next_url = "/explore/content?" + self._query_string(
                 {**params, "page": page + 1}
             )
 
@@ -260,7 +294,7 @@ class FacodiExploreController(http.Controller):
         return rows
 
     @http.route(
-        ["/explorar/videos", "/explorar/videos/page/<int:page>"],
+        ["/explore/videos", "/explore/videos/page/<int:page>"],
         type="http",
         auth="public",
         website=True,
@@ -288,11 +322,11 @@ class FacodiExploreController(http.Controller):
         previous_url = False
         next_url = False
         if page > 1:
-            previous_url = "/explorar/videos?" + self._query_string(
+            previous_url = "/explore/videos?" + self._query_string(
                 {**params, "page": page - 1}
             )
         if page < page_count:
-            next_url = "/explorar/videos?" + self._query_string(
+            next_url = "/explore/videos?" + self._query_string(
                 {**params, "page": page + 1}
             )
 
@@ -312,7 +346,7 @@ class FacodiExploreController(http.Controller):
         )
 
     @http.route(
-        "/explorar/cursos",
+        "/explore/courses",
         type="http",
         auth="public",
         website=True,

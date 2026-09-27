@@ -214,8 +214,8 @@
                                    class="btn btn-primary">
                                     Back to curricular unit
                                 </a>
-                                <a href="/courses" class="btn btn-outline-primary">Explore learning content</a>
-                                <a href="/explorar/videos" class="btn btn-outline-secondary">Community videos</a>
+                                <a href="/slides" class="btn btn-outline-primary">Explore learning content</a>
+                                <a href="/explore/videos" class="btn btn-outline-secondary">Community videos</a>
                                 <a t-if="not request.env.user._is_public() and submission.submitted_by_id == request.env.user"
                                    t-att-href="'/minhas-contribuicoes/%s' % submission.id"
                                    class="btn btn-outline-secondary">Manage submission</a>

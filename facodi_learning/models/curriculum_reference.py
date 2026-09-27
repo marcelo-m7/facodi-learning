@@ -493,7 +493,7 @@ class FacodiLearningCurriculumUnit(models.Model):
         return "/curricular-units/%s/%s-%s" % (
             self.reference_id.id,
             quote(self.external_unit_code or "", safe=""),
-            readable_name or "unidade-curricular",
+            readable_name or "curricular-unit",
         )
 
     @api.model
