@@ -302,6 +302,9 @@ class FacodiContextualSubmissionController(FacodiSubmissionController):
             "contact_sheet_resource_cta": request.env._("Contact page resource"),
             "contribution_board_resource_cta": request.env._("Contribution board"),
             "contribution_board_correction_cta": request.env._("Contribution board correction"),
+            "folder_tabs_contribute": request.env._("Learning navigation"),
+            "course_showcase_contribute": request.env._("Learning catalogue"),
+            "submission_status_followup": request.env._("Submission follow-up"),
         }
         return_url = source_page_url
         return_label = request.env._("Back to Explore")
@@ -339,6 +342,9 @@ class FacodiContextualSubmissionController(FacodiSubmissionController):
             "contact": request.env._("Contact"),
             "contribution-board": request.env._("Contribution board"),
             "cta-sheet": request.env._("Contribution"),
+            "learning-navigation": request.env._("Learning navigation"),
+            "learning-catalogue": request.env._("Learning catalogue"),
+            "submission-status": request.env._("Submission status"),
             "general": request.env._("General"),
         }
         return {
