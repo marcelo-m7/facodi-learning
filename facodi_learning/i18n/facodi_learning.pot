@@ -3906,3 +3906,23 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_module
 msgid "Learning Module Context"
 msgstr ""
+
+#. module: facodi_learning
+#: code:addons/facodi_learning/controllers/contextual_submission.py:0
+msgid "I found a resource that could help start the curricular-unit shelf."
+msgstr ""
+
+#. module: facodi_learning
+#: code:addons/facodi_learning/controllers/contextual_submission.py:0
+msgid "Curricular units · open shelf"
+msgstr ""
+
+#. module: facodi_learning
+#: code:addons/facodi_learning/controllers/contextual_submission.py:0
+msgid "Explore content"
+msgstr ""
+
+#. module: facodi_learning
+#: code:addons/facodi_learning/controllers/contextual_submission.py:0
+msgid "Submission"
+msgstr ""
