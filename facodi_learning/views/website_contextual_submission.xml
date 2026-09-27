@@ -35,9 +35,19 @@
                                 <p class="form-text mb-0 mt-2">Changing the type keeps the page, course, lesson or curricular-unit context you came from.</p>
                             </nav>
 
-                            <div class="card mb-4 facodi-context-card">
+                            <div class="card mb-4 facodi-context-card" data-facodi-contribution-brief="1">
                                 <div class="card-body">
-                                    <p class="text-uppercase small fw-semibold mb-2">You are contributing in this context</p>
+                                    <div class="d-flex flex-wrap align-items-start justify-content-between gap-3 mb-3">
+                                        <div>
+                                            <p class="text-uppercase small fw-semibold mb-1">Contribution brief</p>
+                                            <h2 class="h5 mb-1"><t t-esc="contribution_brief"/></h2>
+                                            <p class="small text-muted mb-0">
+                                                <t t-if="context_is_prefilled">FACODI brought this context from the page you were using. You only need to complete the useful part.</t>
+                                                <t t-else="">No page context was attached. You can still send a general contribution.</t>
+                                            </p>
+                                        </div>
+                                        <span t-if="context_is_prefilled" class="badge facodi-prefill-badge">Context carried over</span>
+                                    </div>
                                     <dl class="row mb-0 small">
                                         <dt class="col-sm-4">Type</dt>
                                         <dd class="col-sm-8">
@@ -119,8 +129,11 @@
                                 <div class="card mb-4 facodi-form-section">
                                     <div class="card-body">
                                         <div class="d-flex flex-wrap align-items-center justify-content-between gap-2">
-                                            <h2 class="h5 mb-0">Submission details</h2>
-                                            <span t-if="source_cta or source_section" class="badge text-bg-light border">Context pre-filled</span>
+                                            <div>
+                                                <p class="small text-uppercase fw-semibold text-muted mb-1">Step 1 · Add the useful part</p>
+                                                <h2 class="h5 mb-0">Submission details</h2>
+                                            </div>
+                                            <span t-if="context_is_prefilled" class="badge facodi-prefill-badge">Context pre-filled</span>
                                         </div>
                                         <p t-if="source_cta or curriculum_unit or roadmap or module or course or suggested_slide" class="small text-muted mt-2 mb-3">
                                             We already added the context from where you clicked. Review it, add the resource itself and tell us why it belongs here.
@@ -227,7 +240,9 @@
 
                                 <div class="card mb-4 facodi-form-section">
                                     <div class="card-body">
-                                        <h2 class="h5">Follow-up</h2>
+                                        <p class="small text-uppercase fw-semibold text-muted mb-1">Step 2 · Optional follow-up</p>
+                                        <h2 class="h5">Stay in the loop</h2>
+                                        <p class="small text-muted">For resources, your contact details are optional. For contact requests, an email is needed so the team can reply.</p>
                                         <div class="row g-3">
                                             <div class="col-md-6">
                                                 <label class="form-label" for="facodi_contact_name">Name</label>
@@ -253,7 +268,7 @@
                                 </div>
 
                                 <div class="d-flex flex-wrap gap-2">
-                                    <button type="submit" class="btn btn-primary">Submit for review</button>
+                                    <button type="submit" class="btn btn-primary">Send to the review desk</button>
                                     <a t-att-href="return_url" class="btn btn-outline-secondary"><t t-esc="return_label"/></a>
                                 </div>
                             </form>
