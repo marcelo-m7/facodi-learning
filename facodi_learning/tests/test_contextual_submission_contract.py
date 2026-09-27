@@ -113,6 +113,17 @@ class TestContextualSubmissionStaticContracts(TransactionCase):
         self.assertIn("type=correction", template)
         self.assertIn("source=unit_correction_cta", template)
         self.assertIn("source=roadmap_correction_cta", template)
+        self.assertNotIn("normalize-space()", template)
+        for hook in (
+            "data-facodi-unit-community-resource-cta",
+            "data-facodi-unit-resource-cta",
+            "data-facodi-unit-catalogue-resource-cta",
+            "data-facodi-roadmap-resource-cta",
+            "data-facodi-unit-provenance",
+            "data-facodi-roadmap-provenance",
+        ):
+            self.assertIn(hook, self._read("views/website_curriculum.xml"))
+            self.assertIn(hook, template)
 
     def test_admin_views_expose_context(self):
         arch = self._read("views/contextual_submission_admin_views.xml")
