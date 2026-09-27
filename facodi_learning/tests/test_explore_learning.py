@@ -137,7 +137,7 @@ class TestExploreLearningWebsite(HttpCase):
 
         courses = self.url_open("/explorar/cursos", allow_redirects=False)
         self.assertIn(courses.status_code, (301, 302, 303, 307, 308))
-        self.assertTrue(courses.headers["Location"].endswith("/slides"))
+        self.assertTrue(courses.headers["Location"].endswith("/courses"))
 
     def test_areas_expose_only_accessible_published_current_website_tags(self):
         response = self.url_open("/explorar/areas")
