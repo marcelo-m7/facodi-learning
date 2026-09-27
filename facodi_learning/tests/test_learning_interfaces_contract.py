@@ -127,7 +127,8 @@ class TestLearningInterfacesContract(unittest.TestCase):
     def test_course_alignment_and_contribution_expose_d1_hooks(self):
         self.assertIn("facodi-course-alignment-sheet", self.curriculum)
         self.assertIn("facodi-open-callout", self.slides)
-        self.assertIn("/contribuir/recurso", self.slides)
+        self.assertIn("/submissions/new?type=resource", self.slides)
+        self.assertIn("source=course_resource_cta", self.slides)
 
         model_source = SLIDE_CHANNEL_MODEL.read_text(encoding="utf-8")
         self.assertIn(
