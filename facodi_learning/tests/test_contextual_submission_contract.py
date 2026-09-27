@@ -94,7 +94,8 @@ class TestContextualSubmissionStaticContracts(TransactionCase):
         self.assertIn('name="submission_type"', template)
         self.assertIn('name="source_cta"', template)
         self.assertIn('name="source_section"', template)
-        self.assertIn("You are contributing in this context", template)
+        self.assertIn("Contribution brief", template)
+        self.assertIn('data-facodi-contribution-brief="1"', template)
         self.assertIn('data-facodi-resource-submission', template)
         self.assertIn('id="facodi_submission_name"', template)
         title_field = template.split('id="facodi_submission_name"', 1)[1].split("</div>", 1)[0]
