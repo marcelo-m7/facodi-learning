@@ -86,6 +86,25 @@
                                                 <div class="form-text">Use a public HTTP or HTTPS page. Do not submit passwords, private links or credentials.</div>
                                                 <button type="button" class="btn btn-sm btn-outline-primary mt-2" data-facodi-discover-button="1">Detect details</button>
                                                 <span class="small text-muted ms-2" data-facodi-discovery-status="1" aria-live="polite"></span>
+                                                <div class="card mt-3 d-none facodi-metadata-preview"
+                                                     data-facodi-metadata-preview="1"
+                                                     aria-live="polite">
+                                                    <div class="card-body py-3">
+                                                        <div class="d-flex gap-3 align-items-start">
+                                                            <img class="rounded d-none"
+                                                                 data-facodi-metadata-thumbnail="1"
+                                                                 alt=""
+                                                                 width="144"
+                                                                 height="81"
+                                                                 loading="lazy"/>
+                                                            <div class="min-w-0">
+                                                                <div class="small text-uppercase fw-semibold text-muted mb-1">Detected resource</div>
+                                                                <div class="fw-semibold" data-facodi-metadata-title="1"></div>
+                                                                <div class="small text-muted" data-facodi-metadata-author="1"></div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </div>
                                             <div class="row g-3">
                                                 <div class="col-md-4">
