@@ -61,12 +61,12 @@ class FacodiContextualSubmissionController(FacodiSubmissionController):
         try:
             record_id = int(raw_id or 0)
         except (TypeError, ValueError):
-            return request.env["slide.tag"].browse()
+            return request.env["slide.channel.tag"].browse()
         if record_id <= 0:
-            return request.env["slide.tag"].browse()
-        area = request.env["slide.tag"].sudo().browse(record_id).exists()
+            return request.env["slide.channel.tag"].browse()
+        area = request.env["slide.channel.tag"].sudo().browse(record_id).exists()
         if not area or not area.group_id or not area.group_id.website_published:
-            return request.env["slide.tag"].browse()
+            return request.env["slide.channel.tag"].browse()
         public_course = request.env["slide.channel"].sudo().search(
             [
                 ("active", "=", True),
@@ -79,7 +79,7 @@ class FacodiContextualSubmissionController(FacodiSubmissionController):
             ],
             limit=1,
         )
-        return area if public_course else request.env["slide.tag"].browse()
+        return area if public_course else request.env["slide.channel.tag"].browse()
 
     @staticmethod
     def _public_course(raw_id):
