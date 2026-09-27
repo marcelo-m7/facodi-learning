@@ -99,21 +99,23 @@ class TestContextualSubmissionStaticContracts(TransactionCase):
         self.assertIn("submission_type != 'resource'", template)
 
     def test_curriculum_ctas_pass_context(self):
-        template = self._read("views/website_curriculum_contextual_ctas.xml")
-        self.assertIn("/submissions/new?type=resource", template)
-        self.assertIn("unit_id=", template)
-        self.assertIn("source=unit_resource_cta", template)
-        self.assertIn("section=resources", template)
-        self.assertIn("source=community_margin", template)
-        self.assertIn("roadmap_detail_contextual_resource_cta", template)
-        self.assertIn("roadmap_id=%s", template)
-        self.assertIn("source=roadmap_resource_cta", template)
-        self.assertIn("source=roadmaps_catalog_cta", template)
-        self.assertIn("source=curricular_units_catalog_cta", template)
-        self.assertIn("type=correction", template)
-        self.assertIn("source=unit_correction_cta", template)
-        self.assertIn("source=roadmap_correction_cta", template)
-        self.assertNotIn("normalize-space()", template)
+        curriculum = self._read("views/website_curriculum.xml")
+        additive = self._read("views/website_curriculum_contextual_ctas.xml")
+        self.assertIn("/submissions/new?type=resource", curriculum)
+        self.assertIn("unit_id=%s", curriculum)
+        self.assertIn("source=unit_resource_cta", curriculum)
+        self.assertIn("section=resources", curriculum)
+        self.assertIn("source=community_margin", curriculum)
+        self.assertIn("roadmap_id=%s", curriculum)
+        self.assertIn("source=roadmap_resource_cta", curriculum)
+        self.assertIn("source=roadmaps_catalog_cta", curriculum)
+        self.assertIn("source=curricular_units_catalog_cta", curriculum)
+        self.assertNotIn("/contribuir/recurso?curriculum_unit_id=", curriculum)
+        self.assertIn("type=correction", additive)
+        self.assertIn("source=unit_correction_cta", additive)
+        self.assertIn("source=roadmap_correction_cta", additive)
+        self.assertNotIn("position=\"attributes\"", additive)
+        self.assertNotIn("normalize-space()", additive)
         for hook in (
             "data-facodi-unit-community-resource-cta",
             "data-facodi-unit-resource-cta",
@@ -122,8 +124,7 @@ class TestContextualSubmissionStaticContracts(TransactionCase):
             "data-facodi-unit-provenance",
             "data-facodi-roadmap-provenance",
         ):
-            self.assertIn(hook, self._read("views/website_curriculum.xml"))
-            self.assertIn(hook, template)
+            self.assertIn(hook, curriculum)
 
     def test_admin_views_expose_context(self):
         arch = self._read("views/contextual_submission_admin_views.xml")
