@@ -20,7 +20,7 @@ class TestLearningInterfacesContract(unittest.TestCase):
 
     def test_d1_release_version(self):
         manifest = MANIFEST.read_text(encoding="utf-8")
-        self.assertIn('"version": "19.0.1.53.0"', manifest)
+        self.assertIn('"version": "19.0.1.54.0"', manifest)
 
     def test_portal_progress_avoids_old_style_percent_formatting(self):
         portal_home = PORTAL_HOME.read_text(encoding="utf-8")
@@ -62,6 +62,17 @@ class TestLearningInterfacesContract(unittest.TestCase):
         self.assertIn('remove_params[filter_row["key"]] = False', explore_controller)
         self.assertIn("facodi-filter-chip__remove", explore_view)
         self.assertIn("t-att-href=\"filter_row['remove_url']\"", explore_view)
+
+    def test_explore_uses_orm_filtering_and_bounded_pagination(self):
+        explore_controller = (MODULE_ROOT / "controllers" / "explore.py").read_text(encoding="utf-8")
+        self.assertIn("Slide.search_count(slide_domain)", explore_controller)
+        self.assertIn("offset=offset", explore_controller)
+        self.assertIn("limit=self.PAGE_SIZE", explore_controller)
+        self.assertIn('("name", "ilike", query)', explore_controller)
+        self.assertIn('("description", "ilike", query)', explore_controller)
+        self.assertIn('("channel_id.tag_ids", "in", [area_id])', explore_controller)
+        self.assertIn('("tag_ids.name", "=", f"{self.LANGUAGE_PREFIX}{language}")', explore_controller)
+        self.assertNotIn("filtered = all_slides", explore_controller)
 
     def test_roadmap_catalogue_exposes_d1_structure(self):
         self.assertIn('id="curriculum_public_index"', self.curriculum)

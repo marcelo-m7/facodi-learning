@@ -42,12 +42,17 @@ class FacodiExploreController(http.Controller):
 
     @classmethod
     def _public_slide_domain(cls):
-        courses = cls._public_courses()
+        website = request.website
         return [
             ("active", "=", True),
             ("website_published", "=", True),
             ("is_preview", "=", True),
-            ("channel_id", "in", courses.ids),
+            ("channel_id.active", "=", True),
+            ("channel_id.website_published", "=", True),
+            ("channel_id.visibility", "=", "public"),
+            "|",
+            ("channel_id.website_id", "=", False),
+            ("channel_id.website_id", "=", website.id),
         ]
 
     @classmethod
@@ -164,41 +169,39 @@ class FacodiExploreController(http.Controller):
         content_format = (kwargs.get("format") or "").strip()
 
         all_slides = self._public_slides()
-        filtered = all_slides
-
-        if query:
-            needle = query.casefold()
-            filtered = filtered.filtered(
-                lambda slide: needle in (slide.name or "").casefold()
-                or needle in (slide.description or "").casefold()
-            )
-
-        if area_id:
-            filtered = filtered.filtered(
-                lambda slide: area_id in slide.channel_id.tag_ids.ids
-            )
-
-        if language:
-            expected = f"{self.LANGUAGE_PREFIX}{language}"
-            filtered = filtered.filtered(
-                lambda slide: expected in slide.tag_ids.mapped("name")
-            )
-
         available_formats = self._format_options(all_slides)
         format_values = {value for value, _label in available_formats}
-        if content_format and content_format in format_values:
-            filtered = filtered.filtered(
-                lambda slide: slide.slide_category == content_format
-            )
-        elif content_format:
+        if content_format and content_format not in format_values:
             content_format = ""
 
-        total = len(filtered)
+        slide_domain = list(self._public_slide_domain())
+        if query:
+            slide_domain += [
+                "|",
+                ("name", "ilike", query),
+                ("description", "ilike", query),
+            ]
+        if area_id:
+            slide_domain.append(("channel_id.tag_ids", "in", [area_id]))
+        if language:
+            slide_domain.append(
+                ("tag_ids.name", "=", f"{self.LANGUAGE_PREFIX}{language}")
+            )
+        if content_format:
+            slide_domain.append(("slide_category", "=", content_format))
+
+        Slide = request.env["slide.slide"].sudo()
+        total = Slide.search_count(slide_domain)
         page_count = max(1, (total + self.PAGE_SIZE - 1) // self.PAGE_SIZE)
         if page > page_count:
             page = page_count
-        start = (page - 1) * self.PAGE_SIZE
-        slides = filtered[start : start + self.PAGE_SIZE]
+        offset = (page - 1) * self.PAGE_SIZE
+        slides = Slide.search(
+            slide_domain,
+            order="sequence, id",
+            offset=offset,
+            limit=self.PAGE_SIZE,
+        )
 
         params = {
             "q": query,
