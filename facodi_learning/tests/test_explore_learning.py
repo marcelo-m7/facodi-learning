@@ -148,6 +148,23 @@ class TestExploreLearningWebsite(HttpCase):
         self.assertIn("Data", response.text)
         self.assertNotIn("Hidden Area", response.text)
         self.assertNotIn("Other Website Course", response.text)
+        tree = html.fromstring(response.text)
+        math_cta = tree.xpath(
+            '//a[contains(@href, "source=area_resource_cta") and contains(@href, "area=%s")]/@href'
+            % self.area_math.id
+        )
+        self.assertEqual(len(math_cta), 1)
+        contextual = self.url_open(math_cta[0])
+        self.assertEqual(contextual.status_code, 200)
+        contextual_tree = html.fromstring(contextual.text)
+        self.assertEqual(
+            contextual_tree.xpath('//input[@name="area_id"]/@value'),
+            [str(self.area_math.id)],
+        )
+        self.assertIn(
+            "Learning area resources",
+            " ".join(contextual_tree.xpath("//body//text()")),
+        )
 
         filtered = self.url_open("/explore/areas?" + urlencode({"q": "Math"}))
         self.assertIn("Mathematics", filtered.text)

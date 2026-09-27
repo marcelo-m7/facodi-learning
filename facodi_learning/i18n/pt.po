@@ -3875,3 +3875,27 @@ msgstr "Sugerido para a área de aprendizagem: %s."
 #: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
 msgid "The learning area context is no longer publicly available."
 msgstr "O contexto da área de aprendizagem já não está disponível publicamente."
+
+#. module: facodi_learning
+#: code:addons/facodi_learning/controllers/contextual_submission.py:0
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_areas
+msgid "Browse resources"
+msgstr "Explorar recursos"
+
+#. module: facodi_learning
+#: code:addons/facodi_learning/controllers/contextual_submission.py:0
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_areas
+msgid "I suggest this resource for this learning area."
+msgstr "Sugiro este recurso para esta área de aprendizagem."
+
+#. module: facodi_learning
+#: code:addons/facodi_learning/controllers/contextual_submission.py:0
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_areas
+msgid "Learning area resources"
+msgstr "Recursos da área de aprendizagem"
+
+#. module: facodi_learning
+#: code:addons/facodi_learning/controllers/contextual_submission.py:0
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_areas
+msgid "Learning areas"
+msgstr "Áreas de aprendizagem"

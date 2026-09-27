@@ -167,6 +167,8 @@ class TestContextualSubmissionStaticContracts(TransactionCase):
         self.assertIn("type=contact", slides)
         self.assertIn("source=course_contact_cta", slides)
         self.assertIn("source=explore_empty_shelf", explore)
+        self.assertIn("source=area_resource_cta", explore)
+        self.assertIn("section=explore-areas", explore)
         self.assertIn("source=community_video_cta", explore)
         self.assertIn("resource_type=video", explore)
         self.assertIn("source=portal_resource_cta", portal)

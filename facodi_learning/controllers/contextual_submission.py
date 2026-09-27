@@ -280,6 +280,9 @@ class FacodiContextualSubmissionController(FacodiSubmissionController):
             "explore_empty_shelf": request.env._(
                 "I found a resource that is missing from the current FACODI catalogue."
             ),
+            "area_resource_cta": request.env._(
+                "I suggest this resource for this learning area."
+            ),
             "community_video_cta": request.env._(
                 "I want to share this public video with the FACODI community."
             ),
@@ -334,6 +337,7 @@ class FacodiContextualSubmissionController(FacodiSubmissionController):
             "study_player_resource_cta": request.env._("Lesson resources"),
             "study_player_correction_cta": request.env._("Lesson problem report"),
             "explore_empty_shelf": request.env._("Explore empty shelf"),
+            "area_resource_cta": request.env._("Learning area resources"),
             "community_video_cta": request.env._("Community videos"),
             "portal_resource_cta": request.env._("My FACODI"),
             "roadmaps_catalog_cta": request.env._("Roadmaps catalogue"),
@@ -413,6 +417,7 @@ class FacodiContextualSubmissionController(FacodiSubmissionController):
 
         section_labels = {
             "resources": request.env._("Learning resources"),
+            "explore-areas": request.env._("Learning areas"),
             "course": request.env._("Course"),
             "lesson": request.env._("Lesson"),
             "courses": request.env._("Courses"),
