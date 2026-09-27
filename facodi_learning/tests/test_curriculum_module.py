@@ -108,6 +108,9 @@ class TestCurriculumModule(TransactionCase):
         self.assertIn("show_learning_progress", view.arch_db)
         self.assertIn("module_row['progress']", view.arch_db)
         self.assertIn("module_row['next_item']", view.arch_db)
+        self.assertIn("data-facodi-module-resource-cta", view.arch_db)
+        self.assertIn("module_id=%s", view.arch_db)
+        self.assertIn("source=module_resource_cta", view.arch_db)
         self.assertNotIn("module_row_index", view.arch_db)
 
     def test_unit_can_order_multiple_modules(self):
