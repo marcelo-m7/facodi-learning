@@ -5,6 +5,38 @@ from odoo.tests import HttpCase, tagged
 
 @tagged("post_install", "-at_install")
 class TestContextualSubmissionHttp(HttpCase):
+    def _csrf_token(self, route="/submissions/new"):
+        response = self.url_open(route)
+        self.assertEqual(response.status_code, 200)
+        tree = html.fromstring(response.text)
+        tokens = tree.xpath('//input[@name="csrf_token"]/@value')
+        self.assertEqual(len(tokens), 1)
+        return tokens[0]
+
+    def test_localized_submission_aliases_render_the_unified_form(self):
+        for route in ("/pt/submissions/new", "/en/submissions/new", "/es/submissions/new", "/fr/submissions/new"):
+            response = self.url_open(route)
+            self.assertEqual(response.status_code, 200, route)
+            self.assertIn('data-facodi-submission-form="1"', response.text)
+
+    def test_honeypot_submission_is_discarded_without_creating_a_record(self):
+        Submission = self.env["facodi.learning.submission"].sudo()
+        before = Submission.search_count([])
+        response = self.url_open(
+            "/submissions/new",
+            data={
+                "csrf_token": self._csrf_token(),
+                "type": "contact",
+                "context": "Automated spam",
+                "contact_email": "bot@example.test",
+                "facodi_company_website": "https://spam.example.test",
+            },
+            allow_redirects=False,
+        )
+        self.assertEqual(response.status_code, 303)
+        self.assertTrue(response.headers["Location"].endswith("/explore"))
+        self.assertEqual(Submission.search_count([]), before)
+
     def test_public_cta_prefills_resource_profile(self):
         response = self.url_open(
             "/submissions/new?type=resource&source=community_video_cta"
