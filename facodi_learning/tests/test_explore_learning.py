@@ -1,5 +1,7 @@
 from urllib.parse import urlencode
 
+from lxml import html
+
 from odoo import Command
 from odoo.tests import HttpCase, tagged
 
@@ -226,3 +228,39 @@ class TestExploreLearningWebsite(HttpCase):
         self.assertIn('value="en_US"', response.text)
         self.assertIn('value="pt_PT"', response.text)
         self.assertNotIn('value="fr_FR"', response.text)
+
+
+    def test_empty_filtered_shelf_prefills_area_language_and_format(self):
+        response = self.url_open(
+            "/explore/content?"
+            + urlencode(
+                {
+                    "area": self.area_data.id,
+                    "language": "en_US",
+                    "format": "video",
+                }
+            )
+        )
+        self.assertEqual(response.status_code, 200)
+        tree = html.fromstring(response.text)
+        hrefs = tree.xpath('//a[normalize-space()="Drop a resource"]/@href')
+        self.assertEqual(len(hrefs), 1)
+        href = hrefs[0]
+        self.assertIn(f"area={self.area_data.id}", href)
+        self.assertIn("language=en", href)
+        self.assertIn("resource_type=video", href)
+
+        form = self.url_open(href)
+        self.assertEqual(form.status_code, 200)
+        form_tree = html.fromstring(form.text)
+        self.assertEqual(
+            form_tree.xpath('//input[@name="area_id"]/@value'),
+            [str(self.area_data.id)],
+        )
+        self.assertIn("Data", " ".join(form_tree.xpath("//body//text()")))
+        self.assertTrue(
+            form_tree.xpath('//select[@name="language"]/option[@value="en"][@selected]')
+        )
+        self.assertTrue(
+            form_tree.xpath('//select[@name="resource_type"]/option[@value="video"][@selected]')
+        )
