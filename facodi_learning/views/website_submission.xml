@@ -277,7 +277,7 @@
                                                       t-esc="row['submission'].language"/>
                                             </div>
                                             <h2 class="h5 mb-2" t-esc="row['submission'].name"/>
-                                            <span class="badge text-bg-light border me-2" t-esc="dict(row['submission']._fields['submission_type']._description_selection(request.env)).get(row['submission'].submission_type, row['submission'].submission_type)"/>
+                                            <span class="badge text-bg-light border me-2" t-esc="row['type_label']"/>
                                             <a t-if="row['submission'].submission_type == 'resource' and row['submission'].source_url"
                                                t-att-href="row['submission'].source_url"
                                                target="_blank"
