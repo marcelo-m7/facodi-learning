@@ -194,7 +194,7 @@
                         <div class="d-flex flex-wrap justify-content-center gap-2">
                             <a href="/explore/content" class="btn btn-primary">Clear the desk</a>
                             <a href="/explore/areas" class="btn btn-outline-primary">Browse areas</a>
-                            <a href="/contribuir/recurso" class="btn btn-outline-secondary">Drop a resource</a>
+                            <a href="/submissions/new?type=resource&amp;source=explore_empty_shelf&amp;section=explore-content" class="btn btn-outline-secondary">Drop a resource</a>
                         </div>
                     </div>
 
@@ -222,7 +222,7 @@
                             <p class="text-muted mb-0"><t t-esc="total"/> public YouTube submissions found.</p>
                         </div>
                         <div class="d-flex gap-2">
-                            <a href="/contribuir/recurso" class="btn btn-primary">Share a video</a>
+                            <a href="/submissions/new?type=resource&amp;resource_type=video&amp;source=community_video_cta&amp;section=explore-videos" class="btn btn-primary">Share a video</a>
                             <a href="/explore" class="btn btn-outline-secondary">Back to Explore</a>
                         </div>
                     </div>
@@ -294,7 +294,7 @@
                         <p class="text-muted">No community video submissions match these filters. Try another language or search, or add a useful public video.</p>
                         <div class="d-flex flex-wrap justify-content-center gap-2">
                             <a href="/explore/videos" class="btn btn-outline-secondary">Clear filters</a>
-                            <a href="/contribuir/recurso" class="btn btn-primary">Share a video</a>
+                            <a href="/submissions/new?type=resource&amp;resource_type=video&amp;source=community_video_cta&amp;section=explore-videos" class="btn btn-primary">Share a video</a>
                         </div>
                     </div>
 
