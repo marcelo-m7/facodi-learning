@@ -550,6 +550,7 @@ class FacodiSubmissionController(http.Controller):
                             ("normalized_source_url", "=", normalized_source_url),
                             ("state", "in", ("submitted", "reviewing", "accepted")),
                             ("curriculum_unit_id", "=", submission.curriculum_unit_id.id or False),
+                            ("module_id", "=", submission.module_id.id or False),
                         ],
                         limit=1,
                     )
