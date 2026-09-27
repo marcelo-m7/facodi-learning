@@ -51,6 +51,7 @@ class TestContextualSubmissionStaticContracts(TransactionCase):
     def test_controller_exposes_contextual_routes_and_aliases(self):
         controller = self._read("controllers/contextual_submission.py")
         self.assertIn('"/submissions/new"', controller)
+        self.assertIn('"/contribuir/recurso"', controller)
         self.assertIn('"/pt/submissions/new"', controller)
         self.assertIn('"/en/submissions/new"', controller)
         self.assertIn("unit_id", controller)
@@ -60,6 +61,10 @@ class TestContextualSubmissionStaticContracts(TransactionCase):
         self.assertIn("request.httprequest.referrer", controller)
         self.assertIn("contact_name", controller)
         self.assertIn("contact_email", controller)
+        self.assertIn("_public_roadmap", controller)
+        self.assertIn("_public_course", controller)
+        self.assertIn("_public_slide", controller)
+        self.assertIn("_discover_public_youtube_metadata", controller)
 
     def test_template_has_contextual_form_contract(self):
         template = self._read("views/website_contextual_submission.xml")
@@ -75,6 +80,8 @@ class TestContextualSubmissionStaticContracts(TransactionCase):
         self.assertIn("form_values.get('language'", template)
         self.assertIn("form_values.get('resource_level'", template)
         self.assertIn("form_values.get('permission_to_contact')", template)
+        self.assertIn('name="curriculum_unit_id"', template)
+        self.assertNotIn("Classic resource form", template)
 
     def test_curriculum_ctas_pass_context(self):
         template = self._read("views/website_curriculum_contextual_ctas.xml")
