@@ -264,3 +264,21 @@ class TestExploreLearningWebsite(HttpCase):
         self.assertTrue(
             form_tree.xpath('//select[@name="resource_type"]/option[@value="video"][@selected]')
         )
+
+
+    def test_contextual_form_rejects_non_public_area_context(self):
+        response = self.url_open(
+            "/submissions/new?"
+            + urlencode(
+                {
+                    "type": "resource",
+                    "area": self.area_hidden.id,
+                    "source": "explore_empty_shelf",
+                    "section": "explore-content",
+                }
+            )
+        )
+        self.assertEqual(response.status_code, 200)
+        tree = html.fromstring(response.text)
+        self.assertFalse(tree.xpath('//input[@name="area_id"]'))
+        self.assertNotIn("Hidden Area", " ".join(tree.xpath("//body//text()")))
