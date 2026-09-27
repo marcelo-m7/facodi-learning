@@ -74,6 +74,13 @@ class TestContextualSubmissionStaticContracts(TransactionCase):
         self.assertIn("_facodi_public_catalog_path", controller)
         self.assertIn("suggested_slide.website_url", controller)
         self.assertIn("course.website_url", controller)
+        self.assertIn("study_player_resource_cta", controller)
+        self.assertIn("study_player_correction_cta", controller)
+        self.assertIn('"lesson": request.env._("Lesson")', controller)
+        self.assertLess(
+            controller.index("elif suggested_slide:"),
+            controller.index("elif course:", controller.index("elif suggested_slide:")),
+        )
 
     def test_template_has_contextual_form_contract(self):
         template = self._read("views/website_contextual_submission.xml")

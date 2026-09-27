@@ -3753,3 +3753,28 @@ msgstr "Suivi de la contribution"
 #: code:addons/facodi_learning/controllers/contextual_submission.py:0
 msgid "Submission status"
 msgstr "Statut de la contribution"
+
+#. module: facodi_learning
+#: code:addons/facodi_learning/controllers/contextual_submission.py:0
+msgid "Suggested around learning item: %s (course: %s)."
+msgstr "Suggéré autour du contenu d’apprentissage : %s (cours : %s)."
+
+#. module: facodi_learning
+#: code:addons/facodi_learning/controllers/contextual_submission.py:0
+msgid "I suggest this resource as a useful companion to this lesson."
+msgstr "Je suggère cette ressource comme complément utile à cette leçon."
+
+#. module: facodi_learning
+#: code:addons/facodi_learning/controllers/contextual_submission.py:0
+msgid "Lesson resources"
+msgstr "Ressources de la leçon"
+
+#. module: facodi_learning
+#: code:addons/facodi_learning/controllers/contextual_submission.py:0
+msgid "Lesson problem report"
+msgstr "Signaler un problème dans la leçon"
+
+#. module: facodi_learning
+#: code:addons/facodi_learning/controllers/contextual_submission.py:0
+msgid "Lesson"
+msgstr "Leçon"

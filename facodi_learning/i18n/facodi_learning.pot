@@ -3716,3 +3716,28 @@ msgstr ""
 #: code:addons/facodi_learning/controllers/contextual_submission.py:0
 msgid "Submission status"
 msgstr ""
+
+#. module: facodi_learning
+#: code:addons/facodi_learning/controllers/contextual_submission.py:0
+msgid "Suggested around learning item: %s (course: %s)."
+msgstr ""
+
+#. module: facodi_learning
+#: code:addons/facodi_learning/controllers/contextual_submission.py:0
+msgid "I suggest this resource as a useful companion to this lesson."
+msgstr ""
+
+#. module: facodi_learning
+#: code:addons/facodi_learning/controllers/contextual_submission.py:0
+msgid "Lesson resources"
+msgstr ""
+
+#. module: facodi_learning
+#: code:addons/facodi_learning/controllers/contextual_submission.py:0
+msgid "Lesson problem report"
+msgstr ""
+
+#. module: facodi_learning
+#: code:addons/facodi_learning/controllers/contextual_submission.py:0
+msgid "Lesson"
+msgstr ""

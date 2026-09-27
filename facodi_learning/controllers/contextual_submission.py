@@ -209,14 +209,19 @@ class FacodiContextualSubmissionController(FacodiSubmissionController):
             profile_context = request.env._(
                 "Suggested for roadmap: %s."
             ) % roadmap.display_name
+        elif suggested_slide:
+            if course:
+                profile_context = request.env._(
+                    "Suggested around learning item: %s (course: %s)."
+                ) % (suggested_slide.name, course.name)
+            else:
+                profile_context = request.env._(
+                    "Suggested around learning item: %s."
+                ) % suggested_slide.name
         elif course:
             profile_context = request.env._(
                 "Suggested for course: %s."
             ) % course.name
-        elif suggested_slide:
-            profile_context = request.env._(
-                "Suggested around learning item: %s."
-            ) % suggested_slide.name
 
         cta_defaults = {
             "community_margin": request.env._(
@@ -230,6 +235,9 @@ class FacodiContextualSubmissionController(FacodiSubmissionController):
             ),
             "course_resource_cta": request.env._(
                 "I suggest this resource as a useful companion to this course."
+            ),
+            "study_player_resource_cta": request.env._(
+                "I suggest this resource as a useful companion to this lesson."
             ),
             "explore_empty_shelf": request.env._(
                 "I found a resource that is missing from the current FACODI catalogue."
@@ -283,6 +291,8 @@ class FacodiContextualSubmissionController(FacodiSubmissionController):
             "roadmap_resource_cta": request.env._("Roadmap resources"),
             "course_resource_cta": request.env._("Course resources"),
             "course_contact_cta": request.env._("Course contribution"),
+            "study_player_resource_cta": request.env._("Lesson resources"),
+            "study_player_correction_cta": request.env._("Lesson problem report"),
             "explore_empty_shelf": request.env._("Explore empty shelf"),
             "community_video_cta": request.env._("Community videos"),
             "portal_resource_cta": request.env._("My FACODI"),
@@ -327,6 +337,7 @@ class FacodiContextualSubmissionController(FacodiSubmissionController):
         section_labels = {
             "resources": request.env._("Learning resources"),
             "course": request.env._("Course"),
+            "lesson": request.env._("Lesson"),
             "courses": request.env._("Courses"),
             "roadmap": request.env._("Roadmap"),
             "roadmaps": request.env._("Roadmaps"),
