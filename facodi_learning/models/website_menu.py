@@ -26,7 +26,7 @@ class WebsiteMenu(models.Model):
             [
                 ("website_id", "=", facodi.id),
                 ("parent_id", "=", root.id),
-                ("url", "=", "/explorar"),
+                ("url", "=", "/explore"),
             ],
             order="id",
             limit=1,
@@ -35,7 +35,7 @@ class WebsiteMenu(models.Model):
             explore = Menu.create(
                 {
                     "name": "Explore",
-                    "url": "/explorar",
+                    "url": "/explore",
                     "parent_id": root.id,
                     "website_id": facodi.id,
                     "sequence": 40,
@@ -46,11 +46,11 @@ class WebsiteMenu(models.Model):
 
         entries = (
             ("Courses", "/slides", 10),
-            ("Areas", "/explorar/areas", 20),
-            ("Learning resources", "/explorar/conteudos", 30),
-            ("Community videos", "/explorar/videos", 40),
+            ("Areas", "/explore/areas", 20),
+            ("Learning resources", "/explore/content", 30),
+            ("Community videos", "/explore/videos", 40),
             ("Roadmaps", "/roadmaps", 50),
-            ("Curricular units", "/unidades-curriculares", 60),
+            ("Curricular units", "/curricular-units", 60),
         )
         target_urls = {url for _name, url, _sequence in entries}
 
@@ -104,7 +104,7 @@ class WebsiteMenu(models.Model):
         # Remove only website-less legacy Explore trees from this module's
         # previous generic data. Other websites remain untouched.
         generic_explore = Menu.search(
-            [("website_id", "=", False), ("url", "=", "/explorar")]
+            [("website_id", "=", False), ("url", "=", "/explore")]
         )
         generic_explore.unlink()
         return True
