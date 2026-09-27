@@ -526,7 +526,7 @@ class FacodiContextualSubmissionController(FacodiSubmissionController):
         return context, values, errors
 
     @http.route(
-        ["/submissions/new", "/pt/submissions/new", "/en/submissions/new", "/contribuir/recurso"],
+        ["/submissions/new", "/pt/submissions/new", "/en/submissions/new", "/es/submissions/new", "/fr/submissions/new", "/contribuir/recurso"],
         type="http",
         auth="public",
         website=True,
