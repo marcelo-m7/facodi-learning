@@ -5,7 +5,7 @@
             <section class="container pt-4" aria-label="Aprendizagem FACODI">
                 <nav class="d-flex flex-wrap gap-3 small">
                     <strong>Learning</strong>
-                    <a href="/unidades-curriculares" class="text-decoration-none">Curricular Units</a>
+                    <a href="/curricular-units" class="text-decoration-none">Curricular Units</a>
                     <a href="/roadmaps" class="text-decoration-none">Roadmaps</a>
                     <a href="/slides" class="text-decoration-none">Explore Content</a>
                     <a href="/contribuir/recurso" class="text-decoration-none">Suggest a resource</a>
