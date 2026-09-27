@@ -3776,3 +3776,21 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
 msgid "Leave this field empty"
 msgstr ""
+
+#. module: facodi_learning
+#: code:addons/facodi_learning/controllers/contextual_submission.py:0
+#: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
+msgid "Enter a valid email address."
+msgstr ""
+
+#. module: facodi_learning
+#: code:addons/facodi_learning/controllers/contextual_submission.py:0
+#: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
+msgid "Add an email address if FACODI may contact you about this submission."
+msgstr ""
+
+#. module: facodi_learning
+#: code:addons/facodi_learning/controllers/contextual_submission.py:0
+#: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
+msgid "Required for contact requests and whenever you ask FACODI to follow up."
+msgstr ""
