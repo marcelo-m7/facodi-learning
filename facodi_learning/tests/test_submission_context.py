@@ -205,3 +205,20 @@ class TestSubmissionContextWebsite(HttpCase):
         )
         self.assertTrue(current)
         self.assertEqual(current.state, "submitted")
+
+    def test_contextual_get_prefills_curricular_unit_context(self):
+        response = self.url_open(
+            "/contribuir/recurso?curriculum_unit_id=%s" % self.database_unit.id
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(self.database_unit.name, response.text)
+        self.assertIn("Suggested for", response.text)
+
+    def test_get_accepts_safe_prefill_fields(self):
+        response = self.url_open(
+            "/contribuir/recurso?name=Open+resource&language=pt&context=Useful+for+this+section"
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('value="Open resource"', response.text)
+        self.assertIn("Useful for this section", response.text)
+
