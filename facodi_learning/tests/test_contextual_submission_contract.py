@@ -37,6 +37,7 @@ class TestContextualSubmissionModelContract(TransactionCase):
             "contact_name",
             "contact_email",
             "organization",
+            "contact_topic",
             "resource_type",
             "resource_level",
             "permission_to_contact",
@@ -61,6 +62,9 @@ class TestContextualSubmissionStaticContracts(TransactionCase):
         self.assertIn("request.httprequest.referrer", controller)
         self.assertIn("contact_name", controller)
         self.assertIn("contact_email", controller)
+        self.assertIn("_safe_origin_path", controller)
+        self.assertIn("contact_topic_defaults", controller)
+        self.assertIn("source_cta_label", controller)
         self.assertIn("_public_roadmap", controller)
         self.assertIn("_public_course", controller)
         self.assertIn("_public_slide", controller)
@@ -80,6 +84,9 @@ class TestContextualSubmissionStaticContracts(TransactionCase):
         self.assertIn("form_values.get('language'", template)
         self.assertIn("form_values.get('resource_level'", template)
         self.assertIn("form_values.get('permission_to_contact')", template)
+        self.assertIn('name="contact_topic"', template)
+        self.assertIn("source_cta_label", template)
+        self.assertNotIn('<code t-esc="source_cta"', template)
         self.assertIn('name="curriculum_unit_id"', template)
         self.assertNotIn("Classic resource form", template)
 
