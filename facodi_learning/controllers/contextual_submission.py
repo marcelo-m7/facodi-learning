@@ -2,7 +2,12 @@ from odoo import http
 from odoo.exceptions import ValidationError
 from odoo.http import request
 
-from .submission import FacodiSubmissionController
+from .submission import (
+    FacodiSubmissionController,
+    MetadataDiscoveryRateLimited,
+    _discover_public_youtube_metadata,
+)
+from ..services.youtube import youtube_video_identity
 
 
 class FacodiContextualSubmissionController(FacodiSubmissionController):
@@ -284,6 +289,31 @@ class FacodiContextualSubmissionController(FacodiSubmissionController):
         errors = []
         Submission = request.env["facodi.learning.submission"]
         if submission_type == "resource":
+            youtube_identity = (
+                youtube_video_identity(source_url)
+                if Submission._is_valid_source_url(source_url)
+                else False
+            )
+            if youtube_identity and (
+                not values["name"]
+                or not values["language"]
+                or source_url != youtube_identity["source_url"]
+            ):
+                try:
+                    discovered = _discover_public_youtube_metadata(source_url)
+                except MetadataDiscoveryRateLimited:
+                    discovered = False
+                except Exception:
+                    discovered = False
+                if discovered and discovered.get("supported"):
+                    values["source_url"] = discovered.get("canonical_url") or source_url
+                    values["name"] = values["name"] or (discovered.get("title") or "")
+                    detected_language = (discovered.get("language") or "").lower()
+                    detected_language = detected_language.replace("_", "-").split("-", 1)[0]
+                    values["language"] = values["language"] or detected_language[:16]
+
+            name = values["name"]
+            source_url = values["source_url"]
             if not name:
                 errors.append(request.env._("Enter a short title for the resource."))
             if not Submission._is_valid_source_url(source_url):
