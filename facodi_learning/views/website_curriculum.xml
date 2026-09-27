@@ -17,7 +17,7 @@
                                     </p>
                                 </div>
                                 <nav class="facodi-index-tabs facodi-index-tabs--roadmaps" aria-label="Learning">
-                                    <a href="/slides">Courses</a>
+                                    <a href="/courses">Courses</a>
                                     <a href="/roadmaps" aria-current="page">Roadmaps</a>
                                     <a href="/curricular-units">Curricular units</a>
                                 </nav>
@@ -145,7 +145,7 @@
                                     </p>
                                 </div>
                                 <nav class="facodi-index-tabs facodi-index-tabs--units" aria-label="Learning">
-                                    <a href="/slides">Courses</a>
+                                    <a href="/courses">Courses</a>
                                     <a href="/roadmaps">Roadmaps</a>
                                     <a href="/curricular-units" aria-current="page">Curricular units</a>
                                 </nav>
@@ -277,7 +277,7 @@
                                 </div>
                                 <div class="d-flex flex-wrap gap-2">
                                     <a href="/contribuir/recurso" class="btn btn-outline-primary">Suggest a learning resource</a>
-                                    <a href="/slides" class="btn btn-link">Explore FACODI courses</a>
+                                    <a href="/courses" class="btn btn-link">Explore FACODI courses</a>
                                 </div>
                             </header>
 
@@ -502,7 +502,7 @@
                                             <p class="text-muted mb-3">This is a public editorial gap; it does not mean that external material is unavailable or that academic recognition exists.</p>
                                             <div class="d-flex flex-wrap gap-2">
                                                 <a t-att-href="'/contribuir/recurso?curriculum_unit_id=%s' % unit.id" class="btn btn-primary">Suggest a resource</a>
-                                                <a href="/slides" class="btn btn-outline-primary">Explore FACODI courses</a>
+                                                <a href="/courses" class="btn btn-outline-primary">Explore FACODI courses</a>
                                             </div>
                                         </div>
                                     </section>

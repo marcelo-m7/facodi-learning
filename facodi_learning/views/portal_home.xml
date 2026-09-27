@@ -30,7 +30,7 @@
                 </div>
 
                 <div class="facodi-momentum-strip mt-4" aria-label="Learning pulse">
-                    <a href="/slides" class="facodi-momentum-card facodi-highlight-lime text-decoration-none">
+                    <a href="/courses" class="facodi-momentum-card facodi-highlight-lime text-decoration-none">
                         <span class="facodi-momentum-card__value" t-esc="facodi_learning_stats['courses']"/>
                         <span class="facodi-momentum-card__label">courses on your desk</span>
                         <small class="facodi-momentum-card__sub"><t t-esc="facodi_learning_stats['completed_courses']"/> done</small>
@@ -51,7 +51,7 @@
             </section>
 
             <section class="facodi-portal-board mb-4" aria-label="FACODI quick actions">
-                <a href="/slides" class="facodi-dashboard-action text-decoration-none">
+                <a href="/courses" class="facodi-dashboard-action text-decoration-none">
                     <span class="facodi-dashboard-action__icon fa fa-graduation-cap" aria-hidden="true"></span>
                     <div><strong>Keep learning</strong><small>Courses, lessons and your next study stop</small></div>
                 </a>
@@ -76,7 +76,7 @@
                             <p class="facodi-kicker mb-1">Pick up where you left off</p>
                             <h2 class="h3 mb-0">Your learning shelf</h2>
                         </div>
-                        <a href="/slides" class="btn btn-sm btn-outline-secondary">Browse all</a>
+                        <a href="/courses" class="btn btn-sm btn-outline-secondary">Browse all</a>
                     </div>
                     <div t-if="facodi_course_rows" class="row g-3">
                         <div t-foreach="facodi_course_rows" t-as="row" class="col-12 col-md-6">
@@ -110,7 +110,7 @@
                         <span class="facodi-empty-icon fa fa-compass" aria-hidden="true"></span>
                         <h3 class="h4">Your desk is still clean. Nice.</h3>
                         <p class="text-muted">Pick something worth learning and build your first FACODI shelf.</p>
-                        <a href="/slides" class="btn btn-primary">Browse courses</a>
+                        <a href="/courses" class="btn btn-primary">Browse courses</a>
                     </div>
                 </div>
 
@@ -250,7 +250,7 @@
                         <h2 class="h3 mb-0">What you finished lately</h2>
                         <p class="small text-muted mb-0">Pulled from your native Odoo eLearning completion history.</p>
                     </div>
-                    <a href="/slides" class="btn btn-sm btn-outline-secondary">Keep moving</a>
+                    <a href="/courses" class="btn btn-sm btn-outline-secondary">Keep moving</a>
                 </div>
 
                 <div t-if="facodi_recent_learning_rows" class="facodi-latest-wins__grid">
@@ -271,7 +271,7 @@
                     <span class="facodi-empty-icon fa fa-check-circle-o" aria-hidden="true"></span>
                     <h3 class="h4">No finished tabs yet. Good place to start.</h3>
                     <p class="text-muted">Complete your first lesson and it will show up here as part of your real learning trail.</p>
-                    <a href="/slides" class="btn btn-primary">Find something to finish</a>
+                    <a href="/courses" class="btn btn-primary">Find something to finish</a>
                 </div>
             </section>
 
