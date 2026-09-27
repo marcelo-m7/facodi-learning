@@ -1,4 +1,5 @@
 from odoo import http
+from odoo.exceptions import ValidationError
 from odoo.http import request
 
 from .submission import FacodiSubmissionController
@@ -23,6 +24,79 @@ class FacodiContextualSubmissionController(FacodiSubmissionController):
         return record
 
     @staticmethod
+    def _public_roadmap(raw_id):
+        try:
+            record_id = int(raw_id or 0)
+        except (TypeError, ValueError):
+            return request.env["facodi.learning.curriculum.reference"].browse()
+        if record_id <= 0:
+            return request.env["facodi.learning.curriculum.reference"].browse()
+        return (
+            request.env["facodi.learning.curriculum.reference"]
+            .sudo()
+            .search(
+                [
+                    ("id", "=", record_id),
+                    ("website_published", "=", True),
+                    ("validated_at", "!=", False),
+                ],
+                limit=1,
+            )
+        )
+
+    @staticmethod
+    def _public_course(raw_id):
+        try:
+            record_id = int(raw_id or 0)
+        except (TypeError, ValueError):
+            return request.env["slide.channel"].browse()
+        if record_id <= 0:
+            return request.env["slide.channel"].browse()
+        return (
+            request.env["slide.channel"]
+            .sudo()
+            .search(
+                [
+                    ("id", "=", record_id),
+                    ("active", "=", True),
+                    ("website_published", "=", True),
+                    ("visibility", "=", "public"),
+                    "|",
+                    ("website_id", "=", False),
+                    ("website_id", "=", request.website.id),
+                ],
+                limit=1,
+            )
+        )
+
+    @staticmethod
+    def _public_slide(raw_id):
+        try:
+            record_id = int(raw_id or 0)
+        except (TypeError, ValueError):
+            return request.env["slide.slide"].browse()
+        if record_id <= 0:
+            return request.env["slide.slide"].browse()
+        return (
+            request.env["slide.slide"]
+            .sudo()
+            .search(
+                [
+                    ("id", "=", record_id),
+                    ("active", "=", True),
+                    ("website_published", "=", True),
+                    ("channel_id.active", "=", True),
+                    ("channel_id.website_published", "=", True),
+                    ("channel_id.visibility", "=", "public"),
+                    "|",
+                    ("channel_id.website_id", "=", False),
+                    ("channel_id.website_id", "=", request.website.id),
+                ],
+                limit=1,
+            )
+        )
+
+    @staticmethod
     def _bounded_text(value, limit):
         return (value or "").strip()[:limit]
 
@@ -35,19 +109,14 @@ class FacodiContextualSubmissionController(FacodiSubmissionController):
         Submission = request.env["facodi.learning.submission"]
         submission_type = Submission._normalize_submission_type(kwargs.get("type") or kwargs.get("submission_type"))
         curriculum_unit = self._public_curriculum_unit(kwargs.get("unit_id") or kwargs.get("curriculum_unit_id"))
-        roadmap = self._public_record(
-            "facodi.learning.curriculum.reference",
-            kwargs.get("roadmap_id") or kwargs.get("reference_id"),
+        roadmap = self._public_roadmap(
+            kwargs.get("roadmap_id") or kwargs.get("reference_id")
         )
-        course = self._public_record(
-            "slide.channel",
-            kwargs.get("course_id") or kwargs.get("channel_id"),
-            website_field="website_published",
+        course = self._public_course(
+            kwargs.get("course_id") or kwargs.get("channel_id")
         )
-        suggested_slide = self._public_record(
-            "slide.slide",
-            kwargs.get("slide_id") or kwargs.get("suggested_slide_id"),
-            website_field="website_published",
+        suggested_slide = self._public_slide(
+            kwargs.get("slide_id") or kwargs.get("suggested_slide_id")
         )
         source_cta = Submission._clean_context_slug(kwargs.get("source") or kwargs.get("source_cta"))
         source_section = Submission._clean_context_slug(kwargs.get("section") or kwargs.get("source_section"))
@@ -175,7 +244,7 @@ class FacodiContextualSubmissionController(FacodiSubmissionController):
         }
 
     @http.route(
-        ["/submissions/new", "/pt/submissions/new", "/en/submissions/new"],
+        ["/submissions/new", "/pt/submissions/new", "/en/submissions/new", "/contribuir/recurso"],
         type="http",
         auth="public",
         website=True,
@@ -234,7 +303,7 @@ class FacodiContextualSubmissionController(FacodiSubmissionController):
         return context, values, errors
 
     @http.route(
-        ["/submissions/new", "/pt/submissions/new", "/en/submissions/new"],
+        ["/submissions/new", "/pt/submissions/new", "/en/submissions/new", "/contribuir/recurso"],
         type="http",
         auth="public",
         website=True,
@@ -251,6 +320,14 @@ class FacodiContextualSubmissionController(FacodiSubmissionController):
             values["submitted_by_id"] = request.env.user.id
         try:
             submission = request.env["facodi.learning.submission"].sudo().create(values)
+        except ValidationError as exc:
+            context.update(
+                {
+                    "form_values": values,
+                    "errors": [str(exc)],
+                }
+            )
+            return request.render("facodi_learning.contextual_submission_form", context)
         except Exception:
             context.update(
                 {
