@@ -1,3 +1,4 @@
+import hashlib
 import re
 from urllib.parse import urlsplit
 
@@ -140,7 +141,6 @@ class FacodiLearningSubmissionContext(models.Model):
             int(curriculum_unit_id or 0),
             int(module_id or 0),
         )
-        import hashlib
         raw = int.from_bytes(
             hashlib.blake2b(payload.encode("utf-8"), digest_size=8).digest(),
             byteorder="big",
