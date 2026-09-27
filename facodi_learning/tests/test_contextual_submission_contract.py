@@ -83,6 +83,11 @@ class TestContextualSubmissionStaticContracts(TransactionCase):
         self.assertIn("source=unit_resource_cta", template)
         self.assertIn("section=resources", template)
         self.assertIn("source=community_margin", template)
+        self.assertIn("roadmap_detail_contextual_resource_cta", template)
+        self.assertIn("roadmap_id=%s", template)
+        self.assertIn("source=roadmap_resource_cta", template)
+        self.assertIn("source=roadmaps_catalog_cta", template)
+        self.assertIn("source=curricular_units_catalog_cta", template)
 
     def test_admin_views_expose_context(self):
         arch = self._read("views/contextual_submission_admin_views.xml")
