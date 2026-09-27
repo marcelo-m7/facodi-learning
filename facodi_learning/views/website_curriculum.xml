@@ -3,9 +3,7 @@
     <template id="curriculum_public_index" name="FACODI Roadmaps">
         <t t-call="website.layout">
             <t t-set="additional_title">Learning roadmaps · FACODI</t>
-            <t t-set="website_meta_description">Explore validated learning roadmaps linking curricular units to open FACODI learning coverage.</t>
-            <t t-set="additional_title">Roadmaps</t>
-            <t t-set="meta_description">Explore verified FACODI learning roadmaps, curricular units, modules and published learning content.</t>
+            <t t-set="website_meta_description">Explore verified FACODI learning roadmaps, curricular units, modules and published learning content.</t>
             <div id="wrap" class="oe_structure">
                 <section class="container py-5 facodi-curriculum">
                     <div class="row justify-content-center">
@@ -60,7 +58,7 @@
     <template id="curriculum_public_map" name="FACODI Public Roadmap">
         <t t-call="website.layout">
             <t t-set="additional_title">Roadmaps</t>
-            <t t-set="meta_description">Explore published FACODI roadmaps, curricular units, learning modules and approved course coverage.</t>
+            <t t-set="website_meta_description">Explore published FACODI roadmaps, curricular units, learning modules and approved course coverage.</t>
             <div id="wrap" class="oe_structure">
                 <section class="container py-5 facodi-curriculum facodi-curriculum-map">
                     <div class="row justify-content-center">

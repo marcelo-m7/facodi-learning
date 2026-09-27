@@ -22,6 +22,55 @@ class WebsiteMenu(models.Model):
         if not root:
             return False
 
+        active_language_codes = set(facodi.language_ids.filtered("active").mapped("code"))
+        menu_translations = {
+            "Explore": {
+                "pt_PT": "Explorar",
+                "es_ES": "Explorar",
+                "fr_FR": "Explorer",
+            },
+            "Courses": {
+                "pt_PT": "Cursos",
+                "es_ES": "Cursos",
+                "fr_FR": "Cours",
+            },
+            "Areas": {
+                "pt_PT": "Áreas",
+                "es_ES": "Áreas",
+                "fr_FR": "Domaines",
+            },
+            "Learning resources": {
+                "pt_PT": "Recursos de aprendizagem",
+                "es_ES": "Recursos de aprendizaje",
+                "fr_FR": "Ressources d’apprentissage",
+            },
+            "Community videos": {
+                "pt_PT": "Vídeos da comunidade",
+                "es_ES": "Vídeos de la comunidad",
+                "fr_FR": "Vidéos de la communauté",
+            },
+            "Roadmaps": {
+                "pt_PT": "Roadmaps",
+                "es_ES": "Rutas",
+                "fr_FR": "Parcours",
+            },
+            "Curricular units": {
+                "pt_PT": "Unidades curriculares",
+                "es_ES": "Unidades curriculares",
+                "fr_FR": "Unités d’enseignement",
+            },
+        }
+
+        def write_menu_name(menu, source_name):
+            menu.with_context(lang="en_US").write({"name": source_name})
+            for language_code, translated_name in menu_translations.get(
+                source_name, {}
+            ).items():
+                if language_code in active_language_codes:
+                    menu.with_context(lang=language_code).write(
+                        {"name": translated_name}
+                    )
+
         explore_candidates = Menu.search(
             [
                 ("website_id", "=", facodi.id),
@@ -46,7 +95,9 @@ class WebsiteMenu(models.Model):
                 }
             )
         else:
-            explore.write({"name": "Explore", "url": "#", "sequence": 10})
+            explore.write({"url": "#", "sequence": 10})
+
+        write_menu_name(explore, "Explore")
 
         duplicate_explore = explore_candidates - explore
         if duplicate_explore:
@@ -92,12 +143,13 @@ class WebsiteMenu(models.Model):
             else:
                 menu.write(
                     {
-                        "name": name,
                         "parent_id": explore.id,
                         "website_id": facodi.id,
                         "sequence": sequence,
                     }
                 )
+
+            write_menu_name(menu, name)
 
             duplicates = matches - menu
             duplicates.filtered(

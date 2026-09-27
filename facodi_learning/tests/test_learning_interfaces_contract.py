@@ -20,7 +20,7 @@ class TestLearningInterfacesContract(unittest.TestCase):
 
     def test_d1_release_version(self):
         manifest = MANIFEST.read_text(encoding="utf-8")
-        self.assertIn('"version": "19.0.1.65.0"', manifest)
+        self.assertIn('"version": "19.0.1.66.0"', manifest)
 
     def test_portal_progress_avoids_old_style_percent_formatting(self):
         portal_home = PORTAL_HOME.read_text(encoding="utf-8")
@@ -123,6 +123,10 @@ class TestLearningInterfacesContract(unittest.TestCase):
         self.assertIn("unit_matrix_groups", self.curriculum)
         self.assertIn("learning['modules']", self.curriculum)
         self.assertIn("learning['next_item']", self.curriculum)
+
+    def test_learning_addon_does_not_duplicate_theme_catalogue_navigation(self):
+        self.assertNotIn("curriculum_catalog_navigation", self.slides)
+        self.assertNotIn('aria-label="Aprendizagem FACODI"', self.slides)
 
     def test_course_alignment_and_contribution_expose_d1_hooks(self):
         self.assertIn("facodi-course-alignment-sheet", self.curriculum)
