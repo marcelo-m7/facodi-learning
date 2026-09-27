@@ -42,11 +42,11 @@ class WebsiteMenu(models.Model):
                     "url": "#",
                     "parent_id": root.id,
                     "website_id": facodi.id,
-                    "sequence": 40,
+                    "sequence": 10,
                 }
             )
         else:
-            explore.write({"name": "Explore", "url": "#", "sequence": 40})
+            explore.write({"name": "Explore", "url": "#", "sequence": 10})
 
         duplicate_explore = explore_candidates - explore
         if duplicate_explore:
