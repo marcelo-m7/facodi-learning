@@ -141,6 +141,12 @@ class FacodiContextualSubmissionController(FacodiSubmissionController):
             "portal_resource_cta": request.env._(
                 "I want to add a useful resource to the FACODI community desk."
             ),
+            "roadmaps_catalog_cta": request.env._(
+                "I found a resource that could strengthen one of the FACODI learning roadmaps."
+            ),
+            "curricular_units_catalog_cta": request.env._(
+                "I found a resource that could help cover a curricular unit in the FACODI academic map."
+            ),
         }
         if not form_values["context"]:
             form_values["context"] = " ".join(
