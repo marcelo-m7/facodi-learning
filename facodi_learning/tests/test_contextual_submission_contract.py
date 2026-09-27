@@ -201,3 +201,17 @@ class TestContextualSubmissionStaticContracts(TransactionCase):
         ):
             self.assertIn(label, self._read("controllers/contextual_submission.py"))
         self.assertNotIn("/contribuir/recurso?curriculum_unit_id=", template)
+
+    def test_follow_up_email_is_validated_server_side(self):
+        controller = self._read("controllers/contextual_submission.py")
+        template = self._read("views/website_contextual_submission.xml")
+        self.assertIn("_is_valid_contact_email", controller)
+        self.assertIn("Enter a valid email address.", controller)
+        self.assertIn(
+            "Add an email address if FACODI may contact you about this submission.",
+            controller,
+        )
+        self.assertIn(
+            "Required for contact requests and whenever you ask FACODI to follow up.",
+            template,
+        )

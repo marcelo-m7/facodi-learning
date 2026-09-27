@@ -1,3 +1,4 @@
+import re
 from urllib.parse import urlencode, urlsplit
 
 from odoo import http
@@ -10,6 +11,13 @@ from ..services.youtube import youtube_video_identity
 
 
 class FacodiContextualSubmissionController(FacodiSubmissionController):
+    _CONTACT_EMAIL_RE = re.compile(r"^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$")
+
+    @classmethod
+    def _is_valid_contact_email(cls, value):
+        candidate = (value or "").strip()
+        return not candidate or bool(cls._CONTACT_EMAIL_RE.fullmatch(candidate))
+
     @staticmethod
     def _public_record(model, raw_id, public_path_method=None, website_field=None):
         try:
@@ -524,8 +532,16 @@ class FacodiContextualSubmissionController(FacodiSubmissionController):
                 errors.append(request.env._("Write a short message so FACODI can review the submission."))
             if submission_type == "contact" and not contact_email:
                 errors.append(request.env._("Enter an email for follow-up."))
+            if contact_email and not self._is_valid_contact_email(contact_email):
+                errors.append(request.env._("Enter a valid email address."))
             if submission_type == "contact" and not values.get("contact_topic"):
                 errors.append(request.env._("Choose what you are contacting FACODI about."))
+        if submission_type == "resource" and contact_email and not self._is_valid_contact_email(contact_email):
+            errors.append(request.env._("Enter a valid email address."))
+        if values["permission_to_contact"] and not contact_email:
+            errors.append(
+                request.env._("Add an email address if FACODI may contact you about this submission.")
+            )
         return context, values, errors
 
     @http.route(

@@ -129,3 +129,44 @@ class TestContextualSubmissionHttp(HttpCase):
             self.assertNotIn("contact_email=", matching[0])
             self.assertNotIn("context=", matching[0])
 
+
+
+    def test_contact_post_rejects_malformed_email_server_side(self):
+        Submission = self.env["facodi.learning.submission"].sudo()
+        before = Submission.search_count([])
+        response = self.url_open(
+            "/submissions/new",
+            data={
+                "csrf_token": self._csrf_token(),
+                "type": "contact",
+                "context": "Please contact me about FACODI.",
+                "contact_topic": "collaboration",
+                "contact_email": "not-an-email",
+            },
+            allow_redirects=False,
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Enter a valid email address.", response.text)
+        self.assertEqual(Submission.search_count([]), before)
+
+    def test_follow_up_permission_requires_an_email(self):
+        Submission = self.env["facodi.learning.submission"].sudo()
+        before = Submission.search_count([])
+        response = self.url_open(
+            "/submissions/new",
+            data={
+                "csrf_token": self._csrf_token(),
+                "type": "resource",
+                "name": "Useful open resource",
+                "source_url": "https://example.org/resource",
+                "context": "Useful for the community.",
+                "permission_to_contact": "1",
+            },
+            allow_redirects=False,
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(
+            "Add an email address if FACODI may contact you about this submission.",
+            response.text,
+        )
+        self.assertEqual(Submission.search_count([]), before)
