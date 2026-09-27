@@ -166,14 +166,6 @@ class FacodiSubmissionController(http.Controller):
             "duplicate": duplicate,
         }
 
-    @http.route(
-        "/contribuir/recurso",
-        type="http",
-        auth="public",
-        website=True,
-        methods=["GET"],
-        sitemap=True,
-    )
     def resource_submission_form(self, **kwargs):
         curriculum_unit = self._public_curriculum_unit(
             kwargs.get("curriculum_unit_id")
@@ -264,15 +256,6 @@ class FacodiSubmissionController(http.Controller):
         response.headers["X-Robots-Tag"] = "noindex, nofollow"
         return response
 
-    @http.route(
-        "/contribuir/recurso",
-        type="http",
-        auth="public",
-        website=True,
-        methods=["POST"],
-        sitemap=False,
-        csrf=True,
-    )
     def resource_submission_create(self, **post):
         name = (post.get("name") or "").strip()[:200]
         source_url = (post.get("source_url") or "").strip()[:2048]

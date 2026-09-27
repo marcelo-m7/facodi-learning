@@ -56,11 +56,19 @@
                                   data-facodi-submission-form="1"
                                   data-metadata-endpoint="/contribuir/recurso/metadata">
                                 <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                <div class="d-none"
+                                     aria-hidden="true"
+                                     data-facodi-discovery-messages="1">
+                                    <span data-facodi-message="discovering">Detecting title and language…</span>
+                                    <span data-facodi-message="detected">FACODI detected this YouTube resource.</span>
+                                    <span data-facodi-message="unavailable">Could not detect details automatically. You can continue manually.</span>
+                                    <span data-facodi-message="unsupported">Automatic discovery is currently available for public YouTube videos. You can continue manually.</span>
+                                </div>
                                 <input type="hidden" name="submission_type" t-att-value="submission_type"/>
                                 <input type="hidden" name="source_cta" t-att-value="source_cta"/>
                                 <input type="hidden" name="source_section" t-att-value="source_section"/>
                                 <input type="hidden" name="source_page_url" t-att-value="source_page_url"/>
-                                <input t-if="curriculum_unit" type="hidden" name="unit_id" t-att-value="curriculum_unit.id"/>
+                                <input t-if="curriculum_unit" type="hidden" name="curriculum_unit_id" t-att-value="curriculum_unit.id"/>
                                 <input t-if="roadmap" type="hidden" name="roadmap_id" t-att-value="roadmap.id"/>
                                 <input t-if="course" type="hidden" name="course_id" t-att-value="course.id"/>
                                 <input t-if="suggested_slide" type="hidden" name="slide_id" t-att-value="suggested_slide.id"/>
@@ -86,6 +94,25 @@
                                                 <div class="form-text">Use a public HTTP or HTTPS page. Do not submit passwords, private links or credentials.</div>
                                                 <button type="button" class="btn btn-sm btn-outline-primary mt-2" data-facodi-discover-button="1">Detect details</button>
                                                 <span class="small text-muted ms-2" data-facodi-discovery-status="1" aria-live="polite"></span>
+                                                <div class="card mt-3 d-none facodi-metadata-preview"
+                                                     data-facodi-metadata-preview="1"
+                                                     aria-live="polite">
+                                                    <div class="card-body py-3">
+                                                        <div class="d-flex gap-3 align-items-start">
+                                                            <img class="rounded d-none"
+                                                                 data-facodi-metadata-thumbnail="1"
+                                                                 alt=""
+                                                                 width="144"
+                                                                 height="81"
+                                                                 loading="lazy"/>
+                                                            <div class="min-w-0">
+                                                                <div class="small text-uppercase fw-semibold text-muted mb-1">Detected resource</div>
+                                                                <div class="fw-semibold" data-facodi-metadata-title="1"></div>
+                                                                <div class="small text-muted" data-facodi-metadata-author="1"></div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </div>
                                             <div class="row g-3">
                                                 <div class="col-md-4">
@@ -158,7 +185,7 @@
 
                                 <div class="d-flex flex-wrap gap-2">
                                     <button type="submit" class="btn btn-primary">Submit for review</button>
-                                    <a href="/contribuir/recurso" class="btn btn-outline-secondary">Classic resource form</a>
+                                    <a href="/explore" class="btn btn-outline-secondary">Back to Explore</a>
                                 </div>
                             </form>
                         </div>

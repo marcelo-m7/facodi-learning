@@ -6,6 +6,8 @@ MODULE_ROOT = Path(__file__).resolve().parents[1]
 WEBSITE_TEMPLATE = MODULE_ROOT / "views" / "website_curriculum.xml"
 WEBSITE_SLIDES_TEMPLATE = MODULE_ROOT / "views" / "website_slides.xml"
 SUBMISSION_TEMPLATE = MODULE_ROOT / "views" / "website_submission.xml"
+CONTEXTUAL_SUBMISSION_TEMPLATE = MODULE_ROOT / "views" / "website_contextual_submission.xml"
+CONTEXTUAL_CTA_TEMPLATE = MODULE_ROOT / "views" / "website_curriculum_contextual_ctas.xml"
 SUBMISSION_CONTROLLER = MODULE_ROOT / "controllers" / "submission.py"
 SUBMISSION_JS = MODULE_ROOT / "static" / "src" / "js" / "resource_submission.js"
 MANIFEST = MODULE_ROOT / "__manifest__.py"
@@ -34,23 +36,20 @@ class TestWebsiteI18nContract(unittest.TestCase):
         ):
             self.assertNotIn(forbidden, source)
 
-    def test_contextual_resource_contribution_ctas_use_canonical_route(self):
-        curriculum = WEBSITE_TEMPLATE.read_text()
+    def test_contextual_resource_contribution_ctas_use_single_rich_intake(self):
         slides = WEBSITE_SLIDES_TEMPLATE.read_text()
-        submission = SUBMISSION_TEMPLATE.read_text()
+        contextual_ctas = CONTEXTUAL_CTA_TEMPLATE.read_text()
+        contextual_form = CONTEXTUAL_SUBMISSION_TEMPLATE.read_text()
 
-        self.assertGreaterEqual(curriculum.count("/contribuir/recurso"), 6)
-        self.assertIn(
-            "/contribuir/recurso?curriculum_unit_id=%s",
-            curriculum,
-        )
-        self.assertGreaterEqual(slides.count("/contribuir/recurso"), 2)
+        self.assertIn("/submissions/new?type=resource", slides)
+        self.assertIn("source=course_resource_cta", slides)
         self.assertIn("/contactus", slides)
-        self.assertIn(
-            "'/contribuir/recurso?curriculum_unit_id=%s' % curriculum_unit.id",
-            submission,
-        )
-        self.assertIn('t-else="" href="/contribuir/recurso"', submission)
+        self.assertIn("/submissions/new?type=resource", contextual_ctas)
+        self.assertIn("source=community_margin", contextual_ctas)
+        self.assertIn("source=unit_resource_cta", contextual_ctas)
+        self.assertIn('action="/submissions/new"', contextual_form)
+        self.assertIn('name="curriculum_unit_id"', contextual_form)
+        self.assertNotIn("Classic resource form", contextual_form)
 
     def test_contribution_cta_translation_entries_reference_each_view(self):
         expected_refs = {
@@ -94,7 +93,7 @@ class TestWebsiteI18nContract(unittest.TestCase):
                     )
 
     def test_public_submission_metadata_discovery_contract(self):
-        template = SUBMISSION_TEMPLATE.read_text()
+        template = CONTEXTUAL_SUBMISSION_TEMPLATE.read_text()
         controller = SUBMISSION_CONTROLLER.read_text()
         javascript = SUBMISSION_JS.read_text()
         manifest = MANIFEST.read_text()
