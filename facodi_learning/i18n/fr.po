@@ -3831,3 +3831,31 @@ msgstr "Ajoutez une adresse e-mail si FACODI peut vous contacter au sujet de cet
 #: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
 msgid "Required for contact requests and whenever you ask FACODI to follow up."
 msgstr "Obligatoire pour les demandes de contact et lorsque vous demandez à FACODI d’assurer un suivi."
+
+#. module: facodi_learning
+#: code:addons/facodi_learning/controllers/contextual_submission.py:0
+#: model:ir.model.fields,field_description:facodi_learning.field_facodi_learning_submission__area_tag_id
+#: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
+msgid "Learning area"
+msgstr "Domaine d’apprentissage"
+
+#. module: facodi_learning
+#: code:addons/facodi_learning/controllers/contextual_submission.py:0
+#: model:ir.model.fields,field_description:facodi_learning.field_facodi_learning_submission__area_tag_id
+#: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
+msgid "Learning Area Context"
+msgstr "Contexte du domaine d’apprentissage"
+
+#. module: facodi_learning
+#: code:addons/facodi_learning/controllers/contextual_submission.py:0
+#: model:ir.model.fields,field_description:facodi_learning.field_facodi_learning_submission__area_tag_id
+#: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
+msgid "Suggested for learning area: %s."
+msgstr "Suggéré pour le domaine d’apprentissage : %s."
+
+#. module: facodi_learning
+#: code:addons/facodi_learning/controllers/contextual_submission.py:0
+#: model:ir.model.fields,field_description:facodi_learning.field_facodi_learning_submission__area_tag_id
+#: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
+msgid "The learning area context is no longer publicly available."
+msgstr "Le contexte du domaine d’apprentissage n’est plus disponible publiquement."

@@ -20,6 +20,7 @@
                 <separator/>
                 <filter name="group_submission_type" string="Type" context="{'group_by': 'submission_type'}"/>
                 <filter name="group_source_section" string="Source section" context="{'group_by': 'source_section'}"/>
+                <filter name="group_area_tag" string="Learning area" context="{'group_by': 'area_tag_id'}"/>
                 <filter name="group_curriculum_unit" string="Curricular unit" context="{'group_by': 'curriculum_unit_id'}"/>
                 <filter name="group_course" string="Course" context="{'group_by': 'course_id'}"/>
             </xpath>
@@ -58,6 +59,7 @@
             </xpath>
             <xpath expr="//field[@name='context']" position="before">
                 <group string="Context">
+                    <field name="area_tag_id" readonly="1"/>
                     <field name="curriculum_unit_id" readonly="1"/>
                     <field name="roadmap_id" readonly="1"/>
                     <field name="course_id" readonly="1"/>

@@ -241,6 +241,21 @@ class FacodiExploreController(http.Controller):
             if remove_query:
                 filter_row["remove_url"] += "?" + remove_query
 
+        contribution_params = {
+            "type": "resource",
+            "source": "explore_empty_shelf",
+            "section": "explore-content",
+        }
+        selected_area = self._visible_areas().filtered(lambda tag: tag.id == area_id)[:1]
+        if selected_area:
+            contribution_params["area"] = selected_area.id
+        contribution_language = language.replace("-", "_").split("_", 1)[0].lower()
+        if contribution_language in {"pt", "en", "es", "fr"}:
+            contribution_params["language"] = contribution_language
+        if content_format in {"video", "article"}:
+            contribution_params["resource_type"] = content_format
+        contribution_url = "/submissions/new?" + self._query_string(contribution_params)
+
         discovery_stats = {
             "resources": len(all_slides),
             "areas": len(self._visible_areas()),
@@ -266,6 +281,7 @@ class FacodiExploreController(http.Controller):
                 "next_url": next_url,
                 "active_filters": active_filters,
                 "discovery_stats": discovery_stats,
+                "contribution_url": contribution_url,
             },
         )
 

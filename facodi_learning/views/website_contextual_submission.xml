@@ -48,6 +48,8 @@
                                                 <t t-else="">Learning resource</t>
                                             </span>
                                         </dd>
+                                        <dt t-if="area_tag" class="col-sm-4">Learning area</dt>
+                                        <dd t-if="area_tag" class="col-sm-8"><strong><t t-esc="area_tag.name"/></strong></dd>
                                         <dt t-if="curriculum_unit" class="col-sm-4">Curricular unit</dt>
                                         <dd t-if="curriculum_unit" class="col-sm-8">
                                             <strong><t t-esc="curriculum_unit.name"/></strong>
@@ -105,6 +107,7 @@
                                 <input type="hidden" name="source_cta" t-att-value="source_cta"/>
                                 <input type="hidden" name="source_section" t-att-value="source_section"/>
                                 <input type="hidden" name="source_page_url" t-att-value="source_page_url"/>
+                                <input t-if="area_tag" type="hidden" name="area_id" t-att-value="area_tag.id"/>
                                 <input t-if="curriculum_unit" type="hidden" name="curriculum_unit_id" t-att-value="curriculum_unit.id"/>
                                 <input t-if="roadmap" type="hidden" name="roadmap_id" t-att-value="roadmap.id"/>
                                 <input t-if="course" type="hidden" name="course_id" t-att-value="course.id"/>

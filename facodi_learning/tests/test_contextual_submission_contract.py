@@ -215,3 +215,18 @@ class TestContextualSubmissionStaticContracts(TransactionCase):
             "Required for contact requests and whenever you ask FACODI to follow up.",
             template,
         )
+
+    def test_learning_area_context_uses_native_course_tag_model(self):
+        self.assertEqual(
+            self.Submission._fields["area_tag_id"].comodel_name,
+            "slide.channel.tag",
+        )
+        controller = self._read("controllers/contextual_submission.py")
+        explore = self._read("controllers/explore.py")
+        template = self._read("views/website_contextual_submission.xml")
+        admin = self._read("views/contextual_submission_admin_views.xml")
+        self.assertIn("_public_area", controller)
+        self.assertIn('switch_base["area"]', controller)
+        self.assertIn('"contribution_url": contribution_url', explore)
+        self.assertIn('name="area_id"', template)
+        self.assertIn("group_area_tag", admin)
