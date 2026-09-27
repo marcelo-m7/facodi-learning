@@ -4033,3 +4033,75 @@ msgstr "Envoyer à la révision"
 #: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
 msgid "General FACODI contribution"
 msgstr "Contribution générale FACODI"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_status
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_manage
+msgid "Contribution journey"
+msgstr "Parcours de la contribution"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_status
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_manage
+msgid "From your desk to the community."
+msgstr "De votre bureau à la communauté."
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_status
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_manage
+msgid "Sent"
+msgstr "Envoyée"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_status
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_manage
+msgid "Your contribution reached FACODI."
+msgstr "Votre contribution est arrivée à FACODI."
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_status
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_manage
+msgid "Review desk"
+msgstr "Table de révision"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_status
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_manage
+msgid "Context and usefulness are checked."
+msgstr "Le contexte et l’utilité sont vérifiés."
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_status
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_manage
+msgid "Decision"
+msgstr "Décision"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_status
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_manage
+msgid "FACODI decides the right editorial route."
+msgstr "FACODI choisit le parcours éditorial approprié."
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_status
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_manage
+msgid "Community route"
+msgstr "Parcours communautaire"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_status
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_manage
+msgid "Accepted contributions move into the appropriate FACODI workflow."
+msgstr "Les contributions acceptées avancent vers le flux FACODI approprié."
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_status
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_manage
+msgid "This journey stopped after editorial review. The contribution remains in your history."
+msgstr "Ce parcours s’est arrêté après la révision éditoriale. La contribution reste dans votre historique."
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_status
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_manage
+msgid "You stopped this journey. The contribution remains in your history."
+msgstr "Vous avez arrêté ce parcours. La contribution reste dans votre historique."
