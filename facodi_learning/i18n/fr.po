@@ -3813,3 +3813,21 @@ msgstr "Changer le type conserve le contexte de la page, du cours, de la leçon 
 #: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
 msgid "Leave this field empty"
 msgstr "Laissez ce champ vide"
+
+#. module: facodi_learning
+#: code:addons/facodi_learning/controllers/contextual_submission.py:0
+#: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
+msgid "Enter a valid email address."
+msgstr "Saisissez une adresse e-mail valide."
+
+#. module: facodi_learning
+#: code:addons/facodi_learning/controllers/contextual_submission.py:0
+#: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
+msgid "Add an email address if FACODI may contact you about this submission."
+msgstr "Ajoutez une adresse e-mail si FACODI peut vous contacter au sujet de cette contribution."
+
+#. module: facodi_learning
+#: code:addons/facodi_learning/controllers/contextual_submission.py:0
+#: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
+msgid "Required for contact requests and whenever you ask FACODI to follow up."
+msgstr "Obligatoire pour les demandes de contact et lorsque vous demandez à FACODI d’assurer un suivi."
