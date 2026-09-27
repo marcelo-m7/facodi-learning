@@ -29,6 +29,42 @@
                                 This resource is already under editorial review for this context. You can suggest another resource instead.
                             </div>
 
+                            <div class="facodi-contribution-journey my-4"
+                                 data-facodi-contribution-journey="1"
+                                 t-att-data-facodi-state="submission.state">
+                                <div class="facodi-contribution-journey__head">
+                                    <div>
+                                        <p class="text-uppercase small fw-semibold mb-1">Contribution journey</p>
+                                        <h2 class="h5 mb-1">From your desk to the community.</h2>
+                                    </div>
+                                    <span class="badge text-bg-light border" t-esc="state_label"/>
+                                </div>
+                                <ol class="facodi-contribution-journey__steps">
+                                    <li t-attf-class="facodi-contribution-step is-done">
+                                        <span class="facodi-contribution-step__marker">1</span>
+                                        <span><strong>Sent</strong><small>Your contribution reached FACODI.</small></span>
+                                    </li>
+                                    <li t-attf-class="facodi-contribution-step #{'is-done' if submission.state in ('reviewing','accepted','resolved','rejected') else ('is-current' if submission.state == 'submitted' else 'is-muted')}">
+                                        <span class="facodi-contribution-step__marker">2</span>
+                                        <span><strong>Review desk</strong><small>Context and usefulness are checked.</small></span>
+                                    </li>
+                                    <li t-attf-class="facodi-contribution-step #{'is-done' if submission.state in ('accepted','resolved') else ('is-current' if submission.state == 'reviewing' else 'is-muted')}">
+                                        <span class="facodi-contribution-step__marker">3</span>
+                                        <span><strong>Decision</strong><small>FACODI decides the right editorial route.</small></span>
+                                    </li>
+                                    <li t-attf-class="facodi-contribution-step #{'is-done' if submission.state == 'resolved' else ('is-current' if submission.state == 'accepted' else 'is-muted')}">
+                                        <span class="facodi-contribution-step__marker">4</span>
+                                        <span><strong>Community route</strong><small>Accepted contributions move into the appropriate FACODI workflow.</small></span>
+                                    </li>
+                                </ol>
+                                <p t-if="submission.state == 'rejected'" class="facodi-contribution-journey__terminal mb-0">
+                                    This journey stopped after editorial review. The contribution remains in your history.
+                                </p>
+                                <p t-elif="submission.state == 'withdrawn'" class="facodi-contribution-journey__terminal mb-0">
+                                    You stopped this journey. The contribution remains in your history.
+                                </p>
+                            </div>
+
                             <div t-if="errors" class="alert alert-danger" role="alert">
                                 <p class="fw-semibold mb-2">Check the information below.</p>
                                 <ul class="mb-0">
@@ -165,6 +201,42 @@
                             </p>
                             <h1>Submission received</h1>
                             <p class="lead" t-esc="submission.name"/>
+
+                            <div class="facodi-contribution-journey my-4"
+                                 data-facodi-contribution-journey="1"
+                                 t-att-data-facodi-state="submission.state">
+                                <div class="facodi-contribution-journey__head">
+                                    <div>
+                                        <p class="text-uppercase small fw-semibold mb-1">Contribution journey</p>
+                                        <h2 class="h5 mb-1">From your desk to the community.</h2>
+                                    </div>
+                                    <span class="badge text-bg-light border" t-esc="state_label"/>
+                                </div>
+                                <ol class="facodi-contribution-journey__steps">
+                                    <li t-attf-class="facodi-contribution-step is-done">
+                                        <span class="facodi-contribution-step__marker">1</span>
+                                        <span><strong>Sent</strong><small>Your contribution reached FACODI.</small></span>
+                                    </li>
+                                    <li t-attf-class="facodi-contribution-step #{'is-done' if submission.state in ('reviewing','accepted','resolved','rejected') else ('is-current' if submission.state == 'submitted' else 'is-muted')}">
+                                        <span class="facodi-contribution-step__marker">2</span>
+                                        <span><strong>Review desk</strong><small>Context and usefulness are checked.</small></span>
+                                    </li>
+                                    <li t-attf-class="facodi-contribution-step #{'is-done' if submission.state in ('accepted','resolved') else ('is-current' if submission.state == 'reviewing' else 'is-muted')}">
+                                        <span class="facodi-contribution-step__marker">3</span>
+                                        <span><strong>Decision</strong><small>FACODI decides the right editorial route.</small></span>
+                                    </li>
+                                    <li t-attf-class="facodi-contribution-step #{'is-done' if submission.state == 'resolved' else ('is-current' if submission.state == 'accepted' else 'is-muted')}">
+                                        <span class="facodi-contribution-step__marker">4</span>
+                                        <span><strong>Community route</strong><small>Accepted contributions move into the appropriate FACODI workflow.</small></span>
+                                    </li>
+                                </ol>
+                                <p t-if="submission.state == 'rejected'" class="facodi-contribution-journey__terminal mb-0">
+                                    This journey stopped after editorial review. The contribution remains in your history.
+                                </p>
+                                <p t-elif="submission.state == 'withdrawn'" class="facodi-contribution-journey__terminal mb-0">
+                                    You stopped this journey. The contribution remains in your history.
+                                </p>
+                            </div>
 
                             <div class="card my-4">
                                 <div class="card-body">
