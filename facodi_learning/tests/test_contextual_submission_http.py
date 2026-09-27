@@ -73,3 +73,19 @@ class TestContextualSubmissionHttp(HttpCase):
         self.assertFalse(
             tree.xpath('//select[@name="language"]/option[@value="xx"]')
         )
+    def test_type_switcher_preserves_safe_origin_context(self):
+        response = self.url_open(
+            "/submissions/new?source=my_submissions_new&section=my-submissions"
+            "&source_page_url=%2Fmy%2Fsubmissions"
+        )
+        self.assertEqual(response.status_code, 200)
+        tree = html.fromstring(response.text)
+        links = tree.xpath('//*[@data-facodi-submission-type-switcher="1"]//a/@href')
+        self.assertEqual(len(links), 4)
+        for submission_type in ("resource", "contact", "correction", "question"):
+            matching = [href for href in links if f"type={submission_type}" in href]
+            self.assertEqual(len(matching), 1, submission_type)
+            self.assertIn("source=my_submissions_new", matching[0])
+            self.assertIn("section=my-submissions", matching[0])
+            self.assertIn("source_page_url=%2Fmy%2Fsubmissions", matching[0])
+
