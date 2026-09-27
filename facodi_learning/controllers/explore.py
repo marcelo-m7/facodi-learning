@@ -319,4 +319,4 @@ class FacodiExploreController(http.Controller):
         sitemap=False,
     )
     def explore_courses(self, **kwargs):
-        return request.redirect("/slides", code=302)
+        return request.redirect("/courses", code=302)
