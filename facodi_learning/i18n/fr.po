@@ -3963,3 +3963,18 @@ msgstr "Contenu d’Explore"
 #: code:addons/facodi_learning/controllers/contextual_submission.py:0
 msgid "Submission"
 msgstr "Contribution"
+
+#. module: facodi_learning
+#: code:addons/facodi_learning/controllers/contextual_submission.py:0
+msgid "Contribution board collaboration"
+msgstr "Collaboration sur le tableau des contributions"
+
+#. module: facodi_learning
+#: code:addons/facodi_learning/controllers/contextual_submission.py:0
+msgid "Translation correction"
+msgstr "Correction de traduction"
+
+#. module: facodi_learning
+#: code:addons/facodi_learning/controllers/contextual_submission.py:0
+msgid "Translation"
+msgstr "Traduction"
