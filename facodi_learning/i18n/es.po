@@ -3728,3 +3728,23 @@ msgstr "Volver al curso"
 #: code:addons/facodi_learning/controllers/contextual_submission.py:0
 msgid "Back to where I was"
 msgstr "Volver a donde estaba"
+
+#. module: facodi_learning
+#: code:addons/facodi_learning/controllers/contextual_submission.py:0
+msgid "Learning navigation"
+msgstr "Navegación de aprendizaje"
+
+#. module: facodi_learning
+#: code:addons/facodi_learning/controllers/contextual_submission.py:0
+msgid "Learning catalogue"
+msgstr "Catálogo de aprendizaje"
+
+#. module: facodi_learning
+#: code:addons/facodi_learning/controllers/contextual_submission.py:0
+msgid "Submission follow-up"
+msgstr "Seguimiento de la contribución"
+
+#. module: facodi_learning
+#: code:addons/facodi_learning/controllers/contextual_submission.py:0
+msgid "Submission status"
+msgstr "Estado de la contribución"
