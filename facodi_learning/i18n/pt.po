@@ -711,7 +711,7 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:facodi_learning.view_facodi_curriculum_unit_list
 #: model_terms:ir.ui.view,arch_db:facodi_learning.view_facodi_curriculum_unit_search
 msgid "Curricular Units"
-msgstr ""
+msgstr "Unidades Curriculares"
 
 #. module: facodi_learning
 #: model:ir.model.fields,field_description:facodi_learning.field_facodi_learning_curriculum_occurrence__curricular_year
