@@ -61,6 +61,23 @@ class TestSubmissionContextWebsite(HttpCase):
         self.assertEqual(len(tokens), 1)
         return tokens[0]
 
+    def test_legacy_resource_url_uses_contextual_form(self):
+        response = self.url_open("/contribuir/recurso")
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('data-facodi-submission-form="1"', response.text)
+        self.assertIn("Submission details", response.text)
+        self.assertNotIn("Classic resource form", response.text)
+
+    def test_private_roadmap_context_is_not_disclosed(self):
+        response = self.url_open(
+            "/submissions/new?type=resource&roadmap_id=%s"
+            % self.private_reference.id
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertNotIn(self.private_reference.programme_name, response.text)
+        tree = html.fromstring(response.text)
+        self.assertFalse(tree.xpath('//input[@name="roadmap_id"]/@value'))
+
     def test_contextual_form_persists_only_public_curricular_unit(self):
         route = (
             "/contribuir/recurso?curriculum_unit_id=%s"
