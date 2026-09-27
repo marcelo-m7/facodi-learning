@@ -155,4 +155,11 @@ class TestContextualSubmissionStaticContracts(TransactionCase):
             self.assertIn(f'followup_params["{key}"]', controller)
         self.assertIn("urlencode(followup_params)", controller)
         self.assertNotIn('followup_params["source_page_url"]', controller)
+        for label in (
+            "Learning navigation",
+            "Learning catalogue",
+            "Submission follow-up",
+            "Submission status",
+        ):
+            self.assertIn(label, self._read("controllers/contextual_submission.py"))
         self.assertNotIn("/contribuir/recurso?curriculum_unit_id=", template)
