@@ -19,10 +19,10 @@
                                 <nav class="facodi-index-tabs facodi-index-tabs--roadmaps" aria-label="Learning">
                                     <a href="/slides">Courses</a>
                                     <a href="/roadmaps" aria-current="page">Roadmaps</a>
-                                    <a href="/unidades-curriculares">Curricular units</a>
+                                    <a href="/curricular-units">Curricular units</a>
                                 </nav>
                                 <div class="d-flex flex-wrap gap-2">
-                                    <a href="/unidades-curriculares" class="btn btn-primary">Explore curricular units</a>
+                                    <a href="/curricular-units" class="btn btn-primary">Explore curricular units</a>
                                     <a href="/contribuir/recurso" class="btn btn-outline-primary">Suggest a learning resource</a>
                                 </div>
                             </div>
@@ -74,7 +74,7 @@
                                 Follow each published path from curriculum reference to curricular unit, learning module and public FACODI course or content.
                             </p>
                             <div class="d-flex flex-wrap gap-2 mb-5">
-                                <a href="/unidades-curriculares" class="btn btn-primary">Explore curricular units</a>
+                                <a href="/curricular-units" class="btn btn-primary">Explore curricular units</a>
                                 <a href="/contribuir/recurso" class="btn btn-outline-primary">Suggest a learning resource</a>
                             </div>
                             <div t-if="not curriculum_map" class="alert alert-info" role="status">
@@ -147,14 +147,14 @@
                                 <nav class="facodi-index-tabs facodi-index-tabs--units" aria-label="Learning">
                                     <a href="/slides">Courses</a>
                                     <a href="/roadmaps">Roadmaps</a>
-                                    <a href="/unidades-curriculares" aria-current="page">Curricular units</a>
+                                    <a href="/curricular-units" aria-current="page">Curricular units</a>
                                 </nav>
                                 <div class="d-flex flex-wrap gap-2">
                                     <a href="/contribuir/recurso" class="btn btn-outline-primary">Suggest a learning resource</a>
                                 </div>
                             </div>
 
-                            <form action="/unidades-curriculares" method="get" class="row g-3 border rounded p-3 mb-5 facodi-filter-sheet facodi-filter-panel" role="search" aria-label="Filter curricular units">
+                            <form action="/curricular-units" method="get" class="row g-3 border rounded p-3 mb-5 facodi-filter-sheet facodi-filter-panel" role="search" aria-label="Filter curricular units">
                                 <div class="col-12 col-md-6">
                                     <label for="curriculum-reference" class="form-label">Roadmap</label>
                                     <select id="curriculum-reference" name="reference_id" class="form-select">
@@ -192,7 +192,7 @@
                                 </div>
                                 <div class="col-12 d-flex gap-2">
                                     <button type="submit" class="btn btn-primary">Apply filters</button>
-                                    <a href="/unidades-curriculares" class="btn btn-outline-secondary">Clear</a>
+                                    <a href="/curricular-units" class="btn btn-outline-secondary">Clear</a>
                                 </div>
                             </form>
 
@@ -201,7 +201,7 @@
                                 <span class="facodi-empty-icon fa fa-search" aria-hidden="true"></span>
                                 <h2 class="h4">No curricular units match these filters</h2>
                                 <p class="text-muted">Try a broader combination or return to the complete academic index.</p>
-                                <a href="/unidades-curriculares" class="btn btn-primary">Clear filters</a>
+                                <a href="/curricular-units" class="btn btn-primary">Clear filters</a>
                             </div>
                             <div t-elif="not entries" class="facodi-empty-state mb-4" data-facodi-empty-state="1">
                                 <span class="facodi-empty-icon fa fa-book" aria-hidden="true"></span>
@@ -396,7 +396,7 @@
                             <nav class="small mb-4" aria-label="Breadcrumb">
                                 <a href="/roadmaps" class="text-decoration-none">Roadmaps</a>
                                 <span class="text-muted mx-1">/</span>
-                                <a href="/unidades-curriculares" class="text-decoration-none">Curricular units</a>
+                                <a href="/curricular-units" class="text-decoration-none">Curricular units</a>
                                 <span class="text-muted mx-1">/</span>
                                 <a t-att-href="'/roadmaps/%s' % reference.id" class="text-decoration-none"><t t-esc="reference.programme_name"/></a>
                                 <span class="text-muted mx-1">/</span>
@@ -507,7 +507,7 @@
                                         </div>
                                     </section>
 
-                                    <a href="/unidades-curriculares" class="btn btn-link px-0">← Back to curricular units</a>
+                                    <a href="/curricular-units" class="btn btn-link px-0">← Back to curricular units</a>
                                 </main>
 
                                 <aside class="facodi-reference-rail">
