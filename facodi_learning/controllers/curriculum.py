@@ -54,7 +54,7 @@ class FacodiCurriculumController(http.Controller):
         return request.redirect("/roadmaps", code=301)
 
     @http.route(
-        "/unidades-curriculares", type="http", auth="public", website=True, sitemap=True
+        "/curricular-units", type="http", auth="public", website=True, sitemap=True
     )
     def curriculum_unit_index(self, **kwargs):
         references = self._public_references()
@@ -223,7 +223,7 @@ class FacodiCurriculumController(http.Controller):
         )
 
     @http.route(
-        "/unidades-curriculares/<int:reference_id>/<path:unit_slug>",
+        "/curricular-units/<int:reference_id>/<path:unit_slug>",
         type="http",
         auth="public",
         website=True,
