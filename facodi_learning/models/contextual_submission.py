@@ -1,0 +1,156 @@
+import re
+
+from odoo import api, fields, models
+from odoo.exceptions import AccessError, ValidationError
+
+from .submission import FacodiLearningSubmission as _BaseSubmission
+
+
+_CONTEXT_SLUG_RE = re.compile(r"^[a-z0-9][a-z0-9_-]{0,63}$")
+_VALID_SUBMISSION_TYPES = {"resource", "contact", "correction", "question"}
+_RESOURCE_TYPES = [
+    ("video", "Video"),
+    ("article", "Article"),
+    ("book", "Book"),
+    ("tool", "Tool"),
+    ("repository", "Repository"),
+    ("course", "External Course"),
+    ("other", "Other"),
+]
+_RESOURCE_LEVELS = [
+    ("introductory", "Introductory"),
+    ("intermediate", "Intermediate"),
+    ("advanced", "Advanced"),
+]
+
+
+class FacodiLearningSubmissionContext(models.Model):
+    _inherit = "facodi.learning.submission"
+
+    source_url = fields.Char(required=False, index=True)
+    submission_type = fields.Selection(
+        [
+            ("resource", "Learning resource"),
+            ("contact", "Contact"),
+            ("correction", "Correction"),
+            ("question", "Question"),
+        ],
+        required=True,
+        default="resource",
+        index=True,
+    )
+    source_cta = fields.Char(index=True)
+    source_section = fields.Char(index=True)
+    source_page_url = fields.Char()
+    roadmap_id = fields.Many2one(
+        "facodi.learning.curriculum.reference",
+        string="Roadmap Context",
+        ondelete="set null",
+        index=True,
+    )
+    course_id = fields.Many2one(
+        "slide.channel",
+        string="Course Context",
+        ondelete="set null",
+        index=True,
+    )
+    suggested_slide_id = fields.Many2one(
+        "slide.slide",
+        string="Learning Item Context",
+        ondelete="set null",
+        index=True,
+    )
+    contact_name = fields.Char()
+    contact_email = fields.Char(index=True)
+    organization = fields.Char()
+    resource_type = fields.Selection(_RESOURCE_TYPES, default="video")
+    resource_level = fields.Selection(_RESOURCE_LEVELS)
+    permission_to_contact = fields.Boolean(default=False)
+
+    @api.model
+    def _normalize_submission_type(self, value):
+        candidate = (value or "resource").strip().lower()
+        return candidate if candidate in _VALID_SUBMISSION_TYPES else "resource"
+
+    @api.model
+    def _is_valid_context_slug(self, value):
+        if not value:
+            return True
+        return bool(_CONTEXT_SLUG_RE.match((value or "").strip().lower()))
+
+    @api.model
+    def _clean_context_slug(self, value):
+        cleaned = (value or "").strip().lower()[:64]
+        return cleaned if self._is_valid_context_slug(cleaned) else ""
+
+    @api.constrains("source_url", "submission_type")
+    def _check_source_url(self):
+        for record in self:
+            if record.submission_type == "resource" and not self._is_valid_source_url(record.source_url):
+                raise ValidationError("Enter a valid public HTTP or HTTPS URL.")
+
+    @api.constrains("source_cta", "source_section")
+    def _check_context_slugs(self):
+        for record in self:
+            if not self._is_valid_context_slug(record.source_cta):
+                raise ValidationError("The CTA context is not valid.")
+            if not self._is_valid_context_slug(record.source_section):
+                raise ValidationError("The section context is not valid.")
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        cleaned_vals_list = []
+        resource_identities = []
+        for raw_vals in vals_list:
+            vals = dict(raw_vals)
+            vals["submission_type"] = self._normalize_submission_type(vals.get("submission_type"))
+            vals["source_cta"] = self._clean_context_slug(vals.get("source_cta"))
+            vals["source_section"] = self._clean_context_slug(vals.get("source_section"))
+            vals["permission_to_contact"] = bool(vals.get("permission_to_contact"))
+            if vals.get("language"):
+                vals["language"] = vals["language"].strip().lower()[:16]
+            if vals.get("contact_email"):
+                vals["contact_email"] = vals["contact_email"].strip().lower()[:254]
+            if vals.get("source_page_url"):
+                vals["source_page_url"] = vals["source_page_url"].strip()[:2048]
+            if vals["submission_type"] == "resource":
+                vals["source_url"] = (vals.get("source_url") or "").strip()[:2048]
+                resource_identities.append((vals["source_url"], vals.get("curriculum_unit_id") or False))
+            else:
+                vals["source_url"] = (vals.get("source_url") or "").strip()[:2048]
+            cleaned_vals_list.append(vals)
+
+        seen_identity_keys = set()
+        for source_url, curriculum_unit_id in sorted(
+            resource_identities,
+            key=lambda item: self._active_identity_key(item[0], item[1]),
+        ):
+            identity_key = self._active_identity_key(source_url, curriculum_unit_id)
+            if identity_key in seen_identity_keys:
+                raise ValidationError(
+                    "This resource is already under editorial review for this context."
+                )
+            seen_identity_keys.add(identity_key)
+            self._lock_active_identity(source_url, curriculum_unit_id)
+            if self._active_duplicate(source_url, curriculum_unit_id):
+                raise ValidationError(
+                    "This resource is already under editorial review for this context."
+                )
+
+        for vals in cleaned_vals_list:
+            forged = self._audit_fields & vals.keys()
+            if forged:
+                raise AccessError(
+                    "Submission audit state is managed by FACODI review actions."
+                )
+            vals.update(
+                state="submitted",
+                access_token=self._new_access_token(),
+                reviewed_by_id=False,
+                reviewed_at=False,
+            )
+            if vals.get("name"):
+                vals["name"] = vals["name"].strip()[:200]
+            if vals.get("context"):
+                vals["context"] = vals["context"].strip()[:4000]
+        return super(_BaseSubmission, self).create(cleaned_vals_list)
