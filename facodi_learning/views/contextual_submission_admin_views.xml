@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_facodi_submission_search_contextual" model="ir.ui.view">
+        <field name="name">facodi.learning.submission.search.contextual</field>
+        <field name="model">facodi.learning.submission</field>
+        <field name="inherit_id" ref="facodi_learning.view_facodi_submission_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='name']" position="after">
+                <field name="submission_type"/>
+                <field name="source_cta"/>
+                <field name="source_section"/>
+                <field name="contact_email"/>
+            </xpath>
+            <xpath expr="//filter[@name='group_state']" position="before">
+                <filter name="group_submission_type" string="Type" context="{'group_by': 'submission_type'}"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_facodi_submission_list_contextual" model="ir.ui.view">
+        <field name="name">facodi.learning.submission.list.contextual</field>
+        <field name="model">facodi.learning.submission</field>
+        <field name="inherit_id" ref="facodi_learning.view_facodi_submission_list"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='name']" position="after">
+                <field name="submission_type" optional="show"/>
+                <field name="source_cta" optional="hide"/>
+                <field name="source_section" optional="hide"/>
+                <field name="contact_email" optional="hide"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_facodi_submission_form_contextual" model="ir.ui.view">
+        <field name="name">facodi.learning.submission.form.contextual</field>
+        <field name="model">facodi.learning.submission</field>
+        <field name="inherit_id" ref="facodi_learning.view_facodi_submission_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='name']" position="before">
+                <field name="submission_type" readonly="state in ('rejected', 'resolved', 'withdrawn')"/>
+            </xpath>
+            <xpath expr="//field[@name='language']" position="after">
+                <field name="resource_type" invisible="submission_type != 'resource'"/>
+                <field name="resource_level" invisible="submission_type != 'resource'"/>
+                <field name="contact_name"/>
+                <field name="contact_email"/>
+                <field name="organization"/>
+                <field name="permission_to_contact"/>
+            </xpath>
+            <xpath expr="//field[@name='context']" position="before">
+                <group string="Context">
+                    <field name="curriculum_unit_id" readonly="1"/>
+                    <field name="roadmap_id" readonly="1"/>
+                    <field name="course_id" readonly="1"/>
+                    <field name="suggested_slide_id" readonly="1"/>
+                    <field name="source_cta" readonly="1"/>
+                    <field name="source_section" readonly="1"/>
+                    <field name="source_page_url" widget="url" readonly="1"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+</odoo>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="curriculum_contextual_resource_ctas" inherit_id="facodi_learning.curriculum_public_unit" name="FACODI Contextual Unit CTAs">
+        <xpath expr="//a[normalize-space()='Drop a resource']" position="attributes">
+            <attribute name="t-att-href">'/submissions/new?type=resource&amp;unit_id=%s&amp;source=community_margin&amp;section=resources' % unit.id</attribute>
+        </xpath>
+        <xpath expr="//a[normalize-space()='Suggest a resource']" position="attributes">
+            <attribute name="t-att-href">'/submissions/new?type=resource&amp;unit_id=%s&amp;source=unit_resource_cta&amp;section=resources' % unit.id</attribute>
+        </xpath>
+    </template>
+
+    <template id="curriculum_index_contextual_resource_ctas" inherit_id="facodi_learning.curriculum_public_unit_index" name="FACODI Contextual Unit Index CTAs">
+        <xpath expr="//a[contains(@t-att-href, '/contribuir/recurso?curriculum_unit_id=%s')]" position="attributes">
+            <attribute name="t-att-href">'/submissions/new?type=resource&amp;unit_id=%s&amp;source=unit_resource_cta&amp;section=resources' % entry['unit'].id</attribute>
+        </xpath>
+    </template>
+</odoo>
