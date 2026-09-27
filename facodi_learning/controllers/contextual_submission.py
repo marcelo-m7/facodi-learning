@@ -163,6 +163,11 @@ class FacodiContextualSubmissionController(FacodiSubmissionController):
         roadmap = self._public_roadmap(
             kwargs.get("roadmap_id") or kwargs.get("reference_id")
         )
+        module = self._public_record(
+            "facodi.learning.curriculum.module",
+            kwargs.get("module_id"),
+            public_path_method="_facodi_public_path",
+        )
         course = self._public_course(
             kwargs.get("course_id") or kwargs.get("channel_id")
         )
@@ -232,7 +237,7 @@ class FacodiContextualSubmissionController(FacodiSubmissionController):
             )
 
         profile_context = ""
-        if area_tag and not curriculum_unit and not roadmap and not course and not suggested_slide:
+        if area_tag and not curriculum_unit and not roadmap and not module and not course and not suggested_slide:
             profile_context = request.env._(
                 "Suggested for learning area: %s."
             ) % area_tag.name
@@ -247,6 +252,10 @@ class FacodiContextualSubmissionController(FacodiSubmissionController):
             profile_context = request.env._(
                 "Suggested for roadmap: %s."
             ) % roadmap.display_name
+        elif module:
+            profile_context = request.env._(
+                "Suggested for learning module: %s."
+            ) % module.name
         elif suggested_slide:
             if course:
                 profile_context = request.env._(
@@ -270,6 +279,9 @@ class FacodiContextualSubmissionController(FacodiSubmissionController):
             ),
             "roadmap_resource_cta": request.env._(
                 "I suggest this resource for this learning roadmap."
+            ),
+            "module_resource_cta": request.env._(
+                "I suggest this resource for this learning module."
             ),
             "course_resource_cta": request.env._(
                 "I suggest this resource as a useful companion to this course."
@@ -324,6 +336,8 @@ class FacodiContextualSubmissionController(FacodiSubmissionController):
             form_values["curriculum_unit_id"] = curriculum_unit.id
         if roadmap:
             form_values["roadmap_id"] = roadmap.id
+        if module:
+            form_values["module_id"] = module.id
         if course:
             form_values["course_id"] = course.id
         if suggested_slide:
@@ -332,6 +346,7 @@ class FacodiContextualSubmissionController(FacodiSubmissionController):
             "community_margin": request.env._("Community margin"),
             "unit_resource_cta": request.env._("Curricular unit resources"),
             "roadmap_resource_cta": request.env._("Roadmap resources"),
+            "module_resource_cta": request.env._("Learning module resources"),
             "course_resource_cta": request.env._("Course resources"),
             "course_contact_cta": request.env._("Course contribution"),
             "study_player_resource_cta": request.env._("Lesson resources"),
@@ -370,6 +385,9 @@ class FacodiContextualSubmissionController(FacodiSubmissionController):
         elif not return_url and roadmap:
             return_url = "/roadmaps/%s" % roadmap.id
             return_label = request.env._("Back to roadmap")
+        elif not return_url and module:
+            return_url = module._facodi_public_path()
+            return_label = request.env._("Back to learning module")
         elif not return_url and suggested_slide:
             return_url = self._safe_origin_path(suggested_slide.website_url)
             return_label = request.env._("Back to learning item")
@@ -391,6 +409,8 @@ class FacodiContextualSubmissionController(FacodiSubmissionController):
             switch_base["unit_id"] = curriculum_unit.id
         if roadmap:
             switch_base["roadmap_id"] = roadmap.id
+        if module:
+            switch_base["module_id"] = module.id
         if course:
             switch_base["course_id"] = course.id
         if suggested_slide:
@@ -449,6 +469,7 @@ class FacodiContextualSubmissionController(FacodiSubmissionController):
             "curriculum_unit": curriculum_unit,
             "area_tag": area_tag,
             "roadmap": roadmap,
+            "module": module,
             "course": course,
             "suggested_slide": suggested_slide,
             "source_cta": source_cta,
@@ -520,6 +541,11 @@ class FacodiContextualSubmissionController(FacodiSubmissionController):
                 post.get("roadmap_id") or post.get("reference_id"),
                 context["roadmap"],
                 request.env._("The roadmap context is no longer publicly available."),
+            ),
+            (
+                post.get("module_id"),
+                context["module"],
+                request.env._("The learning module context is no longer publicly available."),
             ),
             (
                 post.get("course_id") or post.get("channel_id"),
