@@ -3941,3 +3941,8 @@ msgstr ""
 #: code:addons/facodi_learning/controllers/contextual_submission.py:0
 msgid "Translation"
 msgstr ""
+
+#. module: facodi_learning
+#: code:addons/facodi_learning/controllers/contextual_submission.py:0
+msgid "Lesson question"
+msgstr ""
