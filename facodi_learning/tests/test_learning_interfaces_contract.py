@@ -45,7 +45,7 @@ class TestLearningInterfacesContract(unittest.TestCase):
             "/explorar/conteudos",
             "/explorar/videos",
             "/roadmaps",
-            "/unidades-curriculares",
+            "/curricular-units",
         ):
             self.assertIn(f'"{route}"', menu_model)
 
@@ -61,7 +61,7 @@ class TestLearningInterfacesContract(unittest.TestCase):
         self.assertIn("facodi-index-tabs", self.curriculum)
         self.assertIn("facodi-record-card--roadmap", self.curriculum)
         self.assertIn("/roadmaps", self.curriculum)
-        self.assertIn("/unidades-curriculares", self.curriculum)
+        self.assertIn("/curricular-units", self.curriculum)
 
     def test_unit_catalogue_gap_cta_uses_entry_unit_context(self):
         unit_index = self.curriculum.split(
