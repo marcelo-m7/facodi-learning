@@ -331,7 +331,7 @@ class FacodiContextualSubmissionController(FacodiSubmissionController):
                 values["name"] = default_names.get(submission_type, "FACODI submission")
             if not message:
                 errors.append(request.env._("Write a short message so FACODI can review the submission."))
-            if not contact_email:
+            if submission_type == "contact" and not contact_email:
                 errors.append(request.env._("Enter an email for follow-up."))
         return context, values, errors
 
