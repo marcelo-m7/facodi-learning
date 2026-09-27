@@ -249,6 +249,21 @@ class FacodiContextualSubmissionController(FacodiSubmissionController):
             "course_catalog_cta": request.env._(
                 "I found a resource that could strengthen the FACODI course catalogue."
             ),
+            "community_resource_cta": request.env._(
+                "I found a useful public resource to leave on the community learning trail."
+            ),
+            "ecosystem_resource_cta": request.env._(
+                "I found a resource that could strengthen the FACODI open-learning ecosystem."
+            ),
+            "cta_sheet_resource_cta": request.env._(
+                "I want to add another useful page to the shared FACODI learning notebook."
+            ),
+            "contact_sheet_resource_cta": request.env._(
+                "I am using the contribution route because this is a learning resource for editorial review."
+            ),
+            "contribution_board_resource_cta": request.env._(
+                "I want to share a useful public resource for FACODI editorial review."
+            ),
         }
         if not form_values["context"] and submission_type == "resource":
             form_values["context"] = " ".join(
@@ -281,6 +296,12 @@ class FacodiContextualSubmissionController(FacodiSubmissionController):
             "institutional_contact_cta": request.env._("FACODI project"),
             "unit_correction_cta": request.env._("Curricular unit provenance"),
             "roadmap_correction_cta": request.env._("Roadmap provenance"),
+            "community_resource_cta": request.env._("Community resource"),
+            "ecosystem_resource_cta": request.env._("Ecosystem contribution"),
+            "cta_sheet_resource_cta": request.env._("Shared learning notebook"),
+            "contact_sheet_resource_cta": request.env._("Contact page resource"),
+            "contribution_board_resource_cta": request.env._("Contribution board"),
+            "contribution_board_correction_cta": request.env._("Contribution board correction"),
         }
         section_labels = {
             "resources": request.env._("Learning resources"),
@@ -297,6 +318,10 @@ class FacodiContextualSubmissionController(FacodiSubmissionController):
             "editorial-routes": request.env._("Editorial routes"),
             "my-facodi": request.env._("My FACODI"),
             "explore-videos": request.env._("Community videos"),
+            "contact": request.env._("Contact"),
+            "contribution-board": request.env._("Contribution board"),
+            "cta-sheet": request.env._("Contribution"),
+            "general": request.env._("General"),
         }
         return {
             "form_values": form_values,

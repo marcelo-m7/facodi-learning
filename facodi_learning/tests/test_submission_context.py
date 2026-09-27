@@ -138,6 +138,24 @@ class TestSubmissionContextWebsite(HttpCase):
         self.assertTrue(submission)
         self.assertEqual(submission.contact_email, False)
 
+    def test_theme_resource_ctas_render_human_context_and_prefill(self):
+        cases = (
+            ("community_resource_cta", "community", "Community resource", "community learning trail"),
+            ("ecosystem_resource_cta", "ecosystem", "Ecosystem contribution", "open-learning ecosystem"),
+            ("cta_sheet_resource_cta", "cta-sheet", "Shared learning notebook", "shared FACODI learning notebook"),
+            ("contact_sheet_resource_cta", "contact", "Contact page resource", "learning resource for editorial review"),
+            ("contribution_board_resource_cta", "contribution-board", "Contribution board", "public resource for FACODI editorial review"),
+        )
+        for source, section, label, prefill in cases:
+            response = self.url_open(
+                "/submissions/new?type=resource&source=%s&section=%s"
+                % (source, section)
+            )
+            self.assertEqual(response.status_code, 200, source)
+            self.assertIn(label, response.text, source)
+            self.assertIn(prefill, response.text, source)
+            self.assertNotIn("Contextual action", response.text, source)
+
     def test_contact_requires_message_and_email(self):
         response = self.url_open(
             "/submissions/new?type=contact&source=general_contact_cta&section=general"

@@ -3568,3 +3568,68 @@ msgstr "Ecossistema FACODI"
 #: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
 msgid "FACODI project"
 msgstr "Projeto FACODI"
+
+#. module: facodi_learning
+#: code:addons/facodi_learning/controllers/contextual_submission.py:0
+msgid "I found a useful public resource to leave on the community learning trail."
+msgstr "Encontrei um recurso público útil para deixar no percurso de aprendizagem da comunidade."
+
+#. module: facodi_learning
+#: code:addons/facodi_learning/controllers/contextual_submission.py:0
+msgid "I found a resource that could strengthen the FACODI open-learning ecosystem."
+msgstr "Encontrei um recurso que pode reforçar o ecossistema de aprendizagem aberta da FACODI."
+
+#. module: facodi_learning
+#: code:addons/facodi_learning/controllers/contextual_submission.py:0
+msgid "I want to add another useful page to the shared FACODI learning notebook."
+msgstr "Quero acrescentar mais uma página útil ao caderno de aprendizagem partilhado da FACODI."
+
+#. module: facodi_learning
+#: code:addons/facodi_learning/controllers/contextual_submission.py:0
+msgid "I am using the contribution route because this is a learning resource for editorial review."
+msgstr "Estou a usar a via de contribuição porque este é um recurso de aprendizagem para revisão editorial."
+
+#. module: facodi_learning
+#: code:addons/facodi_learning/controllers/contextual_submission.py:0
+msgid "I want to share a useful public resource for FACODI editorial review."
+msgstr "Quero partilhar um recurso público útil para revisão editorial da FACODI."
+
+#. module: facodi_learning
+#: code:addons/facodi_learning/controllers/contextual_submission.py:0
+msgid "Community resource"
+msgstr "Recurso da comunidade"
+
+#. module: facodi_learning
+#: code:addons/facodi_learning/controllers/contextual_submission.py:0
+msgid "Ecosystem contribution"
+msgstr "Contribuição para o ecossistema"
+
+#. module: facodi_learning
+#: code:addons/facodi_learning/controllers/contextual_submission.py:0
+msgid "Shared learning notebook"
+msgstr "Caderno de aprendizagem partilhado"
+
+#. module: facodi_learning
+#: code:addons/facodi_learning/controllers/contextual_submission.py:0
+msgid "Contact page resource"
+msgstr "Recurso da página de contacto"
+
+#. module: facodi_learning
+#: code:addons/facodi_learning/controllers/contextual_submission.py:0
+msgid "Contribution board"
+msgstr "Quadro de contribuições"
+
+#. module: facodi_learning
+#: code:addons/facodi_learning/controllers/contextual_submission.py:0
+msgid "Contribution board correction"
+msgstr "Correção do quadro de contribuições"
+
+#. module: facodi_learning
+#: code:addons/facodi_learning/controllers/contextual_submission.py:0
+msgid "Contribution"
+msgstr "Contribuição"
+
+#. module: facodi_learning
+#: code:addons/facodi_learning/controllers/contextual_submission.py:0
+msgid "General"
+msgstr "Geral"
