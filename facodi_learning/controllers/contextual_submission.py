@@ -205,6 +205,7 @@ class FacodiContextualSubmissionController(FacodiSubmissionController):
             "editorial_routes_contact_cta": "collaboration",
             "ecosystem_contact_cta": "partnership",
             "institutional_contact_cta": "partnership",
+            "legacy_submission_followup": "content",
         }
         contact_topic = self._safe_selection(
             kwargs.get("contact_topic") or kwargs.get("topic"),
@@ -307,6 +308,9 @@ class FacodiContextualSubmissionController(FacodiSubmissionController):
             "curricular_units_catalog_cta": request.env._(
                 "I found a resource that could help cover a curricular unit in the FACODI academic map."
             ),
+            "curricular_units_empty_state": request.env._(
+                "I found a resource that could help start the curricular-unit shelf."
+            ),
             "course_catalog_cta": request.env._(
                 "I found a resource that could strengthen the FACODI course catalogue."
             ),
@@ -357,6 +361,7 @@ class FacodiContextualSubmissionController(FacodiSubmissionController):
             "portal_resource_cta": request.env._("My FACODI"),
             "roadmaps_catalog_cta": request.env._("Roadmaps catalogue"),
             "curricular_units_catalog_cta": request.env._("Curricular units catalogue"),
+            "curricular_units_empty_state": request.env._("Curricular units · open shelf"),
             "course_catalog_cta": request.env._("Course catalogue"),
             "faq_contribution_cta": request.env._("FAQ contribution"),
             "community_collaboration_cta": request.env._("Community collaboration"),
@@ -376,6 +381,7 @@ class FacodiContextualSubmissionController(FacodiSubmissionController):
             "submission_status_followup": request.env._("Submission follow-up"),
             "my_submissions_new": request.env._("My submissions"),
             "my_submissions_empty": request.env._("My submissions empty state"),
+            "legacy_submission_followup": request.env._("Submission follow-up"),
         }
         return_url = source_page_url
         return_label = request.env._("Back to Explore")
@@ -438,6 +444,7 @@ class FacodiContextualSubmissionController(FacodiSubmissionController):
         section_labels = {
             "resources": request.env._("Learning resources"),
             "explore-areas": request.env._("Learning areas"),
+            "explore-content": request.env._("Explore content"),
             "course": request.env._("Course"),
             "lesson": request.env._("Lesson"),
             "module-resources": request.env._("Module resources"),
@@ -458,6 +465,7 @@ class FacodiContextualSubmissionController(FacodiSubmissionController):
             "cta-sheet": request.env._("Contribution"),
             "learning-navigation": request.env._("Learning navigation"),
             "learning-catalogue": request.env._("Learning catalogue"),
+            "submission": request.env._("Submission"),
             "submission-status": request.env._("Submission status"),
             "my-submissions": request.env._("My submissions"),
             "general": request.env._("General"),
