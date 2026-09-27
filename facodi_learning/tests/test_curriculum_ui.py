@@ -141,6 +141,29 @@ class TestCurriculumUI(TransactionCase):
         self.assertEqual(menu.parent_id.url, "#")
         self.assertEqual(menu.parent_id.sequence, 10)
 
+        for code in ("pt_PT", "es_ES", "fr_FR"):
+            self.env["res.lang"]._activate_lang(code)
+        website.language_ids = self.env["res.lang"].search(
+            [("code", "in", ["en_US", "pt_PT", "es_ES", "fr_FR"])]
+        )
+        self.assertTrue(self.env["website.menu"].facodi_reconcile_navigation())
+        expected_names = {
+            "pt_PT": ("Explorar", "Roadmaps", "Unidades curriculares"),
+            "es_ES": ("Explorar", "Rutas", "Unidades curriculares"),
+            "fr_FR": ("Explorer", "Parcours", "Unités d’enseignement"),
+        }
+        units_menu = self.env["website.menu"].search(
+            [
+                ("website_id", "=", website.id),
+                ("url", "=", "/curricular-units"),
+            ],
+            limit=1,
+        )
+        for code, (explore_name, roadmap_name, units_name) in expected_names.items():
+            self.assertEqual(menu.parent_id.with_context(lang=code).name, explore_name)
+            self.assertEqual(menu.with_context(lang=code).name, roadmap_name)
+            self.assertEqual(units_menu.with_context(lang=code).name, units_name)
+
         course_menus = self.env["website.menu"].search(
             [
                 ("website_id", "=", website.id),
