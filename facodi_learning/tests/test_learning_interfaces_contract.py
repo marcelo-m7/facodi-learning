@@ -20,7 +20,7 @@ class TestLearningInterfacesContract(unittest.TestCase):
 
     def test_d1_release_version(self):
         manifest = MANIFEST.read_text(encoding="utf-8")
-        self.assertIn('"version": "19.0.1.52.0"', manifest)
+        self.assertIn('"version": "19.0.1.53.0"', manifest)
 
     def test_portal_progress_avoids_old_style_percent_formatting(self):
         portal_home = PORTAL_HOME.read_text(encoding="utf-8")
@@ -54,6 +54,14 @@ class TestLearningInterfacesContract(unittest.TestCase):
         self.assertNotIn('ref="website.website_2"', menu_data)
         self.assertIn('("website_id", "=", False)', menu_model)
         self.assertIn("set(children.mapped(\"url\")).issubset(target_urls)", menu_model)
+
+    def test_explore_filter_chips_have_individual_remove_urls(self):
+        explore_controller = (MODULE_ROOT / "controllers" / "explore.py").read_text(encoding="utf-8")
+        explore_view = (MODULE_ROOT / "views" / "website_explore.xml").read_text(encoding="utf-8")
+        self.assertIn('filter_row["remove_url"] = "/explore/content"', explore_controller)
+        self.assertIn('remove_params[filter_row["key"]] = False', explore_controller)
+        self.assertIn("facodi-filter-chip__remove", explore_view)
+        self.assertIn("t-att-href=\"filter_row['remove_url']\"", explore_view)
 
     def test_roadmap_catalogue_exposes_d1_structure(self):
         self.assertIn('id="curriculum_public_index"', self.curriculum)

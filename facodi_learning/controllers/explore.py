@@ -230,6 +230,14 @@ class FacodiExploreController(http.Controller):
             format_label = dict(available_formats).get(content_format, content_format)
             active_filters.append({"label": "Format: %s" % format_label, "key": "format"})
 
+        for filter_row in active_filters:
+            remove_params = dict(params)
+            remove_params[filter_row["key"]] = False
+            remove_query = self._query_string(remove_params)
+            filter_row["remove_url"] = "/explore/content"
+            if remove_query:
+                filter_row["remove_url"] += "?" + remove_query
+
         discovery_stats = {
             "resources": len(all_slides),
             "areas": len(self._visible_areas()),

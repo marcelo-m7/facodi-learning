@@ -157,9 +157,13 @@
 
                     <div t-if="active_filters" class="facodi-filter-chips mb-4" aria-label="Active filters">
                         <span class="facodi-filter-chips__label">On your desk:</span>
-                        <span t-foreach="active_filters" t-as="filter_row" class="facodi-filter-chip">
+                        <a t-foreach="active_filters" t-as="filter_row"
+                           t-att-href="filter_row['remove_url']"
+                           class="facodi-filter-chip"
+                           t-att-aria-label="'Remove filter: %s' % filter_row['label']">
                             <span t-esc="filter_row['label']"/>
-                        </span>
+                            <span class="facodi-filter-chip__remove" aria-hidden="true">×</span>
+                        </a>
                         <a href="/explore/content" class="facodi-filter-chip facodi-filter-chip--clear">Clear the desk</a>
                     </div>
 
