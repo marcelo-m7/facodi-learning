@@ -303,6 +303,24 @@ class FacodiContextualSubmissionController(FacodiSubmissionController):
             "contribution_board_resource_cta": request.env._("Contribution board"),
             "contribution_board_correction_cta": request.env._("Contribution board correction"),
         }
+        return_url = source_page_url
+        return_label = request.env._("Back to Explore")
+        if not return_url and curriculum_unit:
+            return_url = curriculum_unit._facodi_public_catalog_path() or curriculum_unit._facodi_public_path()
+            return_label = request.env._("Back to curricular unit")
+        elif not return_url and roadmap:
+            return_url = "/roadmaps/%s" % roadmap.id
+            return_label = request.env._("Back to roadmap")
+        elif not return_url and suggested_slide:
+            return_url = self._safe_origin_path(suggested_slide.website_url)
+            return_label = request.env._("Back to learning item")
+        elif not return_url and course:
+            return_url = self._safe_origin_path(course.website_url)
+            return_label = request.env._("Back to course")
+        elif return_url:
+            return_label = request.env._("Back to where I was")
+        return_url = return_url or "/explore"
+
         section_labels = {
             "resources": request.env._("Learning resources"),
             "course": request.env._("Course"),
@@ -337,6 +355,8 @@ class FacodiContextualSubmissionController(FacodiSubmissionController):
             "source_page_url": source_page_url,
             "source_cta_label": cta_labels.get(source_cta, request.env._("Contextual action") if source_cta else ""),
             "source_section_label": section_labels.get(source_section, source_section.replace("-", " ").title() if source_section else ""),
+            "return_url": return_url,
+            "return_label": return_label,
         }
 
     @http.route(

@@ -3666,3 +3666,33 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_manage
 msgid "Withdrawal stops this submission from continuing through the FACODI workflow. Resource submissions are also removed from public community queues. The record is retained as audit history."
 msgstr ""
+
+#. module: facodi_learning
+#: code:addons/facodi_learning/controllers/contextual_submission.py:0
+msgid "Back to Explore"
+msgstr ""
+
+#. module: facodi_learning
+#: code:addons/facodi_learning/controllers/contextual_submission.py:0
+msgid "Back to curricular unit"
+msgstr ""
+
+#. module: facodi_learning
+#: code:addons/facodi_learning/controllers/contextual_submission.py:0
+msgid "Back to roadmap"
+msgstr ""
+
+#. module: facodi_learning
+#: code:addons/facodi_learning/controllers/contextual_submission.py:0
+msgid "Back to learning item"
+msgstr ""
+
+#. module: facodi_learning
+#: code:addons/facodi_learning/controllers/contextual_submission.py:0
+msgid "Back to course"
+msgstr ""
+
+#. module: facodi_learning
+#: code:addons/facodi_learning/controllers/contextual_submission.py:0
+msgid "Back to where I was"
+msgstr ""
