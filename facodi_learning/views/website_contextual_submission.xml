@@ -75,8 +75,8 @@
                                             We already added the context from where you clicked. Review it, add the resource itself and tell us why it belongs here.
                                         </p>
                                         <div class="mb-3">
-                                            <label class="form-label" for="facodi_submission_title">Title / subject</label>
-                                            <input id="facodi_submission_title" name="name" type="text" maxlength="200" class="form-control" t-att-value="form_values.get('name', '')"/>
+                                            <label class="form-label" for="facodi_submission_name">Title / subject</label>
+                                            <input id="facodi_submission_name" name="name" type="text" maxlength="200" class="form-control" t-att-value="form_values.get('name', '')"/>
                                         </div>
 
                                         <t t-if="submission_type == 'resource'">
