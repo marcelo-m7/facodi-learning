@@ -490,10 +490,10 @@ class FacodiLearningCurriculumUnit(models.Model):
         normalized_name = unicodedata.normalize("NFKD", self.name or "")
         normalized_name = normalized_name.encode("ascii", "ignore").decode("ascii")
         readable_name = re.sub(r"[^a-z0-9]+", "-", normalized_name.lower()).strip("-")
-        return "/unidades-curriculares/%s/%s-%s" % (
+        return "/curricular-units/%s/%s-%s" % (
             self.reference_id.id,
             quote(self.external_unit_code or "", safe=""),
-            readable_name or "unidade-curricular",
+            readable_name or "curricular-unit",
         )
 
     @api.model

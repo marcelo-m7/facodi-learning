@@ -54,7 +54,23 @@ class FacodiCurriculumController(http.Controller):
         return request.redirect("/roadmaps", code=301)
 
     @http.route(
-        "/unidades-curriculares", type="http", auth="public", website=True, sitemap=True
+        ["/unidades-curriculares", "/unidades-curriculares/<path:legacy_path>"],
+        type="http",
+        auth="public",
+        website=True,
+        sitemap=False,
+    )
+    def legacy_curricular_units(self, legacy_path=None, **kwargs):
+        target = "/curricular-units"
+        if legacy_path:
+            target += "/" + legacy_path
+        query = request.httprequest.query_string.decode()
+        if query:
+            target += "?" + query
+        return request.redirect(target, code=301)
+
+    @http.route(
+        "/curricular-units", type="http", auth="public", website=True, sitemap=True
     )
     def curriculum_unit_index(self, **kwargs):
         references = self._public_references()
@@ -223,7 +239,7 @@ class FacodiCurriculumController(http.Controller):
         )
 
     @http.route(
-        "/unidades-curriculares/<int:reference_id>/<path:unit_slug>",
+        "/curricular-units/<int:reference_id>/<path:unit_slug>",
         type="http",
         auth="public",
         website=True,
@@ -251,6 +267,16 @@ class FacodiCurriculumController(http.Controller):
 
     @http.route(
         "/modulos/<int:module_id>",
+        type="http",
+        auth="public",
+        website=True,
+        sitemap=False,
+    )
+    def legacy_module_detail(self, module_id, **kwargs):
+        return request.redirect("/modules/%s" % module_id, code=301)
+
+    @http.route(
+        "/modules/<int:module_id>",
         type="http",
         auth="public",
         website=True,

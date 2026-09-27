@@ -100,7 +100,7 @@ class TestCurriculumUI(TransactionCase):
         self.assertEqual(course_link.type, "qweb")
         self.assertIn("website.layout", index.arch_db)
         self.assertIn("website.layout", detail.arch_db)
-        self.assertIn("/unidades-curriculares", unit_index.arch_db)
+        self.assertIn("/curricular-units", unit_index.arch_db)
         self.assertIn("facodi-learning-hero", index.arch_db)
         self.assertIn("facodi-index-tabs", index.arch_db)
         self.assertIn("facodi-record-card--roadmap", index.arch_db)

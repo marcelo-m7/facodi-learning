@@ -11,7 +11,7 @@
                             <p class="lead text-muted mb-4">Discover learning areas, individual resources and complete courses through the public FACODI catalogue.</p>
                             <div class="row g-3">
                                 <div class="col-12 col-md-6 col-xl-3">
-                                    <a href="/explorar/areas" class="card h-100 text-decoration-none">
+                                    <a href="/explore/areas" class="card h-100 text-decoration-none">
                                         <div class="card-body">
                                             <h2 class="h4">Learning areas</h2>
                                             <p class="text-muted mb-0">Browse public courses by their curated learning area.</p>
@@ -19,7 +19,7 @@
                                     </a>
                                 </div>
                                 <div class="col-12 col-md-6 col-xl-3">
-                                    <a href="/explorar/conteudos" class="card h-100 text-decoration-none">
+                                    <a href="/explore/content" class="card h-100 text-decoration-none">
                                         <div class="card-body">
                                             <h2 class="h4">Learning resources</h2>
                                             <p class="text-muted mb-0">Search public videos, articles and documents by topic, language and format.</p>
@@ -27,7 +27,7 @@
                                     </a>
                                 </div>
                                 <div class="col-12 col-md-6 col-xl-3">
-                                    <a href="/explorar/videos" class="card h-100 text-decoration-none">
+                                    <a href="/explore/videos" class="card h-100 text-decoration-none">
                                         <div class="card-body">
                                             <div class="small text-uppercase fw-semibold text-muted mb-2">Community</div>
                                             <h2 class="h4">Submitted videos</h2>
@@ -36,7 +36,7 @@
                                     </a>
                                 </div>
                                 <div class="col-12 col-md-6 col-xl-3">
-                                    <a href="/explorar/cursos" class="card h-100 text-decoration-none">
+                                    <a href="/explore/courses" class="card h-100 text-decoration-none">
                                         <div class="card-body">
                                             <h2 class="h4">Courses</h2>
                                             <p class="text-muted mb-0">Continue to the canonical Odoo eLearning course catalogue.</p>
@@ -61,10 +61,10 @@
                             <h1 class="h2 mb-1">Learning areas</h1>
                             <p class="text-muted mb-0">Only areas represented by publicly available courses on this website are shown.</p>
                         </div>
-                        <a href="/explorar" class="btn btn-outline-secondary">Back to Explore</a>
+                        <a href="/explore" class="btn btn-outline-secondary">Back to Explore</a>
                     </div>
 
-                    <form method="get" action="/explorar/areas" class="row g-2 mb-4" role="search">
+                    <form method="get" action="/explore/areas" class="row g-2 mb-4" role="search">
                         <div class="col-12 col-md-8 col-lg-6">
                             <label for="facodi-area-query" class="form-label">Search areas</label>
                             <input id="facodi-area-query" type="search" name="q" class="form-control" t-att-value="query" placeholder="e.g. Mathematics"/>
@@ -76,7 +76,7 @@
 
                     <div t-if="areas" class="row g-3">
                         <div t-foreach="areas" t-as="area" class="col-12 col-sm-6 col-lg-4">
-                            <a t-att-href="'/explorar/conteudos?area=%s' % area.id" class="card h-100 text-decoration-none">
+                            <a t-att-href="'/explore/content?area=%s' % area.id" class="card h-100 text-decoration-none">
                                 <div class="card-body">
                                     <div t-if="area.group_id" class="small text-muted mb-1"><span t-field="area.group_id.name"/></div>
                                     <h2 class="h5 mb-0"><span t-field="area.name"/></h2>
@@ -100,7 +100,7 @@
                             <h1 class="display-6 fw-bold mb-1">Find your next useful tab.</h1>
                             <p class="text-muted mb-0"><t t-esc="total"/> public resources in this view. Filter hard, wander freely.</p>
                         </div>
-                        <a href="/explorar" class="btn btn-outline-secondary">Back to Explore</a>
+                        <a href="/explore" class="btn btn-outline-secondary">Back to Explore</a>
                     </div>
 
                     <div class="facodi-discovery-stats mb-4" aria-label="Catalogue snapshot">
@@ -110,7 +110,7 @@
                         <div class="facodi-discovery-stat facodi-highlight-orange"><strong t-esc="discovery_stats['formats']"/><span>formats</span></div>
                     </div>
 
-                    <form method="get" action="/explorar/conteudos" class="card card-body mb-3 facodi-filter-panel" role="search">
+                    <form method="get" action="/explore/content" class="card card-body mb-3 facodi-filter-panel" role="search">
                         <div class="row g-3">
                             <div class="col-12 col-lg-4">
                                 <label for="facodi-content-query" class="form-label">Search</label>
@@ -154,7 +154,7 @@
                         <span t-foreach="active_filters" t-as="filter_row" class="facodi-filter-chip">
                             <span t-esc="filter_row['label']"/>
                         </span>
-                        <a href="/explorar/conteudos" class="facodi-filter-chip facodi-filter-chip--clear">Clear the desk</a>
+                        <a href="/explore/content" class="facodi-filter-chip facodi-filter-chip--clear">Clear the desk</a>
                     </div>
 
                     <div t-if="slides" class="row g-3">
@@ -182,8 +182,8 @@
                         <h2 class="h4">That shelf is empty. The campus isn't.</h2>
                         <p class="text-muted">No public resource matches this exact combination. Clear the desk, browse learning areas or drop a useful resource for the community.</p>
                         <div class="d-flex flex-wrap justify-content-center gap-2">
-                            <a href="/explorar/conteudos" class="btn btn-primary">Clear the desk</a>
-                            <a href="/explorar/areas" class="btn btn-outline-primary">Browse areas</a>
+                            <a href="/explore/content" class="btn btn-primary">Clear the desk</a>
+                            <a href="/explore/areas" class="btn btn-outline-primary">Browse areas</a>
                             <a href="/contribuir/recurso" class="btn btn-outline-secondary">Drop a resource</a>
                         </div>
                     </div>
@@ -211,7 +211,7 @@
                         </div>
                         <div class="d-flex gap-2">
                             <a href="/contribuir/recurso" class="btn btn-primary">Share a video</a>
-                            <a href="/explorar" class="btn btn-outline-secondary">Back to Explore</a>
+                            <a href="/explore" class="btn btn-outline-secondary">Back to Explore</a>
                         </div>
                     </div>
 
@@ -223,7 +223,7 @@
                         </div>
                     </div>
 
-                    <form method="get" action="/explorar/videos" class="card card-body mb-4" role="search">
+                    <form method="get" action="/explore/videos" class="card card-body mb-4" role="search">
                         <div class="row g-3 align-items-end">
                             <div class="col-12 col-lg-7">
                                 <label for="facodi-community-video-query" class="form-label">Search submitted videos</label>
@@ -281,7 +281,7 @@
                         <h2 class="h4">Nothing on this shelf yet</h2>
                         <p class="text-muted">No community video submissions match these filters. Try another language or search, or add a useful public video.</p>
                         <div class="d-flex flex-wrap justify-content-center gap-2">
-                            <a href="/explorar/videos" class="btn btn-outline-secondary">Clear filters</a>
+                            <a href="/explore/videos" class="btn btn-outline-secondary">Clear filters</a>
                             <a href="/contribuir/recurso" class="btn btn-primary">Share a video</a>
                         </div>
                     </div>
