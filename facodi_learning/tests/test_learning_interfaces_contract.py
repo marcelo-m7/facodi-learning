@@ -95,7 +95,7 @@ class TestLearningInterfacesContract(unittest.TestCase):
             unit_index,
         )
         self.assertIn(
-            "'/contribuir/recurso?curriculum_unit_id=%s' % entry['unit'].id",
+            "'/submissions/new?type=resource&amp;unit_id=%s&amp;source=unit_resource_cta&amp;section=resources' % entry['unit'].id",
             unit_index,
         )
 
