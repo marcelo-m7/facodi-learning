@@ -38,16 +38,16 @@ class TestWebsiteI18nContract(unittest.TestCase):
 
     def test_contextual_resource_contribution_ctas_use_single_rich_intake(self):
         slides = WEBSITE_SLIDES_TEMPLATE.read_text()
-        contextual_ctas = CONTEXTUAL_CTA_TEMPLATE.read_text()
+        curriculum = WEBSITE_TEMPLATE.read_text()
         contextual_form = CONTEXTUAL_SUBMISSION_TEMPLATE.read_text()
 
         self.assertIn("/submissions/new?type=resource", slides)
         self.assertIn("source=course_resource_cta", slides)
         self.assertIn("/submissions/new?type=contact", slides)
         self.assertIn("source=course_contact_cta", slides)
-        self.assertIn("/submissions/new?type=resource", contextual_ctas)
-        self.assertIn("source=community_margin", contextual_ctas)
-        self.assertIn("source=unit_resource_cta", contextual_ctas)
+        self.assertIn("/submissions/new?type=resource", curriculum)
+        self.assertIn("source=community_margin", curriculum)
+        self.assertIn("source=unit_resource_cta", curriculum)
         self.assertIn('action="/submissions/new"', contextual_form)
         self.assertIn('name="curriculum_unit_id"', contextual_form)
         self.assertNotIn("Classic resource form", contextual_form)

@@ -20,7 +20,7 @@ class TestLearningInterfacesContract(unittest.TestCase):
 
     def test_d1_release_version(self):
         manifest = MANIFEST.read_text(encoding="utf-8")
-        self.assertIn('"version": "19.0.1.72.0"', manifest)
+        self.assertIn('"version": "19.0.1.73.0"', manifest)
 
     def test_portal_progress_avoids_old_style_percent_formatting(self):
         portal_home = PORTAL_HOME.read_text(encoding="utf-8")
@@ -95,7 +95,7 @@ class TestLearningInterfacesContract(unittest.TestCase):
             unit_index,
         )
         self.assertIn(
-            "'/contribuir/recurso?curriculum_unit_id=%s' % entry['unit'].id",
+            "'/submissions/new?type=resource&amp;unit_id=%s&amp;source=unit_resource_cta&amp;section=resources' % entry['unit'].id",
             unit_index,
         )
 
