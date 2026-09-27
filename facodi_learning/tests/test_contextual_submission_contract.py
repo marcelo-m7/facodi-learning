@@ -95,6 +95,9 @@ class TestContextualSubmissionStaticContracts(TransactionCase):
         self.assertIn("source=roadmap_resource_cta", template)
         self.assertIn("source=roadmaps_catalog_cta", template)
         self.assertIn("source=curricular_units_catalog_cta", template)
+        self.assertIn("type=correction", template)
+        self.assertIn("source=unit_correction_cta", template)
+        self.assertIn("source=roadmap_correction_cta", template)
 
     def test_admin_views_expose_context(self):
         arch = self._read("views/contextual_submission_admin_views.xml")
@@ -109,6 +112,8 @@ class TestContextualSubmissionStaticContracts(TransactionCase):
         portal = self._read("views/portal_home.xml")
         self.assertIn("source=course_resource_cta", slides)
         self.assertIn("course_id=%s", slides)
+        self.assertIn("type=contact", slides)
+        self.assertIn("source=course_contact_cta", slides)
         self.assertIn("source=explore_empty_shelf", explore)
         self.assertIn("source=community_video_cta", explore)
         self.assertIn("resource_type=video", explore)
