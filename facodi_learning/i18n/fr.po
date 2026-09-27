@@ -3983,3 +3983,53 @@ msgstr "Traduction"
 #: code:addons/facodi_learning/controllers/contextual_submission.py:0
 msgid "Lesson question"
 msgstr "Question sur la leçon"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
+msgid "Contribution brief"
+msgstr "Résumé de la contribution"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
+msgid "FACODI brought this context from the page you were using. You only need to complete the useful part."
+msgstr "FACODI a repris ce contexte depuis la page que vous utilisiez. Il ne vous reste qu’à compléter la partie utile."
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
+msgid "No page context was attached. You can still send a general contribution."
+msgstr "Aucun contexte de page n’a été associé. Vous pouvez tout de même envoyer une contribution générale."
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
+msgid "Context carried over"
+msgstr "Contexte conservé"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
+msgid "Step 1 · Add the useful part"
+msgstr "Étape 1 · Ajoutez la partie utile"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
+msgid "Step 2 · Optional follow-up"
+msgstr "Étape 2 · Suivi facultatif"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
+msgid "Stay in the loop"
+msgstr "Restez informé"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
+msgid "For resources, your contact details are optional. For contact requests, an email is needed so the team can reply."
+msgstr "Pour les ressources, vos coordonnées sont facultatives. Pour les demandes de contact, un e-mail est nécessaire afin que l’équipe puisse répondre."
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
+msgid "Send to the review desk"
+msgstr "Envoyer à la révision"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
+msgid "General FACODI contribution"
+msgstr "Contribution générale FACODI"
