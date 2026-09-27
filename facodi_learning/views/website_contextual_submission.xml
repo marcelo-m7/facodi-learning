@@ -82,6 +82,17 @@
                                   data-facodi-submission-form="1"
                                   data-metadata-endpoint="/contribuir/recurso/metadata">
                                 <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                <div class="position-absolute top-0 start-0 overflow-hidden"
+                                     style="width: 1px; height: 1px; clip-path: inset(50%);"
+                                     aria-hidden="true">
+                                    <label for="facodi_company_website">Leave this field empty</label>
+                                    <input id="facodi_company_website"
+                                           name="facodi_company_website"
+                                           type="text"
+                                           tabindex="-1"
+                                           autocomplete="off"
+                                           value=""/>
+                                </div>
                                 <div class="d-none"
                                      aria-hidden="true"
                                      data-facodi-discovery-messages="1">
