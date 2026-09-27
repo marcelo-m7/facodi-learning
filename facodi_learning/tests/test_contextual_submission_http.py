@@ -109,6 +109,8 @@ class TestContextualSubmissionHttp(HttpCase):
         response = self.url_open(
             "/submissions/new?source=my_submissions_new&section=my-submissions"
             "&source_page_url=%2Fmy%2Fsubmissions"
+            "&resource_type=video&resource_level=introductory&language=pt"
+            "&contact_topic=collaboration"
         )
         self.assertEqual(response.status_code, 200)
         tree = html.fromstring(response.text)
@@ -120,4 +122,10 @@ class TestContextualSubmissionHttp(HttpCase):
             self.assertIn("source=my_submissions_new", matching[0])
             self.assertIn("section=my-submissions", matching[0])
             self.assertIn("source_page_url=%2Fmy%2Fsubmissions", matching[0])
+            self.assertIn("resource_type=video", matching[0])
+            self.assertIn("resource_level=introductory", matching[0])
+            self.assertIn("language=pt", matching[0])
+            self.assertIn("contact_topic=collaboration", matching[0])
+            self.assertNotIn("contact_email=", matching[0])
+            self.assertNotIn("context=", matching[0])
 
