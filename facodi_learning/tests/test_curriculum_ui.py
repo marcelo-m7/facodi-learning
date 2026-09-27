@@ -139,6 +139,7 @@ class TestCurriculumUI(TransactionCase):
         self.assertEqual(menu.parent_id.name, "Explore")
         self.assertEqual(menu.parent_id.parent_id, website.menu_id)
         self.assertEqual(menu.parent_id.url, "#")
+        self.assertEqual(menu.parent_id.sequence, 10)
 
         course_menus = self.env["website.menu"].search(
             [
