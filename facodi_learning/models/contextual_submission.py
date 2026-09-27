@@ -1,4 +1,5 @@
 import re
+from urllib.parse import urlsplit
 
 from odoo import api, fields, models
 from odoo.exceptions import AccessError, ValidationError
@@ -92,6 +93,19 @@ class FacodiLearningSubmissionContext(models.Model):
         cleaned = (value or "").strip().lower()[:64]
         return cleaned if self._is_valid_context_slug(cleaned) else ""
 
+    @api.model
+    def _clean_source_page_url(self, value):
+        candidate = (value or "").strip()
+        if not candidate or candidate.startswith("//") or "\\" in candidate:
+            return ""
+        parsed = urlsplit(candidate)
+        if parsed.scheme or parsed.netloc:
+            return ""
+        path = parsed.path or "/"
+        if not path.startswith("/"):
+            return ""
+        return path[:2048]
+
     @api.constrains("source_url", "submission_type")
     def _check_source_url(self):
         for record in self:
@@ -120,8 +134,9 @@ class FacodiLearningSubmissionContext(models.Model):
                 vals["language"] = vals["language"].strip().lower()[:16]
             if vals.get("contact_email"):
                 vals["contact_email"] = vals["contact_email"].strip().lower()[:254]
-            if vals.get("source_page_url"):
-                vals["source_page_url"] = vals["source_page_url"].strip()[:2048]
+            vals["source_page_url"] = self._clean_source_page_url(
+                vals.get("source_page_url")
+            ) or False
             if vals["submission_type"] == "resource":
                 vals["source_url"] = (vals.get("source_url") or "").strip()[:2048]
                 resource_identities.append((vals["source_url"], vals.get("curriculum_unit_id") or False))
