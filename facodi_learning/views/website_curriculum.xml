@@ -2,6 +2,8 @@
 <odoo>
     <template id="curriculum_public_index" name="FACODI Roadmaps">
         <t t-call="website.layout">
+            <t t-set="additional_title">Learning roadmaps · FACODI</t>
+            <t t-set="website_meta_description">Explore validated learning roadmaps linking curricular units to open FACODI learning coverage.</t>
             <t t-set="additional_title">Roadmaps</t>
             <t t-set="meta_description">Explore verified FACODI learning roadmaps, curricular units, modules and published learning content.</t>
             <div id="wrap" class="oe_structure">
@@ -127,6 +129,8 @@
 
     <template id="curriculum_public_unit_index" name="FACODI Curricular Units">
         <t t-call="website.layout">
+            <t t-set="additional_title">Curricular units · FACODI</t>
+            <t t-set="website_meta_description">Explore curricular units from validated programmes and their published FACODI open-learning coverage.</t>
             <div id="wrap" class="oe_structure">
                 <section class="container py-5 facodi-curriculum">
                     <div class="row justify-content-center">
@@ -250,7 +254,7 @@
     <template id="curriculum_public_detail" name="FACODI Roadmap Detail">
         <t t-call="website.layout">
             <t t-set="additional_title"><t t-esc="reference.programme_name"/> · Roadmap</t>
-            <t t-set="meta_description">Explore the FACODI learning roadmap for <t t-esc="reference.programme_name"/>.</t>
+            <t t-set="website_meta_description">Explore the FACODI learning roadmap for <t t-esc="reference.programme_name"/>.</t>
             <div id="wrap" class="oe_structure">
                 <section class="container py-5 facodi-curriculum">
                     <div class="row justify-content-center">

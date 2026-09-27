@@ -1,3 +1,5 @@
+from lxml import html
+
 from odoo.tests import HttpCase, tagged
 
 
@@ -16,3 +18,36 @@ class TestCanonicalRoutes(HttpCase):
         response = self.url_open("/unidades-curriculares", allow_redirects=False)
         self.assertEqual(response.status_code, 301)
         self.assertTrue(response.headers["Location"].endswith("/curricular-units"))
+
+    def test_public_learning_indexes_expose_one_description_and_canonical(self):
+        for route in (
+            "/explore",
+            "/explore/areas",
+            "/explore/content",
+            "/explore/videos",
+            "/roadmaps",
+            "/curricular-units",
+        ):
+            response = self.url_open(route)
+            self.assertEqual(response.status_code, 200, route)
+            tree = html.fromstring(response.text)
+            descriptions = tree.xpath('//meta[@name="description"]/@content')
+            open_graph = tree.xpath('//meta[@property="og:description"]/@content')
+            canonicals = tree.xpath('//link[@rel="canonical"]/@href')
+            self.assertEqual(len(descriptions), 1, route)
+            self.assertTrue(descriptions[0].strip(), route)
+            self.assertEqual(open_graph, descriptions, route)
+            self.assertEqual(len(canonicals), 1, route)
+            canonical_path = canonicals[0].split("?", 1)[0].rstrip("/")
+            self.assertTrue(canonical_path.endswith(route.rstrip("/")), (route, canonicals[0]))
+
+    def test_legacy_explore_aliases_do_not_compete_with_canonical_routes(self):
+        for legacy, canonical in (
+            ("/explorar", "/explore"),
+            ("/explorar/areas", "/explore/areas"),
+            ("/explorar/conteudos", "/explore/content"),
+            ("/explorar/videos", "/explore/videos"),
+        ):
+            response = self.url_open(legacy, allow_redirects=False)
+            self.assertEqual(response.status_code, 301, legacy)
+            self.assertTrue(response.headers["Location"].endswith(canonical), legacy)

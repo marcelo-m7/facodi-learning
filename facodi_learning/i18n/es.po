@@ -3283,3 +3283,123 @@ msgstr "Áreas"
 #: model:website.menu,name:facodi_learning.menu_public_explore_videos
 msgid "Community videos"
 msgstr "Vídeos de la comunidad"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_landing
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_areas
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_content
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_community_videos
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_index
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit_index
+msgid "Explore open learning · FACODI"
+msgstr "Explorar aprendizaje abierto · FACODI"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_landing
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_areas
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_content
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_community_videos
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_index
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit_index
+msgid "Explore FACODI learning areas, public resources, community videos and open courses."
+msgstr "Explora áreas de aprendizaje FACODI, recursos públicos, vídeos de la comunidad y cursos abiertos."
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_landing
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_areas
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_content
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_community_videos
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_index
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit_index
+msgid "Learning areas · FACODI"
+msgstr "Áreas de aprendizaje · FACODI"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_landing
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_areas
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_content
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_community_videos
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_index
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit_index
+msgid "Browse FACODI learning areas represented by public open-learning courses."
+msgstr "Explora áreas de aprendizaje FACODI representadas por cursos públicos de aprendizaje abierto."
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_landing
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_areas
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_content
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_community_videos
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_index
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit_index
+msgid "Open learning resources · FACODI"
+msgstr "Recursos de aprendizaje abierto · FACODI"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_landing
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_areas
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_content
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_community_videos
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_index
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit_index
+msgid "Search FACODI public learning resources by area, language and format."
+msgstr "Busca recursos públicos de aprendizaje FACODI por área, idioma y formato."
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_landing
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_areas
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_content
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_community_videos
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_index
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit_index
+msgid "Community videos · FACODI"
+msgstr "Vídeos de la comunidad · FACODI"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_landing
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_areas
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_content
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_community_videos
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_index
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit_index
+msgid "Browse public YouTube videos shared by the FACODI community and their editorial review status."
+msgstr "Explora vídeos públicos de YouTube compartidos por la comunidad FACODI y su estado de revisión editorial."
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_landing
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_areas
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_content
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_community_videos
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_index
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit_index
+msgid "Learning roadmaps · FACODI"
+msgstr "Rutas de aprendizaje · FACODI"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_landing
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_areas
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_content
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_community_videos
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_index
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit_index
+msgid "Explore validated learning roadmaps linking curricular units to open FACODI learning coverage."
+msgstr "Explora rutas de aprendizaje validadas que conectan unidades curriculares con la cobertura abierta de aprendizaje FACODI."
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_landing
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_areas
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_content
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_community_videos
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_index
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit_index
+msgid "Curricular units · FACODI"
+msgstr "Unidades curriculares · FACODI"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_landing
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_areas
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_content
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_community_videos
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_index
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit_index
+msgid "Explore curricular units from validated programmes and their published FACODI open-learning coverage."
+msgstr "Explora unidades curriculares de programas validados y su cobertura publicada de aprendizaje abierto FACODI."

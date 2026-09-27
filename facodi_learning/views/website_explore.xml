@@ -2,6 +2,8 @@
 <odoo>
     <template id="explore_landing" name="Explore FACODI">
         <t t-call="website.layout">
+            <t t-set="additional_title">Explore open learning · FACODI</t>
+            <t t-set="website_meta_description">Explore FACODI learning areas, public resources, community videos and open courses.</t>
             <div id="wrap" class="oe_structure">
                 <section class="container py-5">
                     <div class="row justify-content-center">
@@ -53,6 +55,8 @@
 
     <template id="explore_areas" name="Explore learning areas">
         <t t-call="website.layout">
+            <t t-set="additional_title">Learning areas · FACODI</t>
+            <t t-set="website_meta_description">Browse FACODI learning areas represented by public open-learning courses.</t>
             <div id="wrap" class="oe_structure">
                 <section class="container py-5">
                     <div class="d-flex flex-wrap justify-content-between align-items-end gap-3 mb-4">
@@ -92,6 +96,8 @@
 
     <template id="explore_content" name="Explore learning content">
         <t t-call="website.layout">
+            <t t-set="additional_title">Open learning resources · FACODI</t>
+            <t t-set="website_meta_description">Search FACODI public learning resources by area, language and format.</t>
             <div id="wrap" class="oe_structure">
                 <section class="container py-5" data-facodi-explore-workbench="1">
                     <div class="d-flex flex-wrap justify-content-between align-items-end gap-3 mb-4">
@@ -201,6 +207,8 @@
     </template>
     <template id="explore_community_videos" name="FACODI Community Videos">
         <t t-call="website.layout">
+            <t t-set="additional_title">Community videos · FACODI</t>
+            <t t-set="website_meta_description">Browse public YouTube videos shared by the FACODI community and their editorial review status.</t>
             <div id="wrap" class="oe_structure">
                 <section class="container py-5" data-facodi-community-videos="1">
                     <div class="d-flex flex-wrap justify-content-between align-items-end gap-3 mb-4">
