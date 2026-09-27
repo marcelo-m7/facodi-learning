@@ -33,7 +33,7 @@
     </template>
 
     <template id="unit_catalogue_contextual_resource_cta" inherit_id="facodi_learning.curriculum_public_unit_index" name="FACODI Contextual Unit Catalogue CTA">
-        <xpath expr="//div[contains(@class, 'facodi-learning-hero')]//*[@data-facodi-roadmap-resource-cta='1']" position="attributes">
+        <xpath expr="//*[@data-facodi-unit-catalogue-resource-cta='1']" position="attributes">
             <attribute name="href">/submissions/new?type=resource&amp;source=curricular_units_catalog_cta&amp;section=curricular-units</attribute>
         </xpath>
     </template>
