@@ -69,6 +69,11 @@ class TestContextualSubmissionStaticContracts(TransactionCase):
         self.assertIn("_public_course", controller)
         self.assertIn("_public_slide", controller)
         self.assertIn("_discover_public_youtube_metadata", controller)
+        self.assertIn('"return_url": return_url', controller)
+        self.assertIn('"return_label": return_label', controller)
+        self.assertIn("_facodi_public_catalog_path", controller)
+        self.assertIn("suggested_slide.website_url", controller)
+        self.assertIn("course.website_url", controller)
 
     def test_template_has_contextual_form_contract(self):
         template = self._read("views/website_contextual_submission.xml")
@@ -89,6 +94,9 @@ class TestContextualSubmissionStaticContracts(TransactionCase):
         self.assertNotIn('<code t-esc="source_cta"', template)
         self.assertIn('name="curriculum_unit_id"', template)
         self.assertNotIn("Classic resource form", template)
+        self.assertIn('t-att-href="return_url"', template)
+        self.assertIn('t-esc="return_label"', template)
+        self.assertIn("submission_type != 'resource'", template)
 
     def test_curriculum_ctas_pass_context(self):
         template = self._read("views/website_curriculum_contextual_ctas.xml")
