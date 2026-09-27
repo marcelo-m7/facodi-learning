@@ -145,12 +145,13 @@ class TestContextualSubmissionStaticContracts(TransactionCase):
         self.assertIn("resource_type=video", explore)
         self.assertIn("source=portal_resource_cta", portal)
 
-    def test_submission_status_followup_preserves_context(self):
+    def test_submission_status_followup_preserves_full_context(self):
         template = self._read("views/website_submission.xml")
-        self.assertIn("source=submission_status_followup", template)
-        self.assertIn("section=submission-status", template)
-        self.assertIn("unit_id=%s", template)
-        self.assertNotIn(
-            "t-att-href=\"'/contribuir/recurso?curriculum_unit_id=%s'",
-            template,
-        )
+        controller = self._read("controllers/submission.py")
+        self.assertIn('t-att-href="followup_submission_url"', template)
+        self.assertIn('"source": "submission_status_followup"', controller)
+        self.assertIn('"section": "submission-status"', controller)
+        for key in ("unit_id", "roadmap_id", "course_id", "slide_id", "source_page_url"):
+            self.assertIn(f'followup_params["{key}"]', controller)
+        self.assertIn("urlencode(followup_params)", controller)
+        self.assertNotIn("/contribuir/recurso?curriculum_unit_id=", template)
