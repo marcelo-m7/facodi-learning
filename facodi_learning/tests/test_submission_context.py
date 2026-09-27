@@ -78,6 +78,91 @@ class TestSubmissionContextWebsite(HttpCase):
         tree = html.fromstring(response.text)
         self.assertFalse(tree.xpath('//input[@name="roadmap_id"]/@value'))
 
+    def test_correction_requires_authored_message_but_not_email(self):
+        route = (
+            "/submissions/new?type=correction&unit_id=%s"
+            "&source=unit_correction_cta&section=provenance"
+            % self.database_unit.id
+        )
+        response = self.url_open(route)
+        self.assertEqual(response.status_code, 200)
+        tree = html.fromstring(response.text)
+        textarea = tree.xpath('//textarea[@name="context"]')[0]
+        self.assertEqual((textarea.text or "").strip(), "")
+        self.assertEqual(
+            tree.xpath('//input[@name="contact_email"]/@required'),
+            [],
+        )
+
+        token = tree.xpath('//input[@name="csrf_token"]/@value')[0]
+        missing_message = self.url_open(
+            "/submissions/new",
+            data={
+                "csrf_token": token,
+                "submission_type": "correction",
+                "unit_id": str(self.database_unit.id),
+                "source_cta": "unit_correction_cta",
+                "source_section": "provenance",
+                "context": "",
+            },
+        )
+        self.assertEqual(missing_message.status_code, 200)
+        self.assertIn(
+            "Write a short message so FACODI can review the submission.",
+            missing_message.text,
+        )
+
+        token = html.fromstring(missing_message.text).xpath(
+            '//input[@name="csrf_token"]/@value'
+        )[0]
+        created = self.url_open(
+            "/submissions/new",
+            data={
+                "csrf_token": token,
+                "submission_type": "correction",
+                "unit_id": str(self.database_unit.id),
+                "source_cta": "unit_correction_cta",
+                "source_section": "provenance",
+                "context": "The source period shown here needs editorial review.",
+            },
+        )
+        self.assertEqual(created.status_code, 200)
+        submission = self.env["facodi.learning.submission"].sudo().search(
+            [
+                ("submission_type", "=", "correction"),
+                ("curriculum_unit_id", "=", self.database_unit.id),
+            ],
+            order="id desc",
+            limit=1,
+        )
+        self.assertTrue(submission)
+        self.assertEqual(submission.contact_email, False)
+
+    def test_contact_requires_message_and_email(self):
+        response = self.url_open(
+            "/submissions/new?type=contact&source=general_contact_cta&section=general"
+        )
+        self.assertEqual(response.status_code, 200)
+        tree = html.fromstring(response.text)
+        self.assertEqual(
+            tree.xpath('//input[@name="contact_email"]/@required'),
+            ["required"],
+        )
+        token = tree.xpath('//input[@name="csrf_token"]/@value')[0]
+        invalid = self.url_open(
+            "/submissions/new",
+            data={
+                "csrf_token": token,
+                "submission_type": "contact",
+                "source_cta": "general_contact_cta",
+                "source_section": "general",
+                "context": "I would like to talk about contributing.",
+                "contact_email": "",
+            },
+        )
+        self.assertEqual(invalid.status_code, 200)
+        self.assertIn("Enter an email for follow-up.", invalid.text)
+
     def test_contextual_form_persists_only_public_curricular_unit(self):
         route = (
             "/contribuir/recurso?curriculum_unit_id=%s"

@@ -3403,3 +3403,52 @@ msgstr "Unidades curriculares · FACODI"
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit_index
 msgid "Explore curricular units from validated programmes and their published FACODI open-learning coverage."
 msgstr "Explora unidades curriculares de programas validados y su cobertura publicada de aprendizaje abierto FACODI."
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
+#: model_terms:ir.ui.view,arch_db:facodi_learning.unit_provenance_correction_cta
+#: model_terms:ir.ui.view,arch_db:facodi_learning.roadmap_provenance_correction_cta
+msgid "Contact"
+msgstr "Contacto"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
+#: model_terms:ir.ui.view,arch_db:facodi_learning.unit_provenance_correction_cta
+#: model_terms:ir.ui.view,arch_db:facodi_learning.roadmap_provenance_correction_cta
+msgid "Correction"
+msgstr "Corrección"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
+#: model_terms:ir.ui.view,arch_db:facodi_learning.unit_provenance_correction_cta
+#: model_terms:ir.ui.view,arch_db:facodi_learning.roadmap_provenance_correction_cta
+msgid "Question"
+msgstr "Pregunta"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
+#: model_terms:ir.ui.view,arch_db:facodi_learning.unit_provenance_correction_cta
+#: model_terms:ir.ui.view,arch_db:facodi_learning.roadmap_provenance_correction_cta
+msgid "Learning resource"
+msgstr "Recurso de aprendizaje"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
+#: model_terms:ir.ui.view,arch_db:facodi_learning.unit_provenance_correction_cta
+#: model_terms:ir.ui.view,arch_db:facodi_learning.roadmap_provenance_correction_cta
+msgid "Suggest a correction"
+msgstr "Sugerir una corrección"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
+#: model_terms:ir.ui.view,arch_db:facodi_learning.unit_provenance_correction_cta
+#: model_terms:ir.ui.view,arch_db:facodi_learning.roadmap_provenance_correction_cta
+msgid "Tell us what should change or what you need help with."
+msgstr "Dinos qué debería cambiar o con qué necesitas ayuda."
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
+#: model_terms:ir.ui.view,arch_db:facodi_learning.unit_provenance_correction_cta
+#: model_terms:ir.ui.view,arch_db:facodi_learning.roadmap_provenance_correction_cta
+msgid "Why does this belong in FACODI?"
+msgstr "¿Por qué debería formar parte de FACODI?"

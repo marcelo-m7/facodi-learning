@@ -37,4 +37,22 @@
             <attribute name="href">/submissions/new?type=resource&amp;source=curricular_units_catalog_cta&amp;section=curricular-units</attribute>
         </xpath>
     </template>
+    <template id="unit_provenance_correction_cta" inherit_id="facodi_learning.curriculum_public_unit" name="FACODI Contextual Unit Correction CTA">
+        <xpath expr="//div[strong[normalize-space()='Provenance and limits.']]" position="inside">
+            <div class="mt-3">
+                <a t-att-href="'/submissions/new?type=correction&amp;unit_id=%s&amp;source=unit_correction_cta&amp;section=provenance' % unit.id"
+                   class="btn btn-link btn-sm px-0">Suggest a correction</a>
+            </div>
+        </xpath>
+    </template>
+
+    <template id="roadmap_provenance_correction_cta" inherit_id="facodi_learning.curriculum_public_detail" name="FACODI Contextual Roadmap Correction CTA">
+        <xpath expr="//div[contains(@class, 'alert') and strong[normalize-space()='Provenance.']]" position="inside">
+            <span class="ms-2">
+                <a t-att-href="'/submissions/new?type=correction&amp;roadmap_id=%s&amp;source=roadmap_correction_cta&amp;section=provenance' % reference.id"
+                   class="small">Suggest a correction</a>
+            </span>
+        </xpath>
+    </template>
+
 </odoo>
