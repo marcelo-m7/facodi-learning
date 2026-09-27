@@ -143,6 +143,16 @@ class TestContextualSubmissionStaticContracts(TransactionCase):
         self.assertIn("source_cta", arch)
         self.assertIn("source_section", arch)
         self.assertIn("contact_email", arch)
+        for marker in (
+            "filter_resource_submission",
+            "filter_contact_submission",
+            "filter_correction_submission",
+            "filter_question_submission",
+            "group_source_section",
+            "group_curriculum_unit",
+            "group_course",
+        ):
+            self.assertIn(marker, arch)
 
     def test_major_public_ctas_use_contextual_submission_entrypoint(self):
         slides = self._read("views/website_slides.xml")
