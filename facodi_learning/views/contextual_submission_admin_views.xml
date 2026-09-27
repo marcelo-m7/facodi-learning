@@ -12,7 +12,16 @@
                 <field name="contact_email"/>
             </xpath>
             <xpath expr="//filter[@name='group_state']" position="before">
+                <separator/>
+                <filter name="filter_resource_submission" string="Resources" domain="[('submission_type', '=', 'resource')]"/>
+                <filter name="filter_contact_submission" string="Contacts" domain="[('submission_type', '=', 'contact')]"/>
+                <filter name="filter_correction_submission" string="Corrections" domain="[('submission_type', '=', 'correction')]"/>
+                <filter name="filter_question_submission" string="Questions" domain="[('submission_type', '=', 'question')]"/>
+                <separator/>
                 <filter name="group_submission_type" string="Type" context="{'group_by': 'submission_type'}"/>
+                <filter name="group_source_section" string="Source section" context="{'group_by': 'source_section'}"/>
+                <filter name="group_curriculum_unit" string="Curricular unit" context="{'group_by': 'curriculum_unit_id'}"/>
+                <filter name="group_course" string="Course" context="{'group_by': 'course_id'}"/>
             </xpath>
         </field>
     </record>
