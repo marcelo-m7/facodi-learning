@@ -184,7 +184,7 @@
                                             </div>
                                             <div class="col-md-6">
                                                 <label class="form-label" for="facodi_contact_email">Email</label>
-                                                <input id="facodi_contact_email" name="contact_email" type="email" class="form-control" maxlength="254" t-att-required="'required' if submission_type != 'resource' else None" t-att-value="form_values.get('contact_email', '')"/>
+                                                <input id="facodi_contact_email" name="contact_email" type="email" class="form-control" maxlength="254" t-att-required="'required' if submission_type == 'contact' else None" t-att-value="form_values.get('contact_email', '')"/>
                                             </div>
                                             <div class="col-12">
                                                 <label class="form-label" for="facodi_organization">Organization</label>

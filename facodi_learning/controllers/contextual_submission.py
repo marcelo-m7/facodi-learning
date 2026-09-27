@@ -2,11 +2,8 @@ from odoo import http
 from odoo.exceptions import ValidationError
 from odoo.http import request
 
-from .submission import (
-    FacodiSubmissionController,
-    MetadataDiscoveryRateLimited,
-    _discover_public_youtube_metadata,
-)
+from . import submission as submission_controller
+from .submission import FacodiSubmissionController
 from ..services.youtube import youtube_video_identity
 
 
@@ -282,15 +279,41 @@ class FacodiContextualSubmissionController(FacodiSubmissionController):
             "source_url": source_url,
             "context": message,
             "language": language,
-            "contact_name": contact_name,
-            "contact_email": contact_email,
-            "organization": organization,
+            "contact_name": contact_name or False,
+            "contact_email": contact_email or False,
+            "organization": organization or False,
             "resource_type": (post.get("resource_type") or "video").strip()[:32],
             "resource_level": (post.get("resource_level") or "").strip()[:32] or False,
             "permission_to_contact": bool(post.get("permission_to_contact")),
         }
         errors = []
         Submission = request.env["facodi.learning.submission"]
+
+        contextual_identifiers = (
+            (
+                post.get("unit_id") or post.get("curriculum_unit_id"),
+                context["curriculum_unit"],
+                request.env._("The curricular unit context is no longer publicly available."),
+            ),
+            (
+                post.get("roadmap_id") or post.get("reference_id"),
+                context["roadmap"],
+                request.env._("The roadmap context is no longer publicly available."),
+            ),
+            (
+                post.get("course_id") or post.get("channel_id"),
+                context["course"],
+                request.env._("The course context is no longer publicly available."),
+            ),
+            (
+                post.get("slide_id") or post.get("suggested_slide_id"),
+                context["suggested_slide"],
+                request.env._("The learning item context is no longer publicly available."),
+            ),
+        )
+        for raw_identifier, resolved_record, error_message in contextual_identifiers:
+            if raw_identifier and not resolved_record:
+                errors.append(error_message)
         if submission_type == "resource":
             youtube_identity = (
                 youtube_video_identity(source_url)
@@ -303,8 +326,8 @@ class FacodiContextualSubmissionController(FacodiSubmissionController):
                 or source_url != youtube_identity["source_url"]
             ):
                 try:
-                    discovered = _discover_public_youtube_metadata(source_url)
-                except MetadataDiscoveryRateLimited:
+                    discovered = submission_controller._discover_public_youtube_metadata(source_url)
+                except submission_controller.MetadataDiscoveryRateLimited:
                     discovered = False
                 except Exception:
                     discovered = False
