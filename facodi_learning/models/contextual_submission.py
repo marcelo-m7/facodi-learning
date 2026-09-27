@@ -51,6 +51,12 @@ class FacodiLearningSubmissionContext(models.Model):
     source_cta = fields.Char(index=True)
     source_section = fields.Char(index=True)
     source_page_url = fields.Char()
+    area_tag_id = fields.Many2one(
+        "slide.tag",
+        string="Learning Area Context",
+        ondelete="set null",
+        index=True,
+    )
     roadmap_id = fields.Many2one(
         "facodi.learning.curriculum.reference",
         string="Roadmap Context",
