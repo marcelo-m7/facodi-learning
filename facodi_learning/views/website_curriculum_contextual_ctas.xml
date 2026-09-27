@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <template id="curriculum_contextual_resource_ctas" inherit_id="facodi_learning.curriculum_public_unit" name="FACODI Contextual Unit CTAs">
-        <xpath expr="//a[normalize-space()='Drop a resource']" position="attributes">
+        <xpath expr="//*[@data-facodi-unit-community-resource-cta='1']" position="attributes">
             <attribute name="t-att-href">'/submissions/new?type=resource&amp;unit_id=%s&amp;source=community_margin&amp;section=resources' % unit.id</attribute>
         </xpath>
-        <xpath expr="//a[normalize-space()='Suggest a resource']" position="attributes">
+        <xpath expr="//*[@data-facodi-unit-resource-cta='1']" position="attributes">
             <attribute name="t-att-href">'/submissions/new?type=resource&amp;unit_id=%s&amp;source=unit_resource_cta&amp;section=resources' % unit.id</attribute>
         </xpath>
     </template>
@@ -15,30 +15,30 @@
         </xpath>
     </template>
     <template id="roadmap_index_contextual_resource_cta" inherit_id="facodi_learning.curriculum_public_index" name="FACODI Contextual Roadmap Index CTA">
-        <xpath expr="//a[normalize-space()='Suggest a learning resource']" position="attributes">
+        <xpath expr="//*[@data-facodi-roadmap-resource-cta='1']" position="attributes">
             <attribute name="href">/submissions/new?type=resource&amp;source=roadmaps_catalog_cta&amp;section=roadmaps</attribute>
         </xpath>
     </template>
 
     <template id="roadmap_map_contextual_resource_cta" inherit_id="facodi_learning.curriculum_public_map" name="FACODI Contextual Roadmap Map CTA">
-        <xpath expr="//a[normalize-space()='Suggest a learning resource']" position="attributes">
+        <xpath expr="//*[@data-facodi-roadmap-resource-cta='1']" position="attributes">
             <attribute name="href">/submissions/new?type=resource&amp;source=roadmaps_catalog_cta&amp;section=roadmaps</attribute>
         </xpath>
     </template>
 
     <template id="roadmap_detail_contextual_resource_cta" inherit_id="facodi_learning.curriculum_public_detail" name="FACODI Contextual Roadmap Detail CTA">
-        <xpath expr="//a[normalize-space()='Suggest a learning resource']" position="attributes">
+        <xpath expr="//*[@data-facodi-roadmap-resource-cta='1']" position="attributes">
             <attribute name="t-att-href">'/submissions/new?type=resource&amp;roadmap_id=%s&amp;source=roadmap_resource_cta&amp;section=roadmap' % reference.id</attribute>
         </xpath>
     </template>
 
     <template id="unit_catalogue_contextual_resource_cta" inherit_id="facodi_learning.curriculum_public_unit_index" name="FACODI Contextual Unit Catalogue CTA">
-        <xpath expr="//div[contains(@class, 'facodi-learning-hero')]//a[normalize-space()='Suggest a learning resource']" position="attributes">
+        <xpath expr="//div[contains(@class, 'facodi-learning-hero')]//*[@data-facodi-roadmap-resource-cta='1']" position="attributes">
             <attribute name="href">/submissions/new?type=resource&amp;source=curricular_units_catalog_cta&amp;section=curricular-units</attribute>
         </xpath>
     </template>
     <template id="unit_provenance_correction_cta" inherit_id="facodi_learning.curriculum_public_unit" name="FACODI Contextual Unit Correction CTA">
-        <xpath expr="//div[strong[normalize-space()='Provenance and limits.']]" position="inside">
+        <xpath expr="//*[@data-facodi-unit-provenance='1']" position="inside">
             <div class="mt-3">
                 <a t-att-href="'/submissions/new?type=correction&amp;unit_id=%s&amp;source=unit_correction_cta&amp;section=provenance' % unit.id"
                    class="btn btn-link btn-sm px-0">Suggest a correction</a>
@@ -47,7 +47,7 @@
     </template>
 
     <template id="roadmap_provenance_correction_cta" inherit_id="facodi_learning.curriculum_public_detail" name="FACODI Contextual Roadmap Correction CTA">
-        <xpath expr="//div[contains(@class, 'alert') and strong[normalize-space()='Provenance.']]" position="inside">
+        <xpath expr="//*[@data-facodi-roadmap-provenance='1']" position="inside">
             <span class="ms-2">
                 <a t-att-href="'/submissions/new?type=correction&amp;roadmap_id=%s&amp;source=roadmap_correction_cta&amp;section=provenance' % reference.id"
                    class="small">Suggest a correction</a>
