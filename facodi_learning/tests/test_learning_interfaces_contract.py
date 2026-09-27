@@ -124,6 +124,10 @@ class TestLearningInterfacesContract(unittest.TestCase):
         self.assertIn("learning['modules']", self.curriculum)
         self.assertIn("learning['next_item']", self.curriculum)
 
+    def test_learning_addon_does_not_duplicate_theme_catalogue_navigation(self):
+        self.assertNotIn("curriculum_catalog_navigation", self.slides)
+        self.assertNotIn('aria-label="Aprendizagem FACODI"', self.slides)
+
     def test_course_alignment_and_contribution_expose_d1_hooks(self):
         self.assertIn("facodi-course-alignment-sheet", self.curriculum)
         self.assertIn("facodi-open-callout", self.slides)
