@@ -3440,3 +3440,73 @@ msgstr ""
 #: code:addons/facodi_learning/controllers/contextual_submission.py:0
 msgid "The learning item context is no longer publicly available."
 msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
+msgid "What is this about?"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
+msgid "Choose a topic"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
+msgid "Collaboration"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
+msgid "Partnership"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
+msgid "Content / editorial"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
+msgid "Technical issue"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
+msgid "Accessibility"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
+msgid "We use this only to route your message to the right review desk."
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
+msgid "Came from"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
+msgid "Choose what you are contacting FACODI about."
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
+msgid "Course contribution"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
+msgid "Community collaboration"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
+msgid "FACODI ecosystem"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
+msgid "FACODI project"
+msgstr ""

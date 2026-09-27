@@ -1,3 +1,5 @@
+from urllib.parse import urlsplit
+
 from odoo import http
 from odoo.exceptions import ValidationError
 from odoo.http import request
@@ -107,6 +109,19 @@ class FacodiContextualSubmissionController(FacodiSubmissionController):
         candidate = (value or "").strip().lower()
         return candidate if candidate in allowed else default
 
+    @staticmethod
+    def _safe_origin_path(value):
+        candidate = (value or "").strip()
+        if not candidate:
+            return ""
+        base = urlsplit(request.website.get_base_url() or "")
+        parsed = urlsplit(candidate)
+        if parsed.scheme or parsed.netloc:
+            if parsed.scheme not in {"http", "https"} or parsed.netloc != base.netloc:
+                return ""
+        path = parsed.path or "/"
+        return path[:2048] if path.startswith("/") else ""
+
     def _submission_context_from_kwargs(self, kwargs):
         Submission = request.env["facodi.learning.submission"]
         submission_type = Submission._normalize_submission_type(kwargs.get("type") or kwargs.get("submission_type"))
@@ -122,15 +137,14 @@ class FacodiContextualSubmissionController(FacodiSubmissionController):
         )
         source_cta = Submission._clean_context_slug(kwargs.get("source") or kwargs.get("source_cta"))
         source_section = Submission._clean_context_slug(kwargs.get("section") or kwargs.get("source_section"))
-        source_page_url = self._bounded_text(
-            kwargs.get("source_page_url") or kwargs.get("origin"),
-            2048,
+        source_page_url = self._safe_origin_path(
+            kwargs.get("source_page_url") or kwargs.get("origin")
         )
         if not source_page_url:
             referrer = request.httprequest.referrer or ""
             website_url = (request.website.get_base_url() or "").rstrip("/")
             if website_url and referrer.startswith(website_url + "/"):
-                source_page_url = referrer[:2048]
+                source_page_url = self._safe_origin_path(referrer)
 
         resource_type = self._safe_selection(
             kwargs.get("resource_type"),
@@ -145,6 +159,19 @@ class FacodiContextualSubmissionController(FacodiSubmissionController):
             kwargs.get("language"),
             {"pt", "en", "es", "fr"},
         )
+        contact_topic_defaults = {
+            "course_contact_cta": "content",
+            "faq_contribution_cta": "collaboration",
+            "community_collaboration_cta": "collaboration",
+            "editorial_routes_contact_cta": "collaboration",
+            "ecosystem_contact_cta": "partnership",
+            "institutional_contact_cta": "partnership",
+        }
+        contact_topic = self._safe_selection(
+            kwargs.get("contact_topic") or kwargs.get("topic"),
+            {"collaboration", "partnership", "content", "technical", "accessibility", "other"},
+            contact_topic_defaults.get(source_cta, ""),
+        )
 
         form_values = {
             "submission_type": submission_type,
@@ -154,6 +181,7 @@ class FacodiContextualSubmissionController(FacodiSubmissionController):
             "resource_type": resource_type,
             "resource_level": resource_level,
             "language": language,
+            "contact_topic": contact_topic,
             "name": self._bounded_text(kwargs.get("name") or kwargs.get("title"), 200),
             "source_url": self._bounded_text(kwargs.get("source_url"), 2048),
             "context": self._bounded_text(kwargs.get("context") or kwargs.get("message"), 4000),
@@ -234,6 +262,42 @@ class FacodiContextualSubmissionController(FacodiSubmissionController):
             form_values["course_id"] = course.id
         if suggested_slide:
             form_values["suggested_slide_id"] = suggested_slide.id
+        cta_labels = {
+            "community_margin": request.env._("Community margin"),
+            "unit_resource_cta": request.env._("Curricular unit resources"),
+            "roadmap_resource_cta": request.env._("Roadmap resources"),
+            "course_resource_cta": request.env._("Course resources"),
+            "course_contact_cta": request.env._("Course contribution"),
+            "explore_empty_shelf": request.env._("Explore empty shelf"),
+            "community_video_cta": request.env._("Community videos"),
+            "portal_resource_cta": request.env._("My FACODI"),
+            "roadmaps_catalog_cta": request.env._("Roadmaps catalogue"),
+            "curricular_units_catalog_cta": request.env._("Curricular units catalogue"),
+            "course_catalog_cta": request.env._("Course catalogue"),
+            "faq_contribution_cta": request.env._("FAQ contribution"),
+            "community_collaboration_cta": request.env._("Community collaboration"),
+            "editorial_routes_contact_cta": request.env._("Contact and contribute"),
+            "ecosystem_contact_cta": request.env._("FACODI ecosystem"),
+            "institutional_contact_cta": request.env._("FACODI project"),
+            "unit_correction_cta": request.env._("Curricular unit provenance"),
+            "roadmap_correction_cta": request.env._("Roadmap provenance"),
+        }
+        section_labels = {
+            "resources": request.env._("Learning resources"),
+            "course": request.env._("Course"),
+            "courses": request.env._("Courses"),
+            "roadmap": request.env._("Roadmap"),
+            "roadmaps": request.env._("Roadmaps"),
+            "curricular-units": request.env._("Curricular units"),
+            "provenance": request.env._("Provenance"),
+            "community": request.env._("Community"),
+            "faq": request.env._("FAQ"),
+            "ecosystem": request.env._("Ecosystem"),
+            "institutional": request.env._("Project"),
+            "editorial-routes": request.env._("Editorial routes"),
+            "my-facodi": request.env._("My FACODI"),
+            "explore-videos": request.env._("Community videos"),
+        }
         return {
             "form_values": form_values,
             "errors": [],
@@ -246,6 +310,8 @@ class FacodiContextualSubmissionController(FacodiSubmissionController):
             "source_cta": source_cta,
             "source_section": source_section,
             "source_page_url": source_page_url,
+            "source_cta_label": cta_labels.get(source_cta, request.env._("Contextual action") if source_cta else ""),
+            "source_section_label": section_labels.get(source_section, source_section.replace("-", " ").title() if source_section else ""),
         }
 
     @http.route(
@@ -282,6 +348,7 @@ class FacodiContextualSubmissionController(FacodiSubmissionController):
             "contact_name": contact_name or False,
             "contact_email": contact_email or False,
             "organization": organization or False,
+            "contact_topic": form_values.get("contact_topic") or False,
             "resource_type": (post.get("resource_type") or "video").strip()[:32],
             "resource_level": (post.get("resource_level") or "").strip()[:32] or False,
             "permission_to_contact": bool(post.get("permission_to_contact")),
@@ -356,6 +423,8 @@ class FacodiContextualSubmissionController(FacodiSubmissionController):
                 errors.append(request.env._("Write a short message so FACODI can review the submission."))
             if submission_type == "contact" and not contact_email:
                 errors.append(request.env._("Enter an email for follow-up."))
+            if submission_type == "contact" and not values.get("contact_topic"):
+                errors.append(request.env._("Choose what you are contacting FACODI about."))
         return context, values, errors
 
     @http.route(
