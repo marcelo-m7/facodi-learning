@@ -55,7 +55,7 @@
                     <span class="facodi-dashboard-action__icon fa fa-graduation-cap" aria-hidden="true"></span>
                     <div><strong>Keep learning</strong><small>Courses, lessons and your next study stop</small></div>
                 </a>
-                <a href="/unidades-curriculares" class="facodi-dashboard-action text-decoration-none">
+                <a href="/curricular-units" class="facodi-dashboard-action text-decoration-none">
                     <span class="facodi-dashboard-action__icon fa fa-map-o" aria-hidden="true"></span>
                     <div><strong>Academic map</strong><small>Explore UCs and their open-learning coverage</small></div>
                 </a>
