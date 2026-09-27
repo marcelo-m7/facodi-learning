@@ -134,6 +134,12 @@ class FacodiSubmissionController(http.Controller):
         ).get(submission.state, submission.state)
 
     @staticmethod
+    def _submission_type_label(submission):
+        return dict(
+            submission._fields["submission_type"]._description_selection(request.env)
+        ).get(submission.submission_type, submission.submission_type)
+
+    @staticmethod
     def _public_curriculum_unit(raw_id):
         try:
             unit_id = int(raw_id or 0)
@@ -434,6 +440,7 @@ class FacodiSubmissionController(http.Controller):
             {
                 "submission": submission,
                 "state_label": self._submission_state_label(submission),
+                "type_label": self._submission_type_label(submission),
                 "can_edit": submission.state == "submitted",
                 "can_withdraw": submission.state in {"submitted", "reviewing"},
             }
