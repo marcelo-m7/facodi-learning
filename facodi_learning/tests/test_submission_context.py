@@ -128,6 +128,39 @@ class TestSubmissionContextWebsite(HttpCase):
         )
         self.assertEqual(submission.module_id, self.public_module)
 
+        another_module = self.env["facodi.learning.curriculum.module"].create(
+            {
+                "name": "Another Public Contribution Module",
+                "website_published": True,
+            }
+        )
+        another_route = (
+            "/submissions/new?type=resource&module_id=%s"
+            "&source=module_resource_cta&section=module-resources"
+            % another_module.id
+        )
+        another_page = self.url_open(another_route)
+        another_tree = html.fromstring(another_page.text)
+        another_created = self.url_open(
+            "/submissions/new",
+            data={
+                "csrf_token": another_tree.xpath('//input[@name="csrf_token"]/@value')[0],
+                "submission_type": "resource",
+                "module_id": str(another_module.id),
+                "source_cta": "module_resource_cta",
+                "source_section": "module-resources",
+                "name": "Same resource in another module",
+                "source_url": "https://example.org/module-context",
+                "context": "The same public resource is useful in another reusable module.",
+            },
+        )
+        self.assertEqual(another_created.status_code, 200)
+        second = self.env["facodi.learning.submission"].sudo().search(
+            [("name", "=", "Same resource in another module")],
+            limit=1,
+        )
+        self.assertEqual(second.module_id, another_module)
+
         private_route = (
             "/submissions/new?type=resource&module_id=%s"
             "&source=module_resource_cta&section=module-resources"
