@@ -315,6 +315,8 @@ class FacodiContextualSubmissionController(FacodiSubmissionController):
             "folder_tabs_contribute": request.env._("Learning navigation"),
             "course_showcase_contribute": request.env._("Learning catalogue"),
             "submission_status_followup": request.env._("Submission follow-up"),
+            "my_submissions_new": request.env._("My submissions"),
+            "my_submissions_empty": request.env._("My submissions empty state"),
         }
         return_url = source_page_url
         return_label = request.env._("Back to Explore")
@@ -356,6 +358,7 @@ class FacodiContextualSubmissionController(FacodiSubmissionController):
             "learning-navigation": request.env._("Learning navigation"),
             "learning-catalogue": request.env._("Learning catalogue"),
             "submission-status": request.env._("Submission status"),
+            "my-submissions": request.env._("My submissions"),
             "general": request.env._("General"),
         }
         return {

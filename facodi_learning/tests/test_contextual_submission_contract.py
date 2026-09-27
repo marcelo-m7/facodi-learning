@@ -158,6 +158,9 @@ class TestContextualSubmissionStaticContracts(TransactionCase):
 
         curriculum = self._read("views/website_curriculum.xml")
         legacy_submission = self._read("views/website_submission.xml")
+        self.assertIn("source=my_submissions_new", legacy_submission)
+        self.assertIn("source=my_submissions_empty", legacy_submission)
+        self.assertIn("section=my-submissions", legacy_submission)
         self.assertNotIn('href="/contribuir/recurso"', curriculum)
         self.assertIn("source=roadmaps_catalog_cta", curriculum)
         self.assertIn("source=curricular_units_catalog_cta", curriculum)
