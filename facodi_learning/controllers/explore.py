@@ -249,8 +249,9 @@ class FacodiExploreController(http.Controller):
         selected_area = self._visible_areas().filtered(lambda tag: tag.id == area_id)[:1]
         if selected_area:
             contribution_params["area"] = selected_area.id
-        if language in {"pt", "en", "es", "fr"}:
-            contribution_params["language"] = language
+        contribution_language = language.replace("-", "_").split("_", 1)[0].lower()
+        if contribution_language in {"pt", "en", "es", "fr"}:
+            contribution_params["language"] = contribution_language
         if content_format in {"video", "article"}:
             contribution_params["resource_type"] = content_format
         contribution_url = "/submissions/new?" + self._query_string(contribution_params)
