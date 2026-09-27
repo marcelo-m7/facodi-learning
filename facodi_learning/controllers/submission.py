@@ -421,8 +421,6 @@ class FacodiSubmissionController(http.Controller):
             followup_params["course_id"] = submission.course_id.id
         if submission.suggested_slide_id:
             followup_params["slide_id"] = submission.suggested_slide_id.id
-        if submission.source_page_url:
-            followup_params["source_page_url"] = submission.source_page_url
         followup_submission_url = "/submissions/new?" + urlencode(followup_params)
 
         response = request.render(
