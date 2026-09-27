@@ -45,12 +45,12 @@ class WebsiteMenu(models.Model):
             explore.write({"name": "Explore", "sequence": 40})
 
         entries = (
-            ("Courses", "/slides", 10),
+            ("Courses", "/courses", 10),
             ("Areas", "/explorar/areas", 20),
             ("Learning resources", "/explorar/conteudos", 30),
             ("Community videos", "/explorar/videos", 40),
             ("Roadmaps", "/roadmaps", 50),
-            ("Curricular units", "/unidades-curriculares", 60),
+            ("Curricular units", "/curricular-units", 60),
         )
         target_urls = {url for _name, url, _sequence in entries}
 
