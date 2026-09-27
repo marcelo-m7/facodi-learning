@@ -14,4 +14,27 @@
             <attribute name="t-att-href">'/submissions/new?type=resource&amp;unit_id=%s&amp;source=unit_resource_cta&amp;section=resources' % entry['unit'].id</attribute>
         </xpath>
     </template>
+    <template id="roadmap_index_contextual_resource_cta" inherit_id="facodi_learning.curriculum_public_index" name="FACODI Contextual Roadmap Index CTA">
+        <xpath expr="//a[normalize-space()='Suggest a learning resource']" position="attributes">
+            <attribute name="href">/submissions/new?type=resource&amp;source=roadmaps_catalog_cta&amp;section=roadmaps</attribute>
+        </xpath>
+    </template>
+
+    <template id="roadmap_map_contextual_resource_cta" inherit_id="facodi_learning.curriculum_public_map" name="FACODI Contextual Roadmap Map CTA">
+        <xpath expr="//a[normalize-space()='Suggest a learning resource']" position="attributes">
+            <attribute name="href">/submissions/new?type=resource&amp;source=roadmaps_catalog_cta&amp;section=roadmaps</attribute>
+        </xpath>
+    </template>
+
+    <template id="roadmap_detail_contextual_resource_cta" inherit_id="facodi_learning.curriculum_public_detail" name="FACODI Contextual Roadmap Detail CTA">
+        <xpath expr="//a[normalize-space()='Suggest a learning resource']" position="attributes">
+            <attribute name="t-att-href">'/submissions/new?type=resource&amp;roadmap_id=%s&amp;source=roadmap_resource_cta&amp;section=roadmap' % reference.id</attribute>
+        </xpath>
+    </template>
+
+    <template id="unit_catalogue_contextual_resource_cta" inherit_id="facodi_learning.curriculum_public_unit_index" name="FACODI Contextual Unit Catalogue CTA">
+        <xpath expr="//div[contains(@class, 'facodi-learning-hero')]//a[normalize-space()='Suggest a learning resource']" position="attributes">
+            <attribute name="href">/submissions/new?type=resource&amp;source=curricular_units_catalog_cta&amp;section=curricular-units</attribute>
+        </xpath>
+    </template>
 </odoo>
