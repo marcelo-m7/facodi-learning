@@ -232,9 +232,9 @@
                                    t-att-href="'/minhas-contribuicoes/%s' % submission.id"
                                    class="btn btn-outline-secondary">Manage submission</a>
                                 <a t-if="curriculum_unit"
-                                   t-att-href="'/contribuir/recurso?curriculum_unit_id=%s' % curriculum_unit.id"
+                                   t-att-href="'/submissions/new?type=resource&amp;unit_id=%s&amp;source=submission_status_followup&amp;section=submission-status' % curriculum_unit.id"
                                    class="btn btn-link">Suggest a resource</a>
-                                <a t-else="" href="/contribuir/recurso" class="btn btn-link">Suggest a resource</a>
+                                <a t-else="" href="/submissions/new?type=resource&amp;source=submission_status_followup&amp;section=submission-status" class="btn btn-link">Suggest a resource</a>
                             </div>
                         </div>
                     </div>
