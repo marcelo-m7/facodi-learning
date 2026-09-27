@@ -168,7 +168,7 @@
                                                       rows="5"
                                                       maxlength="4000"
                                                       class="form-control"
-                                                      t-att-required="'required' if submission_type != 'resource' else None"
+                                                      t-att-required="'required' if submission_type == 'contact' else None"
                                                       t-att-placeholder="'Tell us what should change or what you need help with.' if submission_type != 'resource' else 'Why does this belong in FACODI?'"><t t-esc="form_values.get('context', '')"/></textarea>
                                         </div>
                                     </div>
