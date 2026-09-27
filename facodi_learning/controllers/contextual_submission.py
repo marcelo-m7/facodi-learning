@@ -22,6 +22,15 @@ class FacodiContextualSubmissionController(FacodiSubmissionController):
             return request.env[model].browse()
         return record
 
+    @staticmethod
+    def _bounded_text(value, limit):
+        return (value or "").strip()[:limit]
+
+    @staticmethod
+    def _safe_selection(value, allowed, default=""):
+        candidate = (value or "").strip().lower()
+        return candidate if candidate in allowed else default
+
     def _submission_context_from_kwargs(self, kwargs):
         Submission = request.env["facodi.learning.submission"]
         submission_type = Submission._normalize_submission_type(kwargs.get("type") or kwargs.get("submission_type"))
@@ -42,14 +51,101 @@ class FacodiContextualSubmissionController(FacodiSubmissionController):
         )
         source_cta = Submission._clean_context_slug(kwargs.get("source") or kwargs.get("source_cta"))
         source_section = Submission._clean_context_slug(kwargs.get("section") or kwargs.get("source_section"))
-        source_page_url = (kwargs.get("source_page_url") or kwargs.get("origin") or "").strip()[:2048]
+        source_page_url = self._bounded_text(
+            kwargs.get("source_page_url") or kwargs.get("origin"),
+            2048,
+        )
+        if not source_page_url:
+            referrer = request.httprequest.referrer or ""
+            website_url = (request.website.get_base_url() or "").rstrip("/")
+            if website_url and referrer.startswith(website_url + "/"):
+                source_page_url = referrer[:2048]
+
+        resource_type = self._safe_selection(
+            kwargs.get("resource_type"),
+            {"video", "article", "book", "tool", "repository", "course", "other"},
+            "video",
+        )
+        resource_level = self._safe_selection(
+            kwargs.get("resource_level"),
+            {"introductory", "intermediate", "advanced"},
+        )
+        language = self._safe_selection(
+            kwargs.get("language"),
+            {"pt", "en", "es", "fr"},
+        )
 
         form_values = {
             "submission_type": submission_type,
             "source_cta": source_cta,
             "source_section": source_section,
             "source_page_url": source_page_url,
+            "resource_type": resource_type,
+            "resource_level": resource_level,
+            "language": language,
+            "name": self._bounded_text(kwargs.get("name") or kwargs.get("title"), 200),
+            "source_url": self._bounded_text(kwargs.get("source_url"), 2048),
+            "context": self._bounded_text(kwargs.get("context") or kwargs.get("message"), 4000),
         }
+
+        if not request.env.user._is_public():
+            partner = request.env.user.partner_id
+            form_values.update(
+                {
+                    "contact_name": partner.name or "",
+                    "contact_email": partner.email or request.env.user.email or "",
+                    "organization": partner.parent_id.name if partner.parent_id else "",
+                }
+            )
+
+        profile_context = ""
+        if curriculum_unit:
+            profile_context = request.env._(
+                "Suggested for curricular unit: %s (%s)."
+            ) % (
+                curriculum_unit.name,
+                curriculum_unit.external_unit_code or request.env._("no source code"),
+            )
+        elif roadmap:
+            profile_context = request.env._(
+                "Suggested for roadmap: %s."
+            ) % roadmap.display_name
+        elif course:
+            profile_context = request.env._(
+                "Suggested for course: %s."
+            ) % course.name
+        elif suggested_slide:
+            profile_context = request.env._(
+                "Suggested around learning item: %s."
+            ) % suggested_slide.name
+
+        cta_defaults = {
+            "community_margin": request.env._(
+                "I found a resource that could help learners studying this curricular unit."
+            ),
+            "unit_resource_cta": request.env._(
+                "I suggest this resource to strengthen the learning coverage for this curricular unit."
+            ),
+            "roadmap_resource_cta": request.env._(
+                "I suggest this resource for this learning roadmap."
+            ),
+            "course_resource_cta": request.env._(
+                "I suggest this resource as a useful companion to this course."
+            ),
+            "explore_empty_shelf": request.env._(
+                "I found a resource that is missing from the current FACODI catalogue."
+            ),
+            "community_video_cta": request.env._(
+                "I want to share this public video with the FACODI community."
+            ),
+            "portal_resource_cta": request.env._(
+                "I want to add a useful resource to the FACODI community desk."
+            ),
+        }
+        if not form_values["context"]:
+            form_values["context"] = " ".join(
+                part for part in (profile_context, cta_defaults.get(source_cta, "")) if part
+            )
         if curriculum_unit:
             form_values["curriculum_unit_id"] = curriculum_unit.id
         if roadmap:

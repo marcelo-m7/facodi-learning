@@ -59,7 +59,7 @@
                     <span class="facodi-dashboard-action__icon fa fa-map-o" aria-hidden="true"></span>
                     <div><strong>Academic map</strong><small>Explore UCs and their open-learning coverage</small></div>
                 </a>
-                <a href="/contribuir/recurso" class="facodi-dashboard-action text-decoration-none">
+                <a href="/submissions/new?type=resource&amp;source=portal_resource_cta&amp;section=my-facodi" class="facodi-dashboard-action text-decoration-none">
                     <span class="facodi-dashboard-action__icon fa fa-plus" aria-hidden="true"></span>
                     <div><strong>Drop a resource</strong><small>Put something useful on the community desk</small></div>
                 </a>
@@ -139,7 +139,7 @@
                         <span class="facodi-empty-icon fa fa-lightbulb-o" aria-hidden="true"></span>
                         <h3 class="h4">Found something worth sharing?</h3>
                         <p class="text-muted">Put it on the community desk and let FACODI take it through review.</p>
-                        <a href="/contribuir/recurso" class="btn btn-primary">Drop a resource</a>
+                        <a href="/submissions/new?type=resource&amp;source=portal_resource_cta&amp;section=my-facodi" class="btn btn-primary">Drop a resource</a>
                     </div>
                 </div>
             </div>

@@ -8,7 +8,7 @@
                     <a href="/curricular-units" class="text-decoration-none">Curricular Units</a>
                     <a href="/roadmaps" class="text-decoration-none">Roadmaps</a>
                     <a href="/courses" class="text-decoration-none">Explore Content</a>
-                    <a href="/contribuir/recurso" class="text-decoration-none">Suggest a resource</a>
+                    <a href="/submissions/new?type=resource&amp;source=course_catalog_cta&amp;section=courses" class="text-decoration-none">Suggest a resource</a>
                 </nav>
             </section>
         </xpath>
@@ -34,7 +34,7 @@
                 <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
                     <strong>Contribute to FACODI</strong>
                     <div class="d-flex flex-wrap gap-2">
-                        <a href="/contribuir/recurso" class="btn btn-outline-primary">Suggest a learning resource</a>
+                        <a t-att-href="'/submissions/new?type=resource&amp;course_id=%s&amp;source=course_resource_cta&amp;section=course' % channel.id" class="btn btn-outline-primary">Suggest a learning resource</a>
                         <a href="/contactus" class="btn btn-link">Other contribution</a>
                     </div>
                 </div>

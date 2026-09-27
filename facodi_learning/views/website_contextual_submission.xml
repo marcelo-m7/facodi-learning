@@ -67,10 +67,16 @@
 
                                 <div class="card mb-4 facodi-form-section">
                                     <div class="card-body">
-                                        <h2 class="h5">Submission details</h2>
+                                        <div class="d-flex flex-wrap align-items-center justify-content-between gap-2">
+                                            <h2 class="h5 mb-0">Submission details</h2>
+                                            <span t-if="source_cta or source_section" class="badge text-bg-light border">Context pre-filled</span>
+                                        </div>
+                                        <p t-if="source_cta or curriculum_unit or roadmap or course or suggested_slide" class="small text-muted mt-2 mb-3">
+                                            We already added the context from where you clicked. Review it, add the resource itself and tell us why it belongs here.
+                                        </p>
                                         <div class="mb-3">
-                                            <label class="form-label" for="facodi_submission_title">Title / subject</label>
-                                            <input id="facodi_submission_title" name="name" type="text" maxlength="200" class="form-control" t-att-value="form_values.get('name', '')"/>
+                                            <label class="form-label" for="facodi_submission_name">Title / subject</label>
+                                            <input id="facodi_submission_name" name="name" type="text" maxlength="200" class="form-control" t-att-value="form_values.get('name', '')"/>
                                         </div>
 
                                         <t t-if="submission_type == 'resource'">
@@ -85,32 +91,32 @@
                                                 <div class="col-md-4">
                                                     <label class="form-label" for="facodi_resource_type">Resource type</label>
                                                     <select id="facodi_resource_type" name="resource_type" class="form-select">
-                                                        <option value="video">Video</option>
-                                                        <option value="article">Article</option>
-                                                        <option value="book">Book</option>
-                                                        <option value="tool">Tool</option>
-                                                        <option value="repository">Repository</option>
-                                                        <option value="course">External course</option>
-                                                        <option value="other">Other</option>
+                                                        <option value="video" t-att-selected="'selected' if form_values.get('resource_type', 'video') == 'video' else None">Video</option>
+                                                        <option value="article" t-att-selected="'selected' if form_values.get('resource_type') == 'article' else None">Article</option>
+                                                        <option value="book" t-att-selected="'selected' if form_values.get('resource_type') == 'book' else None">Book</option>
+                                                        <option value="tool" t-att-selected="'selected' if form_values.get('resource_type') == 'tool' else None">Tool</option>
+                                                        <option value="repository" t-att-selected="'selected' if form_values.get('resource_type') == 'repository' else None">Repository</option>
+                                                        <option value="course" t-att-selected="'selected' if form_values.get('resource_type') == 'course' else None">External course</option>
+                                                        <option value="other" t-att-selected="'selected' if form_values.get('resource_type') == 'other' else None">Other</option>
                                                     </select>
                                                 </div>
                                                 <div class="col-md-4">
                                                     <label class="form-label" for="facodi_submission_language">Language</label>
                                                     <select id="facodi_submission_language" name="language" class="form-select">
-                                                        <option value="">Not specified</option>
-                                                        <option value="pt">Portuguese</option>
-                                                        <option value="en">English</option>
-                                                        <option value="es">Spanish</option>
-                                                        <option value="fr">French</option>
+                                                        <option value="" t-att-selected="'selected' if not form_values.get('language') else None">Not specified</option>
+                                                        <option value="pt" t-att-selected="'selected' if form_values.get('language') == 'pt' else None">Portuguese</option>
+                                                        <option value="en" t-att-selected="'selected' if form_values.get('language') == 'en' else None">English</option>
+                                                        <option value="es" t-att-selected="'selected' if form_values.get('language') == 'es' else None">Spanish</option>
+                                                        <option value="fr" t-att-selected="'selected' if form_values.get('language') == 'fr' else None">French</option>
                                                     </select>
                                                 </div>
                                                 <div class="col-md-4">
                                                     <label class="form-label" for="facodi_resource_level">Level</label>
                                                     <select id="facodi_resource_level" name="resource_level" class="form-select">
-                                                        <option value="">Not specified</option>
-                                                        <option value="introductory">Introductory</option>
-                                                        <option value="intermediate">Intermediate</option>
-                                                        <option value="advanced">Advanced</option>
+                                                        <option value="" t-att-selected="'selected' if not form_values.get('resource_level') else None">Not specified</option>
+                                                        <option value="introductory" t-att-selected="'selected' if form_values.get('resource_level') == 'introductory' else None">Introductory</option>
+                                                        <option value="intermediate" t-att-selected="'selected' if form_values.get('resource_level') == 'intermediate' else None">Intermediate</option>
+                                                        <option value="advanced" t-att-selected="'selected' if form_values.get('resource_level') == 'advanced' else None">Advanced</option>
                                                     </select>
                                                 </div>
                                             </div>
@@ -144,7 +150,7 @@
                                             </div>
                                         </div>
                                         <div class="form-check mt-3">
-                                            <input id="facodi_permission_contact" name="permission_to_contact" value="1" type="checkbox" class="form-check-input"/>
+                                            <input id="facodi_permission_contact" name="permission_to_contact" value="1" type="checkbox" class="form-check-input" t-att-checked="'checked' if form_values.get('permission_to_contact') else None"/>
                                             <label class="form-check-label" for="facodi_permission_contact">FACODI may contact me about this submission.</label>
                                         </div>
                                     </div>

@@ -55,6 +55,11 @@ class TestContextualSubmissionStaticContracts(TransactionCase):
         self.assertIn('"/en/submissions/new"', controller)
         self.assertIn("unit_id", controller)
         self.assertIn("_normalize_submission_type", controller)
+        self.assertIn("community_video_cta", controller)
+        self.assertIn("portal_resource_cta", controller)
+        self.assertIn("request.httprequest.referrer", controller)
+        self.assertIn("contact_name", controller)
+        self.assertIn("contact_email", controller)
 
     def test_template_has_contextual_form_contract(self):
         template = self._read("views/website_contextual_submission.xml")
@@ -64,6 +69,12 @@ class TestContextualSubmissionStaticContracts(TransactionCase):
         self.assertIn('name="source_section"', template)
         self.assertIn("You are contributing in this context", template)
         self.assertIn('data-facodi-resource-submission', template)
+        self.assertIn('id="facodi_submission_name"', template)
+        self.assertIn("Context pre-filled", template)
+        self.assertIn("form_values.get('resource_type'", template)
+        self.assertIn("form_values.get('language'", template)
+        self.assertIn("form_values.get('resource_level'", template)
+        self.assertIn("form_values.get('permission_to_contact')", template)
 
     def test_curriculum_ctas_pass_context(self):
         template = self._read("views/website_curriculum_contextual_ctas.xml")
@@ -79,3 +90,14 @@ class TestContextualSubmissionStaticContracts(TransactionCase):
         self.assertIn("source_cta", arch)
         self.assertIn("source_section", arch)
         self.assertIn("contact_email", arch)
+
+    def test_major_public_ctas_use_contextual_submission_entrypoint(self):
+        slides = self._read("views/website_slides.xml")
+        explore = self._read("views/website_explore.xml")
+        portal = self._read("views/portal_home.xml")
+        self.assertIn("source=course_resource_cta", slides)
+        self.assertIn("course_id=%s", slides)
+        self.assertIn("source=explore_empty_shelf", explore)
+        self.assertIn("source=community_video_cta", explore)
+        self.assertIn("resource_type=video", explore)
+        self.assertIn("source=portal_resource_cta", portal)
