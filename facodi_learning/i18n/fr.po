@@ -3457,3 +3457,23 @@ msgstr "Dites-nous ce qui doit changer ou ce pour quoi vous avez besoin d’aide
 #: model_terms:ir.ui.view,arch_db:facodi_learning.roadmap_provenance_correction_cta
 msgid "Why does this belong in FACODI?"
 msgstr "Pourquoi cela a-t-il sa place dans FACODI ?"
+
+#. module: facodi_learning
+#: code:addons/facodi_learning/controllers/contextual_submission.py:0
+msgid "The curricular unit context is no longer publicly available."
+msgstr "Le contexte de l’unité d’enseignement n’est plus disponible publiquement."
+
+#. module: facodi_learning
+#: code:addons/facodi_learning/controllers/contextual_submission.py:0
+msgid "The roadmap context is no longer publicly available."
+msgstr "Le contexte du parcours n’est plus disponible publiquement."
+
+#. module: facodi_learning
+#: code:addons/facodi_learning/controllers/contextual_submission.py:0
+msgid "The course context is no longer publicly available."
+msgstr "Le contexte du cours n’est plus disponible publiquement."
+
+#. module: facodi_learning
+#: code:addons/facodi_learning/controllers/contextual_submission.py:0
+msgid "The learning item context is no longer publicly available."
+msgstr "Le contexte de l’élément d’apprentissage n’est plus disponible publiquement."
