@@ -293,6 +293,15 @@ class TestSubmissionContextWebsite(HttpCase):
         self.assertIn(">Lesson<", correction.text)
         self.assertNotIn("Contextual action", correction.text)
 
+        question = self.url_open(
+            "/submissions/new?type=question&source=study_player_question_cta"
+            "&section=lesson"
+        )
+        self.assertEqual(question.status_code, 200)
+        self.assertIn("Lesson question", question.text)
+        self.assertIn(">Lesson<", question.text)
+        self.assertNotIn("Contextual action", question.text)
+
     def test_remaining_public_ctas_have_human_labels_and_prefill(self):
         empty_shelf = self.url_open(
             "/submissions/new?type=resource"
