@@ -156,6 +156,25 @@ class TestSubmissionContextWebsite(HttpCase):
             self.assertIn(prefill, response.text, source)
             self.assertNotIn("Contextual action", response.text, source)
 
+    def test_study_player_ctas_have_specific_human_context(self):
+        resource = self.url_open(
+            "/submissions/new?type=resource&source=study_player_resource_cta"
+            "&section=lesson"
+        )
+        self.assertEqual(resource.status_code, 200)
+        self.assertIn("Lesson resources", resource.text)
+        self.assertIn("useful companion to this lesson", resource.text)
+        self.assertNotIn("Contextual action", resource.text)
+
+        correction = self.url_open(
+            "/submissions/new?type=correction&source=study_player_correction_cta"
+            "&section=lesson"
+        )
+        self.assertEqual(correction.status_code, 200)
+        self.assertIn("Lesson problem report", correction.text)
+        self.assertIn(">Lesson<", correction.text)
+        self.assertNotIn("Contextual action", correction.text)
+
     def test_contact_requires_message_and_email(self):
         response = self.url_open(
             "/submissions/new?type=contact&source=general_contact_cta&section=general"
