@@ -63,6 +63,12 @@ class FacodiLearningSubmissionContext(models.Model):
         ondelete="set null",
         index=True,
     )
+    module_id = fields.Many2one(
+        "facodi.learning.curriculum.module",
+        string="Learning Module Context",
+        ondelete="set null",
+        index=True,
+    )
     course_id = fields.Many2one(
         "slide.channel",
         string="Course Context",
