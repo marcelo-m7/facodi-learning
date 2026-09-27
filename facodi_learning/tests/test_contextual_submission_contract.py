@@ -155,6 +155,9 @@ class TestContextualSubmissionStaticContracts(TransactionCase):
         self.assertIn("source=community_video_cta", explore)
         self.assertIn("resource_type=video", explore)
         self.assertIn("source=portal_resource_cta", portal)
+        self.assertIn("source=my_submissions_new", legacy_submission)
+        self.assertIn("source=my_submissions_empty", legacy_submission)
+        self.assertIn("section=my-submissions", legacy_submission)
 
         curriculum = self._read("views/website_curriculum.xml")
         legacy_submission = self._read("views/website_submission.xml")
