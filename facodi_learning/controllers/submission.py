@@ -2,6 +2,7 @@ import logging
 import threading
 import time
 from collections import OrderedDict
+from urllib.parse import urlencode
 
 from odoo import http
 from odoo.exceptions import ValidationError
@@ -407,6 +408,23 @@ class FacodiSubmissionController(http.Controller):
         if not curriculum_unit_url:
             curriculum_unit = False
 
+        followup_params = {
+            "type": "resource",
+            "source": "submission_status_followup",
+            "section": "submission-status",
+        }
+        if curriculum_unit:
+            followup_params["unit_id"] = curriculum_unit.id
+        if submission.roadmap_id:
+            followup_params["roadmap_id"] = submission.roadmap_id.id
+        if submission.course_id:
+            followup_params["course_id"] = submission.course_id.id
+        if submission.suggested_slide_id:
+            followup_params["slide_id"] = submission.suggested_slide_id.id
+        if submission.source_page_url:
+            followup_params["source_page_url"] = submission.source_page_url
+        followup_submission_url = "/submissions/new?" + urlencode(followup_params)
+
         response = request.render(
             "facodi_learning.resource_submission_status",
             {
@@ -414,6 +432,7 @@ class FacodiSubmissionController(http.Controller):
                 "state_label": state_label,
                 "curriculum_unit": curriculum_unit,
                 "curriculum_unit_url": curriculum_unit_url,
+                "followup_submission_url": followup_submission_url,
             },
         )
         response.headers["X-Robots-Tag"] = "noindex, nofollow"
