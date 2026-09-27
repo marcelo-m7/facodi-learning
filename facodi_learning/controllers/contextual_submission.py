@@ -349,6 +349,9 @@ class FacodiContextualSubmissionController(FacodiSubmissionController):
             switch_base["course_id"] = course.id
         if suggested_slide:
             switch_base["slide_id"] = suggested_slide.id
+        for key in ("resource_type", "resource_level", "language", "contact_topic"):
+            if form_values.get(key):
+                switch_base[key] = form_values[key]
         switch_base = {
             key: value for key, value in switch_base.items() if value not in ("", False, None)
         }
