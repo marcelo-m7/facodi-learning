@@ -151,7 +151,8 @@ class TestContextualSubmissionStaticContracts(TransactionCase):
         self.assertIn('t-att-href="followup_submission_url"', template)
         self.assertIn('"source": "submission_status_followup"', controller)
         self.assertIn('"section": "submission-status"', controller)
-        for key in ("unit_id", "roadmap_id", "course_id", "slide_id", "source_page_url"):
+        for key in ("unit_id", "roadmap_id", "course_id", "slide_id"):
             self.assertIn(f'followup_params["{key}"]', controller)
         self.assertIn("urlencode(followup_params)", controller)
+        self.assertNotIn('followup_params["source_page_url"]', controller)
         self.assertNotIn("/contribuir/recurso?curriculum_unit_id=", template)
