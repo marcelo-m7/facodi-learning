@@ -421,19 +421,20 @@ class FacodiLearningSubmission(models.Model):
                 "Only submissions waiting for review can be edited."
             )
 
-        candidate_source_url = (values.get("source_url") or submission.source_url).strip()
-        submission._lock_active_identity(
-            candidate_source_url,
-            submission.curriculum_unit_id.id or False,
-        )
-        if submission._active_duplicate(
-            candidate_source_url,
-            submission.curriculum_unit_id.id or False,
-            exclude_id=submission.id,
-        ):
-            raise ValidationError(
-                "This resource is already under editorial review for this context."
+        candidate_source_url = (values.get("source_url") or submission.source_url or "").strip()
+        if getattr(submission, "submission_type", "resource") == "resource":
+            submission._lock_active_identity(
+                candidate_source_url,
+                submission.curriculum_unit_id.id or False,
             )
+            if submission._active_duplicate(
+                candidate_source_url,
+                submission.curriculum_unit_id.id or False,
+                exclude_id=submission.id,
+            ):
+                raise ValidationError(
+                    "This resource is already under editorial review for this context."
+                )
 
         allowed = {"name", "source_url", "context", "language"}
         unknown = set(values) - allowed
@@ -452,8 +453,17 @@ class FacodiLearningSubmission(models.Model):
 
         if not cleaned.get("name", submission.name):
             raise ValidationError("A submission title is required.")
-        if "source_url" in cleaned and not _is_public_http_url(cleaned["source_url"]):
+        if (
+            getattr(submission, "submission_type", "resource") == "resource"
+            and "source_url" in cleaned
+            and not _is_public_http_url(cleaned["source_url"])
+        ):
             raise ValidationError("Enter a valid public HTTP or HTTPS URL.")
+        if (
+            getattr(submission, "submission_type", "resource") != "resource"
+            and not cleaned.get("context", submission.context)
+        ):
+            raise ValidationError("Write a short message so FACODI can review the submission.")
 
         super(FacodiLearningSubmission, submission).write(cleaned)
         return True

@@ -157,7 +157,12 @@
                 <section class="container py-5">
                     <div class="row justify-content-center">
                         <div class="col-lg-8 col-xl-7">
-                            <p class="text-uppercase small fw-semibold mb-2">Resource suggestion</p>
+                            <p class="text-uppercase small fw-semibold mb-2">
+                                <t t-if="submission.submission_type == 'resource'">Learning resource</t>
+                                <t t-elif="submission.submission_type == 'contact'">Contact request</t>
+                                <t t-elif="submission.submission_type == 'correction'">Correction suggestion</t>
+                                <t t-else="">Community question</t>
+                            </p>
                             <h1>Submission received</h1>
                             <p class="lead" t-esc="submission.name"/>
 
@@ -168,13 +173,20 @@
                                         <dd class="col-sm-8">
                                             <span class="badge text-bg-secondary" t-esc="state_label"/>
                                         </dd>
-                                        <dt class="col-sm-4">Resource</dt>
-                                        <dd t-attf-class="col-sm-8 #{'mb-2' if curriculum_unit else 'mb-0'}">
-                                            <a t-att-href="submission.source_url"
-                                               target="_blank"
-                                               rel="noopener noreferrer"
-                                               t-esc="submission.source_url"/>
-                                        </dd>
+                                        <t t-if="submission.submission_type == 'resource' and submission.source_url">
+                                            <dt class="col-sm-4">Resource</dt>
+                                            <dd t-attf-class="col-sm-8 #{'mb-2' if curriculum_unit else 'mb-0'}">
+                                                <a t-att-href="submission.source_url"
+                                                   target="_blank"
+                                                   rel="noopener noreferrer"
+                                                   t-esc="submission.source_url"/>
+                                            </dd>
+                                        </t>
+                                        <t t-else="">
+                                            <dt class="col-sm-4">Message</dt>
+                                            <dd t-attf-class="col-sm-8 #{'mb-2' if curriculum_unit else 'mb-0'}"
+                                                t-esc="submission.context"/>
+                                        </t>
                                         <t t-if="curriculum_unit">
                                             <dt class="col-sm-4">Suggested for</dt>
                                             <dd class="col-sm-8 mb-0">
@@ -190,19 +202,19 @@
                                 Waiting for editorial review.
                             </div>
                             <div t-elif="submission.state == 'reviewing'" class="alert alert-info">
-                                FACODI is checking relevance, provenance and publication rights.
+                                FACODI is reviewing the details and deciding the right follow-up.
                             </div>
                             <div t-elif="submission.state == 'accepted'" class="alert alert-success">
-                                Accepted for curation. This does not mean the resource is published yet.
+                                Accepted for follow-up. FACODI has kept this contribution in the editorial workflow.
                             </div>
                             <div t-elif="submission.state == 'rejected'" class="alert alert-secondary">
                                 This suggestion will not proceed in its current form.
                             </div>
                             <div t-elif="submission.state == 'resolved'" class="alert alert-success">
-                                The suggestion has been routed into the canonical FACODI content workflow.
+                                The submission has been routed to the appropriate FACODI workflow.
                             </div>
                             <div t-elif="submission.state == 'withdrawn'" class="alert alert-secondary">
-                                You withdrew this submission. It is retained only as audit history and is no longer shown in the public community queue.
+                                You withdrew this submission. It is retained only as audit history and will not continue through the FACODI workflow.
                             </div>
 
                             <p class="text-muted small">
@@ -238,9 +250,9 @@
                         <div>
                             <p class="text-uppercase small fw-semibold text-muted mb-2">Your FACODI contributions</p>
                             <h1 class="h2 mb-1">My submissions</h1>
-                            <p class="text-muted mb-0">Track, edit or withdraw resources submitted while signed in.</p>
+                            <p class="text-muted mb-0">Track, edit or withdraw your FACODI submissions while signed in.</p>
                         </div>
-                        <a href="/contribuir/recurso" class="btn btn-primary">Submit another resource</a>
+                        <a href="/submissions/new" class="btn btn-primary">New submission</a>
                     </div>
 
                     <div class="facodi-contribution-dashboard" aria-label="Contribution summary">
@@ -265,11 +277,14 @@
                                                       t-esc="row['submission'].language"/>
                                             </div>
                                             <h2 class="h5 mb-2" t-esc="row['submission'].name"/>
-                                            <a t-att-href="row['submission'].source_url"
+                                            <span class="badge text-bg-light border me-2" t-esc="row['type_label']"/>
+                                            <a t-if="row['submission'].submission_type == 'resource' and row['submission'].source_url"
+                                               t-att-href="row['submission'].source_url"
                                                target="_blank"
                                                rel="noopener noreferrer"
                                                class="small text-break"
                                                t-esc="row['submission'].source_url"/>
+                                            <p t-else="" class="small text-muted mb-0 text-truncate" t-esc="row['submission'].context"/>
                                         </div>
                                         <div class="d-flex flex-wrap gap-2 align-items-start">
                                             <a t-att-href="'/minhas-contribuicoes/%s' % row['submission'].id"
@@ -286,7 +301,7 @@
                         <span class="facodi-empty-icon fa fa-paper-plane-o" aria-hidden="true"></span>
                         <h2 class="h4">Your contribution desk is ready</h2>
                         <p class="text-muted">You have no account-linked submissions yet. Anonymous submissions remain accessible only through their private tracking link.</p>
-                        <a href="/contribuir/recurso" class="btn btn-primary">Share your first resource</a>
+                        <a href="/submissions/new" class="btn btn-primary">Start your first submission</a>
                     </div>
                 </section>
             </div>
@@ -345,7 +360,7 @@
                                            class="form-control"
                                            t-att-value="(form_values or {}).get('name', submission.name)"/>
                                 </div>
-                                <div class="mb-3">
+                                <div t-if="submission.submission_type == 'resource'" class="mb-3">
                                     <label class="form-label" for="facodi_manage_url">Public resource URL</label>
                                     <input id="facodi_manage_url"
                                            type="url"
@@ -355,7 +370,7 @@
                                            class="form-control"
                                            t-att-value="(form_values or {}).get('source_url', submission.source_url)"/>
                                 </div>
-                                <div class="mb-3">
+                                <div t-if="submission.submission_type == 'resource'" class="mb-3">
                                     <label class="form-label" for="facodi_manage_language">Language</label>
                                     <select id="facodi_manage_language" name="language" class="form-select">
                                         <t t-set="current_language" t-value="(form_values or {}).get('language', submission.language or '')"/>
@@ -367,7 +382,7 @@
                                     </select>
                                 </div>
                                 <div class="mb-3">
-                                    <label class="form-label" for="facodi_manage_context">Contribution context</label>
+                                    <label class="form-label" for="facodi_manage_context"><t t-if="submission.submission_type == 'resource'">Contribution context</t><t t-else="">Message</t></label>
                                     <textarea id="facodi_manage_context"
                                               name="context"
                                               rows="5"
@@ -379,10 +394,12 @@
 
                             <div t-if="not can_edit" class="card card-body mb-4">
                                 <dl class="row mb-0">
-                                    <dt class="col-sm-3">Resource</dt>
-                                    <dd class="col-sm-9"><a t-att-href="submission.source_url" target="_blank" rel="noopener noreferrer" t-esc="submission.source_url"/></dd>
-                                    <dt class="col-sm-3">Language</dt>
-                                    <dd class="col-sm-9" t-esc="submission.language or 'Not specified'"/>
+                                    <t t-if="submission.submission_type == 'resource'">
+                                        <dt class="col-sm-3">Resource</dt>
+                                        <dd class="col-sm-9"><a t-att-href="submission.source_url" target="_blank" rel="noopener noreferrer" t-esc="submission.source_url"/></dd>
+                                        <dt class="col-sm-3">Language</dt>
+                                        <dd class="col-sm-9" t-esc="submission.language or 'Not specified'"/>
+                                    </t>
                                     <dt class="col-sm-3">Context</dt>
                                     <dd class="col-sm-9 mb-0" t-esc="submission.context or 'No additional context.'"/>
                                 </dl>
@@ -395,7 +412,7 @@
                                 <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
                                 <p class="mb-2"><strong>Withdraw this submission?</strong></p>
                                 <p class="text-muted small">
-                                    Withdrawal removes the item from the public Community videos queue and prevents it from continuing through the contribution workflow. The record is retained as audit history.
+                                    Withdrawal stops this submission from continuing through the FACODI workflow. Resource submissions are also removed from public community queues. The record is retained as audit history.
                                 </p>
                                 <button type="submit" class="btn btn-outline-danger">Withdraw submission</button>
                             </form>

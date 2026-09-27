@@ -413,6 +413,27 @@ class TestResourceSubmissionModel(TransactionCase):
                 {"name": "Too late"},
             )
 
+    def test_contributor_can_edit_non_resource_submission_without_fake_url(self):
+        submission = self._submission(
+            name="Contact request",
+            source_url=False,
+            submission_type="contact",
+            context="Initial collaboration question.",
+            submitted_by_id=self.portal.id,
+        )
+        submission.action_update_by_contributor(
+            self.portal,
+            {
+                "name": "Updated contact request",
+                "source_url": "",
+                "context": "Updated collaboration question.",
+                "language": "",
+            },
+        )
+        self.assertEqual(submission.name, "Updated contact request")
+        self.assertFalse(submission.source_url)
+        self.assertEqual(submission.context, "Updated collaboration question.")
+
     def test_contributor_cannot_edit_after_review_starts_but_can_withdraw(self):
         submission = self._submission(
             name="Reviewing own submission",
@@ -481,6 +502,39 @@ class TestResourceSubmissionWebsite(HttpCase):
 
         forbidden = self.url_open(f"/minhas-contribuicoes/{other.id}")
         self.assertEqual(forbidden.status_code, 404)
+
+    def test_account_followup_renders_non_resource_submission_without_resource_link(self):
+        owner = self._portal_user("facodi-contact-followup")
+        submission = self.env["facodi.learning.submission"].sudo().create(
+            {
+                "name": "Partnership conversation",
+                "source_url": False,
+                "submission_type": "contact",
+                "context": "We would like to discuss an institutional partnership.",
+                "contact_email": "partner@example.org",
+                "contact_topic": "partnership",
+                "submitted_by_id": owner.id,
+            }
+        )
+
+        self.authenticate(owner.login, "facodi-test-pass")
+        listing = self.url_open("/minhas-contribuicoes")
+        self.assertEqual(listing.status_code, 200)
+        self.assertIn("Partnership conversation", listing.text)
+        self.assertIn("We would like to discuss an institutional partnership.", listing.text)
+        self.assertNotIn('href="False"', listing.text)
+
+        status = self.url_open(
+            f"/contribuir/recurso/status/{submission.access_token}"
+        )
+        self.assertEqual(status.status_code, 200)
+        self.assertIn("Contact request", status.text)
+        self.assertIn("We would like to discuss an institutional partnership.", status.text)
+
+        detail = self.url_open(f"/minhas-contribuicoes/{submission.id}")
+        tree = html.fromstring(detail.text)
+        self.assertFalse(tree.xpath('//input[@id="facodi_manage_url"]'))
+        self.assertFalse(tree.xpath('//select[@id="facodi_manage_language"]'))
 
     def test_contributor_can_edit_and_withdraw_pending_submission(self):
         owner = self._portal_user("facodi-contributor-actions")

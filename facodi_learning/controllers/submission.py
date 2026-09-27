@@ -134,6 +134,12 @@ class FacodiSubmissionController(http.Controller):
         ).get(submission.state, submission.state)
 
     @staticmethod
+    def _submission_type_label(submission):
+        return dict(
+            submission._fields["submission_type"]._description_selection(request.env)
+        ).get(submission.submission_type, submission.submission_type)
+
+    @staticmethod
     def _public_curriculum_unit(raw_id):
         try:
             unit_id = int(raw_id or 0)
@@ -434,6 +440,7 @@ class FacodiSubmissionController(http.Controller):
             {
                 "submission": submission,
                 "state_label": self._submission_state_label(submission),
+                "type_label": self._submission_type_label(submission),
                 "can_edit": submission.state == "submitted",
                 "can_withdraw": submission.state in {"submitted", "reviewing"},
             }
@@ -500,37 +507,42 @@ class FacodiSubmissionController(http.Controller):
         }
         errors = []
         if not values["name"]:
-            errors.append(request.env._("Enter a short title for the resource."))
-        if not request.env["facodi.learning.submission"]._is_valid_source_url(
-            values["source_url"]
-        ):
-            errors.append(request.env._("Enter a valid public HTTP or HTTPS URL."))
+            errors.append(request.env._("Enter a short title for the submission."))
 
-        normalized_source_url = (
-            request.env["facodi.learning.submission"]._normalize_source_url(
+        if submission.submission_type == "resource":
+            if not request.env["facodi.learning.submission"]._is_valid_source_url(
                 values["source_url"]
-            )
-        )
-        if not errors:
-            duplicate = (
-                request.env["facodi.learning.submission"]
-                .sudo()
-                .search(
-                    [
-                        ("id", "!=", submission.id),
-                        ("normalized_source_url", "=", normalized_source_url),
-                        ("state", "in", ("submitted", "reviewing", "accepted")),
-                        ("curriculum_unit_id", "=", submission.curriculum_unit_id.id or False),
-                    ],
-                    limit=1,
+            ):
+                errors.append(request.env._("Enter a valid public HTTP or HTTPS URL."))
+
+            normalized_source_url = (
+                request.env["facodi.learning.submission"]._normalize_source_url(
+                    values["source_url"]
                 )
             )
-            if duplicate:
-                errors.append(
-                    request.env._(
-                        "This resource is already under editorial review for this context."
+            if not errors:
+                duplicate = (
+                    request.env["facodi.learning.submission"]
+                    .sudo()
+                    .search(
+                        [
+                            ("id", "!=", submission.id),
+                            ("submission_type", "=", "resource"),
+                            ("normalized_source_url", "=", normalized_source_url),
+                            ("state", "in", ("submitted", "reviewing", "accepted")),
+                            ("curriculum_unit_id", "=", submission.curriculum_unit_id.id or False),
+                        ],
+                        limit=1,
                     )
                 )
+                if duplicate:
+                    errors.append(
+                        request.env._(
+                            "This resource is already under editorial review for this context."
+                        )
+                    )
+        elif not values["context"]:
+            errors.append(request.env._("Write a short message so FACODI can review the submission."))
 
         if not errors:
             try:
