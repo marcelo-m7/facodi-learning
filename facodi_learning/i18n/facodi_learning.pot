@@ -3946,3 +3946,53 @@ msgstr ""
 #: code:addons/facodi_learning/controllers/contextual_submission.py:0
 msgid "Lesson question"
 msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
+msgid "Contribution brief"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
+msgid "FACODI brought this context from the page you were using. You only need to complete the useful part."
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
+msgid "No page context was attached. You can still send a general contribution."
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
+msgid "Context carried over"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
+msgid "Step 1 · Add the useful part"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
+msgid "Step 2 · Optional follow-up"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
+msgid "Stay in the loop"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
+msgid "For resources, your contact details are optional. For contact requests, an email is needed so the team can reply."
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
+msgid "Send to the review desk"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
+msgid "General FACODI contribution"
+msgstr ""
