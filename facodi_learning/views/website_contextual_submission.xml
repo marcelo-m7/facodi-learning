@@ -60,7 +60,7 @@
                                 <input type="hidden" name="source_cta" t-att-value="source_cta"/>
                                 <input type="hidden" name="source_section" t-att-value="source_section"/>
                                 <input type="hidden" name="source_page_url" t-att-value="source_page_url"/>
-                                <input t-if="curriculum_unit" type="hidden" name="unit_id" t-att-value="curriculum_unit.id"/>
+                                <input t-if="curriculum_unit" type="hidden" name="curriculum_unit_id" t-att-value="curriculum_unit.id"/>
                                 <input t-if="roadmap" type="hidden" name="roadmap_id" t-att-value="roadmap.id"/>
                                 <input t-if="course" type="hidden" name="course_id" t-att-value="course.id"/>
                                 <input t-if="suggested_slide" type="hidden" name="slide_id" t-att-value="suggested_slide.id"/>
@@ -158,7 +158,7 @@
 
                                 <div class="d-flex flex-wrap gap-2">
                                     <button type="submit" class="btn btn-primary">Submit for review</button>
-                                    <a href="/contribuir/recurso" class="btn btn-outline-secondary">Classic resource form</a>
+                                    <a href="/explore" class="btn btn-outline-secondary">Back to Explore</a>
                                 </div>
                             </form>
                         </div>
