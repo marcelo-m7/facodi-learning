@@ -18,5 +18,6 @@ from . import course_candidate
 from . import discovery_run
 from . import course_candidate_discovery
 from . import submission
+from . import contextual_submission
 
 from . import website_menu
