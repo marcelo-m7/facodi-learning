@@ -181,6 +181,20 @@ class FacodiSubmissionController(http.Controller):
         values = {}
         if curriculum_unit:
             values["curriculum_unit_id"] = curriculum_unit.id
+            values["context"] = request.env._(
+                "Suggested for %(code)s · %(name)s.",
+                code=curriculum_unit.external_unit_code or "",
+                name=curriculum_unit.name,
+            )
+        for field_name, limit in (
+            ("name", 200),
+            ("source_url", 2048),
+            ("context", 4000),
+            ("language", 16),
+        ):
+            incoming = (kwargs.get(field_name) or "").strip()[:limit]
+            if incoming:
+                values[field_name] = incoming
         return request.render(
             "facodi_learning.resource_submission_form",
             self._form_values(
