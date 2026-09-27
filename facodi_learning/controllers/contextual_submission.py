@@ -440,6 +440,7 @@ class FacodiContextualSubmissionController(FacodiSubmissionController):
             "explore-areas": request.env._("Learning areas"),
             "course": request.env._("Course"),
             "lesson": request.env._("Lesson"),
+            "module-resources": request.env._("Module resources"),
             "courses": request.env._("Courses"),
             "roadmap": request.env._("Roadmap"),
             "roadmaps": request.env._("Roadmaps"),
