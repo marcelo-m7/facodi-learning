@@ -52,7 +52,7 @@ class FacodiLearningSubmissionContext(models.Model):
     source_section = fields.Char(index=True)
     source_page_url = fields.Char()
     area_tag_id = fields.Many2one(
-        "slide.tag",
+        "slide.channel.tag",
         string="Learning Area Context",
         ondelete="set null",
         index=True,
