@@ -18,6 +18,23 @@
                                 The form is pre-filled from the CTA you clicked. FACODI keeps all submissions under human review before any editorial action.
                             </p>
 
+                            <nav class="facodi-submission-type-switcher mb-4"
+                                 aria-label="Choose contribution type"
+                                 data-facodi-submission-type-switcher="1">
+                                <p class="small text-uppercase fw-semibold text-muted mb-2">What are you sending?</p>
+                                <div class="d-flex flex-wrap gap-2" role="list">
+                                    <a t-foreach="submission_type_options"
+                                       t-as="option"
+                                       t-att-href="option['url']"
+                                       t-att-class="'btn btn-sm %s' % ('btn-primary' if option['key'] == submission_type else 'btn-outline-primary')"
+                                       t-att-aria-current="'page' if option['key'] == submission_type else None"
+                                       role="listitem">
+                                        <t t-esc="option['label']"/>
+                                    </a>
+                                </div>
+                                <p class="form-text mb-0 mt-2">Changing the type keeps the page, course, lesson or curricular-unit context you came from.</p>
+                            </nav>
+
                             <div class="card mb-4 facodi-context-card">
                                 <div class="card-body">
                                     <p class="text-uppercase small fw-semibold mb-2">You are contributing in this context</p>
