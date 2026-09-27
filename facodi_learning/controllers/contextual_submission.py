@@ -57,6 +57,31 @@ class FacodiContextualSubmissionController(FacodiSubmissionController):
         )
 
     @staticmethod
+    def _public_area(raw_id):
+        try:
+            record_id = int(raw_id or 0)
+        except (TypeError, ValueError):
+            return request.env["slide.tag"].browse()
+        if record_id <= 0:
+            return request.env["slide.tag"].browse()
+        area = request.env["slide.tag"].sudo().browse(record_id).exists()
+        if not area or not area.group_id or not area.group_id.website_published:
+            return request.env["slide.tag"].browse()
+        public_course = request.env["slide.channel"].sudo().search(
+            [
+                ("active", "=", True),
+                ("website_published", "=", True),
+                ("visibility", "=", "public"),
+                ("tag_ids", "in", [area.id]),
+                "|",
+                ("website_id", "=", False),
+                ("website_id", "=", request.website.id),
+            ],
+            limit=1,
+        )
+        return area if public_course else request.env["slide.tag"].browse()
+
+    @staticmethod
     def _public_course(raw_id):
         try:
             record_id = int(raw_id or 0)
@@ -134,6 +159,7 @@ class FacodiContextualSubmissionController(FacodiSubmissionController):
         Submission = request.env["facodi.learning.submission"]
         submission_type = Submission._normalize_submission_type(kwargs.get("type") or kwargs.get("submission_type"))
         curriculum_unit = self._public_curriculum_unit(kwargs.get("unit_id") or kwargs.get("curriculum_unit_id"))
+        area_tag = self._public_area(kwargs.get("area_id") or kwargs.get("area"))
         roadmap = self._public_roadmap(
             kwargs.get("roadmap_id") or kwargs.get("reference_id")
         )
@@ -206,6 +232,10 @@ class FacodiContextualSubmissionController(FacodiSubmissionController):
             )
 
         profile_context = ""
+        if area_tag and not curriculum_unit and not roadmap and not course and not suggested_slide:
+            profile_context = request.env._(
+                "Suggested for learning area: %s."
+            ) % area_tag.name
         if curriculum_unit:
             profile_context = request.env._(
                 "Suggested for curricular unit: %s (%s)."
@@ -285,6 +315,8 @@ class FacodiContextualSubmissionController(FacodiSubmissionController):
             form_values["context"] = " ".join(
                 part for part in (profile_context, cta_defaults.get(source_cta, "")) if part
             )
+        if area_tag:
+            form_values["area_tag_id"] = area_tag.id
         if curriculum_unit:
             form_values["curriculum_unit_id"] = curriculum_unit.id
         if roadmap:
@@ -349,6 +381,8 @@ class FacodiContextualSubmissionController(FacodiSubmissionController):
             "section": source_section,
             "source_page_url": source_page_url,
         }
+        if area_tag:
+            switch_base["area"] = area_tag.id
         if curriculum_unit:
             switch_base["unit_id"] = curriculum_unit.id
         if roadmap:
@@ -408,6 +442,7 @@ class FacodiContextualSubmissionController(FacodiSubmissionController):
             "duplicate": False,
             "submission_type": submission_type,
             "curriculum_unit": curriculum_unit,
+            "area_tag": area_tag,
             "roadmap": roadmap,
             "course": course,
             "suggested_slide": suggested_slide,
@@ -466,6 +501,11 @@ class FacodiContextualSubmissionController(FacodiSubmissionController):
         Submission = request.env["facodi.learning.submission"]
 
         contextual_identifiers = (
+            (
+                post.get("area_id") or post.get("area"),
+                context["area_tag"],
+                request.env._("The learning area context is no longer publicly available."),
+            ),
             (
                 post.get("unit_id") or post.get("curriculum_unit_id"),
                 context["curriculum_unit"],
