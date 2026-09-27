@@ -144,3 +144,13 @@ class TestContextualSubmissionStaticContracts(TransactionCase):
         self.assertIn("source=community_video_cta", explore)
         self.assertIn("resource_type=video", explore)
         self.assertIn("source=portal_resource_cta", portal)
+
+    def test_submission_status_followup_preserves_context(self):
+        template = self._read("views/website_submission.xml")
+        self.assertIn("source=submission_status_followup", template)
+        self.assertIn("section=submission-status", template)
+        self.assertIn("unit_id=%s", template)
+        self.assertNotIn(
+            "t-att-href=\"'/contribuir/recurso?curriculum_unit_id=%s'",
+            template,
+        )
