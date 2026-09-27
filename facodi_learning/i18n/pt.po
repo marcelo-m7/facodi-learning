@@ -3959,3 +3959,23 @@ msgstr "O contexto do módulo de aprendizagem já não está disponível publica
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_module
 msgid "Learning Module Context"
 msgstr "Contexto do módulo de aprendizagem"
+
+#. module: facodi_learning
+#: code:addons/facodi_learning/controllers/contextual_submission.py:0
+msgid "I found a resource that could help start the curricular-unit shelf."
+msgstr "Encontrei um recurso que pode ajudar a começar a estante de unidades curriculares."
+
+#. module: facodi_learning
+#: code:addons/facodi_learning/controllers/contextual_submission.py:0
+msgid "Curricular units · open shelf"
+msgstr "Unidades curriculares · estante aberta"
+
+#. module: facodi_learning
+#: code:addons/facodi_learning/controllers/contextual_submission.py:0
+msgid "Explore content"
+msgstr "Conteúdo do Explore"
+
+#. module: facodi_learning
+#: code:addons/facodi_learning/controllers/contextual_submission.py:0
+msgid "Submission"
+msgstr "Submissão"
