@@ -91,7 +91,9 @@ class TestContextualSubmissionStaticContracts(TransactionCase):
         self.assertIn("You are contributing in this context", template)
         self.assertIn('data-facodi-resource-submission', template)
         self.assertIn('id="facodi_submission_name"', template)
-        self.assertIn("t-att-required=\"'required' if submission_type == 'resource' else None\"", template)
+        title_field = template.split('id="facodi_submission_name"', 1)[1].split("</div>", 1)[0]
+        self.assertNotIn("required", title_field)
+        self.assertIn("A title is still required when you submit the resource for review.", template)
         self.assertIn("Context pre-filled", template)
         self.assertIn("form_values.get('resource_type'", template)
         self.assertIn("form_values.get('language'", template)
