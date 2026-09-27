@@ -3420,3 +3420,23 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:facodi_learning.roadmap_provenance_correction_cta
 msgid "Why does this belong in FACODI?"
 msgstr ""
+
+#. module: facodi_learning
+#: code:addons/facodi_learning/controllers/contextual_submission.py:0
+msgid "The curricular unit context is no longer publicly available."
+msgstr ""
+
+#. module: facodi_learning
+#: code:addons/facodi_learning/controllers/contextual_submission.py:0
+msgid "The roadmap context is no longer publicly available."
+msgstr ""
+
+#. module: facodi_learning
+#: code:addons/facodi_learning/controllers/contextual_submission.py:0
+msgid "The course context is no longer publicly available."
+msgstr ""
+
+#. module: facodi_learning
+#: code:addons/facodi_learning/controllers/contextual_submission.py:0
+msgid "The learning item context is no longer publicly available."
+msgstr ""
