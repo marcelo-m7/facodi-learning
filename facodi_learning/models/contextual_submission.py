@@ -132,6 +132,45 @@ class FacodiLearningSubmissionContext(models.Model):
             if not self._is_valid_context_slug(record.source_section):
                 raise ValidationError("The section context is not valid.")
 
+    @api.model
+    def _contextual_identity_key(self, source_url, curriculum_unit_id=False, module_id=False):
+        normalized = self._normalize_source_url(source_url)
+        payload = "%s\x1f%s\x1f%s" % (
+            normalized,
+            int(curriculum_unit_id or 0),
+            int(module_id or 0),
+        )
+        import hashlib
+        raw = int.from_bytes(
+            hashlib.blake2b(payload.encode("utf-8"), digest_size=8).digest(),
+            byteorder="big",
+            signed=False,
+        )
+        return raw - (1 << 64) if raw >= (1 << 63) else raw
+
+    @api.model
+    def _lock_contextual_identity(self, source_url, curriculum_unit_id=False, module_id=False):
+        key = self._contextual_identity_key(source_url, curriculum_unit_id, module_id)
+        self.env.cr.execute("SELECT pg_advisory_xact_lock(%s)", [key])
+
+    @api.model
+    def _contextual_duplicate(
+        self,
+        source_url,
+        curriculum_unit_id=False,
+        module_id=False,
+        exclude_id=False,
+    ):
+        domain = [
+            ("normalized_source_url", "=", self._normalize_source_url(source_url)),
+            ("state", "in", ("submitted", "reviewing", "accepted")),
+            ("curriculum_unit_id", "=", curriculum_unit_id or False),
+            ("module_id", "=", module_id or False),
+        ]
+        if exclude_id:
+            domain.append(("id", "!=", exclude_id))
+        return self.search(domain, limit=1)
+
     @api.model_create_multi
     def create(self, vals_list):
         cleaned_vals_list = []
@@ -151,24 +190,34 @@ class FacodiLearningSubmissionContext(models.Model):
             ) or False
             if vals["submission_type"] == "resource":
                 vals["source_url"] = (vals.get("source_url") or "").strip()[:2048]
-                resource_identities.append((vals["source_url"], vals.get("curriculum_unit_id") or False))
+                resource_identities.append(
+                    (
+                        vals["source_url"],
+                        vals.get("curriculum_unit_id") or False,
+                        vals.get("module_id") or False,
+                    )
+                )
             else:
                 vals["source_url"] = (vals.get("source_url") or "").strip()[:2048]
             cleaned_vals_list.append(vals)
 
         seen_identity_keys = set()
-        for source_url, curriculum_unit_id in sorted(
+        for source_url, curriculum_unit_id, module_id in sorted(
             resource_identities,
-            key=lambda item: self._active_identity_key(item[0], item[1]),
+            key=lambda item: self._contextual_identity_key(item[0], item[1], item[2]),
         ):
-            identity_key = self._active_identity_key(source_url, curriculum_unit_id)
+            identity_key = self._contextual_identity_key(
+                source_url,
+                curriculum_unit_id,
+                module_id,
+            )
             if identity_key in seen_identity_keys:
                 raise ValidationError(
                     "This resource is already under editorial review for this context."
                 )
             seen_identity_keys.add(identity_key)
-            self._lock_active_identity(source_url, curriculum_unit_id)
-            if self._active_duplicate(source_url, curriculum_unit_id):
+            self._lock_contextual_identity(source_url, curriculum_unit_id, module_id)
+            if self._contextual_duplicate(source_url, curriculum_unit_id, module_id):
                 raise ValidationError(
                     "This resource is already under editorial review for this context."
                 )
