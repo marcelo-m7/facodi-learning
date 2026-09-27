@@ -221,8 +221,11 @@ class FacodiContextualSubmissionController(FacodiSubmissionController):
             "curricular_units_catalog_cta": request.env._(
                 "I found a resource that could help cover a curricular unit in the FACODI academic map."
             ),
+            "course_catalog_cta": request.env._(
+                "I found a resource that could strengthen the FACODI course catalogue."
+            ),
         }
-        if not form_values["context"]:
+        if not form_values["context"] and submission_type == "resource":
             form_values["context"] = " ".join(
                 part for part in (profile_context, cta_defaults.get(source_cta, "")) if part
             )
