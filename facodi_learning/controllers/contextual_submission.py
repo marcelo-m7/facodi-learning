@@ -356,6 +356,7 @@ class FacodiContextualSubmissionController(FacodiSubmissionController):
             "course_contact_cta": request.env._("Course contribution"),
             "study_player_resource_cta": request.env._("Lesson resources"),
             "study_player_correction_cta": request.env._("Lesson problem report"),
+            "study_player_question_cta": request.env._("Lesson question"),
             "explore_empty_shelf": request.env._("Explore empty shelf"),
             "area_resource_cta": request.env._("Learning area resources"),
             "community_video_cta": request.env._("Community videos"),
