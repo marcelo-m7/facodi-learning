@@ -1,4 +1,4 @@
-from urllib.parse import urlsplit
+from urllib.parse import urlencode, urlsplit
 
 from odoo import http
 from odoo.exceptions import ValidationError
@@ -336,6 +336,36 @@ class FacodiContextualSubmissionController(FacodiSubmissionController):
             return_label = request.env._("Back to where I was")
         return_url = return_url or "/explore"
 
+        switch_base = {
+            "source": source_cta,
+            "section": source_section,
+            "source_page_url": source_page_url,
+        }
+        if curriculum_unit:
+            switch_base["unit_id"] = curriculum_unit.id
+        if roadmap:
+            switch_base["roadmap_id"] = roadmap.id
+        if course:
+            switch_base["course_id"] = course.id
+        if suggested_slide:
+            switch_base["slide_id"] = suggested_slide.id
+        switch_base = {
+            key: value for key, value in switch_base.items() if value not in ("", False, None)
+        }
+        submission_type_options = [
+            {
+                "key": key,
+                "label": label,
+                "url": "/submissions/new?" + urlencode({**switch_base, "type": key}),
+            }
+            for key, label in (
+                ("resource", request.env._("Learning resource")),
+                ("contact", request.env._("Contact")),
+                ("correction", request.env._("Correction")),
+                ("question", request.env._("Question")),
+            )
+        ]
+
         section_labels = {
             "resources": request.env._("Learning resources"),
             "course": request.env._("Course"),
@@ -377,6 +407,7 @@ class FacodiContextualSubmissionController(FacodiSubmissionController):
             "source_section_label": section_labels.get(source_section, source_section.replace("-", " ").title() if source_section else ""),
             "return_url": return_url,
             "return_label": return_label,
+            "submission_type_options": submission_type_options,
         }
 
     @http.route(
