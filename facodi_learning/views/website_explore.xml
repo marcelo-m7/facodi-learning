@@ -194,7 +194,7 @@
                         <div class="d-flex flex-wrap justify-content-center gap-2">
                             <a href="/explore/content" class="btn btn-primary">Clear the desk</a>
                             <a href="/explore/areas" class="btn btn-outline-primary">Browse areas</a>
-                            <a href="/submissions/new?type=resource&amp;source=explore_empty_shelf&amp;section=explore-content" class="btn btn-outline-secondary">Drop a resource</a>
+                            <a t-att-href="contribution_url" class="btn btn-outline-secondary">Drop a resource</a>
                         </div>
                     </div>
 
