@@ -628,7 +628,16 @@
                                     <span t-if="show_learning_progress and item['progress'] is not None" class="text-muted small"><t t-esc="'%.0f' % item['progress']"/>%</span>
                                 </a>
                             </div>
-                            <p t-else="" class="facodi-open-callout mb-0">There is no published content in this module yet.</p>
+                            <p t-else="" class="facodi-open-callout mb-3">There is no published content in this module yet.</p>
+                            <div class="facodi-open-callout d-flex flex-wrap align-items-center justify-content-between gap-3 mt-4"
+                                 data-facodi-module-resource-cta="1">
+                                <div>
+                                    <strong>Missing something useful?</strong>
+                                    <p class="text-muted small mb-0">Suggest a public resource directly for this learning module.</p>
+                                </div>
+                                <a t-att-href="'/submissions/new?type=resource&amp;module_id=%s&amp;source=module_resource_cta&amp;section=module-resources' % module_row['module'].id"
+                                   class="btn btn-outline-primary">Suggest a resource</a>
+                            </div>
                         </div>
                     </div>
                 </section>

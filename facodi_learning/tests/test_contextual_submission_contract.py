@@ -32,6 +32,7 @@ class TestContextualSubmissionModelContract(TransactionCase):
             "source_section",
             "source_page_url",
             "roadmap_id",
+            "module_id",
             "course_id",
             "suggested_slide_id",
             "contact_name",
@@ -78,6 +79,8 @@ class TestContextualSubmissionStaticContracts(TransactionCase):
         self.assertIn("suggested_slide.website_url", controller)
         self.assertIn("course.website_url", controller)
         self.assertIn("study_player_resource_cta", controller)
+        self.assertIn("module_resource_cta", controller)
+        self.assertIn('"module-resources": request.env._("Module resources")', controller)
         self.assertIn("study_player_correction_cta", controller)
         self.assertIn('"lesson": request.env._("Lesson")', controller)
         self.assertLess(
@@ -108,6 +111,7 @@ class TestContextualSubmissionStaticContracts(TransactionCase):
         self.assertIn("source_cta_label", template)
         self.assertNotIn('<code t-esc="source_cta"', template)
         self.assertIn('name="curriculum_unit_id"', template)
+        self.assertIn('name="module_id"', template)
         self.assertNotIn("Classic resource form", template)
         self.assertIn('t-att-href="return_url"', template)
         self.assertIn('t-esc="return_label"', template)
@@ -123,6 +127,8 @@ class TestContextualSubmissionStaticContracts(TransactionCase):
         self.assertIn("source=community_margin", curriculum)
         self.assertIn("roadmap_id=%s", curriculum)
         self.assertIn("source=roadmap_resource_cta", curriculum)
+        self.assertIn("source=module_resource_cta", curriculum)
+        self.assertIn("data-facodi-module-resource-cta", curriculum)
         self.assertIn("source=roadmaps_catalog_cta", curriculum)
         self.assertIn("source=curricular_units_catalog_cta", curriculum)
         self.assertNotIn("/contribuir/recurso?curriculum_unit_id=", curriculum)
@@ -154,6 +160,7 @@ class TestContextualSubmissionStaticContracts(TransactionCase):
             "filter_question_submission",
             "group_source_section",
             "group_curriculum_unit",
+            "group_module",
             "group_course",
         ):
             self.assertIn(marker, arch)
@@ -194,7 +201,7 @@ class TestContextualSubmissionStaticContracts(TransactionCase):
         self.assertIn('t-att-href="followup_submission_url"', template)
         self.assertIn('"source": "submission_status_followup"', controller)
         self.assertIn('"section": "submission-status"', controller)
-        for key in ("unit_id", "roadmap_id", "course_id", "slide_id"):
+        for key in ("unit_id", "roadmap_id", "module_id", "course_id", "slide_id"):
             self.assertIn(f'followup_params["{key}"]', controller)
         self.assertIn("urlencode(followup_params)", controller)
         self.assertNotIn('followup_params["source_page_url"]', controller)

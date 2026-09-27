@@ -417,6 +417,8 @@ class FacodiSubmissionController(http.Controller):
             followup_params["unit_id"] = curriculum_unit.id
         if submission.roadmap_id:
             followup_params["roadmap_id"] = submission.roadmap_id.id
+        if submission.module_id:
+            followup_params["module_id"] = submission.module_id.id
         if submission.course_id:
             followup_params["course_id"] = submission.course_id.id
         if submission.suggested_slide_id:
@@ -548,6 +550,7 @@ class FacodiSubmissionController(http.Controller):
                             ("normalized_source_url", "=", normalized_source_url),
                             ("state", "in", ("submitted", "reviewing", "accepted")),
                             ("curriculum_unit_id", "=", submission.curriculum_unit_id.id or False),
+                            ("module_id", "=", submission.module_id.id or False),
                         ],
                         limit=1,
                     )

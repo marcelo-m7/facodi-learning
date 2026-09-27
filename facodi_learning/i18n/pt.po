@@ -3899,3 +3899,63 @@ msgstr "Recursos da área de aprendizagem"
 #: model_terms:ir.ui.view,arch_db:facodi_learning.explore_areas
 msgid "Learning areas"
 msgstr "Áreas de aprendizagem"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_module
+msgid "Learning module"
+msgstr "Módulo de aprendizagem"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_module
+msgid "Missing something useful?"
+msgstr "Falta algo útil?"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_module
+msgid "Suggest a public resource directly for this learning module."
+msgstr "Sugere um recurso público diretamente para este módulo de aprendizagem."
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_module
+msgid "Suggested for learning module: %s."
+msgstr "Sugerido para o módulo de aprendizagem: %s."
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_module
+msgid "I suggest this resource for this learning module."
+msgstr "Sugiro este recurso para este módulo de aprendizagem."
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_module
+msgid "Learning module resources"
+msgstr "Recursos do módulo de aprendizagem"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_module
+msgid "Module resources"
+msgstr "Recursos do módulo"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_module
+msgid "Back to learning module"
+msgstr "Voltar ao módulo de aprendizagem"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_module
+msgid "The learning module context is no longer publicly available."
+msgstr "O contexto do módulo de aprendizagem já não está disponível publicamente."
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_module
+msgid "Learning Module Context"
+msgstr "Contexto do módulo de aprendizagem"

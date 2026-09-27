@@ -52,6 +52,18 @@ class TestSubmissionContextWebsite(HttpCase):
                 "name": "Private Submission Unit",
             }
         )
+        cls.public_module = cls.env["facodi.learning.curriculum.module"].create(
+            {
+                "name": "Public Contribution Module",
+                "website_published": True,
+            }
+        )
+        cls.private_module = cls.env["facodi.learning.curriculum.module"].create(
+            {
+                "name": "Private Contribution Module",
+                "website_published": False,
+            }
+        )
 
     def _csrf_token(self, route="/contribuir/recurso"):
         response = self.url_open(route)
@@ -77,6 +89,112 @@ class TestSubmissionContextWebsite(HttpCase):
         self.assertNotIn(self.private_reference.programme_name, response.text)
         tree = html.fromstring(response.text)
         self.assertFalse(tree.xpath('//input[@name="roadmap_id"]/@value'))
+
+    def test_module_context_is_prefilled_persisted_and_private_modules_are_rejected(self):
+        route = (
+            "/submissions/new?type=resource&module_id=%s"
+            "&source=module_resource_cta&section=module-resources"
+            % self.public_module.id
+        )
+        response = self.url_open(route)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(self.public_module.name, response.text)
+        self.assertIn("Learning module resources", response.text)
+        self.assertIn("I suggest this resource for this learning module.", response.text)
+        tree = html.fromstring(response.text)
+        self.assertEqual(
+            tree.xpath('//input[@name="module_id"]/@value'),
+            [str(self.public_module.id)],
+        )
+
+        created = self.url_open(
+            "/submissions/new",
+            data={
+                "csrf_token": tree.xpath('//input[@name="csrf_token"]/@value')[0],
+                "submission_type": "resource",
+                "module_id": str(self.public_module.id),
+                "source_cta": "module_resource_cta",
+                "source_section": "module-resources",
+                "name": "Module-context resource",
+                "source_url": "https://example.org/module-context",
+                "context": "Useful for this reusable module.",
+            },
+        )
+        self.assertEqual(created.status_code, 200)
+        submission = self.env["facodi.learning.submission"].sudo().search(
+            [("name", "=", "Module-context resource")],
+            order="id desc",
+            limit=1,
+        )
+        self.assertEqual(submission.module_id, self.public_module)
+
+        another_module = self.env["facodi.learning.curriculum.module"].create(
+            {
+                "name": "Another Public Contribution Module",
+                "website_published": True,
+            }
+        )
+        another_route = (
+            "/submissions/new?type=resource&module_id=%s"
+            "&source=module_resource_cta&section=module-resources"
+            % another_module.id
+        )
+        another_page = self.url_open(another_route)
+        another_tree = html.fromstring(another_page.text)
+        another_created = self.url_open(
+            "/submissions/new",
+            data={
+                "csrf_token": another_tree.xpath('//input[@name="csrf_token"]/@value')[0],
+                "submission_type": "resource",
+                "module_id": str(another_module.id),
+                "source_cta": "module_resource_cta",
+                "source_section": "module-resources",
+                "name": "Same resource in another module",
+                "source_url": "https://example.org/module-context",
+                "context": "The same public resource is useful in another reusable module.",
+            },
+        )
+        self.assertEqual(another_created.status_code, 200)
+        second = self.env["facodi.learning.submission"].sudo().search(
+            [("name", "=", "Same resource in another module")],
+            limit=1,
+        )
+        self.assertEqual(second.module_id, another_module)
+
+        private_route = (
+            "/submissions/new?type=resource&module_id=%s"
+            "&source=module_resource_cta&section=module-resources"
+            % self.private_module.id
+        )
+        private = self.url_open(private_route)
+        self.assertEqual(private.status_code, 200)
+        private_tree = html.fromstring(private.text)
+        self.assertFalse(private_tree.xpath('//input[@name="module_id"]/@value'))
+        self.assertNotIn(self.private_module.name, private.text)
+
+        rejected = self.url_open(
+            "/submissions/new",
+            data={
+                "csrf_token": private_tree.xpath('//input[@name="csrf_token"]/@value')[0],
+                "submission_type": "resource",
+                "module_id": str(self.private_module.id),
+                "source_cta": "module_resource_cta",
+                "source_section": "module-resources",
+                "name": "Private module resource",
+                "source_url": "https://example.org/private-module-context",
+            },
+        )
+        self.assertEqual(rejected.status_code, 200)
+        self.assertIn(
+            "The learning module context is no longer publicly available.",
+            rejected.text,
+        )
+        self.assertFalse(
+            self.env["facodi.learning.submission"].sudo().search(
+                [("name", "=", "Private module resource")],
+                limit=1,
+            )
+        )
 
     def test_correction_requires_authored_message_but_not_email(self):
         route = (
