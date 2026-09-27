@@ -9,9 +9,14 @@
                             <p class="text-uppercase small fw-semibold mb-2">Contribute to FACODI</p>
                             <h1>Suggest a learning resource</h1>
                             <p class="lead">
-                                Share a public learning resource for editorial review. A submission is a suggestion only:
-                                FACODI will check relevance, provenance and publication rights before it can become learning content.
+                                Share a public learning resource for editorial review. The form keeps the context of the page that brought you here, so you only need to add the resource and the details that help the community review it.
                             </p>
+
+                            <div class="facodi-submission-steps d-grid gap-2 my-4" aria-label="Submission steps">
+                                <div><strong>01 · Context</strong><span class="d-block small text-muted">We keep the curricular unit or learning context when available.</span></div>
+                                <div><strong>02 · Resource</strong><span class="d-block small text-muted">Paste the public link; supported videos can be detected automatically.</span></div>
+                                <div><strong>03 · Why it helps</strong><span class="d-block small text-muted">Add a short note so editorial review starts with useful context.</span></div>
+                            </div>
 
                             <div t-if="curriculum_unit" class="alert alert-info" role="status">
                                 <span class="d-block small text-uppercase fw-semibold">Suggested for curricular unit</span>
@@ -55,6 +60,8 @@
                                        name="curriculum_unit_id"
                                        t-att-value="curriculum_unit.id"/>
 
+                                <fieldset class="border-0 p-0 m-0">
+                                    <legend class="h4 mb-3">Resource details</legend>
                                 <div class="mb-3">
                                     <label class="form-label" for="facodi_submission_name">Resource title</label>
                                     <input id="facodi_submission_name"
@@ -128,17 +135,24 @@
                                     </select>
                                 </div>
 
+                                </fieldset>
+
                                 <div class="mb-4">
-                                    <label class="form-label" for="facodi_submission_context">Why could this resource be useful?</label>
+                                    <label class="form-label" for="facodi_submission_context">Why could this resource be useful here?</label>
                                     <textarea id="facodi_submission_context"
                                               name="context"
                                               rows="5"
                                               maxlength="4000"
                                               class="form-control"
-                                              placeholder="Optional: topic, curricular unit, course or learning goal."><t t-esc="form_values.get('context', '')"/></textarea>
+                                              placeholder="Mention the topic, section, learning goal or why this is a good fit."><t t-esc="form_values.get('context', '')"/></textarea>
+                                    <div class="form-text">The more specific the context, the easier it is to review and place the resource correctly.</div>
                                 </div>
 
-                                <button type="submit" class="btn btn-primary">Submit for review</button>
+                                <div class="facodi-submission-consent small text-muted mb-4">
+                                    By submitting, you confirm that this is a public resource FACODI may inspect for editorial review. Do not include passwords, private links or personal data that is not needed for the suggestion.
+                                </div>
+
+                                <button type="submit" class="btn btn-primary">Send suggestion</button>
                                 <a t-if="not request.env.user._is_public()"
                                    href="/minhas-contribuicoes"
                                    class="btn btn-outline-secondary">My submissions</a>
