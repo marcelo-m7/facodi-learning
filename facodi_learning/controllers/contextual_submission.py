@@ -623,8 +623,13 @@ class FacodiContextualSubmissionController(FacodiSubmissionController):
                 if Submission._is_valid_source_url(source_url)
                 else False
             )
-            if youtube_identity and not values.get("resource_type"):
-                values["resource_type"] = "video"
+            if not values.get("resource_type"):
+                # Keep the richer browser form explicit while preserving the
+                # historical title+URL POST contract used by legacy FACODI
+                # entry points and integrations. YouTube has a reliable native
+                # classification; other legacy resources remain deliberately
+                # generic until editorial review.
+                values["resource_type"] = "video" if youtube_identity else "other"
             if youtube_identity and (
                 not values["name"]
                 or not values["language"]
@@ -647,8 +652,6 @@ class FacodiContextualSubmissionController(FacodiSubmissionController):
             source_url = values["source_url"]
             if not name:
                 errors.append(request.env._("Enter a short title for the resource."))
-            if not values.get("resource_type"):
-                errors.append(request.env._("Choose the resource type."))
             if not Submission._is_valid_source_url(source_url):
                 errors.append(request.env._("Enter a valid public HTTP or HTTPS URL."))
         else:
