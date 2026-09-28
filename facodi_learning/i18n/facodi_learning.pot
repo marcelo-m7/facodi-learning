@@ -4254,3 +4254,83 @@ msgstr ""
 #: code:addons/facodi_learning/controllers/contextual_submission.py:0
 msgid "Homepage"
 msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_landing
+msgid "Where do you want to go next?"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_landing
+msgid "Courses, curricular units, learning roadmaps and open resources — connected instead of isolated."
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_landing
+msgid "Learn by course."
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_landing
+msgid "Explore courses →"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_landing
+msgid "Follow the academic path."
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_landing
+msgid "Follow a roadmap →"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_landing
+msgid "Start from the syllabus."
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_landing
+msgid "Explore curricular units →"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_landing
+msgid "Open resources"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_landing
+msgid "Find the useful tab."
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_landing
+msgid "Browse resources →"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_landing
+msgid "Ask. Compare notes. Share."
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_landing
+msgid "Join the conversation →"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_landing
+msgid "Contribute"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_landing
+msgid "Found something useful?"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_landing
+msgid "Suggest a resource →"
+msgstr ""
