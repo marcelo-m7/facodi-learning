@@ -336,7 +336,7 @@ class FacodiSubmissionController(http.Controller):
         normalized_source_url = Submission._normalize_source_url(source_url)
         duplicate_domain = [
             ("normalized_source_url", "=", normalized_source_url),
-            ("state", "in", ("submitted", "reviewing", "accepted")),
+            ("state", "in", ("submitted", "reviewing", "changes_requested", "accepted")),
         ]
         if curriculum_unit:
             duplicate_domain.append(
@@ -460,8 +460,8 @@ class FacodiSubmissionController(http.Controller):
                 "submission": submission,
                 "state_label": self._submission_state_label(submission),
                 "type_label": self._submission_type_label(submission),
-                "can_edit": submission.state == "submitted",
-                "can_withdraw": submission.state in {"submitted", "reviewing"},
+                "can_edit": submission.state in {"submitted", "changes_requested"},
+                "can_withdraw": submission.state in {"submitted", "reviewing", "changes_requested"},
             }
             for submission in submissions
         ]
@@ -495,8 +495,8 @@ class FacodiSubmissionController(http.Controller):
             {
                 "submission": submission,
                 "state_label": self._submission_state_label(submission),
-                "can_edit": submission.state == "submitted",
-                "can_withdraw": submission.state in {"submitted", "reviewing"},
+                "can_edit": submission.state in {"submitted", "changes_requested"},
+                "can_withdraw": submission.state in {"submitted", "reviewing", "changes_requested"},
                 "errors": [],
                 "form_values": {},
             },
@@ -548,7 +548,7 @@ class FacodiSubmissionController(http.Controller):
                             ("id", "!=", submission.id),
                             ("submission_type", "=", "resource"),
                             ("normalized_source_url", "=", normalized_source_url),
-                            ("state", "in", ("submitted", "reviewing", "accepted")),
+                            ("state", "in", ("submitted", "reviewing", "changes_requested", "accepted")),
                             ("curriculum_unit_id", "=", submission.curriculum_unit_id.id or False),
                             ("module_id", "=", submission.module_id.id or False),
                         ],
@@ -576,8 +576,8 @@ class FacodiSubmissionController(http.Controller):
                 {
                     "submission": submission,
                     "state_label": self._submission_state_label(submission),
-                    "can_edit": submission.state == "submitted",
-                    "can_withdraw": submission.state in {"submitted", "reviewing"},
+                    "can_edit": submission.state in {"submitted", "changes_requested"},
+                    "can_withdraw": submission.state in {"submitted", "reviewing", "changes_requested"},
                     "errors": errors,
                     "form_values": values,
                 },
@@ -587,6 +587,31 @@ class FacodiSubmissionController(http.Controller):
 
         return request.redirect(
             f"/minhas-contribuicoes/{submission.id}?updated=1",
+            code=303,
+        )
+
+    @http.route(
+        "/minhas-contribuicoes/<int:submission_id>/reenviar",
+        type="http",
+        auth="user",
+        website=True,
+        methods=["POST"],
+        sitemap=False,
+        csrf=True,
+    )
+    def my_submission_resubmit(self, submission_id, **post):
+        submission = self._owned_submission(submission_id)
+        if not submission:
+            return request.not_found()
+        try:
+            submission.action_resubmit_by_contributor(request.env.user)
+        except ValidationError:
+            return request.redirect(
+                f"/minhas-contribuicoes/{submission.id}?resubmit_error=1",
+                code=303,
+            )
+        return request.redirect(
+            f"/minhas-contribuicoes/{submission.id}?resubmitted=1",
             code=303,
         )
 
