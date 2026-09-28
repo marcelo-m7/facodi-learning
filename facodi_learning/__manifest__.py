@@ -6,7 +6,7 @@
     "author": "FACODI",
     "website": "https://facodi.com",
     "license": "LGPL-3",
-    "depends": ["portal", "website_slides"],
+    "depends": ["portal", "website_slides", "website_forum"],
     "data": [
         "security/ir.model.access.csv",
         "security/facodi_learning_security.xml",
