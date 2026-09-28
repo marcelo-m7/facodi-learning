@@ -200,8 +200,10 @@ class TestContextualSubmissionStaticContracts(TransactionCase):
         self.assertIn('t-att-href="contribution_url"', explore)
         self.assertIn("source=area_resource_cta", explore)
         self.assertIn("section=explore-areas", explore)
-        self.assertIn("source=community_video_cta", explore)
-        self.assertIn("resource_type=video", explore)
+        self.assertIn('t-att-href="video_contribution_url"', explore)
+        self.assertIn('"source": "community_video_cta"', explore_controller)
+        self.assertIn('"resource_type": "video"', explore_controller)
+        self.assertIn('"video_contribution_url": video_contribution_url', explore_controller)
         self.assertIn("source=portal_resource_cta", portal)
 
         curriculum = self._read("views/website_curriculum.xml")

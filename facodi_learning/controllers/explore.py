@@ -357,6 +357,18 @@ class FacodiExploreController(http.Controller):
                 {**params, "page": page + 1}
             )
 
+        video_contribution_params = {
+            "type": "resource",
+            "resource_type": "video",
+            "source": "community_video_cta",
+            "section": "explore-videos",
+        }
+        if language in {"pt", "en", "es", "fr"}:
+            video_contribution_params["language"] = language
+        video_contribution_url = "/submissions/new?" + self._query_string(
+            video_contribution_params
+        )
+
         return request.render(
             "facodi_learning.explore_community_videos",
             {
@@ -369,6 +381,7 @@ class FacodiExploreController(http.Controller):
                 "total": total,
                 "previous_url": previous_url,
                 "next_url": next_url,
+                "video_contribution_url": video_contribution_url,
             },
         )
 
