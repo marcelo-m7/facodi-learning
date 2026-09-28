@@ -708,4 +708,7 @@ class FacodiContextualSubmissionController(FacodiSubmissionController):
                 }
             )
             return request.render("facodi_learning.contextual_submission_form", context)
+        submission._notify_contributor(
+            "facodi_learning.mail_template_submission_received"
+        )
         return request.redirect("/contribuir/recurso/status/%s" % submission.access_token, code=303)
