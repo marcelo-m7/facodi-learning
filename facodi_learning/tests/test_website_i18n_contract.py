@@ -116,13 +116,14 @@ class TestWebsiteI18nContract(unittest.TestCase):
         )
 
     def test_public_submission_copy_uses_english_source_strings(self):
-        template = SUBMISSION_TEMPLATE.read_text()
+        contextual = CONTEXTUAL_SUBMISSION_TEMPLATE.read_text()
+        status_and_management = SUBMISSION_TEMPLATE.read_text()
 
-        self.assertIn("Suggest a learning resource", template)
-        self.assertIn("Submit for review", template)
-        self.assertIn("Submission received", template)
-        self.assertIn("Waiting for editorial review.", template)
-        self.assertNotIn("Sugerir um recurso de aprendizagem", template)
+        self.assertIn("Suggest a learning resource", contextual)
+        self.assertIn("Send to the review desk", contextual)
+        self.assertIn("Submission received", status_and_management)
+        self.assertIn("Waiting for editorial review.", status_and_management)
+        self.assertNotIn("Sugerir um recurso de aprendizagem", contextual)
 
     def test_public_roadmap_catalogues_cover_supported_languages(self):
         expected_translations = {
@@ -138,7 +139,7 @@ class TestWebsiteI18nContract(unittest.TestCase):
                 "Explore curricular unit": "Explorar unidade curricular",
                 "related courses": "cursos relacionados",
                 "Suggest a learning resource": "Sugerir um recurso de aprendizagem",
-                "Submit for review": "Enviar para revisão",
+                "Send to the review desk": "Enviar para revisão",
                 "Submission received": "Submissão recebida",
                 "Waiting for editorial review.": "A aguardar revisão editorial.",
                 "Suggest a resource": "Sugerir um recurso",
@@ -158,7 +159,7 @@ class TestWebsiteI18nContract(unittest.TestCase):
                 "Explore curricular unit": "Explorar unidad curricular",
                 "related courses": "cursos relacionados",
                 "Suggest a learning resource": "Sugerir un recurso de aprendizaje",
-                "Submit for review": "Enviar a revisión",
+                "Send to the review desk": "Enviar a revisión",
                 "Submission received": "Envío recibido",
                 "Waiting for editorial review.": "En espera de revisión editorial.",
                 "Suggest a resource": "Sugerir un recurso",
@@ -178,7 +179,7 @@ class TestWebsiteI18nContract(unittest.TestCase):
                 "Explore curricular unit": "Explorer l'unite d'enseignement",
                 "related courses": "cours associes",
                 "Suggest a learning resource": "Suggérer une ressource d’apprentissage",
-                "Submit for review": "Envoyer pour examen",
+                "Send to the review desk": "Envoyer à la révision",
                 "Submission received": "Soumission reçue",
                 "Waiting for editorial review.": "En attente d’un examen éditorial.",
                 "Suggest a resource": "Suggérer une ressource",
