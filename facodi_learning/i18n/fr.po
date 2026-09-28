@@ -4187,3 +4187,13 @@ msgstr "Renvoyer en révision →"
 #: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_manage
 msgid "The review desk returned this tab to you. Revise it and resubmit when ready."
 msgstr "La table de révision vous a renvoyé cet onglet. Révisez-le et renvoyez-le lorsqu’il est prêt."
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_manage
+msgid "Follow-up details"
+msgstr "Détails du suivi"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_manage
+msgid "The page, CTA and academic/learning context that brought you here stay locked to this submission. You can revise your contribution details without losing that provenance."
+msgstr "La page, le CTA et le contexte académique/d’apprentissage qui vous ont amené ici restent liés à cette soumission. Vous pouvez modifier les détails de votre contribution sans perdre cette provenance."

@@ -19,6 +19,19 @@ class TestContributionRevisionLoopContract(unittest.TestCase):
         self.assertIn("/reenviar", controller)
         self.assertIn('data-facodi-revision-request="1"', website)
         self.assertIn('data-facodi-revision-resubmit="1"', website)
+        for field_name in (
+            "resource_type",
+            "resource_level",
+            "contact_name",
+            "contact_email",
+            "organization",
+            "contact_topic",
+            "permission_to_contact",
+        ):
+            self.assertIn(f'name="{field_name}"', website)
+            self.assertIn(f'"{field_name}"', controller)
+            self.assertIn(f'"{field_name}"', model)
+        self.assertIn("The page, CTA and academic/learning context", website)
         self.assertIn('name="action_request_changes"', backoffice)
 
 

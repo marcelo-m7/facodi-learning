@@ -498,6 +498,8 @@ class TestResourceSubmissionModel(TransactionCase):
             source_url=False,
             submission_type="contact",
             context="Initial collaboration question.",
+            contact_email="owner@example.org",
+            contact_topic="collaboration",
             submitted_by_id=self.portal.id,
         )
         submission.action_update_by_contributor(
@@ -507,11 +509,20 @@ class TestResourceSubmissionModel(TransactionCase):
                 "source_url": "",
                 "context": "Updated collaboration question.",
                 "language": "",
+                "contact_name": "Portal Owner",
+                "contact_email": "updated@example.org",
+                "organization": "Open Learning Lab",
+                "contact_topic": "partnership",
+                "permission_to_contact": True,
             },
         )
         self.assertEqual(submission.name, "Updated contact request")
         self.assertFalse(submission.source_url)
         self.assertEqual(submission.context, "Updated collaboration question.")
+        self.assertEqual(submission.contact_email, "updated@example.org")
+        self.assertEqual(submission.organization, "Open Learning Lab")
+        self.assertEqual(submission.contact_topic, "partnership")
+        self.assertTrue(submission.permission_to_contact)
 
     def test_contributor_cannot_edit_after_review_starts_but_can_withdraw(self):
         submission = self._submission(
@@ -606,6 +617,12 @@ class TestResourceSubmissionWebsite(HttpCase):
                 "source_url": "https://example.org/revision-requested",
                 "context": "This now explains the learning value.",
                 "language": "en",
+                "resource_type": "article",
+                "resource_level": "intermediate",
+                "contact_name": "Revision Owner",
+                "contact_email": "revision@example.org",
+                "organization": "FACODI Community",
+                "permission_to_contact": "1",
             },
         )
         self.assertEqual(edited.status_code, 200)
@@ -621,6 +638,11 @@ class TestResourceSubmissionWebsite(HttpCase):
         submission.invalidate_recordset()
         self.assertEqual(submission.state, "submitted")
         self.assertEqual(submission.name, "Revision completed")
+        self.assertEqual(submission.resource_type, "article")
+        self.assertEqual(submission.resource_level, "intermediate")
+        self.assertEqual(submission.contact_email, "revision@example.org")
+        self.assertEqual(submission.organization, "FACODI Community")
+        self.assertTrue(submission.permission_to_contact)
 
     def test_authenticated_contributor_can_manage_only_own_submissions(self):
         owner = self._portal_user("facodi-contributor-owner")
