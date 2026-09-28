@@ -247,7 +247,7 @@ class TestCurriculumUI(TransactionCase):
         contribute_menu = self.env["website.menu"].search(
             [
                 ("website_id", "=", website.id),
-                ("url", "=", "/submissions/new?type=resource"),
+                ("url", "=", "/submissions/new?type=resource&source=main_nav_contribute&section=header"),
             ],
             limit=1,
         )
