@@ -271,7 +271,7 @@ class WebsiteMenu(models.Model):
 
         ensure_menu(
             "Contribute",
-            "/submissions/new?type=resource",
+            "/submissions/new?type=resource&source=main_nav_contribute&section=header",
             30,
             community,
             aliases=("/contribuir/recurso", "/contribuir"),
@@ -338,6 +338,7 @@ class WebsiteMenu(models.Model):
                         "/contribuir/recurso",
                         "/contribuir",
                         "/submissions/new?type=resource",
+                        "/submissions/new?type=resource&source=main_nav_contribute&section=header",
                     ],
                 ),
             ]
