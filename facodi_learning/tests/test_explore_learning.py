@@ -27,7 +27,7 @@ class TestExploreLearningWebsite(HttpCase):
             {"name": "Hidden Area", "group_id": cls.area_group.id}
         )
 
-        cls.lang_en = cls.env["slide.tag"].create({"name": "lang:en_US"})
+        cls.lang_en = cls.env["slide.tag"].create({"name": "lang:en_GB"})
         cls.lang_pt = cls.env["slide.tag"].create({"name": "lang:pt_PT"})
         cls.topic_sql = cls.env["slide.tag"].create({"name": "SQL"})
 
@@ -242,7 +242,7 @@ class TestExploreLearningWebsite(HttpCase):
         )
 
         response = self.url_open("/explore/content")
-        self.assertIn('value="en_US"', response.text)
+        self.assertIn('value="en_GB"', response.text)
         self.assertIn('value="pt_PT"', response.text)
         self.assertNotIn('value="fr_FR"', response.text)
 
