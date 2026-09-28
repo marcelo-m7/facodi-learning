@@ -595,7 +595,13 @@
           "xmlid": "facodi_dtm_web_design_j6Ule7GXaRs",
           "name": "Aprenda Design de Websites para Iniciantes - Curso Completo",
           "url": "https://www.youtube.com/watch?v=j6Ule7GXaRs",
-          "description": "<p>Curso completo para iniciantes em design de websites.</p><p><strong>Source:</strong> Flux Academy. Recovered from the historical FACODI/Open2 catalogue.</p><p><strong>Semantic tags:</strong> web design, curso para iniciantes, design gráfico, tecnologia.</p>"
+          "description": "<p>Curso completo para iniciantes em design de websites.</p><p><strong>Source:</strong> Flux Academy. Recovered from the historical FACODI/Open2 catalogue.</p><p><strong>Semantic tags:</strong> web design, curso para iniciantes, design gráfico, tecnologia.</p>",
+          "tags": [
+            "Web Design",
+            "Graphic Design",
+            "Technology",
+            "Beginner"
+          ]
         }
       ]
     },
@@ -612,7 +618,13 @@
           "xmlid": "facodi_dtm_motion_design_vivSXNiUkYs",
           "name": "Domine o Motion Design em 10 Minutos com After Effects!",
           "url": "https://www.youtube.com/watch?v=vivSXNiUkYs",
-          "description": "<p>Aprenda Motion Design em 10 minutos com After Effects.</p><p><strong>Source:</strong> Shadow. Discovered in the historical FACODI/Open2 dataset and selected from semantic enrichment.</p><p><strong>Semantic tags:</strong> motion design, After Effects, design gráfico, tutorial, animação.</p>"
+          "description": "<p>Aprenda Motion Design em 10 minutos com After Effects.</p><p><strong>Source:</strong> Shadow. Discovered in the historical FACODI/Open2 dataset and selected from semantic enrichment.</p><p><strong>Semantic tags:</strong> motion design, After Effects, design gráfico, tutorial, animação.</p>",
+          "tags": [
+            "Motion Design",
+            "After Effects",
+            "Animation",
+            "Graphic Design"
+          ]
         }
       ]
     },
@@ -629,13 +641,25 @@
           "xmlid": "facodi_dtm_interaction_EcbgbKtOELY",
           "name": "Master UI/UX Concepts in 10 Minutes: A Quick Guide for Designers",
           "url": "https://www.youtube.com/watch?v=EcbgbKtOELY",
-          "description": "<p>Quick guide to core UI/UX concepts and user-experience principles.</p><p><strong>Source:</strong> Kole Jain. Selected from the historical FACODI/Open2 catalogue using AI-enriched tags.</p><p><strong>Semantic tags:</strong> UI, UX, design, user experience, web design.</p>"
+          "description": "<p>Quick guide to core UI/UX concepts and user-experience principles.</p><p><strong>Source:</strong> Kole Jain. Selected from the historical FACODI/Open2 catalogue using AI-enriched tags.</p><p><strong>Semantic tags:</strong> UI, UX, design, user experience, web design.</p>",
+          "tags": [
+            "UI",
+            "UX",
+            "User Experience",
+            "Web Design"
+          ]
         },
         {
           "xmlid": "facodi_dtm_interaction_gKM6b2EnW1k",
           "name": "Transform Your Designs: Upgrade 9 Essential UI Elements with Free Figma File",
           "url": "https://www.youtube.com/watch?v=gKM6b2EnW1k",
-          "description": "<p>Practical UI-design resource focused on improving common interface elements with Figma.</p><p><strong>Source:</strong> Kole Jain. Selected from the historical FACODI/Open2 catalogue using AI-enriched tags.</p><p><strong>Semantic tags:</strong> UI Design, Figma, User Experience, Design Tips, Prototyping.</p>"
+          "description": "<p>Practical UI-design resource focused on improving common interface elements with Figma.</p><p><strong>Source:</strong> Kole Jain. Selected from the historical FACODI/Open2 catalogue using AI-enriched tags.</p><p><strong>Semantic tags:</strong> UI Design, Figma, User Experience, Design Tips, Prototyping.</p>",
+          "tags": [
+            "UI Design",
+            "Figma",
+            "User Experience",
+            "Prototyping"
+          ]
         }
       ]
     },
@@ -652,7 +676,13 @@
           "xmlid": "facodi_dtm_design_foundations_pVlCTdb1c90",
           "name": "PRINCÍPIOS de DESIGN GRÁFICO para INICIANTES: Aprenda os Fundamentos",
           "url": "https://www.youtube.com/watch?v=pVlCTdb1c90",
-          "description": "<p>Introdução aos princípios fundamentais do design gráfico e à construção de composições visuais.</p><p><strong>Source:</strong> Nadine Fronza. Recovered from the historical FACODI/Open2 catalogue and selected from AI-enriched metadata.</p><p><strong>Semantic tags:</strong> design gráfico, princípios do design, iniciantes, tutoriais de design, educação.</p>"
+          "description": "<p>Introdução aos princípios fundamentais do design gráfico e à construção de composições visuais.</p><p><strong>Source:</strong> Nadine Fronza. Recovered from the historical FACODI/Open2 catalogue and selected from AI-enriched metadata.</p><p><strong>Semantic tags:</strong> design gráfico, princípios do design, iniciantes, tutoriais de design, educação.</p>",
+          "tags": [
+            "Graphic Design",
+            "Design Principles",
+            "Beginner",
+            "Design Education"
+          ]
         }
       ]
     }
