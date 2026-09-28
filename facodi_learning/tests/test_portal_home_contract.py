@@ -34,7 +34,11 @@ class TestPortalHomeContract(unittest.TestCase):
 
     def test_portal_exposes_native_progress_without_parallel_tracking(self):
         self.assertIn('"completion": min(max(completion, 0.0), 100.0)', self.controller)
-        self.assertIn('"is_completed": membership.member_status == "completed"', self.controller)
+        self.assertIn(
+            'is_completed = membership.member_status == "completed" or completion >= 100',
+            self.controller,
+        )
+        self.assertIn('"is_completed": is_completed', self.controller)
         self.assertIn("facodi-course-progress", self.portal)
         self.assertIn("facodi_course_rows", self.portal)
 
