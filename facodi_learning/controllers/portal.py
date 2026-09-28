@@ -45,11 +45,19 @@ class FacodiCustomerPortal(CustomerPortal):
             completion = float(membership.completion or 0.0)
             if completion <= 1:
                 completion *= 100
+            is_completed = membership.member_status == "completed" or completion >= 100
+            next_slide = membership.next_slide_id if not is_completed else request.env["slide.slide"]
             course_rows.append(
                 {
                     "course": membership.channel_id,
                     "completion": min(max(completion, 0.0), 100.0),
-                    "is_completed": membership.member_status == "completed" or completion >= 100,
+                    "is_completed": is_completed,
+                    "next_slide": next_slide,
+                    "continue_url": (
+                        next_slide.website_url
+                        if next_slide
+                        else membership.channel_id.website_url
+                    ),
                 }
             )
 
