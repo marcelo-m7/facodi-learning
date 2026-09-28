@@ -190,7 +190,7 @@ class WebsiteMenu(models.Model):
             explore = Menu.create(
                 {
                     "name": "Explore",
-                    "url": "/courses",
+                    "url": "/explore",
                     "parent_id": root.id,
                     "website_id": facodi.id,
                     "sequence": 10,
@@ -199,7 +199,7 @@ class WebsiteMenu(models.Model):
         else:
             explore.write(
                 {
-                    "url": "/courses",
+                    "url": "/explore",
                     "parent_id": root.id,
                     "website_id": facodi.id,
                     "sequence": 10,
