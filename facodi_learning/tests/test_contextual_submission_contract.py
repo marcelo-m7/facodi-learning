@@ -177,7 +177,7 @@ class TestContextualSubmissionStaticContracts(TransactionCase):
         portal = self._read("views/portal_home.xml")
         self.assertIn("source=course_resource_cta", slides)
         self.assertIn("course_id=%s", slides)
-        self.assertIn("type=contact", slides)
+        self.assertIn("/contact?course_id=%s", slides)
         self.assertIn("source=course_contact_cta", slides)
         explore_controller = self._read("controllers/explore.py")
         self.assertIn('"source": "explore_empty_shelf"', explore_controller)
