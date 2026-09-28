@@ -20,7 +20,7 @@ class TestLearningInterfacesContract(unittest.TestCase):
 
     def test_d1_release_version(self):
         manifest = MANIFEST.read_text(encoding="utf-8")
-        self.assertIn('"version": "19.0.1.112.0"', manifest)
+        self.assertIn('"version": "19.0.1.113.0"', manifest)
 
     def test_contextual_forum_uses_native_odoo_forum_flow(self):
         manifest = MANIFEST.read_text(encoding="utf-8")
@@ -71,8 +71,9 @@ class TestLearningInterfacesContract(unittest.TestCase):
         self.assertNotIn('ref="website.default_website"', menu_data)
         self.assertNotIn('ref="website.website_2"', menu_data)
         self.assertIn('("website_id", "=", False)', menu_model)
-        self.assertIn("duplicates.mapped(\"child_id\").write({\"parent_id\": menu.id})", menu_model)
-        self.assertIn("duplicate_explore.mapped(\"child_id\").write({\"parent_id\": explore.id})", menu_model)
+        self.assertIn('("id", "!=", parent.id)', menu_model)
+        self.assertIn('descendants = duplicates.mapped("child_id") - menu', menu_model)
+        self.assertIn('descendants = duplicate_explore.mapped("child_id") - explore', menu_model)
         self.assertIn("stale_top_level.unlink()", menu_model)
 
     def test_explore_filter_chips_have_individual_remove_urls(self):
