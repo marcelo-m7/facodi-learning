@@ -4264,3 +4264,15 @@ msgstr "Siguiente pestaña"
 #: model_terms:ir.ui.view,arch_db:facodi_learning.portal_my_home_facodi
 msgid "Continue next lesson"
 msgstr "Continuar con la siguiente lección"
+
+#. module: facodi_learning
+#: code:addons/facodi_learning/controllers/contextual_submission.py:0
+#: code:addons/facodi_learning/models/contextual_submission.py:0
+msgid "Homepage closing call"
+msgstr "Cierre de la página de inicio"
+
+#. module: facodi_learning
+#: code:addons/facodi_learning/controllers/contextual_submission.py:0
+#: code:addons/facodi_learning/models/contextual_submission.py:0
+msgid "I found a useful public resource and want to leave it on the FACODI learning trail."
+msgstr "Encontré un recurso público útil y quiero dejarlo en el recorrido de aprendizaje FACODI."
