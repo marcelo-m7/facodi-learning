@@ -4121,3 +4121,31 @@ msgstr "Este percurso terminou após a revisão editorial. A contribuição perm
 #: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_manage
 msgid "You stopped this journey. The contribution remains in your history."
 msgstr "Interrompeste este percurso. A contribuição permanece no teu histórico."
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.view_facodi_submission_form
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_status
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_manage
+msgid "Reply to Contributor"
+msgstr "Resposta ao contribuidor"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.view_facodi_submission_form
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_status
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_manage
+msgid "Note from the review desk"
+msgstr "Nota da mesa de revisão"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.view_facodi_submission_form
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_status
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_manage
+msgid "FACODI replied to your contribution."
+msgstr "A FACODI respondeu à tua contribuição."
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.view_facodi_submission_form
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_status
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_manage
+msgid "Optional message the contributor may read on their private status page."
+msgstr "Mensagem opcional que o contribuidor pode ler na sua página privada de estado."
