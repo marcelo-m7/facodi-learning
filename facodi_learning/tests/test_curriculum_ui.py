@@ -138,7 +138,7 @@ class TestCurriculumUI(TransactionCase):
         self.assertEqual(menu.url, "/roadmaps")
         self.assertEqual(menu.parent_id.name, "Explore")
         self.assertEqual(menu.parent_id.parent_id, website.menu_id)
-        self.assertEqual(menu.parent_id.url, "/courses")
+        self.assertEqual(menu.parent_id.url, "#")
         self.assertEqual(menu.parent_id.sequence, 10)
         self.assertEqual(website.default_lang_id.code, "en_US")
         self.assertEqual(
@@ -242,14 +242,8 @@ class TestCurriculumUI(TransactionCase):
                 ("url", "=", "/courses"),
             ]
         )
-        self.assertEqual(len(course_menus), 2)
-        explore_menu = menu.parent_id
-        courses_menu = course_menus.filtered(
-            lambda item: item.parent_id == explore_menu
-        )
-        self.assertEqual(len(courses_menu), 1)
-        self.assertEqual(courses_menu.name, "Courses")
-        self.assertIn(explore_menu, course_menus)
+        self.assertEqual(len(course_menus), 1)
+        self.assertEqual(course_menus.parent_id, menu.parent_id)
 
         news_menu = self.env["website.menu"].search(
             [("website_id", "=", website.id), ("url", "=", "/blog")], limit=1
@@ -278,19 +272,15 @@ class TestCurriculumUI(TransactionCase):
             ]
         )
         self.assertEqual(len(explore_menus), 1)
-        self.assertEqual(explore_menus.url, "/courses")
+        self.assertEqual(explore_menus.url, "#")
         repeated_course_menus = self.env["website.menu"].search(
             [
                 ("website_id", "=", website.id),
                 ("url", "=", "/courses"),
             ]
         )
-        self.assertEqual(len(repeated_course_menus), 2)
-        repeated_courses = repeated_course_menus.filtered(
-            lambda item: item.parent_id == explore_menus
-        )
-        self.assertEqual(len(repeated_courses), 1)
-        self.assertEqual(repeated_courses.name, "Courses")
+        self.assertEqual(len(repeated_course_menus), 1)
+        self.assertEqual(repeated_course_menus.parent_id, explore_menus)
         self.assertFalse(
             self.env["website.menu"].search(
                 [
@@ -319,7 +309,7 @@ class TestCurriculumUI(TransactionCase):
             [
                 ("website_id", "=", website.id),
                 ("parent_id", "=", website.menu_id.id),
-                ("url", "=", "/courses"),
+                ("url", "=", "#"),
                 ("name", "=", "Explore"),
             ],
             limit=1,
@@ -336,11 +326,59 @@ class TestCurriculumUI(TransactionCase):
         )
         self.assertEqual(len(courses), 1)
 
-        # A second pass must preserve the intentional parent/child pair that
-        # shares /courses without creating duplicates or recursive parenting.
-        self.assertTrue(
-            Menu.with_context(website_id=website.id).facodi_reconcile_navigation()
+    def test_navigation_reconcile_survives_stale_shared_parent_destination(self):
+        website = self.env["website"].search([], order="id", limit=1)
+        self.assertTrue(website)
+        website.domain = "https://facodi.com"
+
+        Menu = self.env["website.menu"]
+        self.assertTrue(Menu.facodi_reconcile_navigation())
+        explore = Menu.search(
+            [
+                ("website_id", "=", website.id),
+                ("parent_id", "=", website.menu_id.id),
+                ("name", "=", "Explore"),
+            ],
+            limit=1,
         )
-        self.assertEqual(explore.parent_id, website.menu_id)
-        self.assertEqual(courses.parent_id, explore)
-        self.assertNotEqual(explore, courses)
+        courses = Menu.search(
+            [
+                ("website_id", "=", website.id),
+                ("parent_id", "=", explore.id),
+                ("url", "=", "/courses"),
+                ("name", "=", "Courses"),
+            ],
+            limit=1,
+        )
+        self.assertTrue(explore)
+        self.assertTrue(courses)
+        self.assertEqual(explore.url, "#")
+
+        # Odoo 19 computes every menu with children as "#". Production exposed
+        # a persisted stale value where the parent still stored /courses. Seed
+        # that exact legacy shape at SQL level so the reconciler is tested
+        # against the failure that previously caused parent_id = self.
+        self.env.cr.execute(
+            "UPDATE website_menu SET url = %s WHERE id = %s",
+            ("/courses", explore.id),
+        )
+        explore.invalidate_recordset(["url"])
+        self.assertEqual(explore.url, "/courses")
+
+        for _pass in range(2):
+            self.assertTrue(Menu.facodi_reconcile_navigation())
+            explore.invalidate_recordset(["url", "parent_id", "child_id"])
+            courses.invalidate_recordset(["url", "parent_id"])
+            self.assertEqual(explore.parent_id, website.menu_id)
+            self.assertEqual(courses.parent_id, explore)
+            self.assertNotEqual(explore, courses)
+
+        canonical_courses = Menu.search(
+            [
+                ("website_id", "=", website.id),
+                ("parent_id", "=", explore.id),
+                ("url", "=", "/courses"),
+                ("name", "=", "Courses"),
+            ]
+        )
+        self.assertEqual(len(canonical_courses), 1)
