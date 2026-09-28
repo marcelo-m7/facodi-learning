@@ -11,7 +11,7 @@
                 <field name="language"/>
                 <filter name="submitted" string="Submitted" domain="[('state', '=', 'submitted')]"/>
                 <filter name="reviewing" string="Reviewing" domain="[('state', '=', 'reviewing')]"/>
-                <filter name="accepted" string="Accepted" domain="[('state', '=', 'accepted')]"/>
+                <filter name="changes_requested" string="Changes Requested" domain="[(\'state\', \'=\', \'changes_requested\')]"/>\n                <filter name="accepted" string="Accepted" domain="[('state', '=', 'accepted')]"/>
                 <filter name="rejected" string="Rejected" domain="[('state', '=', 'rejected')]"/>
                 <filter name="resolved" string="Resolved" domain="[('state', '=', 'resolved')]"/>
                 <filter name="withdrawn" string="Withdrawn" domain="[('state', '=', 'withdrawn')]"/>
@@ -84,7 +84,7 @@
                             groups="website_slides.group_website_slides_manager"/>
                     <field name="state"
                            widget="statusbar"
-                           statusbar_visible="submitted,reviewing,accepted,rejected,resolved,withdrawn"/>
+                           statusbar_visible="submitted,reviewing,changes_requested,accepted,rejected,resolved,withdrawn"/>
                 </header>
                 <sheet>
                     <group>
