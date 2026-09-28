@@ -79,6 +79,7 @@ _SOURCE_CTA_LABELS = {
     "course_showcase_contribute": _lt("Learning catalogue"),
     "closing_cta": _lt("Homepage closing call"),
     "submission_status_followup": _lt("Submission follow-up"),
+    "legacy_submission_followup": _lt("Submission follow-up"),
     "my_submissions_new": _lt("My submissions"),
     "my_submissions_empty": _lt("My submissions empty state"),
 }
