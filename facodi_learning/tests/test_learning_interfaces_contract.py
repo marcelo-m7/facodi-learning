@@ -95,6 +95,22 @@ class TestLearningInterfacesContract(unittest.TestCase):
         self.assertIn('("tag_ids.name", "=", f"{self.LANGUAGE_PREFIX}{language}")', explore_controller)
         self.assertNotIn("filtered = all_slides", explore_controller)
 
+    def test_explore_map_exposes_dynamic_learning_destinations(self):
+        explore = (MODULE_ROOT / "views" / "website_explore.xml").read_text(encoding="utf-8")
+        controller = (MODULE_ROOT / "controllers" / "explore.py").read_text(encoding="utf-8")
+        for marker in (
+            'data-facodi-explore-map="1"',
+            'data-facodi-spotlight="1"',
+            'data-facodi-scramble="1"',
+            'href="/courses"',
+            'href="/roadmaps"',
+            'href="/curricular-units"',
+            'href="/explore/content"',
+        ):
+            self.assertIn(marker, explore)
+        for key in ('"courses"', '"resources"', '"roadmaps"', '"units"', '"community"', '"areas"'):
+            self.assertIn(key, controller)
+
     def test_roadmap_catalogue_exposes_d1_structure(self):
         self.assertIn('id="curriculum_public_index"', self.curriculum)
         self.assertIn("facodi-learning-hero", self.curriculum)
