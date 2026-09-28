@@ -266,7 +266,28 @@ class WebsiteMenu(models.Model):
             duplicate_community.mapped("child_id").write({"parent_id": community.id})
             duplicate_community.unlink()
 
-        ensure_menu("News", "/blog", 10, community)
+        # Do not expose an empty News destination. website_blog is optional
+        # for facodi_learning, so discover it through installed modules before
+        # touching blog.post. When public posts appear, reconciliation restores
+        # the standard /blog entry automatically.
+        blog_installed = bool(
+            self.env["ir.module.module"].sudo().search_count(
+                [("name", "=", "website_blog"), ("state", "=", "installed")]
+            )
+        )
+        published_news = bool(
+            blog_installed
+            and self.env["blog.post"].sudo().search_count(
+                [("website_published", "=", True)]
+            )
+        )
+        existing_news = Menu.search(
+            [("website_id", "=", facodi.id), ("url", "=", "/blog")]
+        )
+        if published_news:
+            ensure_menu("News", "/blog", 10, community)
+        elif existing_news:
+            existing_news.unlink()
 
         forum_installed = bool(
             self.env["ir.module.module"].sudo().search_count(
