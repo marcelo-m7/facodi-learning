@@ -392,6 +392,43 @@ class TestResourceSubmissionModel(TransactionCase):
             "Internal triage detail that must stay private.",
         )
 
+    def test_manager_can_request_changes_and_owner_can_resubmit_same_record(self):
+        submission = self._submission(
+            name="Needs a revision",
+            source_url="https://example.org/revision-loop",
+            submitted_by_id=self.portal.id,
+        )
+        submission.with_user(self.manager).write(
+            {"editorial_reply": "Please add a clearer description and source context."}
+        )
+        submission.with_user(self.manager).action_request_changes()
+        self.assertEqual(submission.state, "changes_requested")
+        self.assertEqual(submission.reviewed_by_id, self.manager)
+
+        submission.action_update_by_contributor(
+            self.portal,
+            {
+                "name": "Revised contribution",
+                "source_url": "https://example.org/revision-loop",
+                "context": "Expanded source context.",
+                "language": "en",
+            },
+        )
+        submission.action_resubmit_by_contributor(self.portal)
+        self.assertEqual(submission.state, "submitted")
+        self.assertFalse(submission.reviewed_by_id)
+        self.assertFalse(submission.reviewed_at)
+        self.assertEqual(submission.name, "Revised contribution")
+
+    def test_request_changes_requires_contributor_facing_reply(self):
+        submission = self._submission(
+            name="No reply yet",
+            source_url="https://example.org/no-reply",
+            submitted_by_id=self.portal.id,
+        )
+        with self.assertRaisesRegex(ValidationError, "contributor-facing reply"):
+            submission.with_user(self.manager).action_request_changes()
+
     def test_only_manager_can_take_terminal_review_actions(self):
         submission = self._submission()
         officer = self.env["res.users"].create(
@@ -539,6 +576,51 @@ class TestResourceSubmissionWebsite(HttpCase):
         self.assertEqual(detail.status_code, 200)
         self.assertIn("A contributor-safe response from the review desk.", detail.text)
         self.assertNotIn("Internal-only moderation context.", detail.text)
+
+    def test_owner_can_edit_and_resubmit_requested_changes(self):
+        owner = self._portal_user("facodi-revision-owner")
+        submission = self.env["facodi.learning.submission"].sudo().create(
+            {
+                "name": "Revision requested",
+                "source_url": "https://example.org/revision-requested",
+                "context": "First draft.",
+                "submitted_by_id": owner.id,
+            }
+        )
+        submission.write({"editorial_reply": "Please explain why this resource is useful."})
+        submission.action_request_changes()
+
+        self.authenticate(owner.login, "facodi-test-pass")
+        detail = self.url_open(f"/minhas-contribuicoes/{submission.id}")
+        self.assertEqual(detail.status_code, 200)
+        self.assertIn("The review desk needs a revision.", detail.text)
+        self.assertIn("Resubmit for review", detail.text)
+        tree = html.fromstring(detail.text)
+        token = tree.xpath('//form[contains(@action, "/editar")]//input[@name="csrf_token"]/@value')[0]
+
+        edited = self.url_open(
+            f"/minhas-contribuicoes/{submission.id}/editar",
+            data={
+                "csrf_token": token,
+                "name": "Revision completed",
+                "source_url": "https://example.org/revision-requested",
+                "context": "This now explains the learning value.",
+                "language": "en",
+            },
+        )
+        self.assertEqual(edited.status_code, 200)
+
+        detail = self.url_open(f"/minhas-contribuicoes/{submission.id}")
+        tree = html.fromstring(detail.text)
+        resubmit_token = tree.xpath('//form[contains(@action, "/reenviar")]//input[@name="csrf_token"]/@value')[0]
+        resubmitted = self.url_open(
+            f"/minhas-contribuicoes/{submission.id}/reenviar",
+            data={"csrf_token": resubmit_token},
+        )
+        self.assertEqual(resubmitted.status_code, 200)
+        submission.invalidate_recordset()
+        self.assertEqual(submission.state, "submitted")
+        self.assertEqual(submission.name, "Revision completed")
 
     def test_authenticated_contributor_can_manage_only_own_submissions(self):
         owner = self._portal_user("facodi-contributor-owner")
