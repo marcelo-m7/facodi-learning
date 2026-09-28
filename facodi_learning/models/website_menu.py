@@ -312,7 +312,7 @@ class WebsiteMenu(models.Model):
             duplicate_about.mapped("child_id").write({"parent_id": about.id})
             duplicate_about.unlink()
 
-        ensure_menu("Contact", "/contactus", 40, root)
+        ensure_menu("Contact", "/contact", 40, root, aliases=("/contactus",))
 
         # Remove stale top-level shells left by previous iterations now that their
         # destinations are owned by Explore/Community.

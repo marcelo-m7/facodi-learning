@@ -206,13 +206,14 @@ class TestCurriculumUI(TransactionCase):
             [
                 ("website_id", "=", website.id),
                 ("parent_id", "=", website.menu_id.id),
-                ("url", "=", "/contactus"),
+                ("url", "=", "/contact"),
             ],
             limit=1,
         )
         self.assertTrue(community_menu)
         self.assertTrue(about_menu)
         self.assertTrue(contact_menu)
+        self.assertEqual(contact_menu.url, "/contact")
 
         for code, (
             explore_name,
