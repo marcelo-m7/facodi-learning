@@ -71,8 +71,9 @@ class TestLearningInterfacesContract(unittest.TestCase):
         self.assertNotIn('ref="website.default_website"', menu_data)
         self.assertNotIn('ref="website.website_2"', menu_data)
         self.assertIn('("website_id", "=", False)', menu_model)
-        self.assertIn("duplicates.mapped(\"child_id\").write({\"parent_id\": menu.id})", menu_model)
-        self.assertIn("duplicate_explore.mapped(\"child_id\").write({\"parent_id\": explore.id})", menu_model)
+        self.assertIn('("id", "!=", parent.id)', menu_model)
+        self.assertIn('descendants = duplicates.mapped("child_id") - menu', menu_model)
+        self.assertIn('descendants = duplicate_explore.mapped("child_id") - explore', menu_model)
         self.assertIn("stale_top_level.unlink()", menu_model)
 
     def test_explore_filter_chips_have_individual_remove_urls(self):
