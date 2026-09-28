@@ -102,6 +102,14 @@ class FacodiLearningSubmission(models.Model):
     decision_note = fields.Text(
         help="Internal editorial note. Never render this field on public status pages."
     )
+    editorial_reply = fields.Text(
+        string="Reply to Contributor",
+        help=(
+            "Optional contributor-facing editorial reply. This text is shown on "
+            "the private status page and the signed-in contributor view; never "
+            "put internal notes or secrets here."
+        ),
+    )
     candidate_id = fields.Many2one(
         "facodi.learning.course.candidate",
         string="Course Candidate",
