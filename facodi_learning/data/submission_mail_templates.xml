@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="mail_template_submission_changes_requested" model="mail.template">
+        <field name="name">FACODI: Changes requested</field>
+        <field name="model_id" ref="model_facodi_learning_submission"/>
+        <field name="subject">A FACODI contribution needs your revision</field>
+        <field name="email_to">{{ object._contributor_notification_email() }}</field>
+        <field name="lang">{{ object._contributor_notification_lang() }}</field>
+        <field name="body_html" type="html">
+            <div>
+                <p>Hello,</p>
+                <p>The FACODI review desk has asked for a revision to <strong><t t-out="object.name"/></strong>.</p>
+                <blockquote t-if="object.editorial_reply"><t t-out="object.editorial_reply"/></blockquote>
+                <p>Your original contribution and its context are still saved. Update the same submission and send it back to review.</p>
+                <p><a t-att-href="object._contributor_tracking_url()">Open your contribution</a></p>
+            </div>
+        </field>
+        <field name="auto_delete" eval="True"/>
+    </record>
+
+    <record id="mail_template_submission_accepted" model="mail.template">
+        <field name="name">FACODI: Contribution accepted</field>
+        <field name="model_id" ref="model_facodi_learning_submission"/>
+        <field name="subject">Your FACODI contribution was accepted</field>
+        <field name="email_to">{{ object._contributor_notification_email() }}</field>
+        <field name="lang">{{ object._contributor_notification_lang() }}</field>
+        <field name="body_html" type="html">
+            <div>
+                <p>Hello,</p>
+                <p><strong><t t-out="object.name"/></strong> has been accepted by the FACODI review desk.</p>
+                <p t-if="object.editorial_reply"><t t-out="object.editorial_reply"/></p>
+                <p>Acceptance records the editorial decision; publication or downstream processing may still follow separately.</p>
+                <p><a t-att-href="object._contributor_tracking_url()">View contribution status</a></p>
+            </div>
+        </field>
+        <field name="auto_delete" eval="True"/>
+    </record>
+
+    <record id="mail_template_submission_rejected" model="mail.template">
+        <field name="name">FACODI: Contribution review completed</field>
+        <field name="model_id" ref="model_facodi_learning_submission"/>
+        <field name="subject">An update on your FACODI contribution</field>
+        <field name="email_to">{{ object._contributor_notification_email() }}</field>
+        <field name="lang">{{ object._contributor_notification_lang() }}</field>
+        <field name="body_html" type="html">
+            <div>
+                <p>Hello,</p>
+                <p>The review of <strong><t t-out="object.name"/></strong> is complete and this contribution was not accepted.</p>
+                <p t-if="object.editorial_reply"><t t-out="object.editorial_reply"/></p>
+                <p><a t-att-href="object._contributor_tracking_url()">View contribution status</a></p>
+            </div>
+        </field>
+        <field name="auto_delete" eval="True"/>
+    </record>
+</odoo>
