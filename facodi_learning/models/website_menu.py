@@ -126,18 +126,18 @@ class WebsiteMenu(models.Model):
             candidates = Menu.search(
                 [
                     ("website_id", "=", facodi.id),
+                    ("id", "!=", parent.id),
                     ("url", "in", list({url, *aliases})),
                 ],
                 order="id",
             )
             # A navigable parent can intentionally share the canonical URL of
-            # its first child (for example Explore -> /courses). Never reuse the
-            # parent itself as that child: writing parent_id to its own id makes
-            # Odoo's parent_store correctly reject the tree as recursive.
-            reusable_candidates = candidates.filtered(lambda item: item != parent)
-            menu = reusable_candidates.filtered(lambda item: item.parent_id == parent)[:1]
+            # its first child (for example Explore -> /courses). The search
+            # domain excludes that parent, so it can never be reused or deleted
+            # while reconciling the child that points to the same destination.
+            menu = candidates.filtered(lambda item: item.parent_id == parent)[:1]
             if not menu:
-                menu = reusable_candidates[:1]
+                menu = candidates[:1]
             values = {
                 "url": url,
                 "parent_id": parent.id,
@@ -160,10 +160,14 @@ class WebsiteMenu(models.Model):
                 menu = Menu.create({"name": name, **values})
             write_menu_name(menu, name)
 
-            duplicates = reusable_candidates - menu
+            duplicates = candidates - menu
             if duplicates:
                 # Preserve custom descendants before deduplicating a legacy shell.
-                duplicates.mapped("child_id").write({"parent_id": menu.id})
+                # Never reparent the canonical menu to itself if a malformed or
+                # legacy tree happens to expose it through a duplicate's children.
+                descendants = duplicates.mapped("child_id") - menu
+                if descendants:
+                    descendants.write({"parent_id": menu.id})
                 duplicates.unlink()
             return menu
 
@@ -205,7 +209,9 @@ class WebsiteMenu(models.Model):
 
         duplicate_explore = explore_candidates - explore
         if duplicate_explore:
-            duplicate_explore.mapped("child_id").write({"parent_id": explore.id})
+            descendants = duplicate_explore.mapped("child_id") - explore
+            if descendants:
+                descendants.write({"parent_id": explore.id})
             duplicate_explore.unlink()
 
         learning_entries = (
@@ -268,7 +274,9 @@ class WebsiteMenu(models.Model):
         write_menu_name(community, "Community")
         duplicate_community = community_candidates - community
         if duplicate_community:
-            duplicate_community.mapped("child_id").write({"parent_id": community.id})
+            descendants = duplicate_community.mapped("child_id") - community
+            if descendants:
+                descendants.write({"parent_id": community.id})
             duplicate_community.unlink()
 
         # Do not expose an empty News destination. website_blog is optional
@@ -345,7 +353,9 @@ class WebsiteMenu(models.Model):
         write_menu_name(about, "About")
         duplicate_about = about_candidates - about
         if duplicate_about:
-            duplicate_about.mapped("child_id").write({"parent_id": about.id})
+            descendants = duplicate_about.mapped("child_id") - about
+            if descendants:
+                descendants.write({"parent_id": about.id})
             duplicate_about.unlink()
 
         ensure_menu("Contact", "/contact", 40, root, aliases=("/contactus",))
