@@ -11,7 +11,8 @@
                 <field name="language"/>
                 <filter name="submitted" string="Submitted" domain="[('state', '=', 'submitted')]"/>
                 <filter name="reviewing" string="Reviewing" domain="[('state', '=', 'reviewing')]"/>
-                <filter name="changes_requested" string="Changes Requested" domain="[(\'state\', \'=\', \'changes_requested\')]"/>\n                <filter name="accepted" string="Accepted" domain="[('state', '=', 'accepted')]"/>
+                <filter name="changes_requested" string="Changes Requested" domain="[('state', '=', 'changes_requested')]"/>
+                <filter name="accepted" string="Accepted" domain="[('state', '=', 'accepted')]"/>
                 <filter name="rejected" string="Rejected" domain="[('state', '=', 'rejected')]"/>
                 <filter name="resolved" string="Resolved" domain="[('state', '=', 'resolved')]"/>
                 <filter name="withdrawn" string="Withdrawn" domain="[('state', '=', 'withdrawn')]"/>
@@ -31,7 +32,8 @@
                   create="0"
                   decoration-success="state == 'resolved'"
                   decoration-danger="state == 'rejected'"
-                  decoration-info="state == 'reviewing'">
+                  decoration-info="state == 'reviewing'"
+                  decoration-warning="state == 'changes_requested'">
                 <field name="name"/>
                 <field name="source_url" widget="url"/>
                 <field name="language" optional="show"/>
