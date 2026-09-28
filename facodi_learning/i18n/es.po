@@ -609,7 +609,7 @@ msgstr ""
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.approved_course_curriculum_links
 msgid "Coverage relations reviewed and approved by FACODI curation."
-msgstr ""
+msgstr "Relaciones de cobertura revisadas y aprobadas por la curación de FACODI."
 "Relaciones de cobertura revisadas y aprobadas por la curaduría de FACODI."
 
 #. module: facodi_learning
@@ -1011,7 +1011,7 @@ msgstr ""
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.approved_learning_resources
 msgid "Explore further"
-msgstr ""
+msgstr "Explorar más"
 
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_map
@@ -1533,7 +1533,7 @@ msgstr "Itinerario de aprendizaje"
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.approved_learning_resources
 msgid "Learning resources"
-msgstr ""
+msgstr "Recursos de aprendizaje"
 
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_index
@@ -1810,7 +1810,7 @@ msgstr ""
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit
 msgid "Only reviewed and approved relations with currently published courses."
-msgstr ""
+msgstr "Solo relaciones revisadas y aprobadas con cursos actualmente publicados."
 "Solo relaciones revisadas y aprobadas con cursos publicados actualmente."
 
 #. module: facodi_learning
