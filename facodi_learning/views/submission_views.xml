@@ -109,6 +109,11 @@
                         <field name="decision_note"
                                placeholder="Internal editorial note; never shown on the public status page."
                                readonly="state in ('resolved', 'withdrawn')"/>
+                        <field name="editorial_reply"
+                               string="Reply to Contributor"
+                               placeholder="Optional message the contributor may read on their private status page."
+                               readonly="state == 'withdrawn'"
+                               groups="website_slides.group_website_slides_manager"/>
                     </group>
                 </sheet>
             </form>
