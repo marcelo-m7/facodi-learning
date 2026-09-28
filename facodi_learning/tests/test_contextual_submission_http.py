@@ -105,6 +105,41 @@ class TestContextualSubmissionHttp(HttpCase):
         self.assertTrue(tree.xpath('//input[@name="organization"]'))
         self.assertTrue(tree.xpath('//input[@name="contact_email"]'))
 
+    def test_canonical_contact_preserves_explicit_cta_origin_and_topic(self):
+        response = self.url_open(
+            "/contact?source=faq_contact_cta&section=faq&topic=collaboration"
+        )
+        self.assertEqual(response.status_code, 200)
+        tree = html.fromstring(response.text)
+        self.assertEqual(
+            tree.xpath('//input[@name="source_cta"]/@value'),
+            ["faq_contact_cta"],
+        )
+        self.assertEqual(
+            tree.xpath('//input[@name="source_section"]/@value'),
+            ["faq"],
+        )
+        self.assertTrue(
+            tree.xpath('//select[@name="contact_topic"]/option[@value="collaboration"][@selected]')
+        )
+        visible_text = " ".join(tree.xpath("//body//text()"))
+        self.assertIn("FAQ contact", visible_text)
+        self.assertNotIn("faq_contact_cta", visible_text)
+
+    def test_community_contact_origin_is_human_readable(self):
+        response = self.url_open(
+            "/contact?source=forum_postit_contact_cta&section=community&topic=collaboration"
+        )
+        self.assertEqual(response.status_code, 200)
+        tree = html.fromstring(response.text)
+        self.assertEqual(
+            tree.xpath('//input[@name="source_cta"]/@value'),
+            ["forum_postit_contact_cta"],
+        )
+        visible_text = " ".join(tree.xpath("//body//text()"))
+        self.assertIn("Community notebook", visible_text)
+        self.assertNotIn("forum_postit_contact_cta", visible_text)
+
     def test_cross_origin_source_page_is_not_persisted_in_form(self):
         response = self.url_open(
             "/submissions/new?type=contact&source=faq_contribution_cta"
