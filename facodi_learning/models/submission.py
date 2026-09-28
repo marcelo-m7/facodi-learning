@@ -449,7 +449,19 @@ class FacodiLearningSubmission(models.Model):
                     "This resource is already under editorial review for this context."
                 )
 
-        allowed = {"name", "source_url", "context", "language"}
+        allowed = {
+            "name",
+            "source_url",
+            "context",
+            "language",
+            "resource_type",
+            "resource_level",
+            "contact_name",
+            "contact_email",
+            "organization",
+            "contact_topic",
+            "permission_to_contact",
+        }
         unknown = set(values) - allowed
         if unknown:
             raise AccessError("Only contributor-editable fields may be changed.")
@@ -463,6 +475,20 @@ class FacodiLearningSubmission(models.Model):
             cleaned["context"] = (values.get("context") or "").strip()[:4000]
         if "language" in values:
             cleaned["language"] = (values.get("language") or "").strip().lower()[:16]
+        if "resource_type" in values:
+            cleaned["resource_type"] = values.get("resource_type") or False
+        if "resource_level" in values:
+            cleaned["resource_level"] = values.get("resource_level") or False
+        if "contact_name" in values:
+            cleaned["contact_name"] = (values.get("contact_name") or "").strip()[:120]
+        if "contact_email" in values:
+            cleaned["contact_email"] = (values.get("contact_email") or "").strip().lower()[:254]
+        if "organization" in values:
+            cleaned["organization"] = (values.get("organization") or "").strip()[:160]
+        if "contact_topic" in values:
+            cleaned["contact_topic"] = values.get("contact_topic") or False
+        if "permission_to_contact" in values:
+            cleaned["permission_to_contact"] = bool(values.get("permission_to_contact"))
 
         if not cleaned.get("name", submission.name):
             raise ValidationError("A submission title is required.")
@@ -472,11 +498,27 @@ class FacodiLearningSubmission(models.Model):
             and not _is_public_http_url(cleaned["source_url"])
         ):
             raise ValidationError("Enter a valid public HTTP or HTTPS URL.")
+        submission_type = getattr(submission, "submission_type", "resource")
+        if submission_type == "resource" and not cleaned.get(
+            "resource_type", getattr(submission, "resource_type", False)
+        ):
+            raise ValidationError("Choose the type of learning resource.")
         if (
-            getattr(submission, "submission_type", "resource") != "resource"
+            submission_type != "resource"
             and not cleaned.get("context", submission.context)
         ):
             raise ValidationError("Write a short message so FACODI can review the submission.")
+        if submission_type == "contact":
+            if not cleaned.get("contact_topic", getattr(submission, "contact_topic", False)):
+                raise ValidationError("Choose what your contact request is about.")
+            if not cleaned.get("contact_email", getattr(submission, "contact_email", False)):
+                raise ValidationError("Enter an email address so FACODI can reply.")
+        if cleaned.get("permission_to_contact") and not cleaned.get(
+            "contact_email", getattr(submission, "contact_email", False)
+        ):
+            raise ValidationError(
+                "Add an email address if you want FACODI to contact you."
+            )
 
         super(FacodiLearningSubmission, submission).write(cleaned)
         return True
