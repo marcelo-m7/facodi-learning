@@ -85,7 +85,7 @@ class TestContextualSubmissionStaticContracts(TransactionCase):
         self.assertIn("_safe_origin_path", controller)
         self.assertIn("contact_topic_defaults", controller)
         self.assertIn("source_cta_label", controller)
-        self.assertIn("_public_roadmap", controller)
+        self.assertNotIn("cta_labels", controller)\n        self.assertIn("brief_parts.append(source_cta_label", controller)\n        self.assertIn("_public_roadmap", controller)
         self.assertIn("_public_course", controller)
         self.assertIn("_public_slide", controller)
         self.assertIn("_discover_public_youtube_metadata", controller)
