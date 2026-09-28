@@ -21,7 +21,7 @@
                     <strong>Contribute to FACODI</strong>
                     <div class="d-flex flex-wrap gap-2">
                         <a t-att-href="'/submissions/new?type=resource&amp;course_id=%s&amp;source=course_resource_cta&amp;section=course' % channel.id" class="btn btn-outline-primary">Suggest a learning resource</a>
-                        <a t-att-href="'/submissions/new?type=contact&amp;course_id=%s&amp;source=course_contact_cta&amp;section=course' % channel.id" class="btn btn-link">Other contribution</a>
+                        <a t-att-href="'/contact?course_id=%s&amp;source=course_contact_cta&amp;section=course' % channel.id" class="btn btn-link">Other contribution</a>
                     </div>
                 </div>
             </section>
