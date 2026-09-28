@@ -139,6 +139,16 @@ class FacodiLearningSubmissionContext(models.Model):
     resource_level = fields.Selection(_RESOURCE_LEVELS)
     permission_to_contact = fields.Boolean(default=False)
 
+    @api.model
+    def _facodi_source_cta_label(self, source_cta):
+        source_cta = self._clean_context_slug(source_cta)
+        if not source_cta:
+            return ""
+        label = _SOURCE_CTA_LABELS.get(source_cta)
+        if label:
+            return self.env._(label)
+        return source_cta.replace("_", " ").replace("-", " ").title()
+
     def _facodi_contributor_context_rows(self, website=None):
         """Return a safe human-readable projection of captured contribution context.
 
@@ -159,11 +169,8 @@ class FacodiLearningSubmissionContext(models.Model):
         add(self.env._("Contribution type"), submission_type_label, "type")
 
         if self.source_cta:
-            source_label = _SOURCE_CTA_LABELS.get(
-                self.source_cta,
-                self.source_cta.replace("_", " ").replace("-", " ").title(),
-            )
-            add(self.env._("Started from"), self.env._(source_label), "source")
+            source_label = self._facodi_source_cta_label(self.source_cta)
+            add(self.env._("Started from"), source_label, "source")
 
         if self.source_section:
             add(
