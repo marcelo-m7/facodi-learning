@@ -375,9 +375,33 @@ class FacodiSubmissionController(http.Controller):
         resource_types = {"video", "article", "book", "tool", "repository", "course", "other"}
         resource_levels = {"introductory", "intermediate", "advanced"}
         contact_topics = {"collaboration", "partnership", "content", "technical", "accessibility", "other"}
-        resource_type = (post.get("resource_type") or "").strip().lower()
-        resource_level = (post.get("resource_level") or "").strip().lower()
-        contact_topic = (post.get("contact_topic") or "").strip().lower()
+
+        resource_type = (
+            post.get("resource_type")
+            if "resource_type" in post
+            else submission.resource_type
+        ) or ""
+        resource_type = resource_type.strip().lower()
+        if submission.submission_type == "resource" and not resource_type:
+            resource_type = (
+                "video"
+                if youtube_video_identity(submission.source_url)
+                else "other"
+            )
+
+        resource_level = (
+            post.get("resource_level")
+            if "resource_level" in post
+            else submission.resource_level
+        ) or ""
+        resource_level = resource_level.strip().lower()
+
+        contact_topic = (
+            post.get("contact_topic")
+            if "contact_topic" in post
+            else submission.contact_topic
+        ) or ""
+        contact_topic = contact_topic.strip().lower()
         values = {
             "name": (post.get("name") or "").strip()[:200],
             "source_url": (post.get("source_url") or "").strip()[:2048],
