@@ -4307,3 +4307,83 @@ msgstr "Navegação principal"
 #: code:addons/facodi_learning/controllers/contextual_submission.py:0
 msgid "Homepage"
 msgstr "Página inicial"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_landing
+msgid "Where do you want to go next?"
+msgstr "Para onde queres ir a seguir?"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_landing
+msgid "Courses, curricular units, learning roadmaps and open resources — connected instead of isolated."
+msgstr "Cursos, unidades curriculares, roadmaps de aprendizagem e recursos abertos — ligados em vez de isolados."
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_landing
+msgid "Learn by course."
+msgstr "Aprende por curso."
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_landing
+msgid "Explore courses →"
+msgstr "Explorar cursos →"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_landing
+msgid "Follow the academic path."
+msgstr "Segue o percurso académico."
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_landing
+msgid "Follow a roadmap →"
+msgstr "Seguir um roadmap →"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_landing
+msgid "Start from the syllabus."
+msgstr "Começa pelo plano curricular."
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_landing
+msgid "Explore curricular units →"
+msgstr "Explorar unidades curriculares →"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_landing
+msgid "Open resources"
+msgstr "Recursos abertos"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_landing
+msgid "Find the useful tab."
+msgstr "Encontra o separador útil."
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_landing
+msgid "Browse resources →"
+msgstr "Explorar recursos →"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_landing
+msgid "Ask. Compare notes. Share."
+msgstr "Pergunta. Compara apontamentos. Partilha."
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_landing
+msgid "Join the conversation →"
+msgstr "Entrar na conversa →"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_landing
+msgid "Contribute"
+msgstr "Contribuir"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_landing
+msgid "Found something useful?"
+msgstr "Encontraste algo útil?"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_landing
+msgid "Suggest a resource →"
+msgstr "Sugerir um recurso →"
