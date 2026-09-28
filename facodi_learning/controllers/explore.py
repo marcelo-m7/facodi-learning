@@ -241,22 +241,10 @@ class FacodiExploreController(http.Controller):
             if remove_query:
                 filter_row["remove_url"] += "?" + remove_query
 
-        safe_origin_params = {
-            "area": area_id,
-            "language": language,
-            "format": content_format,
-            "page": page if page > 1 else False,
-        }
-        safe_origin_query = self._query_string(safe_origin_params)
-        safe_origin_url = "/explore/content"
-        if safe_origin_query:
-            safe_origin_url += "?" + safe_origin_query
-
         contribution_params = {
             "type": "resource",
             "source": "explore_empty_shelf",
             "section": "explore-content",
-            "source_page_url": safe_origin_url,
         }
         selected_area = self._visible_areas().filtered(lambda tag: tag.id == area_id)[:1]
         if selected_area:
@@ -369,20 +357,11 @@ class FacodiExploreController(http.Controller):
                 {**params, "page": page + 1}
             )
 
-        safe_video_origin_params = {
-            "language": language if language in {"pt", "en", "es", "fr"} else False,
-            "page": page if page > 1 else False,
-        }
-        safe_video_origin_query = self._query_string(safe_video_origin_params)
-        safe_video_origin_url = "/explore/videos"
-        if safe_video_origin_query:
-            safe_video_origin_url += "?" + safe_video_origin_query
         video_contribution_params = {
             "type": "resource",
             "resource_type": "video",
             "source": "community_video_cta",
             "section": "explore-videos",
-            "source_page_url": safe_video_origin_url,
         }
         if language in {"pt", "en", "es", "fr"}:
             video_contribution_params["language"] = language
