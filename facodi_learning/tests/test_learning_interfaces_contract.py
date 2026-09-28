@@ -40,7 +40,7 @@ class TestLearningInterfacesContract(unittest.TestCase):
         self.assertIn('("parent_id", "=", root.id)', menu_model)
 
         for route in (
-            "/slides",
+            "/courses",
             "/explore/areas",
             "/explore/content",
             "/explore/videos",
