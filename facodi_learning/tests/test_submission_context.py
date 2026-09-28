@@ -394,6 +394,23 @@ class TestSubmissionContextWebsite(HttpCase):
         self.assertEqual(invalid.status_code, 200)
         self.assertIn("Enter an email for follow-up.", invalid.text)
 
+    def test_legacy_resource_post_without_type_falls_back_to_other(self):
+        response = self.url_open(
+            "/contribuir/recurso",
+            data={
+                "csrf_token": self._csrf_token(),
+                "name": "Legacy untyped resource",
+                "source_url": "https://example.org/legacy-untyped",
+            },
+        )
+        self.assertEqual(response.status_code, 200)
+        submission = self.env["facodi.learning.submission"].sudo().search(
+            [("name", "=", "Legacy untyped resource")],
+            limit=1,
+        )
+        self.assertTrue(submission)
+        self.assertEqual(submission.resource_type, "other")
+
     def test_contextual_form_persists_only_public_curricular_unit(self):
         route = (
             "/contribuir/recurso?curriculum_unit_id=%s"
