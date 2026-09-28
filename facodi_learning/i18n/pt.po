@@ -520,7 +520,7 @@ msgstr ""
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.approved_course_relations
 msgid "Continue exploring reviewed FACODI course connections."
-msgstr ""
+msgstr "Continue a explorar ligações de cursos FACODI revistas."
 
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_module
@@ -2127,7 +2127,7 @@ msgstr ""
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.approved_course_relations
 msgid "Related courses"
-msgstr ""
+msgstr "Cursos relacionados"
 
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.view_facodi_course_mapping_search
