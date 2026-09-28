@@ -4163,3 +4163,87 @@ msgstr "Détails du suivi"
 #: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_manage
 msgid "The page, CTA and academic/learning context that brought you here stay locked to this submission. You can revise your contribution details without losing that provenance."
 msgstr "La page, le CTA et le contexte académique/d’apprentissage qui vous ont amené ici restent liés à cette soumission. Vous pouvez modifier les détails de votre contribution sans perdre cette provenance."
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_status
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_manage
+#: code:addons/facodi_learning/models/contextual_submission.py:0
+msgid "Context captured"
+msgstr "Contexte enregistré"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_status
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_manage
+#: code:addons/facodi_learning/models/contextual_submission.py:0
+msgid "FACODI kept the useful part of where you started."
+msgstr "FACODI a conservé la partie utile de votre point de départ."
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_status
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_manage
+#: code:addons/facodi_learning/models/contextual_submission.py:0
+msgid "Private link · safe summary"
+msgstr "Lien privé · résumé sûr"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_status
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_manage
+#: code:addons/facodi_learning/models/contextual_submission.py:0
+msgid "Raw origin URLs, tracking tokens and internal review notes are never shown here."
+msgstr "Les URL d’origine, jetons de suivi et notes internes de révision ne sont jamais affichés ici."
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_status
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_manage
+#: code:addons/facodi_learning/models/contextual_submission.py:0
+msgid "The provenance stays pinned while you revise the useful details."
+msgstr "La provenance reste fixée pendant que vous révisez les détails utiles."
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_status
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_manage
+#: code:addons/facodi_learning/models/contextual_submission.py:0
+msgid "Locked context"
+msgstr "Contexte verrouillé"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_status
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_manage
+#: code:addons/facodi_learning/models/contextual_submission.py:0
+msgid "Contribution type"
+msgstr "Type de contribution"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_status
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_manage
+#: code:addons/facodi_learning/models/contextual_submission.py:0
+msgid "Started from"
+msgstr "Démarré depuis"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_status
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_manage
+#: code:addons/facodi_learning/models/contextual_submission.py:0
+msgid "Section"
+msgstr "Section"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_status
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_manage
+#: code:addons/facodi_learning/models/contextual_submission.py:0
+msgid "Learning item"
+msgstr "Élément d’apprentissage"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_status
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_manage
+#: code:addons/facodi_learning/models/contextual_submission.py:0
+msgid "Resource type"
+msgstr "Type de ressource"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_status
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_manage
+#: code:addons/facodi_learning/models/contextual_submission.py:0
+msgid "Contact topic"
+msgstr "Sujet du contact"
