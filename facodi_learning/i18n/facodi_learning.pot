@@ -4244,3 +4244,13 @@ msgstr ""
 #: code:addons/facodi_learning/models/contextual_submission.py:0
 msgid "I found a useful public resource and want to leave it on the FACODI learning trail."
 msgstr ""
+
+#. module: facodi_learning
+#: code:addons/facodi_learning/controllers/contextual_submission.py:0
+msgid "Main navigation"
+msgstr ""
+
+#. module: facodi_learning
+#: code:addons/facodi_learning/controllers/contextual_submission.py:0
+msgid "Homepage"
+msgstr ""
