@@ -3,7 +3,7 @@ from unittest.mock import patch
 from odoo.exceptions import ValidationError
 from odoo.tests import TransactionCase
 
-from ..services.curriculum_bootstrap import ensure_lesti_2026_27
+from ..services.curriculum_bootstrap import ensure_design_curricula_2026_27, ensure_lesti_2026_27
 
 
 class TestCurriculumBootstrap(TransactionCase):
@@ -24,6 +24,48 @@ class TestCurriculumBootstrap(TransactionCase):
                 lambda unit: unit.external_unit_code == "19411035"
             ).credits,
             30.0,
+        )
+
+
+    def test_design_curricula_bootstrap_is_idempotent_and_public(self):
+        first = ensure_design_curricula_2026_27(self.env)
+        second = ensure_design_curricula_2026_27(self.env)
+
+        self.assertEqual(first["1930"], second["1930"])
+        self.assertEqual(first["1454"], second["1454"])
+        self.assertTrue(first["1930"].website_published)
+        self.assertTrue(first["1454"].website_published)
+        self.assertEqual(len(first["1930"].unit_ids), 19)
+        self.assertEqual(len(first["1454"].unit_ids), 41)
+
+        typography = first["1930"].unit_ids.filtered(
+            lambda unit: unit.external_unit_code == "19301007"
+        )
+        web_design = first["1930"].unit_ids.filtered(
+            lambda unit: unit.external_unit_code == "19301009"
+        )
+        self.assertEqual(typography.credits, 5.0)
+        self.assertEqual(web_design.credits, 4.0)
+
+        motion_channel = self.env.ref(
+            "__import__.facodi_dtm_19301008_motion_design"
+        )
+        web_channel = self.env.ref(
+            "__import__.facodi_dtm_19301009_web_design"
+        )
+        self.assertTrue(motion_channel.is_published)
+        self.assertTrue(web_channel.is_published)
+        self.assertTrue(
+            self.env["facodi.learning.curriculum.coverage"].search(
+                [
+                    ("channel_id", "=", motion_channel.id),
+                    ("curriculum_unit_id", "=", first["1930"].unit_ids.filtered(
+                        lambda unit: unit.external_unit_code == "19301008"
+                    ).id),
+                    ("state", "=", "approved"),
+                ],
+                limit=1,
+            )
         )
 
     def test_lesti_bootstrap_rejects_identity_mismatch(self):
