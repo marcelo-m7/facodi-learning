@@ -11,6 +11,8 @@ class TestContributorNotificationContract(unittest.TestCase):
         self.assertIn("def _contributor_tracking_url", model)
         self.assertIn("force_send=False", model)
         self.assertIn("mail_template_submission_changes_requested", model)
+        controller = (MODULE_ROOT / "controllers" / "contextual_submission.py").read_text(encoding="utf-8")
+        self.assertIn("mail_template_submission_received", controller)
         self.assertIn("mail_template_submission_accepted", model)
         self.assertIn("mail_template_submission_rejected", model)
         self.assertIn("_logger.exception", model)
@@ -20,6 +22,8 @@ class TestContributorNotificationContract(unittest.TestCase):
         self.assertNotIn("decision_note", templates)
         self.assertIn("editorial_reply", templates)
         self.assertIn("_contributor_tracking_url()", templates)
+        self.assertIn('id="mail_template_submission_received"', templates)
+        self.assertIn("Track your contribution", templates)
 
 
 if __name__ == "__main__":
