@@ -150,16 +150,19 @@ if set(env["facodi.learning.curriculum.reference"].search([]).ids) != expected_r
     raise AssertionError("Upgrade created curriculum references outside the curated 2026/27 set.")
 
 design_coverage = env["facodi.learning.curriculum.coverage"].search([])
-if len(design_coverage) != 2:
+if len(design_coverage) != 3:
     raise AssertionError(
-        f"Expected two seeded DTM supports relations on a clean upgrade, got {len(design_coverage)}."
+        f"Expected three seeded DTM supports relations on a clean upgrade, got {len(design_coverage)}."
     )
 if set(design_coverage.mapped("state")) != {"approved"}:
     raise AssertionError("Seeded DTM coverage must be explicitly approved supports relations.")
 if set(design_coverage.mapped("coverage_type")) != {"supports"}:
     raise AssertionError("Seeded design coverage may only use supports relations.")
 if set(design_coverage.mapped("curriculum_unit_id.external_unit_code")) != {
+    "19301006",
     "19301008",
     "19301009",
 }:
-    raise AssertionError("Clean-upgrade DTM coverage must target Motion Design and Web Design.")
+    raise AssertionError(
+        "Clean-upgrade DTM coverage must target Interaction Design, Motion Design and Web Design."
+    )
