@@ -518,17 +518,32 @@ class FacodiSubmissionController(http.Controller):
         if not submission:
             return request.not_found()
 
+        resource_types = {"video", "article", "book", "tool", "repository", "course", "other"}
+        resource_levels = {"introductory", "intermediate", "advanced"}
+        contact_topics = {"collaboration", "partnership", "content", "technical", "accessibility", "other"}
+        resource_type = (post.get("resource_type") or "").strip().lower()
+        resource_level = (post.get("resource_level") or "").strip().lower()
+        contact_topic = (post.get("contact_topic") or "").strip().lower()
         values = {
             "name": (post.get("name") or "").strip()[:200],
             "source_url": (post.get("source_url") or "").strip()[:2048],
             "context": (post.get("context") or "").strip()[:4000],
             "language": (post.get("language") or "").strip().lower()[:16],
+            "resource_type": resource_type if resource_type in resource_types else False,
+            "resource_level": resource_level if resource_level in resource_levels else False,
+            "contact_name": (post.get("contact_name") or "").strip()[:120],
+            "contact_email": (post.get("contact_email") or "").strip().lower()[:254],
+            "organization": (post.get("organization") or "").strip()[:160],
+            "contact_topic": contact_topic if contact_topic in contact_topics else False,
+            "permission_to_contact": bool(post.get("permission_to_contact")),
         }
         errors = []
         if not values["name"]:
             errors.append(request.env._("Enter a short title for the submission."))
 
         if submission.submission_type == "resource":
+            if not values["resource_type"]:
+                errors.append(request.env._("Choose the type of learning resource."))
             if not request.env["facodi.learning.submission"]._is_valid_source_url(
                 values["source_url"]
             ):
@@ -563,6 +578,18 @@ class FacodiSubmissionController(http.Controller):
                     )
         elif not values["context"]:
             errors.append(request.env._("Write a short message so FACODI can review the submission."))
+
+        if submission.submission_type == "contact":
+            if not values["contact_topic"]:
+                errors.append(request.env._("Choose what your contact request is about."))
+            if not values["contact_email"]:
+                errors.append(request.env._("Enter an email address so FACODI can reply."))
+        if values["contact_email"] and "@" not in values["contact_email"]:
+            errors.append(request.env._("Enter a valid email address."))
+        if values["permission_to_contact"] and not values["contact_email"]:
+            errors.append(
+                request.env._("Add an email address if you want FACODI to contact you.")
+            )
 
         if not errors:
             try:
