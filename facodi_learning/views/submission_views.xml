@@ -4,11 +4,20 @@
         <field name="name">facodi.learning.submission.search</field>
         <field name="model">facodi.learning.submission</field>
         <field name="arch" type="xml">
-            <search string="Resource Submissions">
+            <search string="FACODI Submissions">
                 <field name="name"/>
                 <field name="source_url"/>
                 <field name="submitted_by_id"/>
+                <field name="submission_type"/>
+                <field name="contact_topic"/>
+                <field name="source_cta"/>
                 <field name="language"/>
+                <separator/>
+                <filter name="needs_attention" string="Needs Attention" domain="[('state', 'in', ('submitted', 'changes_requested'))]"/>
+                <filter name="resources" string="Resources" domain="[('submission_type', '=', 'resource')]"/>
+                <filter name="contacts" string="Contact" domain="[('submission_type', '=', 'contact')]"/>
+                <filter name="corrections" string="Corrections" domain="[('submission_type', '=', 'correction')]"/>
+                <filter name="questions" string="Questions" domain="[('submission_type', '=', 'question')]"/>
                 <filter name="submitted" string="Submitted" domain="[('state', '=', 'submitted')]"/>
                 <filter name="reviewing" string="Reviewing" domain="[('state', '=', 'reviewing')]"/>
                 <filter name="changes_requested" string="Changes Requested" domain="[('state', '=', 'changes_requested')]"/>
@@ -18,6 +27,9 @@
                 <filter name="withdrawn" string="Withdrawn" domain="[('state', '=', 'withdrawn')]"/>
                 <group>
                     <filter name="group_state" string="Status" context="{'group_by': 'state'}"/>
+                    <filter name="group_type" string="Submission Type" context="{'group_by': 'submission_type'}"/>
+                    <filter name="group_topic" string="Contact Topic" context="{'group_by': 'contact_topic'}"/>
+                    <filter name="group_source" string="Source CTA" context="{'group_by': 'source_cta'}"/>
                     <filter name="group_language" string="Language" context="{'group_by': 'language'}"/>
                 </group>
             </search>
@@ -28,14 +40,18 @@
         <field name="name">facodi.learning.submission.list</field>
         <field name="model">facodi.learning.submission</field>
         <field name="arch" type="xml">
-            <list string="Resource Submissions"
+            <list string="FACODI Submissions"
                   create="0"
                   decoration-success="state == 'resolved'"
                   decoration-danger="state == 'rejected'"
                   decoration-info="state == 'reviewing'"
                   decoration-warning="state == 'changes_requested'">
                 <field name="name"/>
-                <field name="source_url" widget="url"/>
+                <field name="submission_type"/>
+                <field name="contact_topic" optional="show"/>
+                <field name="source_url" widget="url" optional="show"/>
+                <field name="source_cta" optional="show"/>
+                <field name="source_section" optional="hide"/>
                 <field name="language" optional="show"/>
                 <field name="submitted_by_id" optional="show"/>
                 <field name="state"/>
@@ -54,7 +70,7 @@
         <field name="name">facodi.learning.submission.form</field>
         <field name="model">facodi.learning.submission</field>
         <field name="arch" type="xml">
-            <form string="Resource Submission" create="0">
+            <form string="FACODI Submission" create="0">
                 <header>
                     <button name="action_start_review"
                             type="object"
@@ -92,6 +108,11 @@
                     <group>
                         <group>
                             <field name="name" readonly="state in ('rejected', 'resolved', 'withdrawn')"/>
+                            <field name="submission_type" readonly="1"/>
+                            <field name="contact_topic" readonly="state in ('rejected', 'resolved', 'withdrawn')" invisible="submission_type != 'contact'"/>
+                            <field name="contact_name" readonly="state in ('rejected', 'resolved', 'withdrawn')" invisible="submission_type != 'contact'"/>
+                            <field name="contact_email" readonly="state in ('rejected', 'resolved', 'withdrawn')" invisible="submission_type != 'contact'"/>
+                            <field name="organization" readonly="state in ('rejected', 'resolved', 'withdrawn')" invisible="submission_type != 'contact'"/>
                             <field name="source_url" widget="url" readonly="state in ('rejected', 'resolved', 'withdrawn')"/>
                             <field name="language" readonly="state in ('rejected', 'resolved', 'withdrawn')"/>
                             <field name="submitted_by_id" readonly="1"/>
@@ -111,7 +132,16 @@
                             <field name="reviewed_at" readonly="1"/>
                         </group>
                     </group>
-                    <group>
+                    <group string="Contributor Context">
+                        <field name="source_cta" readonly="1"/>
+                        <field name="source_section" readonly="1"/>
+                        <field name="source_page_url" readonly="1"/>
+                        <field name="area_tag_id" readonly="1" invisible="not area_tag_id"/>
+                        <field name="curriculum_unit_id" readonly="1" invisible="not curriculum_unit_id"/>
+                        <field name="roadmap_id" readonly="1" invisible="not roadmap_id"/>
+                        <field name="module_id" readonly="1" invisible="not module_id"/>
+                        <field name="course_id" readonly="1" invisible="not course_id"/>
+                        <field name="suggested_slide_id" readonly="1" invisible="not suggested_slide_id"/>
                         <field name="context" readonly="state in ('rejected', 'resolved', 'withdrawn')"/>
                         <field name="decision_note"
                                placeholder="Internal editorial note; never shown on the public status page."
@@ -128,14 +158,14 @@
     </record>
 
     <record id="action_facodi_submissions" model="ir.actions.act_window">
-        <field name="name">Resource Submissions</field>
+        <field name="name">FACODI Submissions</field>
         <field name="res_model">facodi.learning.submission</field>
         <field name="view_mode">list,form</field>
         <field name="search_view_id" ref="view_facodi_submission_search"/>
     </record>
 
     <menuitem id="menu_facodi_submissions"
-              name="Submissions"
+              name="Review Desk"
               parent="menu_facodi_learning_root"
               action="action_facodi_submissions"
               groups="website_slides.group_website_slides_officer"
