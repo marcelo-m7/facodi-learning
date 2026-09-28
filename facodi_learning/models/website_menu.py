@@ -6,7 +6,7 @@ class WebsiteMenu(models.Model):
 
     @api.model
     def facodi_reconcile_navigation(self):
-        """Keep FACODI discovery navigation isolated from other websites."""
+        """Reconcile the FACODI public navigation around an English-first IA."""
         Website = self.env["website"].sudo()
         Menu = self.sudo()
 
@@ -23,17 +23,62 @@ class WebsiteMenu(models.Model):
         if not root:
             return False
 
-        active_language_codes = set(facodi.language_ids.filtered("active").mapped("code"))
+        # English is the canonical/source language of the public FACODI website.
+        # Keep other enabled languages available through Odoo's standard selector.
+        Language = self.env["res.lang"].sudo()
+        english = Language.search([("code", "=", "en_US")], limit=1)
+        if english:
+            if not english.active:
+                Language._activate_lang("en_US")
+                english = Language.search([("code", "=", "en_US")], limit=1)
+            write_values = {"default_lang_id": english.id}
+            if english not in facodi.language_ids:
+                write_values["language_ids"] = [(4, english.id)]
+            facodi.write(write_values)
+
+        active_language_codes = set(
+            facodi.language_ids.filtered("active").mapped("code")
+        )
         menu_translations = {
+            "Home": {
+                "pt_PT": "Início",
+                "es_ES": "Inicio",
+                "fr_FR": "Accueil",
+            },
             "Explore": {
                 "pt_PT": "Explorar",
                 "es_ES": "Explorar",
                 "fr_FR": "Explorer",
             },
+            "Community": {
+                "pt_PT": "Comunidade",
+                "es_ES": "Comunidad",
+                "fr_FR": "Communauté",
+            },
+            "About": {
+                "pt_PT": "Sobre",
+                "es_ES": "Acerca de",
+                "fr_FR": "À propos",
+            },
+            "Contact": {
+                "pt_PT": "Contacto",
+                "es_ES": "Contacto",
+                "fr_FR": "Contact",
+            },
             "Courses": {
                 "pt_PT": "Cursos",
                 "es_ES": "Cursos",
                 "fr_FR": "Cours",
+            },
+            "Roadmaps": {
+                "pt_PT": "Roadmaps",
+                "es_ES": "Rutas",
+                "fr_FR": "Parcours",
+            },
+            "Curricular units": {
+                "pt_PT": "Unidades curriculares",
+                "es_ES": "Unidades curriculares",
+                "fr_FR": "Unités d’enseignement",
             },
             "Areas": {
                 "pt_PT": "Áreas",
@@ -50,15 +95,20 @@ class WebsiteMenu(models.Model):
                 "es_ES": "Vídeos de la comunidad",
                 "fr_FR": "Vidéos de la communauté",
             },
-            "Roadmaps": {
-                "pt_PT": "Roadmaps",
-                "es_ES": "Rutas",
-                "fr_FR": "Parcours",
+            "News": {
+                "pt_PT": "Notícias",
+                "es_ES": "Noticias",
+                "fr_FR": "Actualités",
             },
-            "Curricular units": {
-                "pt_PT": "Unidades curriculares",
-                "es_ES": "Unidades curriculares",
-                "fr_FR": "Unités d’enseignement",
+            "Forum": {
+                "pt_PT": "Fórum",
+                "es_ES": "Foro",
+                "fr_FR": "Forum",
+            },
+            "Contribute": {
+                "pt_PT": "Contribuir",
+                "es_ES": "Contribuir",
+                "fr_FR": "Contribuer",
             },
         }
 
@@ -72,6 +122,38 @@ class WebsiteMenu(models.Model):
                         {"name": translated_name}
                     )
 
+        def ensure_menu(name, url, sequence, parent, aliases=()):
+            candidates = Menu.search(
+                [
+                    ("website_id", "=", facodi.id),
+                    ("url", "in", list({url, *aliases})),
+                ],
+                order="id",
+            )
+            menu = candidates.filtered(lambda item: item.parent_id == parent)[:1]
+            if not menu:
+                menu = candidates[:1]
+            values = {
+                "url": url,
+                "parent_id": parent.id,
+                "website_id": facodi.id,
+                "sequence": sequence,
+            }
+            if menu:
+                menu.write(values)
+            else:
+                menu = Menu.create({"name": name, **values})
+            write_menu_name(menu, name)
+
+            duplicates = candidates - menu
+            if duplicates:
+                # Preserve custom descendants before deduplicating a legacy shell.
+                duplicates.mapped("child_id").write({"parent_id": menu.id})
+                duplicates.unlink()
+            return menu
+
+        home = ensure_menu("Home", "/", 5, root)
+
         explore_candidates = Menu.search(
             [
                 ("website_id", "=", facodi.id),
@@ -80,7 +162,7 @@ class WebsiteMenu(models.Model):
                 ("url", "=", "/explore"),
                 "&",
                 ("url", "=", "#"),
-                ("name", "=", "Explore"),
+                ("name", "in", ["Explore", "Learn", "Learning"]),
             ],
             order="id",
         )
@@ -96,8 +178,14 @@ class WebsiteMenu(models.Model):
                 }
             )
         else:
-            explore.write({"url": "#", "sequence": 10})
-
+            explore.write(
+                {
+                    "url": "#",
+                    "parent_id": root.id,
+                    "website_id": facodi.id,
+                    "sequence": 10,
+                }
+            )
         write_menu_name(explore, "Explore")
 
         duplicate_explore = explore_candidates - explore
@@ -105,83 +193,160 @@ class WebsiteMenu(models.Model):
             duplicate_explore.mapped("child_id").write({"parent_id": explore.id})
             duplicate_explore.unlink()
 
-        entries = (
-            ("Courses", "/courses", 10),
-            ("Areas", "/explore/areas", 20),
-            ("Learning resources", "/explore/content", 30),
-            ("Community videos", "/explore/videos", 40),
-            ("Roadmaps", "/roadmaps", 50),
-            ("Curricular units", "/curricular-units", 60),
+        learning_entries = (
+            ("Courses", "/courses", 10, ("/slides", "/explore/courses")),
+            ("Roadmaps", "/roadmaps", 20, ()),
+            (
+                "Curricular units",
+                "/curricular-units",
+                30,
+                ("/unidades-curriculares",),
+            ),
+            ("Areas", "/explore/areas", 40, ("/explorar/areas",)),
+            (
+                "Learning resources",
+                "/explore/content",
+                50,
+                ("/explorar/conteudos",),
+            ),
+            (
+                "Community videos",
+                "/explore/videos",
+                60,
+                ("/explorar/videos",),
+            ),
         )
-        target_urls = {url for _name, url, _sequence in entries}
-        legacy_urls = {
-            "/slides",
-            "/explorar/areas",
-            "/explorar/conteudos",
-            "/explorar/videos",
-            "/unidades-curriculares",
-        }
+        for name, url, sequence, aliases in learning_entries:
+            ensure_menu(name, url, sequence, explore, aliases=aliases)
 
-        for name, url, sequence in entries:
-            matches = Menu.search(
-                [
-                    ("website_id", "=", facodi.id),
-                    ("url", "=", url),
-                ],
-                order="id",
-            )
-            menu = matches.filtered(lambda item: item.parent_id == explore)[:1]
-            if not menu:
-                menu = Menu.create(
-                    {
-                        "name": name,
-                        "url": url,
-                        "parent_id": explore.id,
-                        "website_id": facodi.id,
-                        "sequence": sequence,
-                    }
-                )
-            else:
-                menu.write(
-                    {
-                        "parent_id": explore.id,
-                        "website_id": facodi.id,
-                        "sequence": sequence,
-                    }
-                )
-
-            write_menu_name(menu, name)
-
-            duplicates = matches - menu
-            duplicates.filtered(
-                lambda item: item.parent_id == explore or item.parent_id == root
-            ).unlink()
-
-        learn_groups = Menu.search(
+        # Group community actions so the primary navbar stays compact on desktop
+        # while the standard Odoo mobile menu keeps the same hierarchy.
+        community_candidates = Menu.search(
             [
                 ("website_id", "=", facodi.id),
                 ("parent_id", "=", root.id),
                 ("url", "=", "#"),
-                ("name", "in", ["Learn", "Learning"]),
-            ]
+                ("name", "in", ["Community", "Comunidade", "Comunidad", "Communauté"]),
+            ],
+            order="id",
         )
-        for learn in learn_groups:
-            children = Menu.search([("parent_id", "=", learn.id)])
-            if children and set(children.mapped("url")).issubset(target_urls):
-                learn.unlink()
+        community = community_candidates[:1]
+        if not community:
+            community = Menu.create(
+                {
+                    "name": "Community",
+                    "url": "#",
+                    "parent_id": root.id,
+                    "website_id": facodi.id,
+                    "sequence": 20,
+                }
+            )
+        else:
+            community.write(
+                {
+                    "url": "#",
+                    "parent_id": root.id,
+                    "website_id": facodi.id,
+                    "sequence": 20,
+                }
+            )
+        write_menu_name(community, "Community")
+        duplicate_community = community_candidates - community
+        if duplicate_community:
+            duplicate_community.mapped("child_id").write({"parent_id": community.id})
+            duplicate_community.unlink()
 
-        stale_entries = Menu.search(
+        ensure_menu("News", "/blog", 10, community)
+
+        forum_installed = bool(
+            self.env["ir.module.module"].sudo().search_count(
+                [("name", "=", "website_forum"), ("state", "=", "installed")]
+            )
+        )
+        existing_forum = Menu.search(
+            [("website_id", "=", facodi.id), ("url", "=", "/forum")], limit=1
+        )
+        if forum_installed or existing_forum:
+            ensure_menu("Forum", "/forum", 20, community)
+
+        ensure_menu(
+            "Contribute",
+            "/submissions/new?type=resource",
+            30,
+            community,
+            aliases=("/contribuir/recurso", "/contribuir"),
+        )
+
+        # Keep the editor-owned About page and any manually curated children.
+        about_candidates = Menu.search(
             [
                 ("website_id", "=", facodi.id),
-                ("parent_id", "in", [explore.id, root.id]),
-                ("url", "in", list(legacy_urls)),
+                ("url", "in", ["/sobre", "/about"]),
+            ],
+            order="id",
+        )
+        about = about_candidates.filtered(lambda item: item.parent_id == root)[:1]
+        if not about:
+            about = about_candidates[:1]
+        if not about:
+            about = Menu.create(
+                {
+                    "name": "About",
+                    "url": "/sobre",
+                    "parent_id": root.id,
+                    "website_id": facodi.id,
+                    "sequence": 30,
+                }
+            )
+        else:
+            about.write(
+                {
+                    "parent_id": root.id,
+                    "website_id": facodi.id,
+                    "sequence": 30,
+                }
+            )
+        write_menu_name(about, "About")
+        duplicate_about = about_candidates - about
+        if duplicate_about:
+            duplicate_about.mapped("child_id").write({"parent_id": about.id})
+            duplicate_about.unlink()
+
+        ensure_menu("Contact", "/contactus", 40, root)
+
+        # Remove stale top-level shells left by previous iterations now that their
+        # destinations are owned by Explore/Community.
+        stale_top_level = Menu.search(
+            [
+                ("website_id", "=", facodi.id),
+                ("parent_id", "=", root.id),
+                ("id", "not in", [home.id, explore.id, community.id, about.id]),
+                (
+                    "url",
+                    "in",
+                    [
+                        "/slides",
+                        "/courses",
+                        "/roadmaps",
+                        "/curricular-units",
+                        "/unidades-curriculares",
+                        "/explore/areas",
+                        "/explore/content",
+                        "/explore/videos",
+                        "/blog",
+                        "/forum",
+                        "/contribuir/recurso",
+                        "/contribuir",
+                        "/submissions/new?type=resource",
+                    ],
+                ),
             ]
         )
-        if stale_entries:
-            stale_entries.unlink()
+        if stale_top_level:
+            stale_top_level.unlink()
 
-        # Remove only website-less legacy Explore trees from this module's
-        # previous generic data. Other websites remain untouched.
+        # Remove only website-less legacy Explore trees from this module's old
+        # generic data. Other websites remain untouched.
         generic_explore = Menu.search(
             [("website_id", "=", False), ("url", "=", "/explore")]
         )
