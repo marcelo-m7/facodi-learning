@@ -144,6 +144,7 @@ def _resolve_import_xmlid(env, name):
 def _ensure_design_content(env, payload):
     Channel = env["slide.channel"].sudo()
     Slide = env["slide.slide"].sudo()
+    Tag = env["slide.tag"].sudo()
     for item in payload.get("content", []):
         channel = _resolve_import_xmlid(env, item["xmlid"])
         if not channel:
@@ -163,21 +164,34 @@ def _ensure_design_content(env, payload):
 
         for position, slide_payload in enumerate(item.get("slides", []), start=1):
             slide = _resolve_import_xmlid(env, slide_payload["xmlid"])
-            if slide:
-                continue
-            slide = Slide.create(
-                {
-                    "name": slide_payload["name"],
-                    "channel_id": channel.id,
-                    "slide_category": "article",
-                    "source_type": "external",
-                    "url": slide_payload["url"],
-                    "description": slide_payload.get("description") or "",
-                    "is_published": True,
-                    "sequence": position * 10,
-                }
-            )
-            _ensure_import_xmlid(env, slide_payload["xmlid"], slide)
+            if not slide:
+                slide = Slide.create(
+                    {
+                        "name": slide_payload["name"],
+                        "channel_id": channel.id,
+                        "slide_category": "article",
+                        "source_type": "external",
+                        "url": slide_payload["url"],
+                        "description": slide_payload.get("description") or "",
+                        "is_published": True,
+                        "sequence": position * 10,
+                    }
+                )
+                _ensure_import_xmlid(env, slide_payload["xmlid"], slide)
+
+            tag_names = [
+                name.strip()
+                for name in slide_payload.get("tags", [])
+                if isinstance(name, str) and name.strip()
+            ]
+            tags = Tag
+            for name in dict.fromkeys(tag_names):
+                tag = Tag.search([("name", "=", name)], limit=1)
+                if not tag:
+                    tag = Tag.create({"name": name})
+                tags |= tag
+            if tags and set(tags.ids) != set(slide.tag_ids.ids):
+                slide.write({"tag_ids": [(6, 0, tags.ids)]})
 
 
 def ensure_design_curricula_2026_27(env):
