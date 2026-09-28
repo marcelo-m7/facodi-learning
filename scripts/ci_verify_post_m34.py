@@ -109,13 +109,57 @@ if len(units) != 43 or len(set(units.mapped("external_unit_code"))) != 43:
     raise AssertionError(
         f"Expected 43 distinct curated LESTI curricular units after upgrade, got {len(units)}."
     )
-if env["facodi.learning.curriculum.reference"].search_count(
-    [("id", "!=", lesti.id)]
+design_refs = {}
+for programme_code, external_id, expected_units in (
+    ("1930", "ualg-1930-2026-27", 19),
+    ("1454", "ualg-1454-2026-27", 41),
 ):
-    raise AssertionError("Upgrade created an unexpected curriculum reference.")
-if env["facodi.learning.curriculum.unit"].search_count(
-    [("reference_id", "!=", lesti.id)]
-):
-    raise AssertionError("Upgrade created curricular units outside the curated LESTI reference.")
-if env["facodi.learning.curriculum.coverage"].search_count([]):
-    raise AssertionError("Upgrade must not fabricate curriculum coverage decisions.")
+    reference = env["facodi.learning.curriculum.reference"].search(
+        [
+            ("provider", "=", "ualg"),
+            ("external_id", "=", external_id),
+        ]
+    )
+    if len(reference) != 1:
+        raise AssertionError(
+            f"Expected one curated UAlg design reference {external_id}, got {len(reference)}."
+        )
+    if (
+        reference.external_programme_code != programme_code
+        or reference.academic_year != "2026/27"
+        or not reference.validated_at
+        or not reference.website_published
+    ):
+        raise AssertionError(
+            f"Curated UAlg design reference {external_id} has an invalid public identity/state."
+        )
+    programme_units = env["facodi.learning.curriculum.unit"].search(
+        [("reference_id", "=", reference.id)]
+    )
+    if (
+        len(programme_units) != expected_units
+        or len(set(programme_units.mapped("external_unit_code"))) != expected_units
+    ):
+        raise AssertionError(
+            f"Expected {expected_units} distinct units for {external_id}, got {len(programme_units)}."
+        )
+    design_refs[programme_code] = reference
+
+expected_reference_ids = {lesti.id, design_refs["1930"].id, design_refs["1454"].id}
+if set(env["facodi.learning.curriculum.reference"].search([]).ids) != expected_reference_ids:
+    raise AssertionError("Upgrade created curriculum references outside the curated 2026/27 set.")
+
+design_coverage = env["facodi.learning.curriculum.coverage"].search([])
+if len(design_coverage) != 2:
+    raise AssertionError(
+        f"Expected two seeded DTM supports relations on a clean upgrade, got {len(design_coverage)}."
+    )
+if set(design_coverage.mapped("state")) != {"approved"}:
+    raise AssertionError("Seeded DTM coverage must be explicitly approved supports relations.")
+if set(design_coverage.mapped("coverage_type")) != {"supports"}:
+    raise AssertionError("Seeded design coverage may only use supports relations.")
+if set(design_coverage.mapped("curriculum_unit_id.external_unit_code")) != {
+    "19301008",
+    "19301009",
+}:
+    raise AssertionError("Clean-upgrade DTM coverage must target Motion Design and Web Design.")
