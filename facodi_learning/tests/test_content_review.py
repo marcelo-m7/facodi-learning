@@ -336,12 +336,12 @@ class TestContentPublicationGovernance(TransactionCase):
         slide.update_field_translations(
             "name",
             {
-                "en_US": "Governed multilingual content",
+                "en_GB": "Governed multilingual content",
                 "fr_FR": "Contenu multilingue gouverné",
             },
         )
-        review = self._complete_review(slide.with_context(lang="en_US"))
-        review.with_user(self.manager).with_context(lang="en_US").action_approve()
+        review = self._complete_review(slide.with_context(lang="en_GB"))
+        review.with_user(self.manager).with_context(lang="en_GB").action_approve()
 
         slide.with_user(self.manager).with_context(lang="fr_FR").write(
             {"is_published": True}
