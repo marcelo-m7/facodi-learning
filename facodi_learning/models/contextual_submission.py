@@ -163,7 +163,7 @@ class FacodiLearningSubmissionContext(models.Model):
     ):
         domain = [
             ("normalized_source_url", "=", self._normalize_source_url(source_url)),
-            ("state", "in", ("submitted", "reviewing", "accepted")),
+            ("state", "in", ("submitted", "reviewing", "changes_requested", "accepted")),
             ("curriculum_unit_id", "=", curriculum_unit_id or False),
             ("module_id", "=", module_id or False),
         ]
