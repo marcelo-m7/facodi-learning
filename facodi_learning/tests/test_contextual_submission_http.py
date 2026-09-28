@@ -187,6 +187,26 @@ class TestContextualSubmissionHttp(HttpCase):
 
 
 
+    def test_header_and_homepage_sections_use_human_labels(self):
+        cases = (
+            (
+                "/submissions/new?type=resource&source=main_nav_contribute&section=header",
+                "Main navigation",
+            ),
+            (
+                "/submissions/new?type=resource&source=closing_cta&section=homepage",
+                "Homepage",
+            ),
+        )
+        for route, expected_label in cases:
+            response = self.url_open(route)
+            self.assertEqual(response.status_code, 200)
+            tree = html.fromstring(response.text)
+            brief = " ".join(
+                tree.xpath('//*[@data-facodi-contribution-brief="1"]//text()')
+            )
+            self.assertIn(expected_label, brief)
+
     def test_contact_post_rejects_malformed_email_server_side(self):
         Submission = self.env["facodi.learning.submission"].sudo()
         before = Submission.search_count([])
