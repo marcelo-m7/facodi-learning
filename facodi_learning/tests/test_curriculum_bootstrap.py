@@ -72,6 +72,15 @@ class TestCurriculumBootstrap(TransactionCase):
             "Design Principles",
             design_foundations_channel.slide_ids.tag_ids.mapped("name"),
         )
+
+        editor_tag = self.env["slide.tag"].create({"name": "Editor-curated DTM tag"})
+        interaction_channel.slide_ids[:1].write({"tag_ids": [(4, editor_tag.id)]})
+        ensure_design_curricula_2026_27(self.env)
+        self.assertIn(
+            "Editor-curated DTM tag",
+            interaction_channel.slide_ids[:1].tag_ids.mapped("name"),
+        )
+
         self.assertTrue(
             self.env["facodi.learning.curriculum.coverage"].search(
                 [
