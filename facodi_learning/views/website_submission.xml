@@ -412,12 +412,12 @@
                                 </ul>
                             </div>
 
-                            <div t-if="can_edit" class="alert alert-info">
-                                You can edit this submission until FACODI starts editorial review. Changes are reflected in the public Community videos queue when applicable.
-                            </div>
-                            <div t-elif="submission.state == 'changes_requested'" class="alert alert-warning" data-facodi-revision-request="1">
+                            <div t-if="submission.state == 'changes_requested'" class="alert alert-warning" data-facodi-revision-request="1">
                                 <strong>The review desk needs a revision.</strong>
                                 Update the fields below using FACODI's note, save your changes, then send the same contribution back to review.
+                            </div>
+                            <div t-elif="can_edit" class="alert alert-info">
+                                You can edit this submission until FACODI starts editorial review. Changes are reflected in the public Community videos queue when applicable.
                             </div>
                             <div t-elif="submission.state == 'reviewing'" class="alert alert-warning">
                                 Editorial review has started, so the submitted details are locked. You can still withdraw the submission.
@@ -431,6 +431,14 @@
                             <div t-elif="submission.state == 'withdrawn'" class="alert alert-secondary">
                                 You withdrew this submission. It is no longer displayed in the public Community videos queue.
                             </div>
+
+                            <section t-if="submission.editorial_reply"
+                                     class="facodi-editorial-reply mb-4"
+                                     data-facodi-editorial-reply="1">
+                                <p class="text-uppercase small fw-semibold mb-1">Note from the review desk</p>
+                                <h2 class="h5 mb-2">FACODI replied to your contribution.</h2>
+                                <p class="mb-0" t-esc="submission.editorial_reply"/>
+                            </section>
 
                             <form t-if="can_edit"
                                   t-att-action="'/minhas-contribuicoes/%s/editar' % submission.id"
