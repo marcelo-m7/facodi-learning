@@ -250,6 +250,16 @@ class TestContextualSubmissionStaticContracts(TransactionCase):
         self.assertIn('name="area_id"', template)
         self.assertIn("group_area_tag", admin)
 
+    def test_status_and_manage_views_render_safe_captured_context(self):
+        template = self._read("views/website_submission.xml")
+        controller = self._read("controllers/submission.py")
+        model = self._read("models/contextual_submission.py")
+        self.assertGreaterEqual(template.count('data-facodi-captured-context="1"'), 2)
+        self.assertIn("_facodi_contributor_context_rows", controller)
+        self.assertIn("_facodi_contributor_context_rows", model)
+        self.assertIn("Raw origin URLs, tracking tokens and internal review notes", template)
+        self.assertNotIn("t-esc=\"submission.source_page_url\"", template)
+
     def test_contribution_brief_is_context_aware(self):
         controller = self._read("controllers/contextual_submission.py")
         template = self._read("views/website_contextual_submission.xml")
