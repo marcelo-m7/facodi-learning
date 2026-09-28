@@ -66,6 +66,11 @@
                             class="btn-primary"
                             invisible="state not in ('submitted', 'reviewing')"
                             groups="website_slides.group_website_slides_manager"/>
+                    <button name="action_request_changes"
+                            type="object"
+                            string="Request Changes"
+                            invisible="state not in ('submitted', 'reviewing')"
+                            groups="website_slides.group_website_slides_manager"/>
                     <button name="action_reject"
                             type="object"
                             string="Reject"
