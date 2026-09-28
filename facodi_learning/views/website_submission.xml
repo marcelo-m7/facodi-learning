@@ -44,11 +44,11 @@
                                         <span class="facodi-contribution-step__marker">1</span>
                                         <span><strong>Sent</strong><small>Your contribution reached FACODI.</small></span>
                                     </li>
-                                    <li t-attf-class="facodi-contribution-step #{'is-done' if submission.state in ('reviewing','accepted','resolved','rejected') else ('is-current' if submission.state == 'submitted' else 'is-muted')}">
+                                    <li t-attf-class="facodi-contribution-step #{'is-done' if submission.state in ('reviewing','changes_requested','accepted','resolved','rejected') else ('is-current' if submission.state == 'submitted' else 'is-muted')}">
                                         <span class="facodi-contribution-step__marker">2</span>
                                         <span><strong>Review desk</strong><small>Context and usefulness are checked.</small></span>
                                     </li>
-                                    <li t-attf-class="facodi-contribution-step #{'is-done' if submission.state in ('accepted','resolved') else ('is-current' if submission.state == 'reviewing' else 'is-muted')}">
+                                    <li t-attf-class="facodi-contribution-step #{'is-done' if submission.state in ('accepted','resolved') else ('is-current' if submission.state in ('reviewing','changes_requested') else 'is-muted')}">
                                         <span class="facodi-contribution-step__marker">3</span>
                                         <span><strong>Decision</strong><small>FACODI decides the right editorial route.</small></span>
                                     </li>
@@ -57,7 +57,10 @@
                                         <span><strong>Community route</strong><small>Accepted contributions move into the appropriate FACODI workflow.</small></span>
                                     </li>
                                 </ol>
-                                <p t-if="submission.state == 'rejected'" class="facodi-contribution-journey__terminal mb-0">
+                                <p t-if="submission.state == 'changes_requested'" class="facodi-contribution-journey__revision mb-0">
+                                    The review desk returned this tab to you. Revise it and resubmit when ready.
+                                </p>
+                                <p t-elif="submission.state == 'rejected'" class="facodi-contribution-journey__terminal mb-0">
                                     This journey stopped after editorial review. The contribution remains in your history.
                                 </p>
                                 <p t-elif="submission.state == 'withdrawn'" class="facodi-contribution-journey__terminal mb-0">
@@ -217,11 +220,11 @@
                                         <span class="facodi-contribution-step__marker">1</span>
                                         <span><strong>Sent</strong><small>Your contribution reached FACODI.</small></span>
                                     </li>
-                                    <li t-attf-class="facodi-contribution-step #{'is-done' if submission.state in ('reviewing','accepted','resolved','rejected') else ('is-current' if submission.state == 'submitted' else 'is-muted')}">
+                                    <li t-attf-class="facodi-contribution-step #{'is-done' if submission.state in ('reviewing','changes_requested','accepted','resolved','rejected') else ('is-current' if submission.state == 'submitted' else 'is-muted')}">
                                         <span class="facodi-contribution-step__marker">2</span>
                                         <span><strong>Review desk</strong><small>Context and usefulness are checked.</small></span>
                                     </li>
-                                    <li t-attf-class="facodi-contribution-step #{'is-done' if submission.state in ('accepted','resolved') else ('is-current' if submission.state == 'reviewing' else 'is-muted')}">
+                                    <li t-attf-class="facodi-contribution-step #{'is-done' if submission.state in ('accepted','resolved') else ('is-current' if submission.state in ('reviewing','changes_requested') else 'is-muted')}">
                                         <span class="facodi-contribution-step__marker">3</span>
                                         <span><strong>Decision</strong><small>FACODI decides the right editorial route.</small></span>
                                     </li>
@@ -230,7 +233,10 @@
                                         <span><strong>Community route</strong><small>Accepted contributions move into the appropriate FACODI workflow.</small></span>
                                     </li>
                                 </ol>
-                                <p t-if="submission.state == 'rejected'" class="facodi-contribution-journey__terminal mb-0">
+                                <p t-if="submission.state == 'changes_requested'" class="facodi-contribution-journey__revision mb-0">
+                                    The review desk returned this tab to you. Revise it and resubmit when ready.
+                                </p>
+                                <p t-elif="submission.state == 'rejected'" class="facodi-contribution-journey__terminal mb-0">
                                     This journey stopped after editorial review. The contribution remains in your history.
                                 </p>
                                 <p t-elif="submission.state == 'withdrawn'" class="facodi-contribution-journey__terminal mb-0">
