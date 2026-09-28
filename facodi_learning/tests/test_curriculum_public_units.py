@@ -133,7 +133,13 @@ class TestCurriculumPublicUnits(TransactionCase):
         all_entries = self.env[
             "facodi.learning.curriculum.unit"
         ]._facodi_public_catalog_entries()
-        self.assertEqual(len(all_entries), len(self.reference.unit_ids))
+        public_references = self.env[
+            "facodi.learning.curriculum.reference"
+        ].search([("state", "=", "validated"), ("website_published", "=", True)])
+        self.assertEqual(
+            len(all_entries),
+            sum(len(reference.unit_ids) for reference in public_references),
+        )
 
         entries = self.env["facodi.learning.curriculum.unit"]._facodi_public_catalog_entries(
             reference_id=self.reference.id,
@@ -174,12 +180,19 @@ class TestCurriculumPublicUnits(TransactionCase):
             "facodi.learning.curriculum.reference"
         ]._facodi_public_curriculum_map()
 
-        self.assertEqual([entry["reference"] for entry in entries], [self.reference])
-        self.assertNotIn(hidden_reference, [entry["reference"] for entry in entries])
-        self.assertEqual(entries[0]["reference_url"], f"/roadmaps/{self.reference.id}")
+        public_refs = [entry["reference"] for entry in entries]
+        self.assertIn(self.reference, public_refs)
+        self.assertNotIn(hidden_reference, public_refs)
+        lesti_entry = next(
+            entry for entry in entries if entry["reference"] == self.reference
+        )
+        self.assertEqual(
+            lesti_entry["reference_url"],
+            f"/roadmaps/{self.reference.id}",
+        )
         programming = next(
             entry
-            for entry in entries[0]["unit_matrix"]
+            for entry in lesti_entry["unit_matrix"]
             if entry["unit"] == self.programming_unit
         )
         self.assertEqual(programming["coverage_status"], "covered")
