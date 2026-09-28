@@ -354,51 +354,8 @@ class FacodiContextualSubmissionController(FacodiSubmissionController):
             form_values["course_id"] = course.id
         if suggested_slide:
             form_values["suggested_slide_id"] = suggested_slide.id
-        cta_labels = {
-            "community_margin": request.env._("Community margin"),
-            "unit_resource_cta": request.env._("Curricular unit resources"),
-            "roadmap_resource_cta": request.env._("Roadmap resources"),
-            "module_resource_cta": request.env._("Learning module resources"),
-            "course_resource_cta": request.env._("Course resources"),
-            "course_contact_cta": request.env._("Course contribution"),
-            "study_player_resource_cta": request.env._("Lesson resources"),
-            "study_player_correction_cta": request.env._("Lesson problem report"),
-            "study_player_question_cta": request.env._("Lesson question"),
-            "explore_empty_shelf": request.env._("Explore empty shelf"),
-            "area_resource_cta": request.env._("Learning area resources"),
-            "community_video_cta": request.env._("Community videos"),
-            "portal_resource_cta": request.env._("My FACODI"),
-            "main_nav_contribute": request.env._("Main navigation"),
-            "roadmaps_catalog_cta": request.env._("Roadmaps catalogue"),
-            "curricular_units_catalog_cta": request.env._("Curricular units catalogue"),
-            "curricular_units_empty_state": request.env._("Curricular units · open shelf"),
-            "course_catalog_cta": request.env._("Course catalogue"),
-            "faq_contribution_cta": request.env._("FAQ contribution"),
-            "faq_contact_cta": request.env._("FAQ contact"),
-            "forum_postit_contact_cta": request.env._("Community notebook"),
-            "community_collaboration_cta": request.env._("Community collaboration"),
-            "editorial_routes_contact_cta": request.env._("Contact and contribute"),
-            "ecosystem_contact_cta": request.env._("FACODI ecosystem"),
-            "institutional_contact_cta": request.env._("FACODI project"),
-            "unit_correction_cta": request.env._("Curricular unit provenance"),
-            "roadmap_correction_cta": request.env._("Roadmap provenance"),
-            "community_resource_cta": request.env._("Community resource"),
-            "ecosystem_resource_cta": request.env._("Ecosystem contribution"),
-            "cta_sheet_resource_cta": request.env._("Shared learning notebook"),
-            "contact_sheet_resource_cta": request.env._("Contact page resource"),
-            "contact_page": request.env._("Contact FACODI"),
-            "contribution_board_resource_cta": request.env._("Contribution board"),
-            "contribution_board_correction_cta": request.env._("Contribution board correction"),
-            "contribution_board_collaboration_cta": request.env._("Contribution board collaboration"),
-            "translation_correction_cta": request.env._("Translation correction"),
-            "folder_tabs_contribute": request.env._("Learning navigation"),
-            "course_showcase_contribute": request.env._("Learning catalogue"),
-            "closing_cta": request.env._("Homepage closing call"),
-            "submission_status_followup": request.env._("Submission follow-up"),
-            "my_submissions_new": request.env._("My submissions"),
-            "my_submissions_empty": request.env._("My submissions empty state"),
-            "legacy_submission_followup": request.env._("Submission follow-up"),
-        }
+        source_cta_label = Submission._facodi_source_cta_label(source_cta)
+
         return_url = source_page_url
         return_label = request.env._("Back to Explore")
         if not return_url and curriculum_unit:
@@ -523,7 +480,7 @@ class FacodiContextualSubmissionController(FacodiSubmissionController):
             "source_cta": source_cta,
             "source_section": source_section,
             "source_page_url": source_page_url,
-            "source_cta_label": cta_labels.get(source_cta, request.env._("Contextual action") if source_cta else ""),
+            "source_cta_label": source_cta_label,
             "source_section_label": section_labels.get(source_section, source_section.replace("-", " ").title() if source_section else ""),
             "contribution_brief": contribution_brief,
             "context_is_prefilled": bool(source_cta or source_section or area_tag or curriculum_unit or roadmap or module or course or suggested_slide),
