@@ -415,6 +415,8 @@ class FacodiContextualSubmissionController(FacodiSubmissionController):
         ]
 
         section_labels = {
+            "header": request.env._("Main navigation"),
+            "homepage": request.env._("Homepage"),
             "resources": request.env._("Learning resources"),
             "explore-areas": request.env._("Learning areas"),
             "explore-content": request.env._("Explore content"),

@@ -4297,3 +4297,13 @@ msgstr "Fecho da homepage"
 #: code:addons/facodi_learning/models/contextual_submission.py:0
 msgid "I found a useful public resource and want to leave it on the FACODI learning trail."
 msgstr "Encontrei um recurso público útil e quero deixá-lo no percurso de aprendizagem FACODI."
+
+#. module: facodi_learning
+#: code:addons/facodi_learning/controllers/contextual_submission.py:0
+msgid "Main navigation"
+msgstr "Navegação principal"
+
+#. module: facodi_learning
+#: code:addons/facodi_learning/controllers/contextual_submission.py:0
+msgid "Homepage"
+msgstr "Página inicial"
