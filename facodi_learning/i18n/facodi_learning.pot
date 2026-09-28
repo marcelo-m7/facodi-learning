@@ -4150,3 +4150,13 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_manage
 msgid "The review desk returned this tab to you. Revise it and resubmit when ready."
 msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_manage
+msgid "Follow-up details"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_manage
+msgid "The page, CTA and academic/learning context that brought you here stay locked to this submission. You can revise your contribution details without losing that provenance."
+msgstr ""
