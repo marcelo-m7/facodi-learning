@@ -242,8 +242,14 @@ class TestCurriculumUI(TransactionCase):
                 ("url", "=", "/courses"),
             ]
         )
-        self.assertEqual(len(course_menus), 1)
-        self.assertEqual(course_menus.parent_id, menu.parent_id)
+        self.assertEqual(len(course_menus), 2)
+        explore_menu = menu.parent_id
+        courses_menu = course_menus.filtered(
+            lambda item: item.parent_id == explore_menu
+        )
+        self.assertEqual(len(courses_menu), 1)
+        self.assertEqual(courses_menu.name, "Courses")
+        self.assertIn(explore_menu, course_menus)
 
         news_menu = self.env["website.menu"].search(
             [("website_id", "=", website.id), ("url", "=", "/blog")], limit=1
@@ -272,7 +278,19 @@ class TestCurriculumUI(TransactionCase):
             ]
         )
         self.assertEqual(len(explore_menus), 1)
-        self.assertEqual(explore_menus.url, "#")
+        self.assertEqual(explore_menus.url, "/courses")
+        repeated_course_menus = self.env["website.menu"].search(
+            [
+                ("website_id", "=", website.id),
+                ("url", "=", "/courses"),
+            ]
+        )
+        self.assertEqual(len(repeated_course_menus), 2)
+        repeated_courses = repeated_course_menus.filtered(
+            lambda item: item.parent_id == explore_menus
+        )
+        self.assertEqual(len(repeated_courses), 1)
+        self.assertEqual(repeated_courses.name, "Courses")
         self.assertFalse(
             self.env["website.menu"].search(
                 [
@@ -301,9 +319,28 @@ class TestCurriculumUI(TransactionCase):
             [
                 ("website_id", "=", website.id),
                 ("parent_id", "=", website.menu_id.id),
-                ("url", "=", "#"),
+                ("url", "=", "/courses"),
+                ("name", "=", "Explore"),
             ],
             limit=1,
         )
         self.assertTrue(explore)
         self.assertEqual(explore.with_context(lang="en_US").name, "Explore")
+        courses = Menu.search(
+            [
+                ("website_id", "=", website.id),
+                ("parent_id", "=", explore.id),
+                ("url", "=", "/courses"),
+                ("name", "=", "Courses"),
+            ]
+        )
+        self.assertEqual(len(courses), 1)
+
+        # A second pass must preserve the intentional parent/child pair that
+        # shares /courses without creating duplicates or recursive parenting.
+        self.assertTrue(
+            Menu.with_context(website_id=website.id).facodi_reconcile_navigation()
+        )
+        self.assertEqual(explore.parent_id, website.menu_id)
+        self.assertEqual(courses.parent_id, explore)
+        self.assertNotEqual(explore, courses)
