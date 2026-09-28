@@ -176,8 +176,9 @@
                                             <div class="row g-3">
                                                 <div class="col-md-4">
                                                     <label class="form-label" for="facodi_resource_type">Resource type</label>
-                                                    <select id="facodi_resource_type" name="resource_type" class="form-select">
-                                                        <option value="video" t-att-selected="'selected' if form_values.get('resource_type', 'video') == 'video' else None">Video</option>
+                                                    <select id="facodi_resource_type" name="resource_type" class="form-select" required="required">
+                                                        <option value="" t-att-selected="'selected' if not form_values.get('resource_type') else None">Choose a type</option>
+                                                        <option value="video" t-att-selected="'selected' if form_values.get('resource_type') == 'video' else None">Video</option>
                                                         <option value="article" t-att-selected="'selected' if form_values.get('resource_type') == 'article' else None">Article</option>
                                                         <option value="book" t-att-selected="'selected' if form_values.get('resource_type') == 'book' else None">Book</option>
                                                         <option value="tool" t-att-selected="'selected' if form_values.get('resource_type') == 'tool' else None">Tool</option>

@@ -196,6 +196,27 @@ class TestSubmissionContextWebsite(HttpCase):
             )
         )
 
+    def test_generic_resource_does_not_pretend_to_be_video(self):
+        response = self.url_open(
+            "/submissions/new?type=resource&source=course_catalog_cta&section=courses"
+        )
+        self.assertEqual(response.status_code, 200)
+        tree = html.fromstring(response.text)
+        resource_type = tree.xpath('//select[@name="resource_type"]')[0]
+        self.assertEqual(resource_type.get("required"), "required")
+        selected = resource_type.xpath('./option[@selected]/@value')
+        self.assertEqual(selected, [""])
+
+        video = self.url_open(
+            "/submissions/new?type=resource&resource_type=video"
+            "&source=community_video_cta&section=explore-videos"
+        )
+        video_tree = html.fromstring(video.text)
+        self.assertEqual(
+            video_tree.xpath('//select[@name="resource_type"]/option[@selected]/@value'),
+            ["video"],
+        )
+
     def test_correction_requires_authored_message_but_not_email(self):
         route = (
             "/submissions/new?type=correction&unit_id=%s"
