@@ -214,6 +214,10 @@ class TestCurriculumUI(TransactionCase):
         self.assertTrue(about_menu)
         self.assertTrue(contact_menu)
         self.assertEqual(contact_menu.url, "/contact")
+        self.assertFalse(
+            contact_menu.page_id,
+            "controller-backed /contact must not retain the legacy /contactus page_id",
+        )
 
         for code, (
             explore_name,
