@@ -609,7 +609,7 @@ msgstr ""
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.approved_course_curriculum_links
 msgid "Coverage relations reviewed and approved by FACODI curation."
-msgstr ""
+msgstr "Relations de couverture examinées et approuvées par la curation FACODI."
 "Relations de couverture examinées et approuvées par la curation FACODI."
 
 #. module: facodi_learning
@@ -1011,7 +1011,7 @@ msgstr ""
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.approved_learning_resources
 msgid "Explore further"
-msgstr ""
+msgstr "Explorer davantage"
 
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_map
@@ -1534,7 +1534,7 @@ msgstr "Parcours d'apprentissage"
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.approved_learning_resources
 msgid "Learning resources"
-msgstr ""
+msgstr "Ressources d’apprentissage"
 
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_index
@@ -1811,7 +1811,7 @@ msgstr ""
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit
 msgid "Only reviewed and approved relations with currently published courses."
-msgstr ""
+msgstr "Uniquement les relations examinées et approuvées avec des cours actuellement publiés."
 "Uniquement les relations examinées et approuvées avec les cours actuellement"
 " publiés."
 
@@ -2479,7 +2479,7 @@ msgstr ""
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit_index
 msgid "There are no curricular units for the selected filters."
-msgstr ""
+msgstr "Aucune unité d’enseignement ne correspond aux filtres sélectionnés."
 "Il n'existe aucune unité d'enseignement pour les filtres sélectionnés."
 
 #. module: facodi_learning
