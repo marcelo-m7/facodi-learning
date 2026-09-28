@@ -43,7 +43,7 @@ class TestWebsiteI18nContract(unittest.TestCase):
 
         self.assertIn("/submissions/new?type=resource", slides)
         self.assertIn("source=course_resource_cta", slides)
-        self.assertIn("/submissions/new?type=contact", slides)
+        self.assertIn("/contact?course_id=%s", slides)
         self.assertIn("source=course_contact_cta", slides)
         self.assertIn("/submissions/new?type=resource", curriculum)
         self.assertIn("source=community_margin", curriculum)
