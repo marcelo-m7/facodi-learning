@@ -86,7 +86,7 @@ class FacodiLearningSubmissionContext(models.Model):
     contact_email = fields.Char(index=True)
     organization = fields.Char()
     contact_topic = fields.Selection(_CONTACT_TOPICS, string="Contact Topic", index=True)
-    resource_type = fields.Selection(_RESOURCE_TYPES, default="video")
+    resource_type = fields.Selection(_RESOURCE_TYPES)
     resource_level = fields.Selection(_RESOURCE_LEVELS)
     permission_to_contact = fields.Boolean(default=False)
 
