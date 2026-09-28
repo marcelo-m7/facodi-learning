@@ -25,7 +25,7 @@ For Design de Comunicação, exact historical unit-code mappings are retained. S
 relations (including Tipografia I and the curated art-history collection) can be public; weaker
 historical associations remain proposed for editorial review.
 
-The operation is idempotent and is run on fresh installation and by the 19.0.1.122.0 migration.
+The operation is idempotent and is run on fresh installation and by the 19.0.1.123.0 migration.
 
 The Interaction Design seed uses two historical Open2 resources whose latest AI enrichment
 explicitly identifies UI, UX, user experience, Figma and prototyping. They remain FACODI
@@ -36,3 +36,8 @@ The Design Foundations seed now uses the recovered Nadine Fronza resource whose 
 Open2 enrichment explicitly identifies graphic-design principles and beginner design education.
 A dedicated DTM-facing FACODI course avoids presenting an LDCOM-labelled course as the
 primary support surface for the 1930 programme.
+
+
+AI-enriched semantic labels selected from the historical Open2 catalogue are also reconciled
+into native Odoo `slide.tag` records for the seeded DTM resources. Tags improve native
+catalogue discovery; they are descriptive metadata only and do not alter academic coverage.
