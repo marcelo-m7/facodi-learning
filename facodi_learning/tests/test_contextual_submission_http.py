@@ -170,3 +170,4 @@ class TestContextualSubmissionHttp(HttpCase):
             response.text,
         )
         self.assertEqual(Submission.search_count([]), before)
+
