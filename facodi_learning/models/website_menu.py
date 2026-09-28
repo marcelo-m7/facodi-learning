@@ -169,7 +169,7 @@ class WebsiteMenu(models.Model):
                 ("website_id", "=", facodi.id),
                 ("parent_id", "=", root.id),
                 "|",
-                ("url", "=", "/explore"),
+                ("url", "in", ["/explore", "/courses"]),
                 "&",
                 ("url", "=", "#"),
                 ("name", "in", ["Explore", "Learn", "Learning"]),
@@ -181,7 +181,7 @@ class WebsiteMenu(models.Model):
             explore = Menu.create(
                 {
                     "name": "Explore",
-                    "url": "#",
+                    "url": "/courses",
                     "parent_id": root.id,
                     "website_id": facodi.id,
                     "sequence": 10,
@@ -190,7 +190,7 @@ class WebsiteMenu(models.Model):
         else:
             explore.write(
                 {
-                    "url": "#",
+                    "url": "/courses",
                     "parent_id": root.id,
                     "website_id": facodi.id,
                     "sequence": 10,
@@ -235,7 +235,7 @@ class WebsiteMenu(models.Model):
             [
                 ("website_id", "=", facodi.id),
                 ("parent_id", "=", root.id),
-                ("url", "=", "#"),
+                ("url", "in", ["#", "/forum"]),
                 ("name", "in", ["Community", "Comunidade", "Comunidad", "Communauté"]),
             ],
             order="id",
@@ -245,7 +245,7 @@ class WebsiteMenu(models.Model):
             community = Menu.create(
                 {
                     "name": "Community",
-                    "url": "#",
+                    "url": "/forum",
                     "parent_id": root.id,
                     "website_id": facodi.id,
                     "sequence": 20,
@@ -254,7 +254,7 @@ class WebsiteMenu(models.Model):
         else:
             community.write(
                 {
-                    "url": "#",
+                    "url": "/forum",
                     "parent_id": root.id,
                     "website_id": facodi.id,
                     "sequence": 20,
