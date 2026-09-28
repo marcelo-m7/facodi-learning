@@ -25,6 +25,17 @@ class TestContextualSubmissionModelContract(TransactionCase):
         self.assertFalse(self.Submission._is_valid_source_url("http://127.0.0.1/private"))
         self.assertFalse(self.Submission._is_valid_source_url("https://user:pass@example.com"))
 
+    def test_source_cta_labels_have_one_model_registry(self):
+        self.assertEqual(
+            self.Submission._facodi_source_cta_label("closing_cta"),
+            "Homepage closing call",
+        )
+        self.assertEqual(
+            self.Submission._facodi_source_cta_label("future_resource_cta"),
+            "Future Resource Cta",
+        )
+        self.assertEqual(self.Submission._facodi_source_cta_label("../../unsafe"), "")
+
     def test_new_fields_exist_on_submission_model(self):
         for field_name in (
             "submission_type",
@@ -86,7 +97,6 @@ class TestContextualSubmissionStaticContracts(TransactionCase):
         self.assertIn("study_player_resource_cta", controller)
         self.assertIn("module_resource_cta", controller)
         self.assertIn("closing_cta", controller)
-        self.assertIn("Homepage closing call", controller)
         self.assertIn("Homepage closing call", self._read("models/contextual_submission.py"))
         self.assertIn('"module-resources": request.env._("Module resources")', controller)
         self.assertIn("study_player_correction_cta", controller)
@@ -214,13 +224,14 @@ class TestContextualSubmissionStaticContracts(TransactionCase):
             self.assertIn(f'followup_params["{key}"]', controller)
         self.assertIn("urlencode(followup_params)", controller)
         self.assertNotIn('followup_params["source_page_url"]', controller)
+        model = self._read("models/contextual_submission.py")
         for label in (
             "Learning navigation",
             "Learning catalogue",
             "Submission follow-up",
-            "Submission status",
         ):
-            self.assertIn(label, self._read("controllers/contextual_submission.py"))
+            self.assertIn(label, model)
+        self.assertIn("Submission status", controller)
         self.assertNotIn("/contribuir/recurso?curriculum_unit_id=", template)
 
     def test_follow_up_email_is_validated_server_side(self):
