@@ -34,6 +34,49 @@ _CONTACT_TOPICS = [
 ]
 
 
+_SOURCE_CTA_LABELS = {
+    "community_margin": "Community margin",
+    "unit_resource_cta": "Curricular unit resources",
+    "unit_correction_cta": "Curricular unit provenance",
+    "roadmap_resource_cta": "Roadmap resources",
+    "roadmap_correction_cta": "Roadmap provenance",
+    "roadmaps_catalog_cta": "Roadmaps catalogue",
+    "curricular_units_catalog_cta": "Curricular units catalogue",
+    "curricular_units_empty_state": "Curricular units · open shelf",
+    "module_resource_cta": "Learning module resources",
+    "course_resource_cta": "Course resources",
+    "course_contact_cta": "Course contribution",
+    "course_catalog_cta": "Course catalogue",
+    "study_player_resource_cta": "Lesson resources",
+    "study_player_correction_cta": "Lesson problem report",
+    "study_player_question_cta": "Lesson question",
+    "explore_empty_shelf": "Explore empty shelf",
+    "area_resource_cta": "Learning area resources",
+    "community_video_cta": "Community videos",
+    "community_resource_cta": "Community resource",
+    "portal_resource_cta": "My FACODI",
+    "main_nav_contribute": "Main navigation",
+    "faq_contribution_cta": "FAQ contribution",
+    "community_collaboration_cta": "Community collaboration",
+    "editorial_routes_contact_cta": "Contact and contribute",
+    "ecosystem_contact_cta": "FACODI ecosystem",
+    "ecosystem_resource_cta": "Ecosystem contribution",
+    "institutional_contact_cta": "FACODI project",
+    "cta_sheet_resource_cta": "Shared learning notebook",
+    "contact_sheet_resource_cta": "Contact page resource",
+    "contact_page": "Contact FACODI",
+    "contribution_board_resource_cta": "Contribution board",
+    "contribution_board_correction_cta": "Contribution board correction",
+    "contribution_board_collaboration_cta": "Contribution board collaboration",
+    "translation_correction_cta": "Translation correction",
+    "folder_tabs_contribute": "Learning navigation",
+    "course_showcase_contribute": "Learning catalogue",
+    "submission_status_followup": "Submission follow-up",
+    "my_submissions_new": "My submissions",
+    "my_submissions_empty": "My submissions empty state",
+}
+
+
 class FacodiLearningSubmissionContext(models.Model):
     _inherit = "facodi.learning.submission"
 
@@ -89,6 +132,118 @@ class FacodiLearningSubmissionContext(models.Model):
     resource_type = fields.Selection(_RESOURCE_TYPES)
     resource_level = fields.Selection(_RESOURCE_LEVELS)
     permission_to_contact = fields.Boolean(default=False)
+
+    def _facodi_contributor_context_rows(self, website=None):
+        """Return a safe human-readable projection of captured contribution context.
+
+        The private tracking page must not expose raw source_page_url values, tokens,
+        internal notes or context records that are no longer publicly visible.
+        """
+        self.ensure_one()
+        website = website or self.env["website"].get_current_website()
+        rows = []
+
+        def add(label, value, key):
+            if value:
+                rows.append({"label": label, "value": value, "key": key})
+
+        submission_type_label = dict(
+            self._fields["submission_type"]._description_selection(self.env)
+        ).get(self.submission_type, self.submission_type)
+        add(self.env._("Contribution type"), submission_type_label, "type")
+
+        if self.source_cta:
+            source_label = _SOURCE_CTA_LABELS.get(
+                self.source_cta,
+                self.source_cta.replace("_", " ").replace("-", " ").title(),
+            )
+            add(self.env._("Started from"), self.env._(source_label), "source")
+
+        if self.source_section:
+            add(
+                self.env._("Section"),
+                self.source_section.replace("-", " ").replace("_", " ").title(),
+                "section",
+            )
+
+        if self.area_tag_id and self.area_tag_id.group_id.website_published:
+            public_course = self.env["slide.channel"].sudo().search_count(
+                [
+                    ("active", "=", True),
+                    ("website_published", "=", True),
+                    ("visibility", "=", "public"),
+                    ("tag_ids", "in", [self.area_tag_id.id]),
+                    "|",
+                    ("website_id", "=", False),
+                    ("website_id", "=", website.id),
+                ],
+                limit=1,
+            )
+            if public_course:
+                add(self.env._("Learning area"), self.area_tag_id.name, "area")
+
+        if self.curriculum_unit_id and self.curriculum_unit_id._facodi_public_path():
+            add(
+                self.env._("Curricular unit"),
+                self.curriculum_unit_id.name,
+                "unit",
+            )
+
+        if (
+            self.roadmap_id
+            and self.roadmap_id.website_published
+            and self.roadmap_id.validated_at
+        ):
+            add(self.env._("Roadmap"), self.roadmap_id.display_name, "roadmap")
+
+        if self.module_id and self.module_id._facodi_public_path():
+            add(self.env._("Learning module"), self.module_id.name, "module")
+
+        if (
+            self.course_id
+            and self.course_id.active
+            and self.course_id.website_published
+            and self.course_id.visibility == "public"
+            and (not self.course_id.website_id or self.course_id.website_id == website)
+        ):
+            add(self.env._("Course"), self.course_id.name, "course")
+
+        if (
+            self.suggested_slide_id
+            and self.suggested_slide_id.active
+            and self.suggested_slide_id.website_published
+            and self.suggested_slide_id.channel_id.active
+            and self.suggested_slide_id.channel_id.website_published
+            and self.suggested_slide_id.channel_id.visibility == "public"
+            and (
+                not self.suggested_slide_id.channel_id.website_id
+                or self.suggested_slide_id.channel_id.website_id == website
+            )
+        ):
+            add(
+                self.env._("Learning item"),
+                self.suggested_slide_id.name,
+                "slide",
+            )
+
+        if self.submission_type == "resource":
+            resource_type_label = dict(
+                self._fields["resource_type"]._description_selection(self.env)
+            ).get(self.resource_type, self.resource_type)
+            resource_level_label = dict(
+                self._fields["resource_level"]._description_selection(self.env)
+            ).get(self.resource_level, self.resource_level)
+            add(self.env._("Resource type"), resource_type_label, "resource_type")
+            add(self.env._("Level"), resource_level_label, "resource_level")
+            if self.language:
+                add(self.env._("Language"), self.language.upper(), "language")
+        elif self.submission_type == "contact":
+            contact_topic_label = dict(
+                self._fields["contact_topic"]._description_selection(self.env)
+            ).get(self.contact_topic, self.contact_topic)
+            add(self.env._("Contact topic"), contact_topic_label, "contact_topic")
+
+        return rows
 
     @api.model
     def _normalize_submission_type(self, value):
