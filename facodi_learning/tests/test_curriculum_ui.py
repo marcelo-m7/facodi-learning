@@ -255,7 +255,10 @@ class TestCurriculumUI(TransactionCase):
             ],
             limit=1,
         )
-        self.assertEqual(news_menu.parent_id, community_menu)
+        self.assertFalse(
+            news_menu,
+            "empty public blogs must not leave a dead News destination in navigation",
+        )
         self.assertEqual(contribute_menu.parent_id, community_menu)
 
         # Reconciliation is idempotent and must not recreate legacy/duplicate
