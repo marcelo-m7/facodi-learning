@@ -188,7 +188,6 @@ class FacodiContextualSubmissionController(FacodiSubmissionController):
         resource_type = self._safe_selection(
             kwargs.get("resource_type"),
             {"video", "article", "book", "tool", "repository", "course", "other"},
-            "video",
         )
         resource_level = self._safe_selection(
             kwargs.get("resource_level"),
@@ -573,7 +572,10 @@ class FacodiContextualSubmissionController(FacodiSubmissionController):
             "contact_email": contact_email or False,
             "organization": organization or False,
             "contact_topic": form_values.get("contact_topic") or False,
-            "resource_type": (post.get("resource_type") or "video").strip()[:32],
+            "resource_type": self._safe_selection(
+                post.get("resource_type"),
+                {"video", "article", "book", "tool", "repository", "course", "other"},
+            ) or False,
             "resource_level": (post.get("resource_level") or "").strip()[:32] or False,
             "permission_to_contact": bool(post.get("permission_to_contact")),
         }
@@ -621,6 +623,8 @@ class FacodiContextualSubmissionController(FacodiSubmissionController):
                 if Submission._is_valid_source_url(source_url)
                 else False
             )
+            if youtube_identity and not values.get("resource_type"):
+                values["resource_type"] = "video"
             if youtube_identity and (
                 not values["name"]
                 or not values["language"]
@@ -643,6 +647,8 @@ class FacodiContextualSubmissionController(FacodiSubmissionController):
             source_url = values["source_url"]
             if not name:
                 errors.append(request.env._("Enter a short title for the resource."))
+            if not values.get("resource_type"):
+                errors.append(request.env._("Choose the resource type."))
             if not Submission._is_valid_source_url(source_url):
                 errors.append(request.env._("Enter a valid public HTTP or HTTPS URL."))
         else:
