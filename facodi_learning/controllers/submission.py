@@ -467,7 +467,7 @@ class FacodiSubmissionController(http.Controller):
         ]
         state_counts = {
             "total": len(submissions),
-            "active": len(submissions.filtered(lambda item: item.state in {"submitted", "reviewing"})),
+            "active": len(submissions.filtered(lambda item: item.state in {"submitted", "reviewing", "changes_requested"})),
             "accepted": len(submissions.filtered(lambda item: item.state in {"accepted", "resolved"})),
             "closed": len(submissions.filtered(lambda item: item.state in {"rejected", "withdrawn"})),
         }
