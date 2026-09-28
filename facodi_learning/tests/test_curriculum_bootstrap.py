@@ -47,14 +47,31 @@ class TestCurriculumBootstrap(TransactionCase):
         self.assertEqual(typography.credits, 5.0)
         self.assertEqual(web_design.credits, 4.0)
 
+        interaction_channel = self.env.ref(
+            "__import__.facodi_dtm_19301006_interaction_design"
+        )
         motion_channel = self.env.ref(
             "__import__.facodi_dtm_19301008_motion_design"
         )
         web_channel = self.env.ref(
             "__import__.facodi_dtm_19301009_web_design"
         )
+        self.assertTrue(interaction_channel.is_published)
         self.assertTrue(motion_channel.is_published)
         self.assertTrue(web_channel.is_published)
+        self.assertEqual(len(interaction_channel.slide_ids), 2)
+        self.assertTrue(
+            self.env["facodi.learning.curriculum.coverage"].search(
+                [
+                    ("channel_id", "=", interaction_channel.id),
+                    ("curriculum_unit_id", "=", first["1930"].unit_ids.filtered(
+                        lambda unit: unit.external_unit_code == "19301006"
+                    ).id),
+                    ("state", "=", "approved"),
+                ],
+                limit=1,
+            )
+        )
         self.assertTrue(
             self.env["facodi.learning.curriculum.coverage"].search(
                 [
