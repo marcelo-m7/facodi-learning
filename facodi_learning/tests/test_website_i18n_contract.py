@@ -146,6 +146,9 @@ class TestWebsiteI18nContract(unittest.TestCase):
                 "Detect details": "Detetar detalhes",
                 "Detected resource": "Recurso detetado",
                 "Detecting title and language…": "A detetar título e idioma…",
+                "Explore further": "Explorar mais",
+                "Learning resources": "Recursos de aprendizagem",
+                "Only reviewed and approved relations with currently published courses.": "Apenas relações revistas e aprovadas com cursos atualmente publicados.",
             },
             "es": {
                 "Learning": "Aprendizaje",
@@ -166,6 +169,10 @@ class TestWebsiteI18nContract(unittest.TestCase):
                 "Detect details": "Detectar detalles",
                 "Detected resource": "Recurso detectado",
                 "Detecting title and language…": "Detectando título e idioma…",
+                "Coverage relations reviewed and approved by FACODI curation.": "Relaciones de cobertura revisadas y aprobadas por la curación de FACODI.",
+                "Explore further": "Explorar más",
+                "Learning resources": "Recursos de aprendizaje",
+                "Only reviewed and approved relations with currently published courses.": "Solo relaciones revisadas y aprobadas con cursos actualmente publicados.",
             },
             "fr": {
                 "Learning": "Apprentissage",
@@ -186,6 +193,11 @@ class TestWebsiteI18nContract(unittest.TestCase):
                 "Detect details": "Détecter les détails",
                 "Detected resource": "Ressource détectée",
                 "Detecting title and language…": "Détection du titre et de la langue…",
+                "Coverage relations reviewed and approved by FACODI curation.": "Relations de couverture examinées et approuvées par la curation FACODI.",
+                "Explore further": "Explorer davantage",
+                "Learning resources": "Ressources d’apprentissage",
+                "Only reviewed and approved relations with currently published courses.": "Uniquement les relations examinées et approuvées avec des cours actuellement publiés.",
+                "There are no curricular units for the selected filters.": "Aucune unité d’enseignement ne correspond aux filtres sélectionnés.",
             },
         }
 
