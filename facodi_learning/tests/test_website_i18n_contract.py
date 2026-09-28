@@ -60,7 +60,6 @@ class TestWebsiteI18nContract(unittest.TestCase):
                 "facodi_learning.curriculum_public_unit_index",
                 "facodi_learning.curriculum_public_detail",
                 "facodi_learning.course_contribution_cta",
-                "facodi_learning.resource_submission_form",
             },
             "Suggest a resource": {
                 "facodi_learning.curriculum_catalog_navigation",
@@ -70,11 +69,9 @@ class TestWebsiteI18nContract(unittest.TestCase):
             },
             "Contribute to FACODI": {
                 "facodi_learning.course_contribution_cta",
-                "facodi_learning.resource_submission_form",
             },
             "Other contribution": {
                 "facodi_learning.course_contribution_cta",
-                "facodi_learning.resource_submission_form",
             },
         }
 
