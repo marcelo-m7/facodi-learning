@@ -140,6 +140,16 @@ class WebsiteMenu(models.Model):
                 "sequence": sequence,
             }
             if menu:
+                # A legacy Website page menu can be reused through an alias
+                # (notably /contactus -> /contact).  Once its URL points to a
+                # controller route, keeping the old page/controller ownership
+                # makes Odoo's menu editor call ir.http._match() while handling
+                # its POST RPC. GET-only FACODI routes then raise 405 and the
+                # whole menu editor cannot be saved.
+                if menu.page_id and menu.page_id.url != url:
+                    values["page_id"] = False
+                if menu.controller_page_id and menu.url != url:
+                    values["controller_page_id"] = False
                 menu.write(values)
             else:
                 menu = Menu.create({"name": name, **values})
