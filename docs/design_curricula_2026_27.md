@@ -30,3 +30,9 @@ The operation is idempotent and is run on fresh installation and by the 19.0.1.1
 The Interaction Design seed uses two historical Open2 resources whose latest AI enrichment
 explicitly identifies UI, UX, user experience, Figma and prototyping. They remain FACODI
 learning support only; the official UAlg study plan stays canonical.
+
+
+The Design Foundations seed now uses the recovered Nadine Fronza resource whose latest
+Open2 enrichment explicitly identifies graphic-design principles and beginner design education.
+A dedicated DTM-facing FACODI course avoids presenting an LDCOM-labelled course as the
+primary support surface for the 1930 programme.
