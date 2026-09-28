@@ -1,5 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+    <record id="mail_template_submission_received" model="mail.template">
+        <field name="name">FACODI: Contribution received</field>
+        <field name="model_id" ref="model_facodi_learning_submission"/>
+        <field name="subject">FACODI received your contribution</field>
+        <field name="email_to">{{ object._contributor_notification_email() }}</field>
+        <field name="lang">{{ object._contributor_notification_lang() }}</field>
+        <field name="body_html" type="html">
+            <div>
+                <p>Hello,</p>
+                <p>FACODI received <strong><t t-out="object.name"/></strong> and placed it on the review desk.</p>
+                <p t-if="object.source_cta or object.source_section">The context carried from the page where you contributed is saved with the submission.</p>
+                <p>You can use the private link below to follow the review, read editorial replies and revise the same contribution if changes are requested.</p>
+                <p><a t-att-href="object._contributor_tracking_url()">Track your contribution</a></p>
+            </div>
+        </field>
+        <field name="auto_delete" eval="True"/>
+    </record>
+
     <record id="mail_template_submission_changes_requested" model="mail.template">
         <field name="name">FACODI: Changes requested</field>
         <field name="model_id" ref="model_facodi_learning_submission"/>
