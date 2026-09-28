@@ -317,4 +317,74 @@
         </t>
     </template>
 
+
+    <template id="homepage_catalogue_fragment" name="FACODI Homepage Catalogue Fragment">
+        <div class="facodi-home-catalogue-fragment" t-att-data-content-type="content_type">
+            <t t-if="content_type == 'courses'">
+                <div class="row g-3">
+                    <div t-foreach="records" t-as="channel" class="col-12 col-md-6 col-lg-4">
+                        <a t-att-href="channel.website_url" class="facodi-course-card facodi-home-fragment-card">
+                            <div class="facodi-course-art facodi-home-fragment-art">
+                                <div class="facodi-course-fallback" aria-hidden="true">
+                                    <span class="facodi-course-fallback-brand" t-translation="off">FACODI.</span>
+                                    <strong t-esc="(channel.name or '')[:2].upper()"/>
+                                    <i class="fa fa-play-circle" aria-hidden="true" t-translation="off"/>
+                                </div>
+                            </div>
+                            <div class="facodi-course-content">
+                                <div class="facodi-course-description" t-field="channel.description_short"/>
+                                <h3 t-field="channel.name"/>
+                                <div class="facodi-card-bottom">
+                                    <span>Open course</span>
+                                    <i class="fa fa-arrow-right" aria-hidden="true" t-translation="off"/>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </t>
+            <t t-elif="content_type == 'roadmaps'">
+                <div class="row g-3">
+                    <div t-foreach="records" t-as="reference" class="col-12 col-md-6 col-lg-4">
+                        <a t-att-href="'/roadmaps/%s' % reference.id" class="facodi-sheet facodi-home-fragment-card facodi-home-roadmap-card">
+                            <p class="facodi-label">Roadmap</p>
+                            <h3 t-esc="reference.programme_name"/>
+                            <p class="mb-2"><t t-esc="reference.institution"/> · <t t-esc="reference.academic_year"/></p>
+                            <span class="facodi-text-link">Open roadmap <i class="fa fa-arrow-right" aria-hidden="true" t-translation="off"/></span>
+                        </a>
+                    </div>
+                </div>
+                <div t-if="not records" class="facodi-empty-state">
+                    <h3>Roadmaps are being prepared</h3>
+                    <p>Browse curricular units or open courses while new learning paths are reviewed.</p>
+                </div>
+            </t>
+            <t t-else="">
+                <div class="row g-3">
+                    <div t-foreach="records" t-as="entry" class="col-12 col-md-6 col-lg-4">
+                        <t t-set="unit" t-value="entry['unit']"/>
+                        <t t-set="reference" t-value="entry['reference']"/>
+                        <a t-att-href="entry['unit_url']" class="facodi-sheet facodi-home-fragment-card facodi-home-unit-card">
+                            <p class="facodi-label">Curricular unit</p>
+                            <h3 t-field="unit.name"/>
+                            <p class="mb-2">
+                                <code t-esc="unit.external_unit_code"/>
+                                <span aria-hidden="true"> · </span>
+                                <t t-esc="unit.curricular_year"/> year
+                                <span aria-hidden="true"> · </span>
+                                <t t-esc="('%g' % unit.credits) if unit.credits else '—'"/> ECTS
+                            </p>
+                            <p class="small mb-3" t-esc="reference.programme_name"/>
+                            <span class="facodi-text-link">Open unit <i class="fa fa-arrow-right" aria-hidden="true" t-translation="off"/></span>
+                        </a>
+                    </div>
+                </div>
+                <div t-if="not records" class="facodi-empty-state">
+                    <h3>Curricular units are being prepared</h3>
+                    <p>Explore available courses or roadmaps while this catalogue is completed.</p>
+                </div>
+            </t>
+        </div>
+    </template>
+
 </odoo>
