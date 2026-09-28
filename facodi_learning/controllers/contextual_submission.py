@@ -446,7 +446,7 @@ class FacodiContextualSubmissionController(FacodiSubmissionController):
         }
         brief_parts = []
         if source_cta:
-            brief_parts.append(cta_labels.get(source_cta, request.env._("Contextual action")))
+            brief_parts.append(source_cta_label or request.env._("Contextual action"))
         if source_section:
             brief_parts.append(section_labels.get(source_section, source_section.replace("-", " ").title()))
         if curriculum_unit:
