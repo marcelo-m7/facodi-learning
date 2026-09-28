@@ -3,9 +3,13 @@ import re
 from urllib.parse import urlsplit
 
 from odoo import api, fields, models
+from odoo.tools import LazyTranslate
 from odoo.exceptions import AccessError, ValidationError
 
 from .submission import FacodiLearningSubmission as _BaseSubmission
+
+
+_lt = LazyTranslate(__name__)
 
 
 _CONTEXT_SLUG_RE = re.compile(r"^[a-z0-9][a-z0-9_-]{0,63}$")
@@ -35,45 +39,45 @@ _CONTACT_TOPICS = [
 
 
 _SOURCE_CTA_LABELS = {
-    "community_margin": "Community margin",
-    "unit_resource_cta": "Curricular unit resources",
-    "unit_correction_cta": "Curricular unit provenance",
-    "roadmap_resource_cta": "Roadmap resources",
-    "roadmap_correction_cta": "Roadmap provenance",
-    "roadmaps_catalog_cta": "Roadmaps catalogue",
-    "curricular_units_catalog_cta": "Curricular units catalogue",
-    "curricular_units_empty_state": "Curricular units · open shelf",
-    "module_resource_cta": "Learning module resources",
-    "course_resource_cta": "Course resources",
-    "course_contact_cta": "Course contribution",
-    "course_catalog_cta": "Course catalogue",
-    "study_player_resource_cta": "Lesson resources",
-    "study_player_correction_cta": "Lesson problem report",
-    "study_player_question_cta": "Lesson question",
-    "explore_empty_shelf": "Explore empty shelf",
-    "area_resource_cta": "Learning area resources",
-    "community_video_cta": "Community videos",
-    "community_resource_cta": "Community resource",
-    "portal_resource_cta": "My FACODI",
-    "main_nav_contribute": "Main navigation",
-    "faq_contribution_cta": "FAQ contribution",
-    "community_collaboration_cta": "Community collaboration",
-    "editorial_routes_contact_cta": "Contact and contribute",
-    "ecosystem_contact_cta": "FACODI ecosystem",
-    "ecosystem_resource_cta": "Ecosystem contribution",
-    "institutional_contact_cta": "FACODI project",
-    "cta_sheet_resource_cta": "Shared learning notebook",
-    "contact_sheet_resource_cta": "Contact page resource",
-    "contact_page": "Contact FACODI",
-    "contribution_board_resource_cta": "Contribution board",
-    "contribution_board_correction_cta": "Contribution board correction",
-    "contribution_board_collaboration_cta": "Contribution board collaboration",
-    "translation_correction_cta": "Translation correction",
-    "folder_tabs_contribute": "Learning navigation",
-    "course_showcase_contribute": "Learning catalogue",
-    "submission_status_followup": "Submission follow-up",
-    "my_submissions_new": "My submissions",
-    "my_submissions_empty": "My submissions empty state",
+    "community_margin": _lt("Community margin"),
+    "unit_resource_cta": _lt("Curricular unit resources"),
+    "unit_correction_cta": _lt("Curricular unit provenance"),
+    "roadmap_resource_cta": _lt("Roadmap resources"),
+    "roadmap_correction_cta": _lt("Roadmap provenance"),
+    "roadmaps_catalog_cta": _lt("Roadmaps catalogue"),
+    "curricular_units_catalog_cta": _lt("Curricular units catalogue"),
+    "curricular_units_empty_state": _lt("Curricular units · open shelf"),
+    "module_resource_cta": _lt("Learning module resources"),
+    "course_resource_cta": _lt("Course resources"),
+    "course_contact_cta": _lt("Course contribution"),
+    "course_catalog_cta": _lt("Course catalogue"),
+    "study_player_resource_cta": _lt("Lesson resources"),
+    "study_player_correction_cta": _lt("Lesson problem report"),
+    "study_player_question_cta": _lt("Lesson question"),
+    "explore_empty_shelf": _lt("Explore empty shelf"),
+    "area_resource_cta": _lt("Learning area resources"),
+    "community_video_cta": _lt("Community videos"),
+    "community_resource_cta": _lt("Community resource"),
+    "portal_resource_cta": _lt("My FACODI"),
+    "main_nav_contribute": _lt("Main navigation"),
+    "faq_contribution_cta": _lt("FAQ contribution"),
+    "community_collaboration_cta": _lt("Community collaboration"),
+    "editorial_routes_contact_cta": _lt("Contact and contribute"),
+    "ecosystem_contact_cta": _lt("FACODI ecosystem"),
+    "ecosystem_resource_cta": _lt("Ecosystem contribution"),
+    "institutional_contact_cta": _lt("FACODI project"),
+    "cta_sheet_resource_cta": _lt("Shared learning notebook"),
+    "contact_sheet_resource_cta": _lt("Contact page resource"),
+    "contact_page": _lt("Contact FACODI"),
+    "contribution_board_resource_cta": _lt("Contribution board"),
+    "contribution_board_correction_cta": _lt("Contribution board correction"),
+    "contribution_board_collaboration_cta": _lt("Contribution board collaboration"),
+    "translation_correction_cta": _lt("Translation correction"),
+    "folder_tabs_contribute": _lt("Learning navigation"),
+    "course_showcase_contribute": _lt("Learning catalogue"),
+    "submission_status_followup": _lt("Submission follow-up"),
+    "my_submissions_new": _lt("My submissions"),
+    "my_submissions_empty": _lt("My submissions empty state"),
 }
 
 
