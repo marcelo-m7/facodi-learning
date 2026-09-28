@@ -287,6 +287,7 @@ class FacodiSubmissionController(http.Controller):
                 "curriculum_unit": curriculum_unit,
                 "curriculum_unit_url": curriculum_unit_url,
                 "followup_submission_url": followup_submission_url,
+                "context_rows": submission._facodi_contributor_context_rows(request.website),
             },
         )
         response.headers["X-Robots-Tag"] = "noindex, nofollow"
@@ -353,6 +354,7 @@ class FacodiSubmissionController(http.Controller):
                 "can_withdraw": submission.state in {"submitted", "reviewing", "changes_requested"},
                 "errors": [],
                 "form_values": {},
+                "context_rows": submission._facodi_contributor_context_rows(request.website),
             },
         )
         response.headers["X-Robots-Tag"] = "noindex, nofollow"
@@ -485,6 +487,7 @@ class FacodiSubmissionController(http.Controller):
                     "can_withdraw": submission.state in {"submitted", "reviewing", "changes_requested"},
                     "errors": errors,
                     "form_values": values,
+                    "context_rows": submission._facodi_contributor_context_rows(request.website),
                 },
             )
             response.headers["X-Robots-Tag"] = "noindex, nofollow"
