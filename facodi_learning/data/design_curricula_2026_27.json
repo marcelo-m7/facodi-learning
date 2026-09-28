@@ -615,6 +615,29 @@
           "description": "<p>Aprenda Motion Design em 10 minutos com After Effects.</p><p><strong>Source:</strong> Shadow. Discovered in the historical FACODI/Open2 dataset and selected from semantic enrichment.</p><p><strong>Semantic tags:</strong> motion design, After Effects, design gráfico, tutorial, animação.</p>"
         }
       ]
+    },
+    {
+      "xmlid": "facodi_dtm_19301006_interaction_design",
+      "channel": {
+        "name": "Open course · Interaction Design (DTM)",
+        "description_short": "<p>Open interaction-design and UI/UX resources supporting the UAlg Design and Multimedia Technologies study plan.</p>",
+        "description": "<p>FACODI course assembled from public UI/UX resources found in the historical Supabase catalogue and selected through semantic enrichment.</p><p><strong>Academic boundary:</strong> content support only; no academic equivalence or ECTS recognition is implied.</p>",
+        "sequence": 180
+      },
+      "slides": [
+        {
+          "xmlid": "facodi_dtm_interaction_EcbgbKtOELY",
+          "name": "Master UI/UX Concepts in 10 Minutes: A Quick Guide for Designers",
+          "url": "https://www.youtube.com/watch?v=EcbgbKtOELY",
+          "description": "<p>Quick guide to core UI/UX concepts and user-experience principles.</p><p><strong>Source:</strong> Kole Jain. Selected from the historical FACODI/Open2 catalogue using AI-enriched tags.</p><p><strong>Semantic tags:</strong> UI, UX, design, user experience, web design.</p>"
+        },
+        {
+          "xmlid": "facodi_dtm_interaction_gKM6b2EnW1k",
+          "name": "Transform Your Designs: Upgrade 9 Essential UI Elements with Free Figma File",
+          "url": "https://www.youtube.com/watch?v=gKM6b2EnW1k",
+          "description": "<p>Practical UI-design resource focused on improving common interface elements with Figma.</p><p><strong>Source:</strong> Kole Jain. Selected from the historical FACODI/Open2 catalogue using AI-enriched tags.</p><p><strong>Semantic tags:</strong> UI Design, Figma, User Experience, Design Tips, Prototyping.</p>"
+        }
+      ]
     }
   ],
   "coverage": [
@@ -713,6 +736,14 @@
       "confidence": 0.95,
       "approved": true,
       "evidence": "Supabase semantic-enrichment match"
+    },
+    {
+      "programme_code": "1930",
+      "unit_code": "19301006",
+      "channel_xmlid": "facodi_dtm_19301006_interaction_design",
+      "confidence": 0.9,
+      "approved": true,
+      "evidence": "Supabase AI-enriched UI/UX semantic match"
     }
   ]
 }
