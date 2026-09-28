@@ -638,6 +638,23 @@
           "description": "<p>Practical UI-design resource focused on improving common interface elements with Figma.</p><p><strong>Source:</strong> Kole Jain. Selected from the historical FACODI/Open2 catalogue using AI-enriched tags.</p><p><strong>Semantic tags:</strong> UI Design, Figma, User Experience, Design Tips, Prototyping.</p>"
         }
       ]
+    },
+    {
+      "xmlid": "facodi_dtm_19301001_design_foundations",
+      "channel": {
+        "name": "Open course · Design Foundations (DTM)",
+        "description_short": "<p>Open graphic-design resources supporting the UAlg Design and Multimedia Technologies study plan.</p>",
+        "description": "<p>FACODI course assembled from a public graphic-design resource recovered from the historical Open2 catalogue and selected through semantic enrichment.</p><p><strong>Academic boundary:</strong> content support only; no academic equivalence or ECTS recognition is implied.</p>",
+        "sequence": 175
+      },
+      "slides": [
+        {
+          "xmlid": "facodi_dtm_design_foundations_pVlCTdb1c90",
+          "name": "PRINCÍPIOS de DESIGN GRÁFICO para INICIANTES: Aprenda os Fundamentos",
+          "url": "https://www.youtube.com/watch?v=pVlCTdb1c90",
+          "description": "<p>Introdução aos princípios fundamentais do design gráfico e à construção de composições visuais.</p><p><strong>Source:</strong> Nadine Fronza. Recovered from the historical FACODI/Open2 catalogue and selected from AI-enriched metadata.</p><p><strong>Semantic tags:</strong> design gráfico, princípios do design, iniciantes, tutoriais de design, educação.</p>"
+        }
+      ]
     }
   ],
   "coverage": [
@@ -708,10 +725,10 @@
     {
       "programme_code": "1930",
       "unit_code": "19301001",
-      "channel_xmlid": "facodi_ldcom_14541000",
-      "confidence": 0.85,
+      "channel_xmlid": "facodi_dtm_19301001_design_foundations",
+      "confidence": 0.92,
       "approved": true,
-      "evidence": "Semantic match: graphic-design principles"
+      "evidence": "Supabase AI-enriched graphic-design foundations match"
     },
     {
       "programme_code": "1930",
