@@ -8,6 +8,7 @@ class TestContributorNotificationContract(unittest.TestCase):
     def test_review_actions_queue_transactional_notifications(self):
         model = (MODULE_ROOT / "models" / "submission.py").read_text(encoding="utf-8")
         self.assertIn("def _contributor_notification_email", model)
+        self.assertIn("self.sudo().submitted_by_id", model)
         self.assertIn("def _contributor_tracking_url", model)
         self.assertIn("force_send=False", model)
         self.assertIn("mail_template_submission_changes_requested", model)

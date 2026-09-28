@@ -497,12 +497,14 @@ class FacodiLearningSubmission(models.Model):
         contextual_email = (getattr(self, "contact_email", False) or "").strip()
         if contextual_email:
             return contextual_email
-        return (self.submitted_by_id.partner_id.email or "").strip()
+        contributor = self.sudo().submitted_by_id
+        return (contributor.partner_id.email or "").strip()
 
     def _contributor_notification_lang(self):
         self.ensure_one()
-        if self.submitted_by_id and self.submitted_by_id.lang:
-            return self.submitted_by_id.lang
+        contributor = self.sudo().submitted_by_id
+        if contributor and contributor.lang:
+            return contributor.lang
         return {
             "pt": "pt_PT",
             "pt_pt": "pt_PT",
