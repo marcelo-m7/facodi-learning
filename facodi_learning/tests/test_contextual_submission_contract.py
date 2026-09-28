@@ -101,7 +101,7 @@ class TestContextualSubmissionStaticContracts(TransactionCase):
         self.assertIn("closing_cta", controller)
         self.assertIn("Homepage closing call", self._read("models/contextual_submission.py"))
         self.assertIn('"module-resources": request.env._("Module resources")', controller)
-        self.assertIn("study_player_correction_cta", controller)
+        self.assertIn("study_player_correction_cta", self._read("models/contextual_submission.py"))
         self.assertIn('"lesson": request.env._("Lesson")', controller)
         self.assertLess(
             controller.index("elif suggested_slide:"),
@@ -233,7 +233,8 @@ class TestContextualSubmissionStaticContracts(TransactionCase):
             "Submission follow-up",
         ):
             self.assertIn(label, model)
-        self.assertIn("Submission status", controller)
+        self.assertIn("legacy_submission_followup", model)
+        self.assertIn("Submission status", self._read("controllers/contextual_submission.py"))
         self.assertNotIn("/contribuir/recurso?curriculum_unit_id=", template)
 
     def test_follow_up_email_is_validated_server_side(self):
