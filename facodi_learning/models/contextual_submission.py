@@ -61,6 +61,8 @@ _SOURCE_CTA_LABELS = {
     "portal_resource_cta": _lt("My FACODI"),
     "main_nav_contribute": _lt("Main navigation"),
     "faq_contribution_cta": _lt("FAQ contribution"),
+    "faq_contact_cta": _lt("FAQ contact"),
+    "forum_postit_contact_cta": _lt("Community notebook"),
     "community_collaboration_cta": _lt("Community collaboration"),
     "editorial_routes_contact_cta": _lt("Contact and contribute"),
     "ecosystem_contact_cta": _lt("FACODI ecosystem"),
