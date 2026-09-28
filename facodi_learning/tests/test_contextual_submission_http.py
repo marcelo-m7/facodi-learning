@@ -225,6 +225,47 @@ class TestContextualSubmissionHttp(HttpCase):
         self.assertIn("Enter a valid email address.", response.text)
         self.assertEqual(Submission.search_count([]), before)
 
+    def test_post_drops_unsupported_language_and_resource_level(self):
+        Submission = self.env["facodi.learning.submission"].sudo()
+        before = Submission.search_count([])
+        response = self.url_open(
+            "/submissions/new",
+            data={
+                "csrf_token": self._csrf_token(),
+                "type": "resource",
+                "name": "Safe selection resource",
+                "source_url": "https://example.org/safe-selection",
+                "resource_type": "article",
+                "resource_level": "expert-only",
+                "language": "xx",
+            },
+            allow_redirects=False,
+        )
+        self.assertEqual(response.status_code, 303)
+        submission = Submission.search(
+            [("name", "=", "Safe selection resource")],
+            order="id desc",
+            limit=1,
+        )
+        self.assertEqual(Submission.search_count([]), before + 1)
+        self.assertFalse(submission.resource_level)
+        self.assertFalse(submission.language)
+
+    def test_validation_error_response_remains_noindex(self):
+        response = self.url_open(
+            "/submissions/new",
+            data={
+                "csrf_token": self._csrf_token(),
+                "type": "contact",
+                "context": "Please contact me.",
+                "contact_topic": "collaboration",
+                "contact_email": "not-an-email",
+            },
+            allow_redirects=False,
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.headers.get("X-Robots-Tag"), "noindex, follow")
+
     def test_follow_up_permission_requires_an_email(self):
         Submission = self.env["facodi.learning.submission"].sudo()
         before = Submission.search_count([])
