@@ -133,6 +133,37 @@ class FacodiExploreController(http.Controller):
                 return request.redirect(target, code=301)
         return request.redirect("/explore", code=301)
 
+    @http.route(
+        "/facodi/home/catalogue-fragment",
+        type="http",
+        auth="public",
+        website=True,
+        sitemap=False,
+        methods=["GET"],
+    )
+    def homepage_catalogue_fragment(self, **kwargs):
+        content_type = (kwargs.get("type") or "courses").strip().lower()
+        if content_type not in {"courses", "roadmaps", "curricular-units"}:
+            content_type = "courses"
+
+        if content_type == "roadmaps":
+            records = self._public_references()[:6]
+        elif content_type == "curricular-units":
+            entries = request.env[
+                "facodi.learning.curriculum.unit"
+            ]._facodi_public_catalog_entries(website=request.website)
+            records = entries[:6]
+        else:
+            records = self._public_courses()[:6]
+
+        return request.render(
+            "facodi_learning.homepage_catalogue_fragment",
+            {
+                "content_type": content_type,
+                "records": records,
+            },
+        )
+
     @http.route("/explore", type="http", auth="public", website=True, sitemap=True)
     def explore_index(self, **kwargs):
         return request.render("facodi_learning.explore_landing")
