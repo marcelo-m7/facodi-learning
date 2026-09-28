@@ -491,6 +491,15 @@ class FacodiContextualSubmissionController(FacodiSubmissionController):
             "submission_type_options": submission_type_options,
         }
 
+    @staticmethod
+    def _render_submission_form(values):
+        response = request.render(
+            "facodi_learning.contextual_submission_form",
+            values,
+        )
+        response.headers["X-Robots-Tag"] = "noindex, follow"
+        return response
+
     @http.route(
         ["/contact", "/pt/contact", "/en/contact", "/es/contact", "/fr/contact"],
         type="http",
@@ -515,12 +524,9 @@ class FacodiContextualSubmissionController(FacodiSubmissionController):
         sitemap=False,
     )
     def contextual_submission_form(self, **kwargs):
-        response = request.render(
-            "facodi_learning.contextual_submission_form",
-            self._submission_context_from_kwargs(kwargs),
+        return self._render_submission_form(
+            self._submission_context_from_kwargs(kwargs)
         )
-        response.headers["X-Robots-Tag"] = "noindex, follow"
-        return response
 
     def _submission_values_from_post(self, post):
         context = self._submission_context_from_kwargs(post)
@@ -532,7 +538,10 @@ class FacodiContextualSubmissionController(FacodiSubmissionController):
         contact_email = (post.get("contact_email") or post.get("email") or "").strip().lower()[:254]
         organization = (post.get("organization") or "").strip()[:160]
         source_url = (post.get("source_url") or "").strip()[:2048]
-        language = (post.get("language") or "").strip().lower()[:16]
+        language = self._safe_selection(
+            post.get("language"),
+            {"pt", "en", "es", "fr"},
+        )
         values = {
             **form_values,
             "name": name,
@@ -547,7 +556,10 @@ class FacodiContextualSubmissionController(FacodiSubmissionController):
                 post.get("resource_type"),
                 {"video", "article", "book", "tool", "repository", "course", "other"},
             ) or False,
-            "resource_level": (post.get("resource_level") or "").strip()[:32] or False,
+            "resource_level": self._safe_selection(
+                post.get("resource_level"),
+                {"introductory", "intermediate", "advanced"},
+            ) or False,
             "permission_to_contact": bool(post.get("permission_to_contact")),
         }
         errors = []
@@ -667,7 +679,7 @@ class FacodiContextualSubmissionController(FacodiSubmissionController):
         context, values, errors = self._submission_values_from_post(post)
         if errors:
             context.update({"form_values": values, "errors": errors})
-            return request.render("facodi_learning.contextual_submission_form", context)
+            return self._render_submission_form(context)
         if not request.env.user._is_public():
             values["submitted_by_id"] = request.env.user.id
         try:
@@ -679,7 +691,7 @@ class FacodiContextualSubmissionController(FacodiSubmissionController):
                     "errors": [str(exc)],
                 }
             )
-            return request.render("facodi_learning.contextual_submission_form", context)
+            return self._render_submission_form(context)
         except Exception:
             context.update(
                 {
@@ -687,7 +699,7 @@ class FacodiContextualSubmissionController(FacodiSubmissionController):
                     "errors": [request.env._("The submission could not be saved. Check the fields and try again.")],
                 }
             )
-            return request.render("facodi_learning.contextual_submission_form", context)
+            return self._render_submission_form(context)
         submission._notify_contributor(
             "facodi_learning.mail_template_submission_received"
         )
