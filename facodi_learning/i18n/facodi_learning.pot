@@ -4232,3 +4232,15 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:facodi_learning.portal_my_home_facodi
 msgid "Continue next lesson"
 msgstr ""
+
+#. module: facodi_learning
+#: code:addons/facodi_learning/controllers/contextual_submission.py:0
+#: code:addons/facodi_learning/models/contextual_submission.py:0
+msgid "Homepage closing call"
+msgstr ""
+
+#. module: facodi_learning
+#: code:addons/facodi_learning/controllers/contextual_submission.py:0
+#: code:addons/facodi_learning/models/contextual_submission.py:0
+msgid "I found a useful public resource and want to leave it on the FACODI learning trail."
+msgstr ""
