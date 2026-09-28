@@ -140,6 +140,11 @@ class TestCurriculumUI(TransactionCase):
         self.assertEqual(menu.parent_id.parent_id, website.menu_id)
         self.assertEqual(menu.parent_id.url, "#")
         self.assertEqual(menu.parent_id.sequence, 10)
+        self.assertEqual(website.default_lang_id.code, "en_US")
+        self.assertEqual(
+            website.menu_id.child_id.sorted("sequence").mapped("name")[:5],
+            ["Home", "Explore", "Community", "About", "Contact"],
+        )
 
         for code in ("pt_PT", "es_ES", "fr_FR"):
             self.env["res.lang"]._activate_lang(code)
@@ -148,9 +153,30 @@ class TestCurriculumUI(TransactionCase):
         )
         self.assertTrue(self.env["website.menu"].facodi_reconcile_navigation())
         expected_names = {
-            "pt_PT": ("Explorar", "Roadmaps", "Unidades curriculares"),
-            "es_ES": ("Explorar", "Rutas", "Unidades curriculares"),
-            "fr_FR": ("Explorer", "Parcours", "Unités d’enseignement"),
+            "pt_PT": (
+                "Explorar",
+                "Roadmaps",
+                "Unidades curriculares",
+                "Comunidade",
+                "Sobre",
+                "Contacto",
+            ),
+            "es_ES": (
+                "Explorar",
+                "Rutas",
+                "Unidades curriculares",
+                "Comunidad",
+                "Acerca de",
+                "Contacto",
+            ),
+            "fr_FR": (
+                "Explorer",
+                "Parcours",
+                "Unités d’enseignement",
+                "Communauté",
+                "À propos",
+                "Contact",
+            ),
         }
         units_menu = self.env["website.menu"].search(
             [
@@ -159,10 +185,51 @@ class TestCurriculumUI(TransactionCase):
             ],
             limit=1,
         )
-        for code, (explore_name, roadmap_name, units_name) in expected_names.items():
+        community_menu = self.env["website.menu"].search(
+            [
+                ("website_id", "=", website.id),
+                ("parent_id", "=", website.menu_id.id),
+                ("url", "=", "#"),
+                ("name", "=", "Community"),
+            ],
+            limit=1,
+        )
+        about_menu = self.env["website.menu"].search(
+            [
+                ("website_id", "=", website.id),
+                ("parent_id", "=", website.menu_id.id),
+                ("url", "in", ["/sobre", "/about"]),
+            ],
+            limit=1,
+        )
+        contact_menu = self.env["website.menu"].search(
+            [
+                ("website_id", "=", website.id),
+                ("parent_id", "=", website.menu_id.id),
+                ("url", "=", "/contactus"),
+            ],
+            limit=1,
+        )
+        self.assertTrue(community_menu)
+        self.assertTrue(about_menu)
+        self.assertTrue(contact_menu)
+
+        for code, (
+            explore_name,
+            roadmap_name,
+            units_name,
+            community_name,
+            about_name,
+            contact_name,
+        ) in expected_names.items():
             self.assertEqual(menu.parent_id.with_context(lang=code).name, explore_name)
             self.assertEqual(menu.with_context(lang=code).name, roadmap_name)
             self.assertEqual(units_menu.with_context(lang=code).name, units_name)
+            self.assertEqual(
+                community_menu.with_context(lang=code).name, community_name
+            )
+            self.assertEqual(about_menu.with_context(lang=code).name, about_name)
+            self.assertEqual(contact_menu.with_context(lang=code).name, contact_name)
 
         course_menus = self.env["website.menu"].search(
             [
@@ -172,6 +239,19 @@ class TestCurriculumUI(TransactionCase):
         )
         self.assertEqual(len(course_menus), 1)
         self.assertEqual(course_menus.parent_id, menu.parent_id)
+
+        news_menu = self.env["website.menu"].search(
+            [("website_id", "=", website.id), ("url", "=", "/blog")], limit=1
+        )
+        contribute_menu = self.env["website.menu"].search(
+            [
+                ("website_id", "=", website.id),
+                ("url", "=", "/submissions/new?type=resource"),
+            ],
+            limit=1,
+        )
+        self.assertEqual(news_menu.parent_id, community_menu)
+        self.assertEqual(contribute_menu.parent_id, community_menu)
 
         # Reconciliation is idempotent and must not recreate legacy/duplicate
         # Explore or Learn trees on every module update.
