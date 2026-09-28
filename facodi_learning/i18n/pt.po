@@ -4203,3 +4203,13 @@ msgstr "Reenviar para revisão →"
 #: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_manage
 msgid "The review desk returned this tab to you. Revise it and resubmit when ready."
 msgstr "A mesa de revisão devolveu-te este separador. Revê-o e reenvia quando estiver pronto."
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_manage
+msgid "Follow-up details"
+msgstr "Detalhes de acompanhamento"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_manage
+msgid "The page, CTA and academic/learning context that brought you here stay locked to this submission. You can revise your contribution details without losing that provenance."
+msgstr "A página, o CTA e o contexto académico/de aprendizagem que te trouxeram até aqui ficam associados a esta submissão. Podes rever os detalhes da contribuição sem perder essa proveniência."
