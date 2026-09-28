@@ -64,6 +64,14 @@ class TestCurriculumBootstrap(TransactionCase):
         self.assertTrue(motion_channel.is_published)
         self.assertTrue(web_channel.is_published)
         self.assertEqual(len(interaction_channel.slide_ids), 2)
+        self.assertIn("User Experience", interaction_channel.slide_ids.tag_ids.mapped("name"))
+        self.assertIn("Figma", interaction_channel.slide_ids.tag_ids.mapped("name"))
+        self.assertIn("Motion Design", motion_channel.slide_ids.tag_ids.mapped("name"))
+        self.assertIn("Web Design", web_channel.slide_ids.tag_ids.mapped("name"))
+        self.assertIn(
+            "Design Principles",
+            design_foundations_channel.slide_ids.tag_ids.mapped("name"),
+        )
         self.assertTrue(
             self.env["facodi.learning.curriculum.coverage"].search(
                 [
