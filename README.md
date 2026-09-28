@@ -187,9 +187,11 @@ the only learner-facing course model.
 
 ## Public resource submissions
 
-FACODI exposes a contributor front door at `/contribuir/recurso`. It persists a
-`facodi.learning.submission` audit record and redirects the contributor to a
-private tokenized status page. Public and Portal users receive no direct model ACL.
+FACODI exposes a unified contextual contribution intake at `/submissions/new`;
+the historical `/contribuir/recurso` URL is kept as a compatibility alias to the
+same controller. The intake persists a `facodi.learning.submission` audit record
+and redirects the contributor to a private tokenized status page. Public and
+Portal users receive no direct model ACL.
 
 Submission states are `submitted → reviewing → accepted/rejected → resolved`.
 Only eLearning Managers make review decisions. Acceptance is editorial intent, not
