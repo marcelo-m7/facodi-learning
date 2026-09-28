@@ -334,6 +334,9 @@ class FacodiContextualSubmissionController(FacodiSubmissionController):
             "contribution_board_resource_cta": request.env._(
                 "I want to share a useful public resource for FACODI editorial review."
             ),
+            "closing_cta": request.env._(
+                "I found a useful public resource and want to leave it on the FACODI learning trail."
+            ),
         }
         if not form_values["context"] and submission_type == "resource":
             form_values["context"] = " ".join(
@@ -390,6 +393,7 @@ class FacodiContextualSubmissionController(FacodiSubmissionController):
             "translation_correction_cta": request.env._("Translation correction"),
             "folder_tabs_contribute": request.env._("Learning navigation"),
             "course_showcase_contribute": request.env._("Learning catalogue"),
+            "closing_cta": request.env._("Homepage closing call"),
             "submission_status_followup": request.env._("Submission follow-up"),
             "my_submissions_new": request.env._("My submissions"),
             "my_submissions_empty": request.env._("My submissions empty state"),
