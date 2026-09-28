@@ -26,11 +26,11 @@ class WebsiteMenu(models.Model):
         # English is the canonical/source language of the public FACODI website.
         # Keep other enabled languages available through Odoo's standard selector.
         Language = self.env["res.lang"].sudo()
-        english = Language.search([("code", "=", "en_US")], limit=1)
+        english = Language.search([("code", "=", "en_GB")], limit=1)
         if english:
             if not english.active:
-                Language._activate_lang("en_US")
-                english = Language.search([("code", "=", "en_US")], limit=1)
+                Language._activate_lang("en_GB")
+                english = Language.search([("code", "=", "en_GB")], limit=1)
             write_values = {"default_lang_id": english.id}
             if english not in facodi.language_ids:
                 write_values["language_ids"] = [(4, english.id)]
@@ -113,7 +113,7 @@ class WebsiteMenu(models.Model):
         }
 
         def write_menu_name(menu, source_name):
-            menu.with_context(lang="en_US").write({"name": source_name})
+            menu.with_context(lang="en_GB").write({"name": source_name})
             for language_code, translated_name in menu_translations.get(
                 source_name, {}
             ).items():
