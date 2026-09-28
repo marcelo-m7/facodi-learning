@@ -53,6 +53,11 @@ class TestContextualSubmissionStaticContracts(TransactionCase):
     def test_controller_exposes_contextual_routes_and_aliases(self):
         controller = self._read("controllers/contextual_submission.py")
         self.assertIn('"/submissions/new"', controller)
+        self.assertIn('"/contact"', controller)
+        self.assertIn('"/pt/contact"', controller)
+        self.assertIn("def contextual_contact_form", controller)
+        self.assertIn('contact_kwargs.setdefault("type", "contact")', controller)
+        self.assertIn('contact_kwargs.setdefault("source", "contact_page")', controller)
         self.assertIn('"/contribuir/recurso"', controller)
         self.assertIn('"/pt/submissions/new"', controller)
         self.assertIn('"/en/submissions/new"', controller)
