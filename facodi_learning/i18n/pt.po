@@ -1010,7 +1010,7 @@ msgstr ""
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.approved_learning_resources
 msgid "Explore further"
-msgstr ""
+msgstr "Explorar mais"
 
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_map
@@ -1532,7 +1532,7 @@ msgstr "Percurso de aprendizagem"
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.approved_learning_resources
 msgid "Learning resources"
-msgstr ""
+msgstr "Recursos de aprendizagem"
 
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_index
@@ -1809,7 +1809,7 @@ msgstr ""
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit
 msgid "Only reviewed and approved relations with currently published courses."
-msgstr ""
+msgstr "Apenas relações revistas e aprovadas com cursos atualmente publicados."
 "Apenas relações revistas e aprovadas com cursos atualmente publicados."
 
 #. module: facodi_learning
