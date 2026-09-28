@@ -73,6 +73,34 @@ class TestSubmissionContextWebsite(HttpCase):
         self.assertEqual(len(tokens), 1)
         return tokens[0]
 
+    def test_private_status_shows_safe_captured_context_without_raw_origin(self):
+        submission = self.env["facodi.learning.submission"].sudo().create(
+            {
+                "name": "Captured context resource",
+                "source_url": "https://example.org/context-resource",
+                "submission_type": "resource",
+                "source_cta": "module_resource_cta",
+                "source_section": "module-resources",
+                "source_page_url": "/courses/private-origin",
+                "module_id": self.public_module.id,
+                "resource_type": "article",
+                "resource_level": "introductory",
+                "language": "pt",
+            }
+        )
+        response = self.url_open(
+            f"/contribuir/recurso/status/{submission.access_token}"
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('data-facodi-captured-context="1"', response.text)
+        self.assertIn("Context captured", response.text)
+        self.assertIn("Learning module resources", response.text)
+        self.assertIn(self.public_module.name, response.text)
+        self.assertIn("Article", response.text)
+        self.assertIn("Introductory", response.text)
+        self.assertNotIn("/courses/private-origin", response.text)
+        self.assertNotIn("source_page_url", response.text)
+
     def test_legacy_resource_url_uses_contextual_form(self):
         response = self.url_open("/contribuir/recurso")
         self.assertEqual(response.status_code, 200)
