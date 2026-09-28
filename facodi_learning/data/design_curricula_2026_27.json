@@ -1,0 +1,718 @@
+{
+  "programmes": [
+    {
+      "reference": {
+        "name": "Universidade do Algarve — Design e Tecnologias Multimédia (2026/27)",
+        "institution": "Universidade do Algarve",
+        "programme_name": "Design e Tecnologias Multimédia",
+        "external_programme_code": "1930",
+        "academic_year": "2026/27",
+        "source_url": "https://www.ualg.pt/curso/1930/plano",
+        "source_title": "Design e Tecnologias Multimédia — Plano de estudos",
+        "website_published": true,
+        "provider": "ualg",
+        "external_id": "ualg-1930-2026-27",
+        "metadata": {
+          "source_kind": "official_study_plan",
+          "source_verified_on": "2026-09-28"
+        }
+      },
+      "units": [
+        {
+          "code": "19301016",
+          "name": "DESENHO E COMPOSIÇÃO",
+          "credits": 5,
+          "year": 1,
+          "period": "semester_1",
+          "classification": "mandatory",
+          "sequence": 10
+        },
+        {
+          "code": "19301003",
+          "name": "FUNDAMENTOS DA ANIMAÇÃO 2D",
+          "credits": 5,
+          "year": 1,
+          "period": "semester_1",
+          "classification": "mandatory",
+          "sequence": 20
+        },
+        {
+          "code": "19301001",
+          "name": "FUNDAMENTOS DO DESIGN",
+          "credits": 5,
+          "year": 1,
+          "period": "semester_1",
+          "classification": "mandatory",
+          "sequence": 30
+        },
+        {
+          "code": "19301002",
+          "name": "ILUSTRAÇÃO DIGITAL",
+          "credits": 5,
+          "year": 1,
+          "period": "semester_1",
+          "classification": "mandatory",
+          "sequence": 40
+        },
+        {
+          "code": "19301004",
+          "name": "PRODUÇÃO E EDIÇÃO DE SOM E IMAGEM",
+          "credits": 5,
+          "year": 1,
+          "period": "semester_1",
+          "classification": "mandatory",
+          "sequence": 50
+        },
+        {
+          "code": "19301000",
+          "name": "TEORIA DA COMUNICAÇÃO AUDIOVISUAL",
+          "credits": 5,
+          "year": 1,
+          "period": "semester_1",
+          "classification": "mandatory",
+          "sequence": 60
+        },
+        {
+          "code": "19301006",
+          "name": "DESIGN DE INTERAÇÃO",
+          "credits": 6,
+          "year": 1,
+          "period": "semester_2",
+          "classification": "mandatory",
+          "sequence": 70
+        },
+        {
+          "code": "19301005",
+          "name": "FOTOGRAFIA DIGITAL",
+          "credits": 6,
+          "year": 1,
+          "period": "semester_2",
+          "classification": "mandatory",
+          "sequence": 80
+        },
+        {
+          "code": "19301010",
+          "name": "MODELAÇÃO E RENDERIZAÇÃO 3D",
+          "credits": 4,
+          "year": 1,
+          "period": "semester_2",
+          "classification": "mandatory",
+          "sequence": 90
+        },
+        {
+          "code": "19301008",
+          "name": "MOTION DESIGN",
+          "credits": 5,
+          "year": 1,
+          "period": "semester_2",
+          "classification": "mandatory",
+          "sequence": 100
+        },
+        {
+          "code": "19301007",
+          "name": "TIPOGRAFIA E DESIGN EDITORIAL",
+          "credits": 5,
+          "year": 1,
+          "period": "semester_2",
+          "classification": "mandatory",
+          "sequence": 110
+        },
+        {
+          "code": "19301009",
+          "name": "WEB DESIGN",
+          "credits": 4,
+          "year": 1,
+          "period": "semester_2",
+          "classification": "mandatory",
+          "sequence": 120
+        },
+        {
+          "code": "19301013",
+          "name": "ANIMAÇÃO 3D - PARA MOTION GRAPHICS",
+          "credits": 5,
+          "year": 2,
+          "period": "semester_1",
+          "classification": "mandatory",
+          "sequence": 130
+        },
+        {
+          "code": "19301011",
+          "name": "MARKETING DIGITAL",
+          "credits": 6,
+          "year": 2,
+          "period": "semester_1",
+          "classification": "mandatory",
+          "sequence": 140
+        },
+        {
+          "code": "19301018",
+          "name": "PORTFÓLIO E GESTÃO DE CARREIRA",
+          "credits": 4,
+          "year": 2,
+          "period": "semester_1",
+          "classification": "mandatory",
+          "sequence": 150
+        },
+        {
+          "code": "19301014",
+          "name": "PRODUÇÃO DE EVENTOS",
+          "credits": 5,
+          "year": 2,
+          "period": "semester_1",
+          "classification": "mandatory",
+          "sequence": 160
+        },
+        {
+          "code": "19301012",
+          "name": "PROJETO FINAL",
+          "credits": 6,
+          "year": 2,
+          "period": "semester_1",
+          "classification": "mandatory",
+          "sequence": 170
+        },
+        {
+          "code": "19301015",
+          "name": "VIDEOMAPPING E AR",
+          "credits": 4,
+          "year": 2,
+          "period": "semester_1",
+          "classification": "mandatory",
+          "sequence": 180
+        },
+        {
+          "code": "19301017",
+          "name": "ESTÁGIO",
+          "credits": 30,
+          "year": 2,
+          "period": "semester_2",
+          "classification": "mandatory",
+          "sequence": 190
+        }
+      ]
+    },
+    {
+      "reference": {
+        "name": "Universidade do Algarve — Design de Comunicação (2026/27)",
+        "institution": "Universidade do Algarve",
+        "programme_name": "Design de Comunicação",
+        "external_programme_code": "1454",
+        "academic_year": "2026/27",
+        "source_url": "https://www.ualg.pt/curso/1454/plano",
+        "source_title": "Design de Comunicação — Plano de estudos",
+        "website_published": true,
+        "provider": "ualg",
+        "external_id": "ualg-1454-2026-27",
+        "metadata": {
+          "source_kind": "official_study_plan",
+          "source_verified_on": "2026-09-28"
+        }
+      },
+      "units": [
+        {
+          "code": "14541142",
+          "name": "DESENHO",
+          "credits": 5,
+          "year": 1,
+          "period": "semester_1",
+          "classification": "mandatory",
+          "sequence": 10
+        },
+        {
+          "code": "14541000",
+          "name": "DESIGN DE COMUNICAÇÃO I",
+          "credits": 9,
+          "year": 1,
+          "period": "semester_1",
+          "classification": "mandatory",
+          "sequence": 20
+        },
+        {
+          "code": "14541196",
+          "name": "HISTÓRIA DA ARTE MODERNA E CONTEMPORÂNEA",
+          "credits": 3,
+          "year": 1,
+          "period": "semester_1",
+          "classification": "mandatory",
+          "sequence": 30
+        },
+        {
+          "code": "14541181",
+          "name": "PERCEÇÃO E COMPOSIÇÃO VISUAL",
+          "credits": 3,
+          "year": 1,
+          "period": "semester_1",
+          "classification": "mandatory",
+          "sequence": 40
+        },
+        {
+          "code": "14541143",
+          "name": "TECNOLOGIAS I",
+          "credits": 5,
+          "year": 1,
+          "period": "semester_1",
+          "classification": "mandatory",
+          "sequence": 50
+        },
+        {
+          "code": "14541153",
+          "name": "TIPOGRAFIA I",
+          "credits": 5,
+          "year": 1,
+          "period": "semester_1",
+          "classification": "mandatory",
+          "sequence": 60
+        },
+        {
+          "code": "14541006",
+          "name": "DESIGN DE COMUNICAÇÃO II",
+          "credits": 9,
+          "year": 1,
+          "period": "semester_2",
+          "classification": "mandatory",
+          "sequence": 70
+        },
+        {
+          "code": "14541154",
+          "name": "HISTÓRIA E TEORIAS DO DESIGN I",
+          "credits": 3,
+          "year": 1,
+          "period": "semester_2",
+          "classification": "mandatory",
+          "sequence": 80
+        },
+        {
+          "code": "14541182",
+          "name": "TÉCNICAS GRÁFICAS",
+          "credits": 5,
+          "year": 1,
+          "period": "semester_2",
+          "classification": "mandatory",
+          "sequence": 90
+        },
+        {
+          "code": "14541144",
+          "name": "TECNOLOGIAS II",
+          "credits": 5,
+          "year": 1,
+          "period": "semester_2",
+          "classification": "mandatory",
+          "sequence": 100
+        },
+        {
+          "code": "14541156",
+          "name": "TEORIAS DA IMAGEM E COMUNICAÇÃO",
+          "credits": 3,
+          "year": 1,
+          "period": "semester_2",
+          "classification": "mandatory",
+          "sequence": 110
+        },
+        {
+          "code": "14541155",
+          "name": "TIPOGRAFIA II",
+          "credits": 5,
+          "year": 1,
+          "period": "semester_2",
+          "classification": "mandatory",
+          "sequence": 120
+        },
+        {
+          "code": "14541012",
+          "name": "DESIGN DE COMUNICAÇÃO III",
+          "credits": 9,
+          "year": 2,
+          "period": "semester_1",
+          "classification": "mandatory",
+          "sequence": 130
+        },
+        {
+          "code": "14541184",
+          "name": "FOTOGRAFIA I",
+          "credits": 4,
+          "year": 2,
+          "period": "semester_1",
+          "classification": "mandatory",
+          "sequence": 140
+        },
+        {
+          "code": "14541157",
+          "name": "HISTÓRIA E TEORIAS DO DESIGN II",
+          "credits": 3,
+          "year": 2,
+          "period": "semester_1",
+          "classification": "mandatory",
+          "sequence": 150
+        },
+        {
+          "code": "14541145",
+          "name": "ILUSTRAÇÃO",
+          "credits": 4,
+          "year": 2,
+          "period": "semester_1",
+          "classification": "mandatory",
+          "sequence": 160
+        },
+        {
+          "code": "14541183",
+          "name": "TÉCNICAS MULTIMÉDIA",
+          "credits": 5,
+          "year": 2,
+          "period": "semester_1",
+          "classification": "mandatory",
+          "sequence": 170
+        },
+        {
+          "code": "14541147",
+          "name": "TECNOLOGIAS III",
+          "credits": 5,
+          "year": 2,
+          "period": "semester_1",
+          "classification": "mandatory",
+          "sequence": 180
+        },
+        {
+          "code": "14541018",
+          "name": "DESIGN DE COMUNICAÇÃO IV",
+          "credits": 9,
+          "year": 2,
+          "period": "semester_2",
+          "classification": "mandatory",
+          "sequence": 190
+        },
+        {
+          "code": "14541025",
+          "name": "DESIGN DE MULTIMÉDIA E INTERAÇÃO",
+          "credits": 4,
+          "year": 2,
+          "period": "semester_2",
+          "classification": "mandatory",
+          "sequence": 200
+        },
+        {
+          "code": "14541185",
+          "name": "FOTOGRAFIA II",
+          "credits": 4,
+          "year": 2,
+          "period": "semester_2",
+          "classification": "mandatory",
+          "sequence": 210
+        },
+        {
+          "code": "14541194",
+          "name": "TÉCNICAS DA IMAGEM EM MOVIMENTO",
+          "credits": 4,
+          "year": 2,
+          "period": "semester_2",
+          "classification": "mandatory",
+          "sequence": 220
+        },
+        {
+          "code": "14541150",
+          "name": "TECNOLOGIAS IV",
+          "credits": 5,
+          "year": 2,
+          "period": "semester_2",
+          "classification": "mandatory",
+          "sequence": 230
+        },
+        {
+          "code": "14541161",
+          "name": "CALIGRAFIA E DESIGN GRÁFICO",
+          "credits": 4,
+          "year": 2,
+          "period": "semester_2",
+          "classification": "optional",
+          "sequence": 240
+        },
+        {
+          "code": "14541187",
+          "name": "ILUSTRAÇÃO DIGITAL EM DESIGN DE COMUNICAÇÃO",
+          "credits": 4,
+          "year": 2,
+          "period": "semester_2",
+          "classification": "optional",
+          "sequence": 250
+        },
+        {
+          "code": "14541195",
+          "name": "OFICINA DE TÉCNICAS DE IMPRESSÃO",
+          "credits": 4,
+          "year": 2,
+          "period": "semester_2",
+          "classification": "optional",
+          "sequence": 260
+        },
+        {
+          "code": "14541178",
+          "name": "PRINCÍPIOS DE ANIMAÇÃO 3D",
+          "credits": 4,
+          "year": 2,
+          "period": "semester_2",
+          "classification": "optional",
+          "sequence": 270
+        },
+        {
+          "code": "14541188",
+          "name": "PRODUÇÃO 3D EM DESIGN DE COMUNICAÇÃO",
+          "credits": 4,
+          "year": 2,
+          "period": "semester_2",
+          "classification": "optional",
+          "sequence": 280
+        },
+        {
+          "code": "14541026",
+          "name": "CULTURA VISUAL CONTEMPORÂNEA",
+          "credits": 3,
+          "year": 3,
+          "period": "semester_1",
+          "classification": "mandatory",
+          "sequence": 290
+        },
+        {
+          "code": "14541158",
+          "name": "DESIGN DE COMUNICAÇÃO V",
+          "credits": 10,
+          "year": 3,
+          "period": "semester_1",
+          "classification": "mandatory",
+          "sequence": 300
+        },
+        {
+          "code": "14541197",
+          "name": "PRÁTICA E DEONTOLOGIA DO DESIGN",
+          "credits": 3,
+          "year": 3,
+          "period": "semester_1",
+          "classification": "mandatory",
+          "sequence": 310
+        },
+        {
+          "code": "14541028",
+          "name": "SEMINÁRIO",
+          "credits": 6,
+          "year": 3,
+          "period": "semester_1",
+          "classification": "mandatory",
+          "sequence": 320
+        },
+        {
+          "code": "14541189",
+          "name": "FOTOGRAFIA ANALÓGICA",
+          "credits": 4,
+          "year": 3,
+          "period": "semester_1",
+          "classification": "optional",
+          "sequence": 330
+        },
+        {
+          "code": "14541191",
+          "name": "MARKETING EM DESIGN DE COMUNICAÇÃO",
+          "credits": 4,
+          "year": 3,
+          "period": "semester_1",
+          "classification": "optional",
+          "sequence": 340
+        },
+        {
+          "code": "14541193",
+          "name": "MODELAÇÃO 3D EM DESIGN DE COMUNICAÇÃO",
+          "credits": 4,
+          "year": 3,
+          "period": "semester_1",
+          "classification": "optional",
+          "sequence": 350
+        },
+        {
+          "code": "14541198",
+          "name": "OFICINA E TÉCNICAS DE IMPRESSÃO DIGITAIS",
+          "credits": 4,
+          "year": 3,
+          "period": "semester_1",
+          "classification": "optional",
+          "sequence": 360
+        },
+        {
+          "code": "14541172",
+          "name": "PRODUÇÃO E EDIÇÃO DE VÍDEO",
+          "credits": 4,
+          "year": 3,
+          "period": "semester_1",
+          "classification": "optional",
+          "sequence": 370
+        },
+        {
+          "code": "14541200",
+          "name": "DIDÁTICA DAS ARTES VISUAIS",
+          "credits": 4,
+          "year": 3,
+          "period": "semester_1",
+          "classification": "optional",
+          "sequence": 380
+        },
+        {
+          "code": "14541165",
+          "name": "LÍNGUA ESTRANGEIRA - INGLÊS",
+          "credits": 4,
+          "year": 3,
+          "period": "semester_1",
+          "classification": "optional",
+          "sequence": 390
+        },
+        {
+          "code": "14541199",
+          "name": "REALIDADE VIRTUAL E VIDEOMAPPING",
+          "credits": 4,
+          "year": 3,
+          "period": "semester_1",
+          "classification": "optional",
+          "sequence": 400
+        },
+        {
+          "code": "14541152",
+          "name": "PROJETO E ESTÁGIO CURRICULAR",
+          "credits": 30,
+          "year": 3,
+          "period": "semester_2",
+          "classification": "mandatory",
+          "sequence": 410
+        }
+      ]
+    }
+  ],
+  "content": [
+    {
+      "xmlid": "facodi_dtm_19301009_web_design",
+      "channel": {
+        "name": "Open course · Web Design (DTM)",
+        "description_short": "<p>Open web-design resources supporting the UAlg Design and Multimedia Technologies study plan.</p>",
+        "description": "<p>FACODI course built from a recovered public resource and current UAlg curricular context for Web Design.</p><p><strong>Academic boundary:</strong> content support only; no academic equivalence or ECTS recognition is implied.</p>",
+        "sequence": 160
+      },
+      "slides": [
+        {
+          "xmlid": "facodi_dtm_web_design_j6Ule7GXaRs",
+          "name": "Aprenda Design de Websites para Iniciantes - Curso Completo",
+          "url": "https://www.youtube.com/watch?v=j6Ule7GXaRs",
+          "description": "<p>Curso completo para iniciantes em design de websites.</p><p><strong>Source:</strong> Flux Academy. Recovered from the historical FACODI/Open2 catalogue.</p><p><strong>Semantic tags:</strong> web design, curso para iniciantes, design gráfico, tecnologia.</p>"
+        }
+      ]
+    },
+    {
+      "xmlid": "facodi_dtm_19301008_motion_design",
+      "channel": {
+        "name": "Open course · Motion Design (DTM)",
+        "description_short": "<p>Open motion-design resources supporting the UAlg Design and Multimedia Technologies study plan.</p>",
+        "description": "<p>FACODI course built from a public Motion Design resource identified through the historical Supabase catalogue and semantic enrichment.</p><p><strong>Academic boundary:</strong> content support only; no academic equivalence or ECTS recognition is implied.</p>",
+        "sequence": 170
+      },
+      "slides": [
+        {
+          "xmlid": "facodi_dtm_motion_design_vivSXNiUkYs",
+          "name": "Domine o Motion Design em 10 Minutos com After Effects!",
+          "url": "https://www.youtube.com/watch?v=vivSXNiUkYs",
+          "description": "<p>Aprenda Motion Design em 10 minutos com After Effects.</p><p><strong>Source:</strong> Shadow. Discovered in the historical FACODI/Open2 dataset and selected from semantic enrichment.</p><p><strong>Semantic tags:</strong> motion design, After Effects, design gráfico, tutorial, animação.</p>"
+        }
+      ]
+    }
+  ],
+  "coverage": [
+    {
+      "programme_code": "1454",
+      "unit_code": "14541000",
+      "channel_xmlid": "facodi_ldcom_14541000",
+      "confidence": 0.7,
+      "approved": false,
+      "evidence": "Open2 historical unit mapping"
+    },
+    {
+      "programme_code": "1454",
+      "unit_code": "14541012",
+      "channel_xmlid": "facodi_ldcom_14541012",
+      "confidence": 0.6,
+      "approved": false,
+      "evidence": "Open2 historical unit mapping"
+    },
+    {
+      "programme_code": "1454",
+      "unit_code": "14541018",
+      "channel_xmlid": "facodi_ldcom_14541018",
+      "confidence": 0.6,
+      "approved": false,
+      "evidence": "Open2 historical unit mapping"
+    },
+    {
+      "programme_code": "1454",
+      "unit_code": "14541025",
+      "channel_xmlid": "facodi_ldcom_14541025",
+      "confidence": 0.55,
+      "approved": false,
+      "evidence": "Open2 historical unit mapping"
+    },
+    {
+      "programme_code": "1454",
+      "unit_code": "14541026",
+      "channel_xmlid": "facodi_ldcom_14541026",
+      "confidence": 0.35,
+      "approved": false,
+      "evidence": "Open2 mapping requires editorial review"
+    },
+    {
+      "programme_code": "1454",
+      "unit_code": "14541153",
+      "channel_xmlid": "facodi_ldcom_14541153",
+      "confidence": 0.88,
+      "approved": true,
+      "evidence": "Open2 auto-reviewed typography mapping"
+    },
+    {
+      "programme_code": "1454",
+      "unit_code": "14541161",
+      "channel_xmlid": "facodi_ldcom_14541161",
+      "confidence": 0.25,
+      "approved": false,
+      "evidence": "Historical resource-topic mismatch; keep proposed"
+    },
+    {
+      "programme_code": "1454",
+      "unit_code": "14541196",
+      "channel_xmlid": "facodi_ldcom_14541196",
+      "confidence": 0.72,
+      "approved": true,
+      "evidence": "Curated Open2 art-history mapping"
+    },
+    {
+      "programme_code": "1930",
+      "unit_code": "19301001",
+      "channel_xmlid": "facodi_ldcom_14541000",
+      "confidence": 0.85,
+      "approved": true,
+      "evidence": "Semantic match: graphic-design principles"
+    },
+    {
+      "programme_code": "1930",
+      "unit_code": "19301007",
+      "channel_xmlid": "facodi_ldcom_14541153",
+      "confidence": 0.92,
+      "approved": true,
+      "evidence": "Typography collection"
+    },
+    {
+      "programme_code": "1930",
+      "unit_code": "19301009",
+      "channel_xmlid": "facodi_dtm_19301009_web_design",
+      "confidence": 0.95,
+      "approved": true,
+      "evidence": "Recovered Web Design resource"
+    },
+    {
+      "programme_code": "1930",
+      "unit_code": "19301008",
+      "channel_xmlid": "facodi_dtm_19301008_motion_design",
+      "confidence": 0.95,
+      "approved": true,
+      "evidence": "Supabase semantic-enrichment match"
+    }
+  ]
+}
