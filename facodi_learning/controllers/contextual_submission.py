@@ -302,6 +302,9 @@ class FacodiContextualSubmissionController(FacodiSubmissionController):
             "portal_resource_cta": request.env._(
                 "I want to add a useful resource to the FACODI community desk."
             ),
+            "main_nav_contribute": request.env._(
+                "I want to contribute a useful public learning resource to FACODI."
+            ),
             "roadmaps_catalog_cta": request.env._(
                 "I found a resource that could strengthen one of the FACODI learning roadmaps."
             ),
@@ -360,6 +363,7 @@ class FacodiContextualSubmissionController(FacodiSubmissionController):
             "area_resource_cta": request.env._("Learning area resources"),
             "community_video_cta": request.env._("Community videos"),
             "portal_resource_cta": request.env._("My FACODI"),
+            "main_nav_contribute": request.env._("Main navigation"),
             "roadmaps_catalog_cta": request.env._("Roadmaps catalogue"),
             "curricular_units_catalog_cta": request.env._("Curricular units catalogue"),
             "curricular_units_empty_state": request.env._("Curricular units · open shelf"),
