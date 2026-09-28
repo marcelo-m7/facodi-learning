@@ -1,10 +1,14 @@
 import hashlib
 import ipaddress
+import logging
 import secrets
 from urllib.parse import urlsplit, urlunsplit
 
 from odoo import api, fields, models
 from odoo.exceptions import AccessError, ValidationError
+
+
+_logger = logging.getLogger(__name__)
 
 
 def _is_public_http_url(value):
@@ -488,6 +492,58 @@ class FacodiLearningSubmission(models.Model):
         super(FacodiLearningSubmission, submission).write({"state": "withdrawn"})
         return True
 
+    def _contributor_notification_email(self):
+        self.ensure_one()
+        contextual_email = (getattr(self, "contact_email", False) or "").strip()
+        if contextual_email:
+            return contextual_email
+        return (self.submitted_by_id.partner_id.email or "").strip()
+
+    def _contributor_notification_lang(self):
+        self.ensure_one()
+        if self.submitted_by_id and self.submitted_by_id.lang:
+            return self.submitted_by_id.lang
+        return {
+            "pt": "pt_PT",
+            "pt_pt": "pt_PT",
+            "es": "es_ES",
+            "es_es": "es_ES",
+            "fr": "fr_FR",
+            "fr_fr": "fr_FR",
+        }.get((self.language or "").strip().lower(), "en_US")
+
+    def _contributor_tracking_url(self):
+        self.ensure_one()
+        return "%s/contribuir/recurso/status/%s" % (
+            self.get_base_url().rstrip("/"),
+            self.access_token,
+        )
+
+    def _notify_contributor(self, template_xmlid):
+        """Queue a transactional contributor update without blocking review."""
+        for submission in self:
+            recipient = submission._contributor_notification_email()
+            if not recipient:
+                continue
+            try:
+                template = self.env.ref(template_xmlid, raise_if_not_found=False)
+                if not template:
+                    _logger.warning("FACODI notification template missing: %s", template_xmlid)
+                    continue
+                template.with_context(
+                    lang=submission._contributor_notification_lang()
+                ).send_mail(
+                    submission.id,
+                    force_send=False,
+                    email_values={"email_to": recipient},
+                )
+            except Exception:
+                _logger.exception(
+                    "Could not queue FACODI contributor notification for submission %s",
+                    submission.id,
+                )
+        return True
+
     def _require_manager(self):
         if not self.env.user.has_group(
             "website_slides.group_website_slides_manager"
@@ -529,6 +585,9 @@ class FacodiLearningSubmission(models.Model):
                     "reviewed_at": now,
                 }
             )
+            submission._notify_contributor(
+                "facodi_learning.mail_template_submission_changes_requested"
+            )
         return True
 
     def action_resubmit_by_contributor(self, user):
@@ -564,6 +623,9 @@ class FacodiLearningSubmission(models.Model):
                     "reviewed_at": now,
                 }
             )
+            submission._notify_contributor(
+                "facodi_learning.mail_template_submission_accepted"
+            )
         return True
 
     def action_reject(self):
@@ -581,6 +643,9 @@ class FacodiLearningSubmission(models.Model):
                     "reviewed_by_id": self.env.user.id,
                     "reviewed_at": now,
                 }
+            )
+            submission._notify_contributor(
+                "facodi_learning.mail_template_submission_rejected"
             )
         return True
 
