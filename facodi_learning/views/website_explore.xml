@@ -227,7 +227,7 @@
                             <p class="text-muted mb-0"><t t-esc="total"/> public YouTube submissions found.</p>
                         </div>
                         <div class="d-flex gap-2">
-                            <a href="/submissions/new?type=resource&amp;resource_type=video&amp;source=community_video_cta&amp;section=explore-videos" class="btn btn-primary">Share a video</a>
+                            <a t-att-href="video_contribution_url" class="btn btn-primary">Share a video</a>
                             <a href="/explore" class="btn btn-outline-secondary">Back to Explore</a>
                         </div>
                     </div>
