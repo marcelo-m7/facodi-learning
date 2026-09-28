@@ -44,11 +44,11 @@
                                         <span class="facodi-contribution-step__marker">1</span>
                                         <span><strong>Sent</strong><small>Your contribution reached FACODI.</small></span>
                                     </li>
-                                    <li t-attf-class="facodi-contribution-step #{'is-done' if submission.state in ('reviewing','accepted','resolved','rejected') else ('is-current' if submission.state == 'submitted' else 'is-muted')}">
+                                    <li t-attf-class="facodi-contribution-step #{'is-done' if submission.state in ('reviewing','changes_requested','accepted','resolved','rejected') else ('is-current' if submission.state == 'submitted' else 'is-muted')}">
                                         <span class="facodi-contribution-step__marker">2</span>
                                         <span><strong>Review desk</strong><small>Context and usefulness are checked.</small></span>
                                     </li>
-                                    <li t-attf-class="facodi-contribution-step #{'is-done' if submission.state in ('accepted','resolved') else ('is-current' if submission.state == 'reviewing' else 'is-muted')}">
+                                    <li t-attf-class="facodi-contribution-step #{'is-done' if submission.state in ('accepted','resolved') else ('is-current' if submission.state in ('reviewing','changes_requested') else 'is-muted')}">
                                         <span class="facodi-contribution-step__marker">3</span>
                                         <span><strong>Decision</strong><small>FACODI decides the right editorial route.</small></span>
                                     </li>
@@ -57,7 +57,10 @@
                                         <span><strong>Community route</strong><small>Accepted contributions move into the appropriate FACODI workflow.</small></span>
                                     </li>
                                 </ol>
-                                <p t-if="submission.state == 'rejected'" class="facodi-contribution-journey__terminal mb-0">
+                                <p t-if="submission.state == 'changes_requested'" class="facodi-contribution-journey__revision mb-0">
+                                    The review desk returned this tab to you. Revise it and resubmit when ready.
+                                </p>
+                                <p t-elif="submission.state == 'rejected'" class="facodi-contribution-journey__terminal mb-0">
                                     This journey stopped after editorial review. The contribution remains in your history.
                                 </p>
                                 <p t-elif="submission.state == 'withdrawn'" class="facodi-contribution-journey__terminal mb-0">
@@ -217,11 +220,11 @@
                                         <span class="facodi-contribution-step__marker">1</span>
                                         <span><strong>Sent</strong><small>Your contribution reached FACODI.</small></span>
                                     </li>
-                                    <li t-attf-class="facodi-contribution-step #{'is-done' if submission.state in ('reviewing','accepted','resolved','rejected') else ('is-current' if submission.state == 'submitted' else 'is-muted')}">
+                                    <li t-attf-class="facodi-contribution-step #{'is-done' if submission.state in ('reviewing','changes_requested','accepted','resolved','rejected') else ('is-current' if submission.state == 'submitted' else 'is-muted')}">
                                         <span class="facodi-contribution-step__marker">2</span>
                                         <span><strong>Review desk</strong><small>Context and usefulness are checked.</small></span>
                                     </li>
-                                    <li t-attf-class="facodi-contribution-step #{'is-done' if submission.state in ('accepted','resolved') else ('is-current' if submission.state == 'reviewing' else 'is-muted')}">
+                                    <li t-attf-class="facodi-contribution-step #{'is-done' if submission.state in ('accepted','resolved') else ('is-current' if submission.state in ('reviewing','changes_requested') else 'is-muted')}">
                                         <span class="facodi-contribution-step__marker">3</span>
                                         <span><strong>Decision</strong><small>FACODI decides the right editorial route.</small></span>
                                     </li>
@@ -230,7 +233,10 @@
                                         <span><strong>Community route</strong><small>Accepted contributions move into the appropriate FACODI workflow.</small></span>
                                     </li>
                                 </ol>
-                                <p t-if="submission.state == 'rejected'" class="facodi-contribution-journey__terminal mb-0">
+                                <p t-if="submission.state == 'changes_requested'" class="facodi-contribution-journey__revision mb-0">
+                                    The review desk returned this tab to you. Revise it and resubmit when ready.
+                                </p>
+                                <p t-elif="submission.state == 'rejected'" class="facodi-contribution-journey__terminal mb-0">
                                     This journey stopped after editorial review. The contribution remains in your history.
                                 </p>
                                 <p t-elif="submission.state == 'withdrawn'" class="facodi-contribution-journey__terminal mb-0">
@@ -409,6 +415,10 @@
                             <div t-if="can_edit" class="alert alert-info">
                                 You can edit this submission until FACODI starts editorial review. Changes are reflected in the public Community videos queue when applicable.
                             </div>
+                            <div t-elif="submission.state == 'changes_requested'" class="alert alert-warning" data-facodi-revision-request="1">
+                                <strong>The review desk needs a revision.</strong>
+                                Update the fields below using FACODI's note, save your changes, then send the same contribution back to review.
+                            </div>
                             <div t-elif="submission.state == 'reviewing'" class="alert alert-warning">
                                 Editorial review has started, so the submitted details are locked. You can still withdraw the submission.
                             </div>
@@ -466,7 +476,19 @@
                                               maxlength="4000"
                                               class="form-control"><t t-esc="(form_values or {}).get('context', submission.context or '')"/></textarea>
                                 </div>
-                                <button type="submit" class="btn btn-primary align-self-start">Save changes</button>
+                                <button type="submit" class="btn btn-primary align-self-start"><t t-if="submission.state == 'changes_requested'">Save revision</t><t t-else="">Save changes</t></button>
+                            </form>
+
+                            <form t-if="submission.state == 'changes_requested'"
+                                  t-att-action="'/minhas-contribuicoes/%s/reenviar' % submission.id"
+                                  method="post"
+                                  class="facodi-revision-resubmit card card-body mb-4"
+                                  data-facodi-revision-resubmit="1">
+                                <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                <p class="text-uppercase small fw-semibold mb-1">Revision ready?</p>
+                                <h2 class="h5 mb-2">Send this tab back to the review desk.</h2>
+                                <p class="text-muted small">Resubmitting keeps the same contribution, context and tracking history. No duplicate submission is created.</p>
+                                <button type="submit" class="btn btn-primary align-self-start">Resubmit for review →</button>
                             </form>
 
                             <div t-if="not can_edit" class="card card-body mb-4">

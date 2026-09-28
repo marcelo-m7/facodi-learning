@@ -4096,3 +4096,57 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_manage
 msgid "Optional message the contributor may read on their private status page."
 msgstr ""
+
+#. module: facodi_learning
+#: model:ir.model.fields.selection,name:facodi_learning.selection__facodi_learning_submission__state__changes_requested
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_manage
+msgid "Changes Requested"
+msgstr ""
+
+#. module: facodi_learning
+#: model:ir.model.fields.selection,name:facodi_learning.selection__facodi_learning_submission__state__changes_requested
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_manage
+msgid "The review desk needs a revision."
+msgstr ""
+
+#. module: facodi_learning
+#: model:ir.model.fields.selection,name:facodi_learning.selection__facodi_learning_submission__state__changes_requested
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_manage
+msgid "Update the fields below using FACODI's note, save your changes, then send the same contribution back to review."
+msgstr ""
+
+#. module: facodi_learning
+#: model:ir.model.fields.selection,name:facodi_learning.selection__facodi_learning_submission__state__changes_requested
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_manage
+msgid "Save revision"
+msgstr ""
+
+#. module: facodi_learning
+#: model:ir.model.fields.selection,name:facodi_learning.selection__facodi_learning_submission__state__changes_requested
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_manage
+msgid "Revision ready?"
+msgstr ""
+
+#. module: facodi_learning
+#: model:ir.model.fields.selection,name:facodi_learning.selection__facodi_learning_submission__state__changes_requested
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_manage
+msgid "Send this tab back to the review desk."
+msgstr ""
+
+#. module: facodi_learning
+#: model:ir.model.fields.selection,name:facodi_learning.selection__facodi_learning_submission__state__changes_requested
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_manage
+msgid "Resubmitting keeps the same contribution, context and tracking history. No duplicate submission is created."
+msgstr ""
+
+#. module: facodi_learning
+#: model:ir.model.fields.selection,name:facodi_learning.selection__facodi_learning_submission__state__changes_requested
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_manage
+msgid "Resubmit for review →"
+msgstr ""
+
+#. module: facodi_learning
+#: model:ir.model.fields.selection,name:facodi_learning.selection__facodi_learning_submission__state__changes_requested
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_manage
+msgid "The review desk returned this tab to you. Revise it and resubmit when ready."
+msgstr ""
