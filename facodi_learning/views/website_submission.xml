@@ -270,6 +270,14 @@
                                 </div>
                             </div>
 
+                            <section t-if="submission.editorial_reply"
+                                     class="facodi-editorial-reply my-4"
+                                     data-facodi-editorial-reply="1">
+                                <p class="text-uppercase small fw-semibold mb-1">Note from the review desk</p>
+                                <h2 class="h5 mb-2">FACODI replied to your contribution.</h2>
+                                <p class="mb-0" t-esc="submission.editorial_reply"/>
+                            </section>
+
                             <div t-if="submission.state == 'submitted'" class="alert alert-info">
                                 Waiting for editorial review.
                             </div>
