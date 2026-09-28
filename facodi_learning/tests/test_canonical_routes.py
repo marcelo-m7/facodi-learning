@@ -8,7 +8,7 @@ class TestCanonicalRoutes(HttpCase):
     def test_portuguese_learning_routes_render_without_inheritance_errors(self):
         website = self.env["website"].get_current_website()
         lang_pt = self.env["res.lang"]._activate_lang("pt_PT")
-        website.language_ids = self.env.ref("base.lang_en") + lang_pt
+        lang_en = self.env["res.lang"]._activate_lang("en_GB")\n        website.language_ids = lang_en + lang_pt
 
         for route in ("/pt/roadmaps", "/pt/curricular-units", "/pt/courses"):
             response = self.url_open(route, allow_redirects=True)
