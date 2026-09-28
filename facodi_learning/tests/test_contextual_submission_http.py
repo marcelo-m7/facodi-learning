@@ -84,6 +84,27 @@ class TestContextualSubmissionHttp(HttpCase):
         self.assertNotIn("course_contact_cta", visible_text)
         self.assertNotIn("token=private", response.text)
 
+    def test_canonical_contact_route_opens_full_contextual_contact_form(self):
+        response = self.url_open("/contact")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.headers.get("X-Robots-Tag"), "noindex, follow")
+        tree = html.fromstring(response.text)
+        self.assertEqual(
+            tree.xpath('//input[@name="submission_type"]/@value'),
+            ["contact"],
+        )
+        self.assertEqual(
+            tree.xpath('//input[@name="source_cta"]/@value'),
+            ["contact_page"],
+        )
+        self.assertEqual(
+            tree.xpath('//input[@name="source_section"]/@value'),
+            ["contact"],
+        )
+        self.assertTrue(tree.xpath('//select[@name="contact_topic"]'))
+        self.assertTrue(tree.xpath('//input[@name="organization"]'))
+        self.assertTrue(tree.xpath('//input[@name="contact_email"]'))
+
     def test_cross_origin_source_page_is_not_persisted_in_form(self):
         response = self.url_open(
             "/submissions/new?type=contact&source=faq_contribution_cta"
