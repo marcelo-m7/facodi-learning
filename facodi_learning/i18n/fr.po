@@ -4281,3 +4281,13 @@ msgstr "Appel final de la page d’accueil"
 #: code:addons/facodi_learning/models/contextual_submission.py:0
 msgid "I found a useful public resource and want to leave it on the FACODI learning trail."
 msgstr "J’ai trouvé une ressource publique utile et je souhaite la laisser sur le parcours d’apprentissage FACODI."
+
+#. module: facodi_learning
+#: code:addons/facodi_learning/controllers/contextual_submission.py:0
+msgid "Main navigation"
+msgstr "Navigation principale"
+
+#. module: facodi_learning
+#: code:addons/facodi_learning/controllers/contextual_submission.py:0
+msgid "Homepage"
+msgstr "Page d’accueil"
