@@ -371,6 +371,27 @@ class TestResourceSubmissionModel(TransactionCase):
                 candidate=candidate,
             )
 
+    def test_editorial_reply_is_separate_from_internal_decision_note(self):
+        submission = self._submission(
+            name="Reply boundary",
+            source_url="https://example.org/reply-boundary",
+            submitted_by_id=self.portal.id,
+        )
+        submission.with_user(self.manager).write(
+            {
+                "decision_note": "Internal triage detail that must stay private.",
+                "editorial_reply": "Thanks — this is useful context for the community.",
+            }
+        )
+        self.assertEqual(
+            submission.editorial_reply,
+            "Thanks — this is useful context for the community.",
+        )
+        self.assertEqual(
+            submission.decision_note,
+            "Internal triage detail that must stay private.",
+        )
+
     def test_only_manager_can_take_terminal_review_actions(self):
         submission = self._submission()
         officer = self.env["res.users"].create(
@@ -489,6 +510,35 @@ class TestResourceSubmissionWebsite(HttpCase):
                 "group_ids": [(6, 0, [self.env.ref("base.group_portal").id])],
             }
         )
+
+    def test_private_status_and_owner_view_show_public_reply_not_internal_note(self):
+        owner = self._portal_user("facodi-editorial-reply-owner")
+        submission = self.env["facodi.learning.submission"].sudo().create(
+            {
+                "name": "Editorial reply contribution",
+                "source_url": "https://example.org/editorial-reply",
+                "submitted_by_id": owner.id,
+            }
+        )
+        submission.write(
+            {
+                "editorial_reply": "A contributor-safe response from the review desk.",
+                "decision_note": "Internal-only moderation context.",
+            }
+        )
+
+        status = self.url_open(
+            f"/contribuir/recurso/status/{submission.access_token}"
+        )
+        self.assertEqual(status.status_code, 200)
+        self.assertIn("A contributor-safe response from the review desk.", status.text)
+        self.assertNotIn("Internal-only moderation context.", status.text)
+
+        self.authenticate(owner.login, "facodi-test-pass")
+        detail = self.url_open(f"/minhas-contribuicoes/{submission.id}")
+        self.assertEqual(detail.status_code, 200)
+        self.assertIn("A contributor-safe response from the review desk.", detail.text)
+        self.assertNotIn("Internal-only moderation context.", detail.text)
 
     def test_authenticated_contributor_can_manage_only_own_submissions(self):
         owner = self._portal_user("facodi-contributor-owner")
