@@ -98,9 +98,19 @@
                                          aria-valuemin="0" aria-valuemax="100">
                                         <span t-attf-style="width: #{row['completion']}%"></span>
                                     </div>
-                                    <a t-att-href="course.website_url" class="btn btn-sm btn-primary align-self-start mt-auto">
+                                    <div t-if="row['next_slide']"
+                                         class="facodi-portal-next-tab mb-3"
+                                         data-facodi-next-tab="1">
+                                        <span class="facodi-portal-next-tab__marker fa fa-play" aria-hidden="true"></span>
+                                        <div class="min-w-0">
+                                            <small>Next tab</small>
+                                            <strong t-esc="row['next_slide'].name"/>
+                                        </div>
+                                    </div>
+                                    <a t-att-href="row['continue_url']" class="btn btn-sm btn-primary align-self-start mt-auto">
                                         <t t-if="row['is_completed']">Review course</t>
-                                        <t t-else="">Continue course</t>
+                                        <t t-elif="row['next_slide']">Continue next lesson</t>
+                                        <t t-else="">Open course</t>
                                     </a>
                                 </div>
                             </article>

@@ -4275,3 +4275,13 @@ msgstr "Contacto do FAQ"
 #: code:addons/facodi_learning/models/contextual_submission.py:0
 msgid "Community notebook"
 msgstr "Caderno da comunidade"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.portal_my_home_facodi
+msgid "Next tab"
+msgstr "Próximo separador"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.portal_my_home_facodi
+msgid "Continue next lesson"
+msgstr "Continuar para a próxima aula"

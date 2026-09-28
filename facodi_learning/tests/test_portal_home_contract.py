@@ -38,6 +38,15 @@ class TestPortalHomeContract(unittest.TestCase):
         self.assertIn("facodi-course-progress", self.portal)
         self.assertIn("facodi_course_rows", self.portal)
 
+    def test_learning_shelf_continues_at_odoo_native_next_lesson(self):
+        self.assertIn("membership.next_slide_id", self.controller)
+        self.assertIn('"next_slide": next_slide', self.controller)
+        self.assertIn('"continue_url": (', self.controller)
+        self.assertIn("next_slide.website_url", self.controller)
+        self.assertIn('data-facodi-next-tab="1"', self.portal)
+        self.assertIn("row['continue_url']", self.portal)
+        self.assertIn("Continue next lesson", self.portal)
+
     def test_academic_map_uses_standard_membership_course_ids(self):
         self.assertIn(
             'enrolled_course_ids = set(memberships.mapped("channel_id").ids)',
