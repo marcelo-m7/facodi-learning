@@ -40,6 +40,20 @@ class FacodiExploreController(http.Controller):
     def _public_courses(cls):
         return request.env["slide.channel"].sudo().search(cls._public_course_domain())
 
+    @staticmethod
+    def _public_references():
+        return (
+            request.env["facodi.learning.curriculum.reference"]
+            .sudo()
+            .search(
+                [
+                    ("website_published", "=", True),
+                    ("validated_at", "!=", False),
+                ],
+                order="institution, programme_name, academic_year desc, id",
+            )
+        )
+
     @classmethod
     def _public_slide_domain(cls):
         website = request.website
