@@ -16,6 +16,7 @@ ECTS recognition, assessment, progression or replacement of the official program
 For Design e Tecnologias Multimédia, the bootstrap currently approves conservative support for:
 
 - 19301001 — Fundamentos do Design
+- 19301006 — Design de Interação
 - 19301007 — Tipografia e Design Editorial
 - 19301008 — Motion Design
 - 19301009 — Web Design
@@ -25,3 +26,7 @@ relations (including Tipografia I and the curated art-history collection) can be
 historical associations remain proposed for editorial review.
 
 The operation is idempotent and is run on fresh installation and by the 19.0.1.121.0 migration.
+
+The Interaction Design seed uses two historical Open2 resources whose latest AI enrichment
+explicitly identifies UI, UX, user experience, Figma and prototyping. They remain FACODI
+learning support only; the official UAlg study plan stays canonical.
