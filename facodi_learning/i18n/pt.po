@@ -4285,3 +4285,15 @@ msgstr "Próximo separador"
 #: model_terms:ir.ui.view,arch_db:facodi_learning.portal_my_home_facodi
 msgid "Continue next lesson"
 msgstr "Continuar para a próxima aula"
+
+#. module: facodi_learning
+#: code:addons/facodi_learning/controllers/contextual_submission.py:0
+#: code:addons/facodi_learning/models/contextual_submission.py:0
+msgid "Homepage closing call"
+msgstr "Fecho da homepage"
+
+#. module: facodi_learning
+#: code:addons/facodi_learning/controllers/contextual_submission.py:0
+#: code:addons/facodi_learning/models/contextual_submission.py:0
+msgid "I found a useful public resource and want to leave it on the FACODI learning trail."
+msgstr "Encontrei um recurso público útil e quero deixá-lo no percurso de aprendizagem FACODI."
