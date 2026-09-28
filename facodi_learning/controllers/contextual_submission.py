@@ -376,6 +376,7 @@ class FacodiContextualSubmissionController(FacodiSubmissionController):
             "ecosystem_resource_cta": request.env._("Ecosystem contribution"),
             "cta_sheet_resource_cta": request.env._("Shared learning notebook"),
             "contact_sheet_resource_cta": request.env._("Contact page resource"),
+            "contact_page": request.env._("Contact FACODI"),
             "contribution_board_resource_cta": request.env._("Contribution board"),
             "contribution_board_correction_cta": request.env._("Contribution board correction"),
             "contribution_board_collaboration_cta": request.env._("Contribution board collaboration"),
@@ -519,6 +520,21 @@ class FacodiContextualSubmissionController(FacodiSubmissionController):
             "return_label": return_label,
             "submission_type_options": submission_type_options,
         }
+
+    @http.route(
+        ["/contact", "/pt/contact", "/en/contact", "/es/contact", "/fr/contact"],
+        type="http",
+        auth="public",
+        website=True,
+        methods=["GET"],
+        sitemap=True,
+    )
+    def contextual_contact_form(self, **kwargs):
+        contact_kwargs = dict(kwargs)
+        contact_kwargs.setdefault("type", "contact")
+        contact_kwargs.setdefault("source", "contact_page")
+        contact_kwargs.setdefault("section", "contact")
+        return self.contextual_submission_form(**contact_kwargs)
 
     @http.route(
         ["/submissions/new", "/pt/submissions/new", "/en/submissions/new", "/es/submissions/new", "/fr/submissions/new", "/contribuir/recurso"],
