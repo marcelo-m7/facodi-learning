@@ -1,5 +1,7 @@
 from urllib.parse import urlencode
 
+from markupsafe import escape
+
 from odoo import http
 from odoo.http import request
 
@@ -128,11 +130,13 @@ class FacodiCommunityController(http.Controller):
             intro = "Tenho uma dúvida neste contexto de aprendizagem."
             prompt = "O que estás a tentar compreender? Explica o que já tentaste e onde surgiu a dúvida."
 
+        safe_label = escape(context_label)
+        safe_url = escape(context_url)
         content = (
-            f"<p><strong>Contexto:</strong> {context_label}</p>"
+            f"<p><strong>Contexto:</strong> {safe_label}</p>"
             f"<p>{intro}</p>"
             f"<p><br></p><p><em>{prompt}</em></p>"
-            f"<p><br></p><p><small>Referência FACODI: {context_url}</small></p>"
+            f"<p><br></p><p><small>Referência FACODI: {safe_url}</small></p>"
         )
         slug = request.env["ir.http"]._slug
         query = urlencode(
