@@ -86,6 +86,29 @@
                                 </div>
                             </div>
 
+                            <section t-if="context_rows"
+                                     class="facodi-captured-context my-4"
+                                     data-facodi-captured-context="1">
+                                <div class="d-flex flex-wrap justify-content-between align-items-end gap-2 mb-3">
+                                    <div>
+                                        <p class="facodi-kicker mb-1">Context captured</p>
+                                        <h2 class="h5 mb-0">FACODI kept the useful part of where you started.</h2>
+                                    </div>
+                                    <span class="facodi-captured-context__safe">Private link · safe summary</span>
+                                </div>
+                                <dl class="facodi-captured-context__grid mb-0">
+                                    <t t-foreach="context_rows" t-as="row">
+                                        <div t-attf-class="facodi-captured-context__item facodi-captured-context__item--#{row['key']}">
+                                            <dt t-esc="row['label']"/>
+                                            <dd t-esc="row['value']"/>
+                                        </div>
+                                    </t>
+                                </dl>
+                                <p class="small text-muted mb-0 mt-3">
+                                    Raw origin URLs, tracking tokens and internal review notes are never shown here.
+                                </p>
+                            </section>
+
                             <section t-if="submission.editorial_reply"
                                      class="facodi-editorial-reply my-4"
                                      data-facodi-editorial-reply="1">
@@ -248,6 +271,26 @@
                                 <p class="text-uppercase small fw-semibold mb-1">Note from the review desk</p>
                                 <h2 class="h5 mb-2">FACODI replied to your contribution.</h2>
                                 <p class="mb-0" t-esc="submission.editorial_reply"/>
+                            </section>
+
+                            <section t-if="context_rows"
+                                     class="facodi-captured-context mb-4"
+                                     data-facodi-captured-context="1">
+                                <div class="d-flex flex-wrap justify-content-between align-items-end gap-2 mb-3">
+                                    <div>
+                                        <p class="facodi-kicker mb-1">Context captured</p>
+                                        <h2 class="h5 mb-0">The provenance stays pinned while you revise the useful details.</h2>
+                                    </div>
+                                    <span class="facodi-captured-context__safe">Locked context</span>
+                                </div>
+                                <dl class="facodi-captured-context__grid mb-0">
+                                    <t t-foreach="context_rows" t-as="row">
+                                        <div t-attf-class="facodi-captured-context__item facodi-captured-context__item--#{row['key']}">
+                                            <dt t-esc="row['label']"/>
+                                            <dd t-esc="row['value']"/>
+                                        </div>
+                                    </t>
+                                </dl>
                             </section>
 
                             <form t-if="can_edit"
