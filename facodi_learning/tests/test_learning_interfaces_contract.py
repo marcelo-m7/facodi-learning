@@ -20,7 +20,25 @@ class TestLearningInterfacesContract(unittest.TestCase):
 
     def test_d1_release_version(self):
         manifest = MANIFEST.read_text(encoding="utf-8")
-        self.assertIn('"version": "19.0.1.108.0"', manifest)
+        self.assertIn('"version": "19.0.1.109.0"', manifest)
+
+    def test_contextual_forum_uses_native_odoo_forum_flow(self):
+        manifest = MANIFEST.read_text(encoding="utf-8")
+        controller = (MODULE_ROOT / "controllers" / "community.py").read_text(encoding="utf-8")
+        prefill = (MODULE_ROOT / "static" / "src" / "js" / "forum_prefill.js").read_text(encoding="utf-8")
+
+        self.assertIn('"website_forum"', manifest)
+        self.assertIn('"/community/new"', controller)
+        self.assertIn('/ask?', controller)
+        self.assertIn('"question", "share"', controller)
+        self.assertIn("unit_id", controller)
+        self.assertIn("course_id", controller)
+        self.assertIn("slide_id", controller)
+        self.assertIn("facodi-forum-question-cta", self.curriculum)
+        self.assertIn("facodi-forum-share-cta", self.curriculum)
+        self.assertIn("facodi-forum-question-cta", self.slides)
+        self.assertIn("facodi-forum-share-cta", self.slides)
+        self.assertIn("Never overwrite", prefill)
 
     def test_portal_progress_avoids_old_style_percent_formatting(self):
         portal_home = PORTAL_HOME.read_text(encoding="utf-8")

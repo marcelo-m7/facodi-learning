@@ -11,6 +11,14 @@
                     </li>
                 </ul>
             </aside>
+            <aside class="mt-4 facodi-open-callout" aria-label="Discuss this lesson with the FACODI community">
+                <strong>Discuss this lesson</strong>
+                <p class="text-muted small mb-2">Ask a question or share what you learned without losing the lesson context.</p>
+                <div class="d-flex flex-wrap gap-2">
+                    <a t-att-href="'/community/new?kind=question&amp;slide_id=%s' % slide.id" data-facodi-forum-question-cta="1" class="btn btn-primary btn-sm">Ask a question</a>
+                    <a t-att-href="'/community/new?kind=share&amp;slide_id=%s' % slide.id" data-facodi-forum-share-cta="1" class="btn btn-outline-primary btn-sm">Share a note</a>
+                </div>
+            </aside>
         </xpath>
     </template>
 
@@ -20,6 +28,8 @@
                 <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
                     <strong>Contribute to FACODI</strong>
                     <div class="d-flex flex-wrap gap-2">
+                        <a t-att-href="'/community/new?kind=question&amp;course_id=%s' % channel.id" data-facodi-forum-question-cta="1" class="btn btn-primary">Ask the community</a>
+                        <a t-att-href="'/community/new?kind=share&amp;course_id=%s' % channel.id" data-facodi-forum-share-cta="1" class="btn btn-outline-primary">Share a note</a>
                         <a t-att-href="'/submissions/new?type=resource&amp;course_id=%s&amp;source=course_resource_cta&amp;section=course' % channel.id" class="btn btn-outline-primary">Suggest a learning resource</a>
                         <a t-att-href="'/contact?course_id=%s&amp;source=course_contact_cta&amp;section=course' % channel.id" class="btn btn-link">Other contribution</a>
                     </div>

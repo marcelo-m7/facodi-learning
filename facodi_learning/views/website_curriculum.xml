@@ -562,7 +562,8 @@
                                                 Use the FACODI community to compare notes, ask for explanations and share study approaches around this curricular unit.
                                             </p>
                                             <div class="d-flex flex-wrap gap-2">
-                                                <a t-att-href="community_forum_url" class="btn btn-primary btn-sm">Open the forum</a>
+                                                <a t-att-href="'/community/new?kind=question&amp;unit_id=%s' % unit.id" data-facodi-forum-question-cta="1" class="btn btn-primary btn-sm">Ask about this unit</a>
+                                                <a t-att-href="'/community/new?kind=share&amp;unit_id=%s' % unit.id" data-facodi-forum-share-cta="1" class="btn btn-outline-primary btn-sm">Share with the community</a>
                                                 <a t-att-href="'/submissions/new?type=resource&amp;unit_id=%s&amp;source=community_margin&amp;section=resources' % unit.id" data-facodi-unit-community-resource-cta="1" class="btn btn-outline-primary btn-sm">Drop a resource</a>
                                             </div>
                                         </div>
