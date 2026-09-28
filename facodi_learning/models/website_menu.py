@@ -130,9 +130,14 @@ class WebsiteMenu(models.Model):
                 ],
                 order="id",
             )
-            menu = candidates.filtered(lambda item: item.parent_id == parent)[:1]
+            # A navigable parent can intentionally share the canonical URL of
+            # its first child (for example Explore -> /courses). Never reuse the
+            # parent itself as that child: writing parent_id to its own id makes
+            # Odoo's parent_store correctly reject the tree as recursive.
+            reusable_candidates = candidates.filtered(lambda item: item != parent)
+            menu = reusable_candidates.filtered(lambda item: item.parent_id == parent)[:1]
             if not menu:
-                menu = candidates[:1]
+                menu = reusable_candidates[:1]
             values = {
                 "url": url,
                 "parent_id": parent.id,
@@ -155,7 +160,7 @@ class WebsiteMenu(models.Model):
                 menu = Menu.create({"name": name, **values})
             write_menu_name(menu, name)
 
-            duplicates = candidates - menu
+            duplicates = reusable_candidates - menu
             if duplicates:
                 # Preserve custom descendants before deduplicating a legacy shell.
                 duplicates.mapped("child_id").write({"parent_id": menu.id})
