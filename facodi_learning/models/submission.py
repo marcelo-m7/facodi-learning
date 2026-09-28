@@ -502,7 +502,9 @@ class FacodiLearningSubmission(models.Model):
         if submission_type == "resource" and not cleaned.get(
             "resource_type", getattr(submission, "resource_type", False)
         ):
-            raise ValidationError("Choose the type of learning resource.")
+            # Preserve compatibility with pre-contextual resource records and
+            # direct integrations that never stored a resource type.
+            cleaned["resource_type"] = "other"
         if (
             submission_type != "resource"
             and not cleaned.get("context", submission.context)
