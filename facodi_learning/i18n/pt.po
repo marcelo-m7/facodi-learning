@@ -4263,3 +4263,15 @@ msgstr "Tipo de recurso"
 #: code:addons/facodi_learning/models/contextual_submission.py:0
 msgid "Contact topic"
 msgstr "Tema do contacto"
+
+#. module: facodi_learning
+#: code:addons/facodi_learning/controllers/contextual_submission.py:0
+#: code:addons/facodi_learning/models/contextual_submission.py:0
+msgid "FAQ contact"
+msgstr "Contacto do FAQ"
+
+#. module: facodi_learning
+#: code:addons/facodi_learning/controllers/contextual_submission.py:0
+#: code:addons/facodi_learning/models/contextual_submission.py:0
+msgid "Community notebook"
+msgstr "Caderno da comunidade"

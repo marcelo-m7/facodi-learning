@@ -200,6 +200,8 @@ class FacodiContextualSubmissionController(FacodiSubmissionController):
         contact_topic_defaults = {
             "course_contact_cta": "content",
             "faq_contribution_cta": "collaboration",
+            "faq_contact_cta": "collaboration",
+            "forum_postit_contact_cta": "collaboration",
             "community_collaboration_cta": "collaboration",
             "editorial_routes_contact_cta": "collaboration",
             "ecosystem_contact_cta": "partnership",
@@ -369,6 +371,8 @@ class FacodiContextualSubmissionController(FacodiSubmissionController):
             "curricular_units_empty_state": request.env._("Curricular units · open shelf"),
             "course_catalog_cta": request.env._("Course catalogue"),
             "faq_contribution_cta": request.env._("FAQ contribution"),
+            "faq_contact_cta": request.env._("FAQ contact"),
+            "forum_postit_contact_cta": request.env._("Community notebook"),
             "community_collaboration_cta": request.env._("Community collaboration"),
             "editorial_routes_contact_cta": request.env._("Contact and contribute"),
             "ecosystem_contact_cta": request.env._("FACODI ecosystem"),

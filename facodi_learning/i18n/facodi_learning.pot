@@ -4210,3 +4210,15 @@ msgstr ""
 #: code:addons/facodi_learning/models/contextual_submission.py:0
 msgid "Contact topic"
 msgstr ""
+
+#. module: facodi_learning
+#: code:addons/facodi_learning/controllers/contextual_submission.py:0
+#: code:addons/facodi_learning/models/contextual_submission.py:0
+msgid "FAQ contact"
+msgstr ""
+
+#. module: facodi_learning
+#: code:addons/facodi_learning/controllers/contextual_submission.py:0
+#: code:addons/facodi_learning/models/contextual_submission.py:0
+msgid "Community notebook"
+msgstr ""
