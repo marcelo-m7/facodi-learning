@@ -77,6 +77,7 @@ class FacodiLearningSubmission(models.Model):
         [
             ("submitted", "Submitted"),
             ("reviewing", "Reviewing"),
+            ("changes_requested", "Changes Requested"),
             ("accepted", "Accepted"),
             ("rejected", "Rejected"),
             ("resolved", "Resolved"),
@@ -319,7 +320,7 @@ class FacodiLearningSubmission(models.Model):
         normalized = self._normalize_source_url(source_url)
         domain = [
             ("normalized_source_url", "=", normalized),
-            ("state", "in", ("submitted", "reviewing", "accepted")),
+            ("state", "in", ("submitted", "reviewing", "changes_requested", "accepted")),
             ("curriculum_unit_id", "=", curriculum_unit_id or False),
         ]
         if exclude_id:
@@ -424,9 +425,9 @@ class FacodiLearningSubmission(models.Model):
         self.ensure_one()
         submission = self._lock_for_state_transition()
         submission._require_contributor(user)
-        if submission.state != "submitted":
+        if submission.state not in {"submitted", "changes_requested"}:
             raise ValidationError(
-                "Only submissions waiting for review can be edited."
+                "Only submissions waiting for review or contributor changes can be edited."
             )
 
         candidate_source_url = (values.get("source_url") or submission.source_url or "").strip()
@@ -480,9 +481,9 @@ class FacodiLearningSubmission(models.Model):
         self.ensure_one()
         submission = self._lock_for_state_transition()
         submission._require_contributor(user)
-        if submission.state not in {"submitted", "reviewing"}:
+        if submission.state not in {"submitted", "reviewing", "changes_requested"}:
             raise ValidationError(
-                "Only pending or reviewing submissions can be withdrawn."
+                "Only pending, reviewing or changes-requested submissions can be withdrawn."
             )
         super(FacodiLearningSubmission, submission).write({"state": "withdrawn"})
         return True
@@ -506,6 +507,45 @@ class FacodiLearningSubmission(models.Model):
             super(FacodiLearningSubmission, submission).write(
                 {"state": "reviewing"}
             )
+        return True
+
+    def action_request_changes(self):
+        self._require_manager()
+        locked = self._lock_for_state_transition()
+        now = fields.Datetime.now()
+        for submission in locked:
+            if submission.state not in {"submitted", "reviewing"}:
+                raise ValidationError(
+                    "Only submitted or reviewing contributions can be returned for changes."
+                )
+            if not (submission.editorial_reply or "").strip():
+                raise ValidationError(
+                    "Write a contributor-facing reply before requesting changes."
+                )
+            super(FacodiLearningSubmission, submission).write(
+                {
+                    "state": "changes_requested",
+                    "reviewed_by_id": self.env.user.id,
+                    "reviewed_at": now,
+                }
+            )
+        return True
+
+    def action_resubmit_by_contributor(self, user):
+        self.ensure_one()
+        submission = self._lock_for_state_transition()
+        submission._require_contributor(user)
+        if submission.state != "changes_requested":
+            raise ValidationError(
+                "Only contributions with requested changes can be resubmitted."
+            )
+        super(FacodiLearningSubmission, submission).write(
+            {
+                "state": "submitted",
+                "reviewed_by_id": False,
+                "reviewed_at": False,
+            }
+        )
         return True
 
     def action_accept(self):
