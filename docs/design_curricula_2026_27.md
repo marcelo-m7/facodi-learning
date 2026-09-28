@@ -25,7 +25,7 @@ For Design de Comunicação, exact historical unit-code mappings are retained. S
 relations (including Tipografia I and the curated art-history collection) can be public; weaker
 historical associations remain proposed for editorial review.
 
-The operation is idempotent and is run on fresh installation and by the 19.0.1.121.0 migration.
+The operation is idempotent and is run on fresh installation and by the 19.0.1.122.0 migration.
 
 The Interaction Design seed uses two historical Open2 resources whose latest AI enrichment
 explicitly identifies UI, UX, user experience, Figma and prototyping. They remain FACODI
