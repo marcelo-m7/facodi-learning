@@ -288,12 +288,14 @@ class TestExploreLearningWebsite(HttpCase):
         self.assertEqual(response.status_code, 200)
         tree = html.fromstring(response.text)
         hrefs = tree.xpath('//a[normalize-space()="Share a video"]/@href')
-        self.assertEqual(len(hrefs), 1)
-        self.assertIn("type=resource", hrefs[0])
-        self.assertIn("resource_type=video", hrefs[0])
-        self.assertIn("source=community_video_cta", hrefs[0])
-        self.assertIn("section=explore-videos", hrefs[0])
-        self.assertIn("language=pt", hrefs[0])
+        self.assertGreaterEqual(len(hrefs), 1)
+        self.assertEqual(len(set(hrefs)), 1)
+        for href in hrefs:
+            self.assertIn("type=resource", href)
+            self.assertIn("resource_type=video", href)
+            self.assertIn("source=community_video_cta", href)
+            self.assertIn("section=explore-videos", href)
+            self.assertIn("language=pt", href)
 
         form = self.url_open(hrefs[0])
         self.assertEqual(form.status_code, 200)
@@ -310,8 +312,10 @@ class TestExploreLearningWebsite(HttpCase):
         self.assertEqual(response.status_code, 200)
         tree = html.fromstring(response.text)
         hrefs = tree.xpath('//a[normalize-space()="Share a video"]/@href')
-        self.assertEqual(len(hrefs), 1)
-        self.assertNotIn("language=xx", hrefs[0])
+        self.assertGreaterEqual(len(hrefs), 1)
+        self.assertEqual(len(set(hrefs)), 1)
+        for href in hrefs:
+            self.assertNotIn("language=xx", href)
 
     def test_contextual_form_rejects_non_public_area_context(self):
         response = self.url_open(

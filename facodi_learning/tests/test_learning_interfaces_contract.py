@@ -20,7 +20,7 @@ class TestLearningInterfacesContract(unittest.TestCase):
 
     def test_d1_release_version(self):
         manifest = MANIFEST.read_text(encoding="utf-8")
-        self.assertIn('"version": "19.0.1.116.0"', manifest)
+        self.assertIn('"version": "19.0.1.117.0"', manifest)
 
     def test_contextual_forum_uses_native_odoo_forum_flow(self):
         manifest = MANIFEST.read_text(encoding="utf-8")
