@@ -190,8 +190,11 @@ def _ensure_design_content(env, payload):
                 if not tag:
                     tag = Tag.create({"name": name})
                 tags |= tag
-            if tags and set(tags.ids) != set(slide.tag_ids.ids):
-                slide.write({"tag_ids": [(6, 0, tags.ids)]})
+            if tags:
+                desired_tags = slide.tag_ids | tags
+                if set(desired_tags.ids) != set(slide.tag_ids.ids):
+                    # Seed semantic tags without deleting editor-added metadata.
+                    slide.write({"tag_ids": [(6, 0, desired_tags.ids)]})
 
 
 def ensure_design_curricula_2026_27(env):
