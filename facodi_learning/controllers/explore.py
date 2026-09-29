@@ -60,7 +60,6 @@ class FacodiExploreController(http.Controller):
         return [
             ("active", "=", True),
             ("website_published", "=", True),
-            ("is_preview", "=", True),
             ("channel_id.active", "=", True),
             ("channel_id.website_published", "=", True),
             ("channel_id.visibility", "=", "public"),
@@ -236,17 +235,13 @@ class FacodiExploreController(http.Controller):
             slide_domain.append(("slide_category", "=", content_format))
 
         Slide = request.env["slide.slide"].sudo()
-        total = Slide.search_count(slide_domain)
+        matching_slides = Slide.search(slide_domain, order="sequence, id")
+        total = len(matching_slides)
         page_count = max(1, (total + self.PAGE_SIZE - 1) // self.PAGE_SIZE)
         if page > page_count:
             page = page_count
         offset = (page - 1) * self.PAGE_SIZE
-        slides = Slide.search(
-            slide_domain,
-            order="sequence, id",
-            offset=offset,
-            limit=self.PAGE_SIZE,
-        )
+        slides = matching_slides[offset : offset + self.PAGE_SIZE]
 
         params = {
             "q": query,
@@ -302,7 +297,10 @@ class FacodiExploreController(http.Controller):
         contribution_url = "/submissions/new?" + self._query_string(contribution_params)
 
         discovery_stats = {
-            "resources": len(all_slides),
+            "matching_resources": total,
+            "catalogue_resources": len(all_slides),
+            "courses": len(matching_slides.mapped("channel_id")),
+            "views": sum(matching_slides.mapped("total_views")),
             "areas": len(self._visible_areas()),
             "languages": len(self._language_options(all_slides)),
             "formats": len(available_formats),
