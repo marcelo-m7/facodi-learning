@@ -150,20 +150,38 @@ if set(env["facodi.learning.curriculum.reference"].search([]).ids) != expected_r
     raise AssertionError("Upgrade created curriculum references outside the curated 2026/27 set.")
 
 design_coverage = env["facodi.learning.curriculum.coverage"].search([])
-if len(design_coverage) != 4:
+if len(design_coverage) != 7:
     raise AssertionError(
-        f"Expected four seeded DTM supports relations on a clean upgrade, got {len(design_coverage)}."
+        f"Expected seven curated design supports relations on a clean upgrade, got {len(design_coverage)}."
     )
 if set(design_coverage.mapped("state")) != {"approved"}:
-    raise AssertionError("Seeded DTM coverage must be explicitly approved supports relations.")
+    raise AssertionError("Seeded design coverage must be explicitly approved supports relations.")
 if set(design_coverage.mapped("coverage_type")) != {"supports"}:
     raise AssertionError("Seeded design coverage may only use supports relations.")
-if set(design_coverage.mapped("curriculum_unit_id.external_unit_code")) != {
+
+dtm_codes = set(
+    design_coverage.filtered(
+        lambda row: row.curriculum_unit_id.reference_id.external_programme_code == "1930"
+    ).mapped("curriculum_unit_id.external_unit_code")
+)
+if dtm_codes != {
     "19301001",
     "19301006",
+    "19301007",
     "19301008",
     "19301009",
 }:
     raise AssertionError(
-        "Clean-upgrade DTM coverage must target Design Foundations, Interaction Design, Motion Design and Web Design."
+        "Clean-upgrade DTM coverage must target Design Foundations, Interaction Design, Typography and Editorial Design, Motion Design and Web Design."
     )
+
+ldcom_codes = set(
+    design_coverage.filtered(
+        lambda row: row.curriculum_unit_id.reference_id.external_programme_code == "1454"
+    ).mapped("curriculum_unit_id.external_unit_code")
+)
+if ldcom_codes != {"14541153", "14541196"}:
+    raise AssertionError(
+        "Clean-upgrade Design de Comunicação coverage must expose reviewed Typography I and Art History support."
+    )
+
