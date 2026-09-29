@@ -236,6 +236,18 @@ class TestExploreLearningWebsite(HttpCase):
             [{"key": "video", "label": "Video", "count": 2}],
         )
 
+    def test_course_page_renders_live_course_snapshot(self):
+        response = self.url_open(self.math_course.website_url)
+        self.assertEqual(response.status_code, 200)
+        tree = html.fromstring(response.text)
+        snapshot = tree.xpath('//*[@data-facodi-course-live-stats="1"]')
+        self.assertEqual(len(snapshot), 1)
+        values = snapshot[0].xpath('.//*[contains(@class, "display-6")]/text()')
+        self.assertGreaterEqual(len(values), 4)
+        self.assertEqual(values[0].strip(), "2")
+        self.assertEqual(values[1].strip(), "1")
+        self.assertEqual(values[2].strip(), "0")
+
     def test_content_pagination_preserves_public_boundary(self):
         for index in range(13):
             self.env["slide.slide"].create(
