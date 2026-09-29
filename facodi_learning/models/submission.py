@@ -556,7 +556,7 @@ class FacodiLearningSubmission(models.Model):
             "es_es": "es_ES",
             "fr": "fr_FR",
             "fr_fr": "fr_FR",
-        }.get((self.language or "").strip().lower(), "en_US")
+        }.get((self.language or "").strip().lower(), "en_GB")
 
     def _contributor_tracking_url(self):
         self.ensure_one()
