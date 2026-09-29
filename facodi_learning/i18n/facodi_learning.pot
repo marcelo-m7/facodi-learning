@@ -4326,3 +4326,33 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:facodi_learning.course_live_stats
 msgid "Published resources by format"
 msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_landing
+msgid "Browse by learning area."
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_landing
+msgid "public learning areas organise the catalogue without hiding the courses behind them."
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_landing
+msgid "Explore learning areas →"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_landing
+msgid "See what the campus shared."
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_landing
+msgid "public community video drops are visible with their editorial review status."
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_landing
+msgid "Browse community videos →"
+msgstr ""
