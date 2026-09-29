@@ -235,13 +235,23 @@ class FacodiExploreController(http.Controller):
             slide_domain.append(("slide_category", "=", content_format))
 
         Slide = request.env["slide.slide"].sudo()
-        matching_slides = Slide.search(slide_domain, order="sequence, id")
-        total = len(matching_slides)
+        total = Slide.search_count(slide_domain)
         page_count = max(1, (total + self.PAGE_SIZE - 1) // self.PAGE_SIZE)
         if page > page_count:
             page = page_count
         offset = (page - 1) * self.PAGE_SIZE
-        slides = matching_slides[offset : offset + self.PAGE_SIZE]
+        slides = Slide.search(
+            slide_domain,
+            order="sequence, id",
+            offset=offset,
+            limit=self.PAGE_SIZE,
+        )
+        grouped_stats = Slide.read_group(
+            slide_domain,
+            ["channel_id", "total_views:sum"],
+            ["channel_id"],
+            lazy=False,
+        )
 
         params = {
             "q": query,
@@ -299,8 +309,10 @@ class FacodiExploreController(http.Controller):
         discovery_stats = {
             "matching_resources": total,
             "catalogue_resources": len(all_slides),
-            "courses": len(matching_slides.mapped("channel_id")),
-            "views": sum(matching_slides.mapped("total_views")),
+            "courses": len(
+                [group for group in grouped_stats if group.get("channel_id")]
+            ),
+            "views": sum(group.get("total_views", 0) or 0 for group in grouped_stats),
             "areas": len(self._visible_areas()),
             "languages": len(self._language_options(all_slides)),
             "formats": len(available_formats),
