@@ -179,7 +179,24 @@ class FacodiExploreController(http.Controller):
 
     @http.route("/explore", type="http", auth="public", website=True, sitemap=True)
     def explore_index(self, **kwargs):
-        return request.render("facodi_learning.explore_landing")
+        courses = self._public_courses()
+        slides = self._public_slides()
+        references = self._public_references()
+        unit_entries = request.env[
+            "facodi.learning.curriculum.unit"
+        ]._facodi_public_catalog_entries(website=request.website)
+        explore_stats = {
+            "courses": len(courses),
+            "resources": len(slides),
+            "roadmaps": len(references),
+            "units": len(unit_entries),
+            "community": len(self._community_video_rows()),
+            "areas": len(self._visible_areas()),
+        }
+        return request.render(
+            "facodi_learning.explore_landing",
+            {"explore_stats": explore_stats},
+        )
 
     @http.route(
         ["/explore/areas"],
