@@ -685,6 +685,484 @@
           ]
         }
       ]
+    },
+    {
+      "xmlid": "facodi_ldcom_14541153",
+      "channel": {
+        "name": "Open course · Typography I (LDCOM)",
+        "description_short": "<p>20 curated open resources on typography fundamentals, type selection, readability, spacing, alignment and editorial composition.</p>",
+        "description": "<p>FACODI typography collection recovered from the historical Open2 catalogue and curated to support independent study around UAlg Design de Comunicação — Typography I and Design e Tecnologias Multimédia — Typography and Editorial Design.</p><p><strong>Academic boundary:</strong> content support only; no academic equivalence, accreditation or ECTS recognition is implied.</p>",
+        "sequence": 185
+      },
+      "slides": [
+        {
+          "xmlid": "facodi_link_14541153_4DVqU0MsCsI",
+          "name": "Tipografia: Introdução aos Tipos - Aula 01 do Curso de Design",
+          "url": "https://www.youtube.com/watch?v=4DVqU0MsCsI",
+          "description": "<p>Aula introdutória sobre tipografia e sua aplicação no design.</p><p><strong>Source:</strong> Chief of Design. Recovered from the historical FACODI/Open2 catalogue.</p><p><strong>Semantic tags:</strong> tipografia, design, fontes, comunicação visual, aula.</p><p><strong>Academic boundary:</strong> Recovered public resource supporting independent typography study; no academic equivalence or ECTS recognition is implied.</p>",
+          "tags": [
+            "tipografia",
+            "design",
+            "fontes",
+            "comunicação visual",
+            "aula"
+          ]
+        },
+        {
+          "xmlid": "facodi_link_14541153_E2ZIxzXFL7s",
+          "name": "Tipografia: Aula 02 - Explorando Tipos e Estilos no Design Gráfico",
+          "url": "https://www.youtube.com/watch?v=E2ZIxzXFL7s",
+          "description": "<p>Aula sobre tipografia e estilos no design gráfico.</p><p><strong>Source:</strong> Chief of Design. Recovered from the historical FACODI/Open2 catalogue.</p><p><strong>Semantic tags:</strong> tipografia, design gráfico, aula, cursos de design, estilos de letra.</p><p><strong>Academic boundary:</strong> Recovered public resource supporting independent typography study; no academic equivalence or ECTS recognition is implied.</p>",
+          "tags": [
+            "tipografia",
+            "design gráfico",
+            "aula",
+            "cursos de design",
+            "estilos de letra"
+          ]
+        },
+        {
+          "xmlid": "facodi_link_14541153_xdfx__oTa78",
+          "name": "Tipografia Design: Como Utilizar a Tipografia em Seus Projetos de Design",
+          "url": "https://www.youtube.com/watch?v=xdfx--oTa78",
+          "description": "<p>Aprenda a utilizar a tipografia em seus projetos de design.</p><p><strong>Source:</strong> Chief of Design. Recovered from the historical FACODI/Open2 catalogue.</p><p><strong>Semantic tags:</strong> tipografia, design, projetos, gráficos, comunicação visual.</p><p><strong>Academic boundary:</strong> Recovered public resource supporting independent typography study; no academic equivalence or ECTS recognition is implied.</p>",
+          "tags": [
+            "tipografia",
+            "design",
+            "projetos",
+            "gráficos",
+            "comunicação visual"
+          ]
+        },
+        {
+          "xmlid": "facodi_link_14541153_AXpxZMRM1EY",
+          "name": "O Guia DEFINITIVO de Tipografia para Iniciantes",
+          "url": "https://www.youtube.com/watch?v=AXpxZMRM1EY",
+          "description": "<p>Um guia essencial para iniciantes em tipografia.</p><p><strong>Source:</strong> DesignSpo. Recovered from the historical FACODI/Open2 catalogue.</p><p><strong>Semantic tags:</strong> tipografia, design, guias, educação, iniciantes.</p><p><strong>Academic boundary:</strong> Recovered public resource supporting independent typography study; no academic equivalence or ECTS recognition is implied.</p>",
+          "tags": [
+            "tipografia",
+            "design",
+            "guias",
+            "educação",
+            "iniciantes"
+          ]
+        },
+        {
+          "xmlid": "facodi_link_14541153_cd4y6udSm_A",
+          "name": "Qual é a melhor tipografia? Como escolher a fonte tipográfica certa?",
+          "url": "https://www.youtube.com/watch?v=cd4y6udSm-A",
+          "description": "<p>Aprenda a escolher a tipografia certa para design.</p><p><strong>Source:</strong> Chief of Design. Recovered from the historical FACODI/Open2 catalogue.</p><p><strong>Semantic tags:</strong> tipografia, design, fontes, escolha de fontes, comunicação visual.</p><p><strong>Academic boundary:</strong> Recovered public resource supporting independent typography study; no academic equivalence or ECTS recognition is implied.</p>",
+          "tags": [
+            "tipografia",
+            "design",
+            "fontes",
+            "escolha de fontes",
+            "comunicação visual"
+          ]
+        },
+        {
+          "xmlid": "facodi_link_14541153_Yh21JKIYRI4",
+          "name": "10 dicas de tipografia - Check list de tipografia para o seu projeto",
+          "url": "https://www.youtube.com/watch?v=Yh21JKIYRI4",
+          "description": "<p>Dicas práticas de tipografia para designers.</p><p><strong>Source:</strong> Chief of Design. Recovered from the historical FACODI/Open2 catalogue.</p><p><strong>Semantic tags:</strong> tipografia, design, dicas de design, projetos gráficos, checklist.</p><p><strong>Academic boundary:</strong> Recovered public resource supporting independent typography study; no academic equivalence or ECTS recognition is implied.</p>",
+          "tags": [
+            "tipografia",
+            "design",
+            "dicas de design",
+            "projetos gráficos",
+            "checklist"
+          ]
+        },
+        {
+          "xmlid": "facodi_link_14541153_X6w49w1et70",
+          "name": "Dica de Tipografia: Quantas Fontes Usar no Projeto?",
+          "url": "https://www.youtube.com/watch?v=X6w49w1et70",
+          "description": "<p>Aprenda a escolher o número certo de fontes para design.</p><p><strong>Source:</strong> Chief of Design. Recovered from the historical FACODI/Open2 catalogue.</p><p><strong>Semantic tags:</strong> tipografia, design, fontes, projetos, estética.</p><p><strong>Academic boundary:</strong> Recovered public resource supporting independent typography study; no academic equivalence or ECTS recognition is implied.</p>",
+          "tags": [
+            "tipografia",
+            "design",
+            "fontes",
+            "projetos",
+            "estética"
+          ]
+        },
+        {
+          "xmlid": "facodi_link_14541153_N9_cX20dlBg",
+          "name": "Dica de Tipografia: Tracking e Kerning no Design",
+          "url": "https://www.youtube.com/watch?v=N9_cX20dlBg",
+          "description": "<p>Explore os conceitos de tracking e kerning na tipografia.</p><p><strong>Source:</strong> Chief of Design. Recovered from the historical FACODI/Open2 catalogue.</p><p><strong>Semantic tags:</strong> tipografia, design gráfico, tracking, kerning, espaçamento.</p><p><strong>Academic boundary:</strong> Recovered public resource supporting independent typography study; no academic equivalence or ECTS recognition is implied.</p>",
+          "tags": [
+            "tipografia",
+            "design gráfico",
+            "tracking",
+            "kerning",
+            "espaçamento"
+          ]
+        },
+        {
+          "xmlid": "facodi_link_14541153_1FwL9GIsMFE",
+          "name": "Dica de Tipografia: Leiturabilidade e Legibilidade",
+          "url": "https://www.youtube.com/watch?v=1FwL9GIsMFE",
+          "description": "<p>Aprenda sobre leiturabilidade e legibilidade na tipografia.</p><p><strong>Source:</strong> Chief of Design. Recovered from the historical FACODI/Open2 catalogue.</p><p><strong>Semantic tags:</strong> tipografia, leiturabilidade, legibilidade, design, comunicação visual.</p><p><strong>Academic boundary:</strong> Recovered public resource supporting independent typography study; no academic equivalence or ECTS recognition is implied.</p>",
+          "tags": [
+            "tipografia",
+            "leiturabilidade",
+            "legibilidade",
+            "design",
+            "comunicação visual"
+          ]
+        },
+        {
+          "xmlid": "facodi_link_14541153_6RZFfSF31qo",
+          "name": "Dicas de Tipografia: Entrelinha e Alinhamento do Texto",
+          "url": "https://www.youtube.com/watch?v=6RZFfSF31qo",
+          "description": "<p>Dicas sobre entrelinha e alinhamento em tipografia.</p><p><strong>Source:</strong> Chief of Design. Recovered from the historical FACODI/Open2 catalogue.</p><p><strong>Semantic tags:</strong> tipografia, design gráfico, entrelinha, alinhamento, dicas de design.</p><p><strong>Academic boundary:</strong> Recovered public resource supporting independent typography study; no academic equivalence or ECTS recognition is implied.</p>",
+          "tags": [
+            "tipografia",
+            "design gráfico",
+            "entrelinha",
+            "alinhamento",
+            "dicas de design"
+          ]
+        },
+        {
+          "xmlid": "facodi_link_14541153_fxI85KqE_u8",
+          "name": "10 Dicas de Tipografia: Fonte com Serifa ou Sem Serifa?",
+          "url": "https://www.youtube.com/watch?v=fxI85KqE-u8",
+          "description": "<p>Dicas sobre a escolha de fontes em design.</p><p><strong>Source:</strong> Chief of Design. Recovered from the historical FACODI/Open2 catalogue.</p><p><strong>Semantic tags:</strong> tipografia, design gráfico, fontes, serifa, educação.</p><p><strong>Academic boundary:</strong> Recovered public resource supporting independent typography study; no academic equivalence or ECTS recognition is implied.</p>",
+          "tags": [
+            "tipografia",
+            "design gráfico",
+            "fontes",
+            "serifa",
+            "educação"
+          ]
+        },
+        {
+          "xmlid": "facodi_link_14541153_xPeP18M1m_k",
+          "name": "Dica de Tipografia: O Contraste dos Tipos com o Fundo",
+          "url": "https://www.youtube.com/watch?v=xPeP18M1m-k",
+          "description": "<p>Aprenda sobre contraste em tipografia.</p><p><strong>Source:</strong> Chief of Design. Recovered from the historical FACODI/Open2 catalogue.</p><p><strong>Semantic tags:</strong> tipografia, design gráfico, contraste, estética, legibilidade.</p><p><strong>Academic boundary:</strong> Recovered public resource supporting independent typography study; no academic equivalence or ECTS recognition is implied.</p>",
+          "tags": [
+            "tipografia",
+            "design gráfico",
+            "contraste",
+            "estética",
+            "legibilidade"
+          ]
+        },
+        {
+          "xmlid": "facodi_link_14541153_767Ke8_FAAQ",
+          "name": "Como combinar tipografias diferentes no seu projeto?",
+          "url": "https://www.youtube.com/watch?v=767Ke8_FAAQ",
+          "description": "<p>Dicas para combinar tipografias em design.</p><p><strong>Source:</strong> Chief of Design. Recovered from the historical FACODI/Open2 catalogue.</p><p><strong>Semantic tags:</strong> tipografia, design, projetos, comunicação visual, estética.</p><p><strong>Academic boundary:</strong> Recovered public resource supporting independent typography study; no academic equivalence or ECTS recognition is implied.</p>",
+          "tags": [
+            "tipografia",
+            "design",
+            "projetos",
+            "comunicação visual",
+            "estética"
+          ]
+        },
+        {
+          "xmlid": "facodi_link_14541153_DpSbHbtV3dw",
+          "name": "Tipografia - Escolhendo a tipografia perfeita [Aulão completo]",
+          "url": "https://www.youtube.com/watch?v=DpSbHbtV3dw",
+          "description": "<p>Aprenda a escolher a tipografia ideal para design.</p><p><strong>Source:</strong> Chief of Design. Recovered from the historical FACODI/Open2 catalogue.</p><p><strong>Semantic tags:</strong> tipografia, design gráfico, escolha de fontes, comunicação visual, aula completa.</p><p><strong>Academic boundary:</strong> Recovered public resource supporting independent typography study; no academic equivalence or ECTS recognition is implied.</p>",
+          "tags": [
+            "tipografia",
+            "design gráfico",
+            "escolha de fontes",
+            "comunicação visual",
+            "aula completa"
+          ]
+        },
+        {
+          "xmlid": "facodi_link_14541153_zR1LwJDmwbk",
+          "name": "Dica de Tipografia: A Voz da Fonte",
+          "url": "https://www.youtube.com/watch?v=zR1LwJDmwbk",
+          "description": "<p>Aprenda sobre a voz tipográfica e sua aplicação no design.</p><p><strong>Source:</strong> Chief of Design. Recovered from the historical FACODI/Open2 catalogue.</p><p><strong>Semantic tags:</strong> tipografia, design, comunicação visual, fontes, estética.</p><p><strong>Academic boundary:</strong> Recovered public resource supporting independent typography study; no academic equivalence or ECTS recognition is implied.</p>",
+          "tags": [
+            "tipografia",
+            "design",
+            "comunicação visual",
+            "fontes",
+            "estética"
+          ]
+        },
+        {
+          "xmlid": "facodi_link_14541153_g4WUTb0jRkY",
+          "name": "Livro para Designer - Pensar com Tipos de Ellen Lupton | Tipografia",
+          "url": "https://www.youtube.com/watch?v=g4WUTb0jRkY",
+          "description": "<p>Exploração do livro 'Pensar com Tipos' de Ellen Lupton.</p><p><strong>Source:</strong> Chief of Design. Recovered from the historical FACODI/Open2 catalogue.</p><p><strong>Semantic tags:</strong> tipografia, design, Ellen Lupton, livros de design, educação.</p><p><strong>Academic boundary:</strong> Recovered public resource supporting independent typography study; no academic equivalence or ECTS recognition is implied.</p>",
+          "tags": [
+            "tipografia",
+            "design",
+            "Ellen Lupton",
+            "livros de design",
+            "educação"
+          ]
+        },
+        {
+          "xmlid": "facodi_link_14541153_aDziF_eM08w",
+          "name": "Tipografia Design: Como Escolher a Fonte Certa para Seus Projetos",
+          "url": "https://www.youtube.com/watch?v=aDziF-eM08w",
+          "description": "<p>Aprenda a escolher a fonte certa para seus projetos de design gráfico.</p><p><strong>Source:</strong> Chief of Design. Recovered from the historical FACODI/Open2 catalogue.</p><p><strong>Semantic tags:</strong> tipografia, design gráfico, fontes, escolha de fontes, design.</p><p><strong>Academic boundary:</strong> Recovered public resource supporting independent typography study; no academic equivalence or ECTS recognition is implied.</p>",
+          "tags": [
+            "tipografia",
+            "design gráfico",
+            "fontes",
+            "escolha de fontes",
+            "design"
+          ]
+        },
+        {
+          "xmlid": "facodi_link_14541153_3cY2Y2SmhG0",
+          "name": "FontBase - Gerenciador de Fontes para Designers no Windows e MAC",
+          "url": "https://www.youtube.com/watch?v=3cY2Y2SmhG0",
+          "description": "<p>Aprenda a usar o FontBase para gerenciar fontes.</p><p><strong>Source:</strong> Chief of Design. Recovered from the historical FACODI/Open2 catalogue.</p><p><strong>Semantic tags:</strong> FontBase, gerenciador de fontes, design, Windows, MAC.</p><p><strong>Academic boundary:</strong> Recovered public resource supporting independent typography study; no academic equivalence or ECTS recognition is implied.</p>",
+          "tags": [
+            "FontBase",
+            "gerenciador de fontes",
+            "design",
+            "Windows",
+            "MAC"
+          ]
+        },
+        {
+          "xmlid": "facodi_link_14541153_TawkL78AcHM",
+          "name": "Justificação e Hifenização no Adobe Indesign",
+          "url": "https://www.youtube.com/watch?v=TawkL78AcHM",
+          "description": "<p>Tutorial sobre justificação e hifenização no Indesign.</p><p><strong>Source:</strong> Chief of Design. Recovered from the historical FACODI/Open2 catalogue.</p><p><strong>Semantic tags:</strong> Adobe Indesign, justificação, hifenização, design gráfico, tutoriais.</p><p><strong>Academic boundary:</strong> Recovered public resource supporting independent typography study; no academic equivalence or ECTS recognition is implied.</p>",
+          "tags": [
+            "Adobe Indesign",
+            "justificação",
+            "hifenização",
+            "design gráfico",
+            "tutoriais"
+          ]
+        },
+        {
+          "xmlid": "facodi_link_14541153_88uTd11Xu3A",
+          "name": "Como eliminar Órfãs, Viúvas e Forcas no Adobe Indesign",
+          "url": "https://www.youtube.com/watch?v=88uTd11Xu3A",
+          "description": "<p>Tutorial sobre como eliminar problemas de formatação no InDesign.</p><p><strong>Source:</strong> Chief of Design. Recovered from the historical FACODI/Open2 catalogue.</p><p><strong>Semantic tags:</strong> Adobe InDesign, design gráfico, formatação de texto, tutorial, edição de texto.</p><p><strong>Academic boundary:</strong> Recovered public resource supporting independent typography study; no academic equivalence or ECTS recognition is implied.</p>",
+          "tags": [
+            "Adobe InDesign",
+            "design gráfico",
+            "formatação de texto",
+            "tutorial",
+            "edição de texto"
+          ]
+        }
+      ]
+    },
+    {
+      "xmlid": "facodi_ldcom_14541196",
+      "channel": {
+        "name": "Open course · Art History (LDCOM)",
+        "description_short": "<p>22 curated open resources spanning prehistory, ancient art, medieval art, Renaissance, Mannerism and Baroque.</p>",
+        "description": "<p>FACODI art-history collection recovered from the historical Open2 catalogue. Two clear outliers were excluded before publication; the remaining resources provide a broad historical study trail.</p><p><strong>Academic boundary:</strong> content support only; no academic equivalence, accreditation or ECTS recognition is implied.</p>",
+        "sequence": 190
+      },
+      "slides": [
+        {
+          "xmlid": "facodi_link_14541196_HfCKCkq4keI",
+          "name": "História da Arte em 28 dias Aula 03 | Arte da Mesopotâmia",
+          "url": "https://www.youtube.com/watch?v=HfCKCkq4keI",
+          "description": "<p>Aula sobre a arte da Mesopotâmia.</p><p><strong>Source:</strong> Apreciando Arte. Recovered from the historical FACODI/Open2 catalogue.</p><p><strong>Semantic tags:</strong> História da Arte, Mesopotâmia, Arte Antiga, Cultura, Educação.</p><p><strong>Academic boundary:</strong> Curated historical art-history resource for independent study; no academic equivalence or ECTS recognition is implied.</p>",
+          "tags": [
+            "História da Arte",
+            "Mesopotâmia",
+            "Arte Antiga",
+            "Cultura",
+            "Educação"
+          ]
+        },
+        {
+          "xmlid": "facodi_link_14541196_TyF5FFHwop8",
+          "name": "História da Arte em 28 dias Aula 01 | Introdução",
+          "url": "https://www.youtube.com/watch?v=TyF5FFHwop8",
+          "description": "<p>Introdução à História da Arte em 28 dias.</p><p><strong>Source:</strong> Apreciando Arte. Recovered from the historical FACODI/Open2 catalogue.</p><p><strong>Semantic tags:</strong> história da arte, arte, cultura, educação, aula.</p><p><strong>Academic boundary:</strong> Curated historical art-history resource for independent study; no academic equivalence or ECTS recognition is implied.</p>",
+          "tags": [
+            "história da arte",
+            "arte",
+            "cultura",
+            "educação",
+            "aula"
+          ]
+        },
+        {
+          "xmlid": "facodi_link_14541196_aMdkTOLF_Vw",
+          "name": "História da Arte em 28 dias Aula 04 | Arte do Egito Antigo",
+          "url": "https://www.youtube.com/watch?v=aMdkTOLF_Vw",
+          "description": "<p>Exploração da arte do Egito Antigo.</p><p><strong>Source:</strong> Apreciando Arte. Recovered from the historical FACODI/Open2 catalogue.</p><p><strong>Semantic tags:</strong> arte, Egito Antigo, história da arte, cultura, educação.</p><p><strong>Academic boundary:</strong> Curated historical art-history resource for independent study; no academic equivalence or ECTS recognition is implied.</p>",
+          "tags": [
+            "arte",
+            "Egito Antigo",
+            "história da arte",
+            "cultura",
+            "educação"
+          ]
+        },
+        {
+          "xmlid": "facodi_link_14541196_OZBGNpzTVD0",
+          "name": "História da Arte em 28 dias Aula 02 | Pré-História",
+          "url": "https://www.youtube.com/watch?v=OZBGNpzTVD0",
+          "description": "<p>Exploração da arte na Pré-História.</p><p><strong>Source:</strong> Apreciando Arte. Recovered from the historical FACODI/Open2 catalogue.</p><p><strong>Semantic tags:</strong> História da Arte, Pré-História, Arte, Cultura, Educação.</p><p><strong>Academic boundary:</strong> Curated historical art-history resource for independent study; no academic equivalence or ECTS recognition is implied.</p>",
+          "tags": [
+            "História da Arte",
+            "Pré-História",
+            "Arte",
+            "Cultura",
+            "Educação"
+          ]
+        },
+        {
+          "xmlid": "facodi_link_14541196_zbUnlQ9BVGQ",
+          "name": "História da Arte em 28 dias Aula 06 | Arte da Grécia Arcaica | Vídeo 02 de 02",
+          "url": "https://www.youtube.com/watch?v=zbUnlQ9BVGQ",
+          "description": "<p>Exploração da arte da Grécia arcaica.</p><p><strong>Source:</strong> Apreciando Arte. Recovered from the historical FACODI/Open2 catalogue.</p><p><strong>Semantic tags:</strong> história da arte, arte grega, cultura, arte arcaica, educação.</p><p><strong>Academic boundary:</strong> Curated historical art-history resource for independent study; no academic equivalence or ECTS recognition is implied.</p>",
+          "tags": [
+            "história da arte",
+            "arte grega",
+            "cultura",
+            "arte arcaica",
+            "educação"
+          ]
+        },
+        {
+          "xmlid": "facodi_link_14541196_Ww81lc07pGM",
+          "name": "História da Arte em 28 dias Aula 05 | Arte da Grécia Arcaica | Vídeo 01 de 02",
+          "url": "https://www.youtube.com/watch?v=Ww81lc07pGM",
+          "description": "<p>Aula sobre a arte da Grécia arcaica.</p><p><strong>Source:</strong> Apreciando Arte. Recovered from the historical FACODI/Open2 catalogue.</p><p><strong>Semantic tags:</strong> história da arte, arte grega, arte arcaica, cultura, educação.</p><p><strong>Academic boundary:</strong> Curated historical art-history resource for independent study; no academic equivalence or ECTS recognition is implied.</p>",
+          "tags": [
+            "história da arte",
+            "arte grega",
+            "arte arcaica",
+            "cultura",
+            "educação"
+          ]
+        },
+        {
+          "xmlid": "facodi_link_14541196_5I5EU6gV3N0",
+          "name": "História da Arte em 28 dias Aula 07 | Arte Grega Clássica",
+          "url": "https://www.youtube.com/watch?v=5I5EU6gV3N0",
+          "description": "<p>Aula sobre a Arte Grega Clássica.</p><p><strong>Source:</strong> Apreciando Arte. Recovered from the historical FACODI/Open2 catalogue.</p><p><strong>Semantic tags:</strong> Arte, História da Arte, Arte Grega, Cultura, Estética.</p><p><strong>Academic boundary:</strong> Curated historical art-history resource for independent study; no academic equivalence or ECTS recognition is implied.</p>",
+          "tags": [
+            "Arte",
+            "História da Arte",
+            "Arte Grega",
+            "Cultura",
+            "Estética"
+          ]
+        },
+        {
+          "xmlid": "facodi_link_14541196_qLgqIumCZ_U",
+          "name": "A Arquitetura do Renascimento",
+          "url": "https://www.youtube.com/watch?v=qLgqIumCZ-U",
+          "description": "<p>A Arquitetura do Renascimento: foco em conteúdo educacional geral.</p><p><strong>Source:</strong> Dani Porto. Recovered from the historical FACODI/Open2 catalogue.</p><p><strong>Academic boundary:</strong> Curated historical art-history resource for independent study; no academic equivalence or ECTS recognition is implied.</p>",
+          "tags": []
+        },
+        {
+          "xmlid": "facodi_link_14541196_CUqGnuaMBq8",
+          "name": "A Pintura Barroca",
+          "url": "https://www.youtube.com/watch?v=CUqGnuaMBq8",
+          "description": "<p>A Pintura Barroca: foco em conteúdo educacional geral.</p><p><strong>Source:</strong> Dani Porto. Recovered from the historical FACODI/Open2 catalogue.</p><p><strong>Academic boundary:</strong> Curated historical art-history resource for independent study; no academic equivalence or ECTS recognition is implied.</p>",
+          "tags": []
+        },
+        {
+          "xmlid": "facodi_link_14541196_1CuomdJil1k",
+          "name": "A Pintura do Renascimento",
+          "url": "https://www.youtube.com/watch?v=1CuomdJil1k",
+          "description": "<p>A Pintura do Renascimento: foco em conteúdo educacional geral.</p><p><strong>Source:</strong> Dani Porto. Recovered from the historical FACODI/Open2 catalogue.</p><p><strong>Academic boundary:</strong> Curated historical art-history resource for independent study; no academic equivalence or ECTS recognition is implied.</p>",
+          "tags": []
+        },
+        {
+          "xmlid": "facodi_link_14541196_Oe3yehZ7XVk",
+          "name": "Alta Idade Média - Arte Bárbara e Carolíngea",
+          "url": "https://www.youtube.com/watch?v=Oe3yehZ7XVk",
+          "description": "<p>Alta Idade Média - Arte Bárbara e Carolíngea</p><p><strong>Source:</strong> Dani Porto. Recovered from the historical FACODI/Open2 catalogue.</p><p><strong>Academic boundary:</strong> Curated historical art-history resource for independent study; no academic equivalence or ECTS recognition is implied.</p>",
+          "tags": []
+        },
+        {
+          "xmlid": "facodi_link_14541196_f1YvTdVj0V8",
+          "name": "Arquitetura Barroca",
+          "url": "https://www.youtube.com/watch?v=f1YvTdVj0V8",
+          "description": "<p>Arquitetura Barroca: foco em conteúdo educacional geral.</p><p><strong>Source:</strong> Dani Porto. Recovered from the historical FACODI/Open2 catalogue.</p><p><strong>Academic boundary:</strong> Curated historical art-history resource for independent study; no academic equivalence or ECTS recognition is implied.</p>",
+          "tags": []
+        },
+        {
+          "xmlid": "facodi_link_14541196_mJQh1vfg4uU",
+          "name": "Arte Bizantina - a arte suntuosa",
+          "url": "https://www.youtube.com/watch?v=mJQh1vfg4uU",
+          "description": "<p>Arte Bizantina - a arte suntuosa</p><p><strong>Source:</strong> Dani Porto. Recovered from the historical FACODI/Open2 catalogue.</p><p><strong>Academic boundary:</strong> Curated historical art-history resource for independent study; no academic equivalence or ECTS recognition is implied.</p>",
+          "tags": []
+        },
+        {
+          "xmlid": "facodi_link_14541196_yM8qU_S1KNQ",
+          "name": "Arte Egípcia - a arte da imortalidade",
+          "url": "https://www.youtube.com/watch?v=yM8qU-S1KNQ",
+          "description": "<p>Arte Egípcia - a arte da imortalidade</p><p><strong>Source:</strong> Dani Porto. Recovered from the historical FACODI/Open2 catalogue.</p><p><strong>Academic boundary:</strong> Curated historical art-history resource for independent study; no academic equivalence or ECTS recognition is implied.</p>",
+          "tags": []
+        },
+        {
+          "xmlid": "facodi_link_14541196__DbJzEi_NGA",
+          "name": "Arte Gótica - O triunfo da luz na arquitetura",
+          "url": "https://www.youtube.com/watch?v=-DbJzEi-NGA",
+          "description": "<p>Arte Gótica - O triunfo da luz na arquitetura</p><p><strong>Source:</strong> Dani Porto. Recovered from the historical FACODI/Open2 catalogue.</p><p><strong>Academic boundary:</strong> Curated historical art-history resource for independent study; no academic equivalence or ECTS recognition is implied.</p>",
+          "tags": []
+        },
+        {
+          "xmlid": "facodi_link_14541196__RI3NUj1w1o",
+          "name": "Arte Grega - a arte da beleza",
+          "url": "https://www.youtube.com/watch?v=_RI3NUj1w1o",
+          "description": "<p>Arte Grega - a arte da beleza</p><p><strong>Source:</strong> Dani Porto. Recovered from the historical FACODI/Open2 catalogue.</p><p><strong>Academic boundary:</strong> Curated historical art-history resource for independent study; no academic equivalence or ECTS recognition is implied.</p>",
+          "tags": []
+        },
+        {
+          "xmlid": "facodi_link_14541196_CSt5yw_4zak",
+          "name": "Arte Grega e Arte Romana - entenda a diferença",
+          "url": "https://www.youtube.com/watch?v=CSt5yw_4zak",
+          "description": "<p>Arte Grega e Arte Romana - entenda a diferença</p><p><strong>Source:</strong> Dani Porto. Recovered from the historical FACODI/Open2 catalogue.</p><p><strong>Academic boundary:</strong> Curated historical art-history resource for independent study; no academic equivalence or ECTS recognition is implied.</p>",
+          "tags": []
+        },
+        {
+          "xmlid": "facodi_link_14541196_lPAsunweNbo",
+          "name": "Arte Paleocristã - A arte das catacumbas",
+          "url": "https://www.youtube.com/watch?v=lPAsunweNbo",
+          "description": "<p>Arte Paleocristã - A arte das catacumbas</p><p><strong>Source:</strong> Dani Porto. Recovered from the historical FACODI/Open2 catalogue.</p><p><strong>Academic boundary:</strong> Curated historical art-history resource for independent study; no academic equivalence or ECTS recognition is implied.</p>",
+          "tags": []
+        },
+        {
+          "xmlid": "facodi_link_14541196_GEwm_AnPNCM",
+          "name": "Arte Romana - a arte do grande império",
+          "url": "https://www.youtube.com/watch?v=GEwm-AnPNCM",
+          "description": "<p>Arte Romana - a arte do grande império</p><p><strong>Source:</strong> Dani Porto. Recovered from the historical FACODI/Open2 catalogue.</p><p><strong>Academic boundary:</strong> Curated historical art-history resource for independent study; no academic equivalence or ECTS recognition is implied.</p>",
+          "tags": []
+        },
+        {
+          "xmlid": "facodi_link_14541196_HQj_l5FABQc",
+          "name": "Arte Românica - a arte das fortalezas",
+          "url": "https://www.youtube.com/watch?v=HQj_l5FABQc",
+          "description": "<p>Arte Românica - a arte das fortalezas</p><p><strong>Source:</strong> Dani Porto. Recovered from the historical FACODI/Open2 catalogue.</p><p><strong>Academic boundary:</strong> Curated historical art-history resource for independent study; no academic equivalence or ECTS recognition is implied.</p>",
+          "tags": []
+        },
+        {
+          "xmlid": "facodi_link_14541196_7lPkYk9fmYU",
+          "name": "Arte Rupestre - Como a arte começou",
+          "url": "https://www.youtube.com/watch?v=7lPkYk9fmYU",
+          "description": "<p>Arte Rupestre - Como a arte começou</p><p><strong>Source:</strong> Dani Porto. Recovered from the historical FACODI/Open2 catalogue.</p><p><strong>Academic boundary:</strong> Curated historical art-history resource for independent study; no academic equivalence or ECTS recognition is implied.</p>",
+          "tags": []
+        },
+        {
+          "xmlid": "facodi_link_14541196_5BxxuVnOuy8",
+          "name": "Maneirismo",
+          "url": "https://www.youtube.com/watch?v=5BxxuVnOuy8",
+          "description": "<p>Maneirismo: foco em conteúdo educacional geral.</p><p><strong>Source:</strong> Dani Porto. Recovered from the historical FACODI/Open2 catalogue.</p><p><strong>Academic boundary:</strong> Curated historical art-history resource for independent study; no academic equivalence or ECTS recognition is implied.</p>",
+          "tags": []
+        }
+      ]
     }
   ],
   "coverage": [
