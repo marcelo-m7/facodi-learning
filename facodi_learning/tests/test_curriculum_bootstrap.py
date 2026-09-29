@@ -168,6 +168,47 @@ class TestCurriculumBootstrap(TransactionCase):
             )
         )
 
+    def test_design_bootstrap_repairs_normalized_open2_slide_external_id(self):
+        ensure_design_curricula_2026_27(self.env)
+        ModelData = self.env["ir.model.data"].sudo()
+        correct_name = "facodi_link_14541153_cd4y6udSm-A"
+        legacy_name = correct_name.replace("-", "_")
+        external_id = ModelData.search(
+            [
+                ("module", "=", "__import__"),
+                ("name", "=", correct_name),
+                ("model", "=", "slide.slide"),
+            ],
+            limit=1,
+        )
+        self.assertTrue(external_id)
+        original_slide = self.env["slide.slide"].browse(external_id.res_id)
+        external_id.write({"name": legacy_name})
+
+        ensure_design_curricula_2026_27(self.env)
+
+        repaired = ModelData.search(
+            [
+                ("module", "=", "__import__"),
+                ("name", "=", correct_name),
+                ("model", "=", "slide.slide"),
+            ],
+            limit=1,
+        )
+        self.assertEqual(repaired.res_id, original_slide.id)
+        self.assertFalse(
+            ModelData.search(
+                [
+                    ("module", "=", "__import__"),
+                    ("name", "=", legacy_name),
+                    ("model", "=", "slide.slide"),
+                ],
+                limit=1,
+            )
+        )
+        typography_channel = self.env.ref("__import__.facodi_ldcom_14541153")
+        self.assertEqual(len(typography_channel.slide_ids), 20)
+
     def test_lesti_bootstrap_rejects_identity_mismatch(self):
         reference = ensure_lesti_2026_27(self.env)
         original_institution = reference.institution
