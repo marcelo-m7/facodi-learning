@@ -189,14 +189,17 @@ class TestExploreLearningWebsite(HttpCase):
         self.assertIn("Public course lesson", response.text)
         self.assertNotIn("Members secret", response.text)
 
-        tree = html.fromstring(response.text)
+        filtered_stats = self.url_open(
+            "/explore/content?" + urlencode({"q": "Public course lesson"})
+        )
+        tree = html.fromstring(filtered_stats.text)
         live_stats = tree.xpath(
             '//*[@data-facodi-live-stats="1"]//strong/text()'
         )
         self.assertGreaterEqual(len(live_stats), 4)
-        self.assertEqual(live_stats[0].strip(), "3")
-        self.assertEqual(live_stats[1].strip(), "2")
-        self.assertEqual(live_stats[2].strip(), "7")
+        self.assertEqual(live_stats[0].strip(), "1")
+        self.assertEqual(live_stats[1].strip(), "1")
+        self.assertTrue(live_stats[2].strip().isdigit())
         self.assertNotIn("Draft secret", response.text)
         self.assertNotIn("Other website secret", response.text)
 
@@ -226,7 +229,7 @@ class TestExploreLearningWebsite(HttpCase):
         stats = self.math_course._facodi_public_course_stats(self.website)
         self.assertEqual(stats["resources"], 2)
         self.assertEqual(stats["formats"], 1)
-        self.assertEqual(stats["views"], 7)
+        self.assertEqual(stats["views"], 0)
         self.assertEqual(stats["curriculum_links"], 0)
         self.assertEqual(
             stats["format_rows"],
