@@ -62,6 +62,22 @@
                             <span class="facodi-explore-card__cta">Browse resources →</span>
                         </a>
 
+                        <a href="/explore/areas" class="facodi-explore-card facodi-sheet text-decoration-none" data-facodi-spotlight="1" data-facodi-motion="rise" data-facodi-motion-delay="220">
+                            <div class="facodi-explore-card__icon"><span class="fa fa-tags" aria-hidden="true"></span></div>
+                            <p class="facodi-label">Learning areas</p>
+                            <h2>Browse by learning area.</h2>
+                            <p><t t-esc="explore_stats['areas']"/> public learning areas organise the catalogue without hiding the courses behind them.</p>
+                            <span class="facodi-explore-card__cta">Explore learning areas →</span>
+                        </a>
+
+                        <a href="/explore/videos" class="facodi-explore-card facodi-sheet text-decoration-none" data-facodi-spotlight="1" data-facodi-motion="rise" data-facodi-motion-delay="240">
+                            <div class="facodi-explore-card__icon"><span class="fa fa-play-circle-o" aria-hidden="true"></span></div>
+                            <p class="facodi-label">Community videos</p>
+                            <h2>See what the campus shared.</h2>
+                            <p><t t-esc="explore_stats['community']"/> public community video drops are visible with their editorial review status.</p>
+                            <span class="facodi-explore-card__cta">Browse community videos →</span>
+                        </a>
+
                         <a href="/forum" class="facodi-explore-card facodi-sheet text-decoration-none" data-facodi-spotlight="1" data-facodi-motion="rise" data-facodi-motion-delay="240">
                             <div class="facodi-explore-card__icon"><span class="fa fa-comments-o" aria-hidden="true"></span></div>
                             <p class="facodi-label">Community</p>
