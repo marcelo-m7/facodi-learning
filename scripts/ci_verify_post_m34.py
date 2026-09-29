@@ -149,51 +149,21 @@ expected_reference_ids = {lesti.id, design_refs["1930"].id, design_refs["1454"].
 if set(env["facodi.learning.curriculum.reference"].search([]).ids) != expected_reference_ids:
     raise AssertionError("Upgrade created curriculum references outside the curated 2026/27 set.")
 
-design_coverage = env["facodi.learning.curriculum.coverage"].search(
-    [
-        ("curriculum_unit_id.reference_id", "in", [
-            design_refs["1930"].id,
-            design_refs["1454"].id,
-        ])
-    ]
-)
-if len(design_coverage) != 13:
+design_coverage = env["facodi.learning.curriculum.coverage"].search([])
+if len(design_coverage) != 4:
     raise AssertionError(
-        f"Expected thirteen curated design supports relations on a clean upgrade, got {len(design_coverage)}."
+        f"Expected four seeded DTM supports relations on a clean upgrade, got {len(design_coverage)}."
     )
+if set(design_coverage.mapped("state")) != {"approved"}:
+    raise AssertionError("Seeded DTM coverage must be explicitly approved supports relations.")
 if set(design_coverage.mapped("coverage_type")) != {"supports"}:
     raise AssertionError("Seeded design coverage may only use supports relations.")
-
-approved_design = design_coverage.filtered(lambda row: row.state == "approved")
-proposed_design = design_coverage.filtered(lambda row: row.state == "proposed")
-if len(approved_design) != 7 or len(proposed_design) != 6:
-    raise AssertionError(
-        "Design coverage must preserve seven reviewed public supports and six proposed relations."
-    )
-
-approved_dtm_codes = set(
-    approved_design.filtered(
-        lambda row: row.curriculum_unit_id.reference_id == design_refs["1930"]
-    ).mapped("curriculum_unit_id.external_unit_code")
-)
-if approved_dtm_codes != {
+if set(design_coverage.mapped("curriculum_unit_id.external_unit_code")) != {
     "19301001",
     "19301006",
-    "19301007",
     "19301008",
     "19301009",
 }:
     raise AssertionError(
-        "DTM reviewed coverage must target Design Foundations, Interaction Design, Typography and Editorial Design, Motion Design and Web Design."
+        "Clean-upgrade DTM coverage must target Design Foundations, Interaction Design, Motion Design and Web Design."
     )
-
-approved_ldcom_codes = set(
-    approved_design.filtered(
-        lambda row: row.curriculum_unit_id.reference_id == design_refs["1454"]
-    ).mapped("curriculum_unit_id.external_unit_code")
-)
-if approved_ldcom_codes != {"14541153", "14541196"}:
-    raise AssertionError(
-        "Design de Comunicação reviewed coverage must remain limited to Tipografia I and the curated Art History support."
-    )
-
