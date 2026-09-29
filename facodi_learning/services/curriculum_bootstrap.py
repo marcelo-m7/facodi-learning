@@ -141,6 +141,66 @@ def _resolve_import_xmlid(env, name):
     return env.ref(f"__import__.{name}", raise_if_not_found=False)
 
 
+def _reconcile_design_slide_xmlids(env, payload):
+    """Repair the temporary normalized IDs used by the 19.0.1.124.0 recovery.
+
+    Historical Open2 imports preserve the YouTube ID verbatim in __import__
+    external IDs. A short-lived 19.0.1.124.0 fixture normalized hyphens to
+    underscores, which could create a duplicate beside an already recovered
+    production slide. Rebind clean-install records and remove only exact
+    same-URL duplicates before normal reconciliation.
+    """
+    ModelData = env["ir.model.data"].sudo()
+    Slide = env["slide.slide"].sudo()
+    for item in payload.get("content", []):
+        for slide_payload in item.get("slides", []):
+            correct_name = slide_payload["xmlid"]
+            legacy_name = correct_name.replace("-", "_")
+            if legacy_name == correct_name:
+                continue
+
+            correct = ModelData.search(
+                [
+                    ("module", "=", "__import__"),
+                    ("name", "=", correct_name),
+                    ("model", "=", "slide.slide"),
+                ],
+                limit=1,
+            )
+            legacy = ModelData.search(
+                [
+                    ("module", "=", "__import__"),
+                    ("name", "=", legacy_name),
+                    ("model", "=", "slide.slide"),
+                ],
+                limit=1,
+            )
+            if not legacy:
+                continue
+            if not correct:
+                legacy.write({"name": correct_name})
+                continue
+            if legacy.res_id == correct.res_id:
+                legacy.unlink()
+                continue
+
+            expected_url = slide_payload["url"]
+            correct_slide = Slide.browse(correct.res_id).exists()
+            legacy_slide = Slide.browse(legacy.res_id).exists()
+            if (
+                not correct_slide
+                or not legacy_slide
+                or correct_slide.url != expected_url
+                or legacy_slide.url != expected_url
+                or correct_slide.channel_id != legacy_slide.channel_id
+            ):
+                raise ValidationError(
+                    "FACODI cannot safely reconcile conflicting recovered design content."
+                )
+            legacy.unlink()
+            legacy_slide.unlink()
+
+
 def _ensure_design_content(env, payload):
     Channel = env["slide.channel"].sudo()
     Slide = env["slide.slide"].sudo()
@@ -262,6 +322,7 @@ def ensure_design_curricula_2026_27(env):
             reference.action_publish()
         references[reference.external_programme_code] = reference
 
+    _reconcile_design_slide_xmlids(env, payload)
     _ensure_design_content(env, payload)
 
     for relation in payload.get("coverage", []):
