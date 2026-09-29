@@ -4307,3 +4307,75 @@ msgstr "Navegação principal"
 #: code:addons/facodi_learning/controllers/contextual_submission.py:0
 msgid "Homepage"
 msgstr "Página inicial"
+
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_content
+msgid "matching resources"
+msgstr "recursos correspondentes"
+
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_content
+msgid "courses represented"
+msgstr "cursos representados"
+
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_content
+msgid "resource views"
+msgstr "visualizações dos recursos"
+
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_content
+msgid "catalogue resources"
+msgstr "recursos no catálogo"
+
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_content
+msgid "Live from Odoo:"
+msgstr "Dados em tempo real do Odoo:"
+
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.course_live_stats
+msgid "Live course snapshot"
+msgstr "Resumo dinâmico do curso"
+
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.course_live_stats
+msgid "What is available right now"
+msgstr "O que está disponível agora"
+
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.course_live_stats
+msgid "Calculated from published Odoo content"
+msgstr "Calculado a partir do conteúdo publicado no Odoo"
+
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.course_live_stats
+msgid "published resources"
+msgstr "recursos publicados"
+
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.course_live_stats
+msgid "content formats"
+msgstr "formatos de conteúdo"
+
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.course_live_stats
+msgid "reviewed curriculum links"
+msgstr "ligações curriculares revistas"
+
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.course_live_stats
+msgid "Published resources by format"
+msgstr "Recursos publicados por formato"
