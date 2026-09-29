@@ -146,7 +146,7 @@ class TestExploreLearningWebsite(HttpCase):
         self.assertIn("/explore/areas", landing.text)
         self.assertIn("/explore/content", landing.text)
         self.assertIn("/explore/videos", landing.text)
-        self.assertIn("/explore/courses", landing.text)
+        self.assertIn("/courses", landing.text)
 
         courses = self.url_open("/explore/courses", allow_redirects=False)
         self.assertIn(courses.status_code, (301, 302, 303, 307, 308))

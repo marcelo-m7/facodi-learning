@@ -25,7 +25,7 @@ class WebsiteMenu(models.Model):
 
         # English is the canonical/source language of the public FACODI website.
         # Keep other enabled languages available through Odoo's standard selector.
-        Language = self.env["res.lang"].sudo()
+        Language = self.env["res.lang"].sudo().with_context(active_test=False)
         english = Language.search([("code", "=", "en_GB")], limit=1)
         if english:
             if not english.active:
@@ -112,8 +112,17 @@ class WebsiteMenu(models.Model):
             },
         }
 
+        source_language = english.code if english else (facodi.default_lang_id.code or self.env.lang)
+        english_us = Language.search([("code", "=", "en_US")], limit=1)
+
         def write_menu_name(menu, source_name):
-            menu.with_context(lang="en_GB").write({"name": source_name})
+            # Odoo's stock website records may already carry an en_US translation
+            # (for example \"Contact us\"). FACODI's canonical language is en_GB,
+            # but keep both English variants aligned so callers running with the
+            # base en_US context do not see stale stock labels during install/update.
+            if english_us and english_us.active:
+                menu.with_context(lang="en_US").write({"name": source_name})
+            menu.with_context(lang=source_language).write({"name": source_name})
             for language_code, translated_name in menu_translations.get(
                 source_name, {}
             ).items():
