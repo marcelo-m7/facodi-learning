@@ -114,12 +114,32 @@
                         <a href="/explore" class="btn btn-outline-secondary">Back to Explore</a>
                     </div>
 
-                    <div class="facodi-discovery-stats mb-4" aria-label="Catalogue snapshot">
-                        <div class="facodi-discovery-stat facodi-highlight-lime"><strong t-esc="discovery_stats['resources']"/><span>resources</span></div>
-                        <div class="facodi-discovery-stat facodi-highlight-mint"><strong t-esc="discovery_stats['areas']"/><span>areas</span></div>
-                        <div class="facodi-discovery-stat facodi-highlight-cyan"><strong t-esc="discovery_stats['languages']"/><span>languages</span></div>
-                        <div class="facodi-discovery-stat facodi-highlight-orange"><strong t-esc="discovery_stats['formats']"/><span>formats</span></div>
+                    <div class="facodi-discovery-stats mb-2" aria-label="Live catalogue snapshot" data-facodi-live-stats="1">
+                        <div class="facodi-discovery-stat facodi-highlight-lime">
+                            <strong t-esc="discovery_stats['matching_resources']"/>
+                            <span>matching resources</span>
+                        </div>
+                        <div class="facodi-discovery-stat facodi-highlight-mint">
+                            <strong t-esc="discovery_stats['courses']"/>
+                            <span>courses represented</span>
+                        </div>
+                        <div class="facodi-discovery-stat facodi-highlight-cyan">
+                            <strong t-esc="discovery_stats['views']"/>
+                            <span>resource views</span>
+                        </div>
+                        <div class="facodi-discovery-stat facodi-highlight-orange">
+                            <strong t-esc="discovery_stats['catalogue_resources']"/>
+                            <span>catalogue resources</span>
+                        </div>
                     </div>
+                    <p class="small text-muted mb-4">
+                        Live from Odoo:
+                        <strong t-esc="discovery_stats['areas']"/> areas
+                        <span aria-hidden="true"> · </span>
+                        <strong t-esc="discovery_stats['languages']"/> languages
+                        <span aria-hidden="true"> · </span>
+                        <strong t-esc="discovery_stats['formats']"/> formats
+                    </p>
 
                     <form method="get" action="/explore/content" class="card card-body mb-3 facodi-filter-panel" role="search">
                         <div class="row g-3">
