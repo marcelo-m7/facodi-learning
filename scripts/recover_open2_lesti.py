@@ -13,6 +13,7 @@ coverage and official equivalence/credit recognition.
 
 import json
 import os
+import re
 from html import escape
 from pathlib import Path
 
@@ -74,13 +75,39 @@ def _ensure_xmlid(xmlid, record):
 
 def _upsert_by_xmlid(xmlid, model, values):
     record = _xmlid_record(xmlid, model)
-    Model = env[model].sudo().with_context(tracking_disable=True)
+    Model = env[model].sudo().with_context(
+        tracking_disable=True,
+        website_slides_skip_fetch_metadata=True,
+    )
     if record:
-        record.sudo().with_context(tracking_disable=True).write(values)
+        record.sudo().with_context(
+            tracking_disable=True,
+            website_slides_skip_fetch_metadata=True,
+        ).write(values)
         return record, False
     record = Model.create(values)
     _ensure_xmlid(xmlid, record)
     return record, True
+
+
+def _recovery_title(row, youtube_id):
+    """Prefer the original provider title when legacy AI output is synthetic."""
+    optimized = str(row.get("optimized_title") or "").strip()
+    original = str(row.get("title") or "").strip()
+    synthetic = bool(
+        optimized
+        and (
+            optimized.lower().startswith("monynha fun:")
+            or "título otimizado" in optimized.lower()
+            or re.search(
+                r"[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}",
+                optimized,
+                re.I,
+            )
+        )
+    )
+    title = original if synthetic and original else (optimized or original)
+    return (title or ("YouTube video %s" % youtube_id)).strip()[:255]
 
 
 def _video_description(row):
@@ -168,19 +195,15 @@ for row in snapshot.get("videos", []):
         continue
     seen.add(identity)
 
-    title = (
-        row.get("optimized_title")
-        or row.get("title")
-        or "Vídeo %s" % youtube_id
-    ).strip()
+    title = _recovery_title(row, youtube_id)
     values = {
-        "name": title[:255],
+        "name": title,
         "channel_id": channels[unit_code].id,
-        # External article is deliberate for recovery: it avoids Odoo fetching
-        # every YouTube URL synchronously during disaster restoration.
-        "slide_category": "article",
+        # Keep the native Odoo video semantics while suppressing remote
+        # metadata fetches through the recovery context above.
+        "slide_category": "video",
         "source_type": "external",
-        "url": "https://www.youtube.com/watch?v=%s" % youtube_id,
+        "video_url": "https://www.youtube.com/watch?v=%s" % youtube_id,
         "description": _video_description(row),
         "is_published": True,
         "sequence": int(row.get("position") or 0) + 10,

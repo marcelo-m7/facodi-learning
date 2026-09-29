@@ -76,9 +76,15 @@ def _ensure_xmlid(xmlid, record):
 
 def _upsert(xmlid, model, values):
     rec = _xmlid_record(xmlid, model)
-    Model = env[model].sudo().with_context(tracking_disable=True)
+    Model = env[model].sudo().with_context(
+        tracking_disable=True,
+        website_slides_skip_fetch_metadata=True,
+    )
     if rec:
-        rec.sudo().with_context(tracking_disable=True).write(values)
+        rec.sudo().with_context(
+            tracking_disable=True,
+            website_slides_skip_fetch_metadata=True,
+        ).write(values)
         return rec, False
     rec = Model.create(values)
     _ensure_xmlid(xmlid, rec)
@@ -139,6 +145,26 @@ def _slide_xmlid(playlist, item):
         return "__import__.facodi_link_%s_%s" % (unit_code, youtube_id)
     base = unit_code or playlist.get("slug") or playlist.get("name")
     return "__import__.facodi_link_%s_%s" % (_slug(base), youtube_id)
+
+
+def _recovery_title(row, youtube_id):
+    """Prefer the original provider title when legacy AI output is synthetic."""
+    optimized = str(row.get("optimized_title") or "").strip()
+    original = str(row.get("title") or "").strip()
+    synthetic = bool(
+        optimized
+        and (
+            optimized.lower().startswith("monynha fun:")
+            or "título otimizado" in optimized.lower()
+            or re.search(
+                r"[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}",
+                optimized,
+                re.I,
+            )
+        )
+    )
+    title = original if synthetic and original else (optimized or original)
+    return (title or ("YouTube video %s" % youtube_id)).strip()[:255]
 
 
 def _description(playlist, item):
@@ -252,13 +278,13 @@ for slug, playlist in playlists.items():
         if youtube_id in seen:
             continue
         seen.add(youtube_id)
-        title = item.get("optimized_title") or item.get("title") or youtube_id
+        title = _recovery_title(item, youtube_id)
         vals = {
-            "name": str(title).strip()[:255],
+            "name": title,
             "channel_id": channel.id,
-            "slide_category": "article",
+            "slide_category": "video",
             "source_type": "external",
-            "url": "https://www.youtube.com/watch?v=%s" % youtube_id,
+            "video_url": "https://www.youtube.com/watch?v=%s" % youtube_id,
             "description": _description(playlist, item),
             "is_published": bool(channel.is_published),
             "sequence": int(item.get("position") or 0) + 10,
