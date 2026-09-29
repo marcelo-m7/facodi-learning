@@ -4254,3 +4254,75 @@ msgstr ""
 #: code:addons/facodi_learning/controllers/contextual_submission.py:0
 msgid "Homepage"
 msgstr ""
+
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_content
+msgid "matching resources"
+msgstr ""
+
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_content
+msgid "courses represented"
+msgstr ""
+
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_content
+msgid "resource views"
+msgstr ""
+
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_content
+msgid "catalogue resources"
+msgstr ""
+
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_content
+msgid "Live from Odoo:"
+msgstr ""
+
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.course_live_stats
+msgid "Live course snapshot"
+msgstr ""
+
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.course_live_stats
+msgid "What is available right now"
+msgstr ""
+
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.course_live_stats
+msgid "Calculated from published Odoo content"
+msgstr ""
+
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.course_live_stats
+msgid "published resources"
+msgstr ""
+
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.course_live_stats
+msgid "content formats"
+msgstr ""
+
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.course_live_stats
+msgid "reviewed curriculum links"
+msgstr ""
+
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.course_live_stats
+msgid "Published resources by format"
+msgstr ""
