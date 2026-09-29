@@ -4363,3 +4363,33 @@ msgstr "liens curriculaires examinés"
 #: model_terms:ir.ui.view,arch_db:facodi_learning.course_live_stats
 msgid "Published resources by format"
 msgstr "Ressources publiées par format"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_landing
+msgid "Browse by learning area."
+msgstr "Explorez par domaine d’apprentissage."
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_landing
+msgid "public learning areas organise the catalogue without hiding the courses behind them."
+msgstr "domaines publics d’apprentissage organisent le catalogue sans masquer les cours."
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_landing
+msgid "Explore learning areas →"
+msgstr "Explorer les domaines d’apprentissage →"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_landing
+msgid "See what the campus shared."
+msgstr "Voyez ce que le campus a partagé."
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_landing
+msgid "public community video drops are visible with their editorial review status."
+msgstr "vidéos publiques partagées par la communauté sont visibles avec leur statut de révision éditoriale."
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_landing
+msgid "Browse community videos →"
+msgstr "Explorer les vidéos de la communauté →"
