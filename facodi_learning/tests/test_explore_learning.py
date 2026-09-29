@@ -101,6 +101,17 @@ class TestExploreLearningWebsite(HttpCase):
                 "tag_ids": [Command.set([cls.lang_pt.id, cls.topic_sql.id])],
             }
         )
+        cls.public_non_preview = cls.env["slide.slide"].create(
+            {
+                "name": "Public course lesson",
+                "channel_id": cls.math_course.id,
+                "slide_category": "video",
+                "website_published": True,
+                "is_preview": False,
+                "total_views": 7,
+                "tag_ids": [Command.set([cls.lang_en.id])],
+            }
+        )
         cls.env["slide.slide"].create(
             {
                 "name": "Members secret",
@@ -175,7 +186,17 @@ class TestExploreLearningWebsite(HttpCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn("Algebra video", response.text)
         self.assertIn("SQL foundations", response.text)
+        self.assertIn("Public course lesson", response.text)
         self.assertNotIn("Members secret", response.text)
+
+        tree = html.fromstring(response.text)
+        live_stats = tree.xpath(
+            '//*[@data-facodi-live-stats="1"]//strong/text()'
+        )
+        self.assertGreaterEqual(len(live_stats), 4)
+        self.assertEqual(live_stats[0].strip(), "3")
+        self.assertEqual(live_stats[1].strip(), "2")
+        self.assertEqual(live_stats[2].strip(), "7")
         self.assertNotIn("Draft secret", response.text)
         self.assertNotIn("Other website secret", response.text)
 
@@ -200,6 +221,17 @@ class TestExploreLearningWebsite(HttpCase):
         search = self.url_open("/explore/content?" + urlencode({"q": "SQL"}))
         self.assertIn("SQL foundations", search.text)
         self.assertNotIn("Algebra video", search.text)
+
+    def test_public_course_stats_use_live_published_content(self):
+        stats = self.math_course._facodi_public_course_stats(self.website)
+        self.assertEqual(stats["resources"], 2)
+        self.assertEqual(stats["formats"], 1)
+        self.assertEqual(stats["views"], 7)
+        self.assertEqual(stats["curriculum_links"], 0)
+        self.assertEqual(
+            stats["format_rows"],
+            [{"key": "video", "label": "Video", "count": 2}],
+        )
 
     def test_content_pagination_preserves_public_boundary(self):
         for index in range(13):
