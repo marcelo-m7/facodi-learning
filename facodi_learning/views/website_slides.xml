@@ -22,6 +22,62 @@
         </xpath>
     </template>
 
+    <template id="course_live_stats" inherit_id="website_slides.course_main" name="Live course statistics">
+        <xpath expr="//div[@id='home']" position="inside">
+            <t t-set="facodi_course_stats" t-value="channel._facodi_public_course_stats(website)"/>
+            <section class="mt-4 mb-4 facodi-course-live-stats" data-facodi-course-live-stats="1" aria-label="Live course snapshot">
+                <div class="d-flex flex-wrap justify-content-between align-items-end gap-3 mb-3">
+                    <div>
+                        <p class="facodi-kicker mb-1">Live course snapshot</p>
+                        <h2 class="h4 mb-0">What is available right now</h2>
+                    </div>
+                    <span class="small text-muted">Calculated from published Odoo content</span>
+                </div>
+                <div class="row g-3">
+                    <div class="col-6 col-lg-3">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <strong class="display-6 d-block" t-esc="facodi_course_stats['resources']"/>
+                                <span class="small text-muted">published resources</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-lg-3">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <strong class="display-6 d-block" t-esc="facodi_course_stats['formats']"/>
+                                <span class="small text-muted">content formats</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-lg-3">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <strong class="display-6 d-block" t-esc="facodi_course_stats['curriculum_links']"/>
+                                <span class="small text-muted">reviewed curriculum links</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-lg-3">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <strong class="display-6 d-block" t-esc="facodi_course_stats['views']"/>
+                                <span class="small text-muted">resource views</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div t-if="facodi_course_stats['format_rows']" class="d-flex flex-wrap gap-2 mt-3" aria-label="Published resources by format">
+                    <span t-foreach="facodi_course_stats['format_rows']"
+                          t-as="format_row"
+                          class="badge rounded-pill text-bg-light border">
+                        <t t-esc="format_row['label']"/> · <t t-esc="format_row['count']"/>
+                    </span>
+                </div>
+            </section>
+        </xpath>
+    </template>
+
     <template id="course_contribution_cta" inherit_id="website_slides.course_main" name="Course contribution CTA">
         <xpath expr="//div[@id='home']" position="inside">
             <section class="mt-5 facodi-open-callout" aria-label="Contribute to FACODI">
