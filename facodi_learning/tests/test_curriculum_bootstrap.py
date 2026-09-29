@@ -73,6 +73,56 @@ class TestCurriculumBootstrap(TransactionCase):
             design_foundations_channel.slide_ids.tag_ids.mapped("name"),
         )
 
+        typography_channel = self.env.ref(
+            "__import__.facodi_ldcom_14541153"
+        )
+        art_history_channel = self.env.ref(
+            "__import__.facodi_ldcom_14541196"
+        )
+        self.assertTrue(typography_channel.is_published)
+        self.assertTrue(art_history_channel.is_published)
+        self.assertEqual(len(typography_channel.slide_ids), 20)
+        self.assertEqual(len(art_history_channel.slide_ids), 22)
+        self.assertFalse(
+            typography_channel.slide_ids.filtered(
+                lambda slide: "2AnSbALxoD8" in (slide.url or "")
+            )
+        )
+        self.assertFalse(
+            art_history_channel.slide_ids.filtered(
+                lambda slide: any(
+                    youtube_id in (slide.url or "")
+                    for youtube_id in ("lAAfjtnc7bI", "m62ZGavdj-8")
+                )
+            )
+        )
+
+        typography_dtm = first["1930"].unit_ids.filtered(
+            lambda unit: unit.external_unit_code == "19301007"
+        )
+        typography_ldcom = first["1454"].unit_ids.filtered(
+            lambda unit: unit.external_unit_code == "14541153"
+        )
+        art_history_ldcom = first["1454"].unit_ids.filtered(
+            lambda unit: unit.external_unit_code == "14541196"
+        )
+        for channel, unit in (
+            (typography_channel, typography_dtm),
+            (typography_channel, typography_ldcom),
+            (art_history_channel, art_history_ldcom),
+        ):
+            self.assertTrue(
+                self.env["facodi.learning.curriculum.coverage"].search(
+                    [
+                        ("channel_id", "=", channel.id),
+                        ("curriculum_unit_id", "=", unit.id),
+                        ("coverage_type", "=", "supports"),
+                        ("state", "=", "approved"),
+                    ],
+                    limit=1,
+                )
+            )
+
         editor_tag = self.env["slide.tag"].create({"name": "Editor-curated DTM tag"})
         interaction_channel.slide_ids[:1].write({"tag_ids": [(4, editor_tag.id)]})
         ensure_design_curricula_2026_27(self.env)
