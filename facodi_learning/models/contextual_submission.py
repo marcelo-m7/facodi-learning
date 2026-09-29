@@ -55,6 +55,7 @@ _SOURCE_CTA_LABELS = {
     "study_player_correction_cta": _lt("Lesson problem report"),
     "study_player_question_cta": _lt("Lesson question"),
     "explore_empty_shelf": _lt("Explore empty shelf"),
+    "explore_map_resource_cta": _lt("Explore learning map"),
     "area_resource_cta": _lt("Learning area resources"),
     "community_video_cta": _lt("Community videos"),
     "community_resource_cta": _lt("Community resource"),
