@@ -94,6 +94,57 @@ class SlideChannel(models.Model):
         return channel.search(domain, order="sequence, id", limit=8)
 
 
+    def _facodi_public_course_stats(self, website=None):
+        """Return live, public-safe course counters for the Website surface."""
+        self.ensure_one()
+        channel = self.sudo(False)
+        channel.check_access("read")
+
+        slide_domain = [
+            ("channel_id", "=", channel.id),
+            ("active", "=", True),
+            ("website_published", "=", True),
+        ]
+        if website:
+            slide_domain += [
+                "|",
+                ("website_id", "=", False),
+                ("website_id", "=", website.id),
+            ]
+
+        slides = self.env["slide.slide"].sudo().search(
+            slide_domain, order="sequence, id"
+        )
+        labels = dict(slides._fields["slide_category"].selection)
+        category_counts = {}
+        for slide in slides:
+            if not slide.slide_category:
+                continue
+            category_counts[slide.slide_category] = (
+                category_counts.get(slide.slide_category, 0) + 1
+            )
+
+        curriculum_links = channel._facodi_public_curriculum_links(website)
+        format_rows = [
+            {
+                "key": key,
+                "label": labels.get(key, key.replace("_", " ").title()),
+                "count": count,
+            }
+            for key, count in sorted(
+                category_counts.items(),
+                key=lambda item: (labels.get(item[0], item[0]), item[0]),
+            )
+        ]
+
+        return {
+            "resources": len(slides),
+            "formats": len(format_rows),
+            "format_rows": format_rows,
+            "views": sum(slides.mapped("total_views")),
+            "curriculum_links": len(curriculum_links),
+        }
+
     def _facodi_public_curriculum_links(self, website=None):
         """Return approved links from this published course to public official curricula."""
         self.ensure_one()
