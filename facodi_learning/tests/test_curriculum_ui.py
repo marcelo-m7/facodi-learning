@@ -140,7 +140,7 @@ class TestCurriculumUI(TransactionCase):
         self.assertEqual(menu.parent_id.parent_id, website.menu_id)
         self.assertEqual(menu.parent_id.url, "#")
         self.assertEqual(menu.parent_id.sequence, 10)
-        self.assertEqual(website.default_lang_id.code, "en_US")
+        self.assertEqual(website.default_lang_id.code, "en_GB")
         self.assertEqual(
             website.menu_id.child_id.sorted("sequence").mapped("name")[:5],
             ["Home", "Explore", "Community", "About", "Contact"],
@@ -149,7 +149,7 @@ class TestCurriculumUI(TransactionCase):
         for code in ("pt_PT", "es_ES", "fr_FR"):
             self.env["res.lang"]._activate_lang(code)
         website.language_ids = self.env["res.lang"].search(
-            [("code", "in", ["en_US", "pt_PT", "es_ES", "fr_FR"])]
+            [("code", "in", ["en_GB", "pt_PT", "es_ES", "fr_FR"])]
         )
         self.assertTrue(self.env["website.menu"].facodi_reconcile_navigation())
         expected_names = {
@@ -315,7 +315,7 @@ class TestCurriculumUI(TransactionCase):
             limit=1,
         )
         self.assertTrue(explore)
-        self.assertEqual(explore.with_context(lang="en_US").name, "Explore")
+        self.assertEqual(explore.with_context(lang="en_GB").name, "Explore")
         courses = Menu.search(
             [
                 ("website_id", "=", website.id),
