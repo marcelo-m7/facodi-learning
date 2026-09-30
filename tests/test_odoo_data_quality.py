@@ -41,6 +41,18 @@ class OdooDataQualityTest(unittest.TestCase):
                     f"{relative_path} declares duplicate external IDs: {duplicates}",
                 )
 
+    def test_github_actions_are_commit_pinned(self):
+        workflow = (ROOT / ".github" / "workflows" / "ci.yml").read_text(
+            encoding="utf-8"
+        )
+        for expected in (
+            "actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+            "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+        ):
+            self.assertIn(expected, workflow)
+        self.assertNotIn("actions/checkout@v4", workflow)
+        self.assertNotIn("actions/upload-artifact@v4", workflow)
+
     def test_access_control_csv_has_unique_external_ids(self):
         path = ADDON / "security" / "ir.model.access.csv"
         with path.open(encoding="utf-8", newline="") as handle:
