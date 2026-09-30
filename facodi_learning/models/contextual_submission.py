@@ -51,6 +51,7 @@ _SOURCE_CTA_LABELS = {
     "course_resource_cta": _lt("Course resources"),
     "course_contact_cta": _lt("Course contribution"),
     "course_catalog_cta": _lt("Course catalogue"),
+    "course_gap": _lt("Course coverage gap"),
     "study_player_resource_cta": _lt("Lesson resources"),
     "study_player_correction_cta": _lt("Lesson problem report"),
     "study_player_question_cta": _lt("Lesson question"),
