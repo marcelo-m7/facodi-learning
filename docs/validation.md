@@ -95,8 +95,14 @@ credit-recognition workflow or second course/prerequisite model.
   `slide.channel.prerequisite_channel_ids`.
 - Public/Portal still cannot read curriculum audit models directly; version 19.0.1.7.0
   adds a narrow public route for validated, explicitly published references only.
-- No live curriculum scraper, scheduled sync or AI matcher is bundled. The LESTI
-  fixture is curated source evidence and creates no automatic coverage decisions.
+- Official curriculum sources may be checked manually by an eLearning Manager or by
+  the bounded daily cron when a source is explicitly opted in. The HTTP boundary is
+  HTTPS/UAlg-only, validates public DNS and redirects, and caps timeout/response size.
+  Unchanged checks update verification evidence; changed sources create a new private
+  draft; failures preserve the previously reviewed/published reference. Verification
+  never validates, publishes or creates curriculum coverage decisions automatically.
+- No AI curriculum matcher is bundled. The LESTI fixture remains curated source
+  evidence and creates no automatic coverage decisions.
 
 Release version: `19.0.1.5.0`. The final exact-head CI for the version/documentation
 head must pass the same clean-install and upgrade gates before the pull request is
