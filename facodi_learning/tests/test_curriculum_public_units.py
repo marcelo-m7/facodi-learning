@@ -202,7 +202,7 @@ class TestCurriculumPublicUnits(TransactionCase):
         )
         self.assertEqual(
             lesti_entry["reference_url"],
-            f"/roadmaps/{self.reference.id}",
+            self.reference._facodi_public_path(),
         )
         programming = next(
             entry
