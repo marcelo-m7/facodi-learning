@@ -160,7 +160,7 @@ class FacodiCustomerPortal(CustomerPortal):
                 )
             academic_map = {
                 "reference": roadmap,
-                "url": f"/roadmaps/{roadmap.id}",
+                "url": roadmap._facodi_public_path(),
                 "counts": counts,
                 "preview": preview[:8],
                 "total": len(matrix),

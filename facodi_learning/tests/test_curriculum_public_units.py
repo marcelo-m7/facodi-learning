@@ -37,11 +37,23 @@ class TestCurriculumPublicUnits(TransactionCase):
         coverage.action_approve()
         return coverage
 
+    def test_public_reference_path_is_stable_versioned_and_db_id_free(self):
+        path = self.reference._facodi_public_path()
+        self.assertEqual(
+            path,
+            "/roadmaps/universidade-do-algarve/1941/2026-27/r1",
+        )
+        self.assertEqual(
+            self.reference._facodi_public_year_path(),
+            "/roadmaps/universidade-do-algarve/1941/2026-27",
+        )
+        self.assertNotIn(f"/{self.reference.id}/", path + "/")
+
     def test_public_unit_path_requires_public_validated_reference(self):
         path = self.database_unit._facodi_public_path()
         self.assertEqual(
             path,
-            f"/roadmaps/{self.reference.id}/units/19411017",
+            "/roadmaps/universidade-do-algarve/1941/2026-27/r1/units/19411017",
         )
 
         self.reference.action_archive()
@@ -85,7 +97,7 @@ class TestCurriculumPublicUnits(TransactionCase):
         self.assertEqual(row["published_course_count"], 2)
         self.assertEqual(
             row["unit_url"],
-            f"/roadmaps/{self.reference.id}/units/19411000",
+            "/roadmaps/universidade-do-algarve/1941/2026-27/r1/units/19411000",
         )
 
         gap = next(
@@ -158,7 +170,7 @@ class TestCurriculumPublicUnits(TransactionCase):
         self.assertEqual(programming["published_course_count"], 1)
         self.assertEqual(
             programming["unit_url"],
-            f"/curricular-units/{self.reference.id}/19411000-programacao",
+            "/roadmaps/universidade-do-algarve/1941/2026-27/r1/units/19411000",
         )
         self.assertNotIn(
             "PRIVATE-001",
@@ -190,7 +202,7 @@ class TestCurriculumPublicUnits(TransactionCase):
         )
         self.assertEqual(
             lesti_entry["reference_url"],
-            f"/roadmaps/{self.reference.id}",
+            self.reference._facodi_public_path(),
         )
         programming = next(
             entry
