@@ -39,8 +39,12 @@ class _TableParser(HTMLParser):
 def parse_ualg_course_plan(raw, *, academic_year, source_url):
     if not re.fullmatch(r"20\d{2}/\d{2}", academic_year or ""):
         raise CurriculumParseError("Academic year must use YYYY/YY format.")
-    try: html = bytes(raw).decode("utf-8")
-    except Exception as error: raise CurriculumParseError("Curriculum response is not UTF-8 HTML.") from error
+    try:
+        html = bytes(raw).decode("utf-8")
+    except (TypeError, UnicodeDecodeError) as error:
+        raise CurriculumParseError(
+            "Curriculum response is not UTF-8 HTML."
+        ) from error
     parser = _TableParser(); parser.feed(html)
     if academic_year not in html: raise CurriculumParseError("Academic year is not present in the official page.")
     code = re.search(r"/curso/([^/]+)/", urlparse(source_url).path + "/")
