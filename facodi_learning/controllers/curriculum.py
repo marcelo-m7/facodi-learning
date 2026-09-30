@@ -12,10 +12,40 @@ class FacodiCurriculumController(http.Controller):
                 [
                     ("website_published", "=", True),
                     ("validated_at", "!=", False),
+                    "|",
+                    ("source_id", "=", False),
+                    ("source_id.website_id", "in", [False, request.website.id]),
                 ],
-                order="institution, programme_name, academic_year desc, id",
+                order="institution, programme_name, academic_year desc, revision desc, id desc",
             )
         )
+
+    @classmethod
+    def _public_reference_by_route(
+        cls,
+        institution_slug,
+        programme_slug,
+        academic_year_slug,
+        revision_token=None,
+    ):
+        candidates = cls._public_references()
+        expected_year_path = "/roadmaps/%s/%s/%s" % (
+            institution_slug,
+            programme_slug,
+            academic_year_slug,
+        )
+        matching = candidates.filtered(
+            lambda reference: reference._facodi_public_year_path() == expected_year_path
+        )
+        if revision_token is None:
+            return matching.sorted(
+                key=lambda reference: (reference.revision, reference.id),
+                reverse=True,
+            )[:1]
+        expected_path = "%s/%s" % (expected_year_path, revision_token)
+        return matching.filtered(
+            lambda reference: reference._facodi_public_path() == expected_path
+        )[:1]
 
     @staticmethod
     def _positive_integer(value):
@@ -114,24 +144,25 @@ class FacodiCurriculumController(http.Controller):
         )
 
     @http.route(
-        "/roadmaps/<int:reference_id>",
+        "/roadmaps/<string:institution_slug>/<string:programme_slug>/<string:academic_year_slug>/<string:revision_token>",
         type="http",
         auth="public",
         website=True,
         sitemap=True,
     )
-    def roadmap_detail(self, reference_id, **kwargs):
-        reference = (
-            request.env["facodi.learning.curriculum.reference"]
-            .sudo()
-            .search(
-                [
-                    ("id", "=", reference_id),
-                    ("website_published", "=", True),
-                    ("validated_at", "!=", False),
-                ],
-                limit=1,
-            )
+    def roadmap_detail(
+        self,
+        institution_slug,
+        programme_slug,
+        academic_year_slug,
+        revision_token,
+        **kwargs,
+    ):
+        reference = self._public_reference_by_route(
+            institution_slug,
+            programme_slug,
+            academic_year_slug,
+            revision_token,
         )
         if not reference:
             return request.not_found()
@@ -178,6 +209,44 @@ class FacodiCurriculumController(http.Controller):
         )
 
     @http.route(
+        "/roadmaps/<string:institution_slug>/<string:programme_slug>/<string:academic_year_slug>",
+        type="http",
+        auth="public",
+        website=True,
+        sitemap=False,
+    )
+    def roadmap_current_revision(
+        self,
+        institution_slug,
+        programme_slug,
+        academic_year_slug,
+        **kwargs,
+    ):
+        reference = self._public_reference_by_route(
+            institution_slug,
+            programme_slug,
+            academic_year_slug,
+        )
+        if not reference:
+            return request.not_found()
+        return request.redirect(reference._facodi_public_path(), code=302)
+
+    @http.route(
+        "/roadmaps/<int:reference_id>",
+        type="http",
+        auth="public",
+        website=True,
+        sitemap=False,
+    )
+    def legacy_roadmap_detail(self, reference_id, **kwargs):
+        reference = self._public_references().filtered(
+            lambda item: item.id == reference_id
+        )[:1]
+        if not reference:
+            return request.not_found()
+        return request.redirect(reference._facodi_public_path(), code=301)
+
+    @http.route(
         "/curriculos/<int:reference_id>",
         type="http",
         auth="public",
@@ -185,27 +254,34 @@ class FacodiCurriculumController(http.Controller):
         sitemap=False,
     )
     def legacy_curriculum_detail(self, reference_id, **kwargs):
-        return request.redirect("/roadmaps/%s" % reference_id, code=301)
+        reference = self._public_references().filtered(
+            lambda item: item.id == reference_id
+        )[:1]
+        if not reference:
+            return request.not_found()
+        return request.redirect(reference._facodi_public_path(), code=301)
 
     @http.route(
-        "/roadmaps/<int:reference_id>/units/<path:unit_code>",
+        "/roadmaps/<string:institution_slug>/<string:programme_slug>/<string:academic_year_slug>/<string:revision_token>/units/<path:unit_code>",
         type="http",
         auth="public",
         website=True,
         sitemap=True,
     )
-    def roadmap_unit_detail(self, reference_id, unit_code, **kwargs):
-        reference = (
-            request.env["facodi.learning.curriculum.reference"]
-            .sudo()
-            .search(
-                [
-                    ("id", "=", reference_id),
-                    ("website_published", "=", True),
-                    ("validated_at", "!=", False),
-                ],
-                limit=1,
-            )
+    def roadmap_unit_detail(
+        self,
+        institution_slug,
+        programme_slug,
+        academic_year_slug,
+        revision_token,
+        unit_code,
+        **kwargs,
+    ):
+        reference = self._public_reference_by_route(
+            institution_slug,
+            programme_slug,
+            academic_year_slug,
+            revision_token,
         )
         if not reference:
             return request.not_found()
@@ -234,9 +310,17 @@ class FacodiCurriculumController(http.Controller):
         sitemap=False,
     )
     def legacy_curriculum_unit_detail(self, reference_id, unit_code, **kwargs):
-        return request.redirect(
-            "/roadmaps/%s/units/%s" % (reference_id, unit_code), code=301
-        )
+        reference = self._public_references().filtered(
+            lambda item: item.id == reference_id
+        )[:1]
+        if not reference:
+            return request.not_found()
+        unit = reference.unit_ids.filtered(
+            lambda item: item.external_unit_code == unit_code
+        )[:1]
+        if not unit:
+            return request.not_found()
+        return request.redirect(unit._facodi_public_path(), code=301)
 
     @http.route(
         "/curricular-units/<int:reference_id>/<path:unit_slug>",
