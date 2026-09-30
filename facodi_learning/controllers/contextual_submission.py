@@ -341,6 +341,9 @@ class FacodiContextualSubmissionController(FacodiSubmissionController):
             "closing_cta": request.env._(
                 "I found a useful public resource and want to leave it on the FACODI learning trail."
             ),
+            "about_resource_cta": request.env._(
+                "I found a public learning resource that fits the FACODI open-learning mission."
+            ),
         }
         if not form_values["context"] and submission_type == "resource":
             form_values["context"] = " ".join(
@@ -421,6 +424,7 @@ class FacodiContextualSubmissionController(FacodiSubmissionController):
         section_labels = {
             "header": request.env._("Main navigation"),
             "homepage": request.env._("Homepage"),
+            "about": request.env._("About FACODI"),
             "explore": request.env._("Explore"),
             "resources": request.env._("Learning resources"),
             "explore-areas": request.env._("Learning areas"),
