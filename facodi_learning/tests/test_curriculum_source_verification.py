@@ -5,6 +5,7 @@ from odoo.exceptions import AccessError
 from odoo.tests import TransactionCase
 
 from ..services.curriculum import CurriculumFetchError
+from ..services.curriculum.fetch import DEFAULT_TIMEOUT, MAX_RESPONSE_BYTES
 
 
 HTML_V1 = b"""
@@ -193,6 +194,29 @@ class TestCurriculumSourceVerification(TransactionCase):
         self.assertFalse(disabled.last_attempt_at)
         self.assertTrue(enabled.last_attempt_at)
         self.assertEqual(enabled.last_check_status, "changed")
+
+    def test_http_fetch_limits_are_bounded(self):
+        self.assertLessEqual(DEFAULT_TIMEOUT, 15)
+        self.assertLessEqual(MAX_RESPONSE_BYTES, 2 * 1024 * 1024)
+
+    def test_daily_cron_prioritizes_never_checked_sources(self):
+        older = self._source("cron-old", verification_enabled=True)
+        older.write({"last_attempt_at": "2026-09-29 12:00:00"})
+        never = self._source("cron-never", verification_enabled=True)
+        self.env["ir.config_parameter"].sudo().set_param(
+            "facodi_learning.curriculum_verify_batch_size",
+            "1",
+        )
+
+        with self._fetch(HTML_V1):
+            self.env["facodi.learning.curriculum.source"]._cron_verify_enabled_sources()
+
+        older.invalidate_recordset()
+        never.invalidate_recordset()
+        self.assertEqual(older.last_check_status, "never")
+        self.assertFalse(older.current_reference_id)
+        self.assertEqual(never.last_check_status, "changed")
+        self.assertTrue(never.current_reference_id)
 
     def test_http_policy_rejects_non_https_and_non_ualg_hosts_before_network(self):
         from ..services.curriculum import fetch_official_curriculum
