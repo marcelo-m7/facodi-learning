@@ -1,21 +1,24 @@
 # Validation — 2026-09-20
 
-## 19.0.1.7.0 — Public curriculum golden path
+## 19.0.1.135.0 — Draft-only LESTI bootstrap
 
-The release intentionally changes one earlier M3.4 invariant: instead of shipping
-zero curriculum rows forever, installation/upgrade now reconciles exactly one reviewed
-external reference — UAlg LESTI 2026/27 — from the versioned fixture
-`facodi_learning/data/lesti_2026_27.json`.
+Installation/upgrade reconciles the curated UAlg LESTI 2026/27 source facts from the
+versioned fixture `facodi_learning/data/lesti_2026_27.json`, but bootstrap no longer
+performs editorial review decisions.
 
 The release gate requires:
-- exactly one `ualg / ualg-1941-2026-27` reference;
-- programme code `1941`, academic year `2026/27`, validated/public state;
+- exactly one `ualg / ualg-1941-2026-27` reference for the curated identity;
+- programme code `1941`, academic year `2026/27`;
+- a newly bootstrapped reference remains `draft`, unvalidated and unpublished;
+- replay/upgrade preserves a reference that was already explicitly validated/published;
 - 43 distinct curricular-unit codes from the official study-plan source;
-- zero automatically-created `facodi.learning.curriculum.coverage` decisions;
+- zero automatically-created LESTI `facodi.learning.curriculum.coverage` decisions;
+- no invented byte-level checksum: the fixture records the official source URL,
+  verification date and the provenance actually available;
 - preservation of pre-M3.4 standard courses, content, prerequisites, analysis history,
   approved content mappings and approved course mappings;
-- public curriculum routes expose only validated and explicitly published references;
-- approved curriculum links on course pages require Manager-reviewed coverage.
+- public curriculum routes expose only references later validated and explicitly
+  published by an eLearning Manager.
 
 This is a deliberate product milestone and not a claim of UAlg academic equivalence,
 credit recognition or automatic syllabus matching. `slide.channel` remains the only
