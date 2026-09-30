@@ -3,7 +3,7 @@ from odoo.tests import TransactionCase
 
 
 class TestCurriculumReleaseInvariants(TransactionCase):
-    def test_release_bootstraps_only_validated_lesti_reference(self):
+    def test_release_bootstraps_lesti_reference_as_private_draft(self):
         Reference = self.env["facodi.learning.curriculum.reference"]
         Unit = self.env["facodi.learning.curriculum.unit"]
         Coverage = self.env["facodi.learning.curriculum.coverage"]
@@ -15,8 +15,9 @@ class TestCurriculumReleaseInvariants(TransactionCase):
         self.assertEqual(reference.external_id, "ualg-1941-2026-27")
         self.assertEqual(reference.external_programme_code, "1941")
         self.assertEqual(reference.academic_year, "2026/27")
-        self.assertTrue(reference.validated_at)
-        self.assertTrue(reference.website_published)
+        self.assertEqual(reference.state, "draft")
+        self.assertFalse(reference.validated_at)
+        self.assertFalse(reference.website_published)
 
         units = Unit.search([("reference_id", "=", reference.id)])
         self.assertEqual(len(units), 43)
