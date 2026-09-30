@@ -1,3 +1,4 @@
+import ast
 from pathlib import Path
 
 from odoo.tests.common import TransactionCase
@@ -111,6 +112,35 @@ class TestContextualSubmissionStaticContracts(TransactionCase):
             controller.index("elif suggested_slide:"),
             controller.index("elif course:", controller.index("elif suggested_slide:")),
         )
+
+    def test_unexpected_controller_failures_are_logged_without_payload_values(self):
+        controller = self._read("controllers/contextual_submission.py")
+        self.assertIn("_logger = logging.getLogger(__name__)", controller)
+        self.assertIn(
+            "Unexpected FACODI public metadata discovery failure",
+            controller,
+        )
+        self.assertIn(
+            "Unexpected FACODI contextual submission create failure",
+            controller,
+        )
+
+        tree = ast.parse(controller)
+        calls = [
+            node
+            for node in ast.walk(tree)
+            if isinstance(node, ast.Call)
+            and isinstance(node.func, ast.Attribute)
+            and isinstance(node.func.value, ast.Name)
+            and node.func.value.id == "_logger"
+            and node.func.attr == "exception"
+        ]
+        self.assertEqual(len(calls), 2)
+        for call in calls:
+            self.assertEqual(len(call.args), 1)
+            self.assertIsInstance(call.args[0], ast.Constant)
+            self.assertIsInstance(call.args[0].value, str)
+            self.assertFalse(call.keywords)
 
     def test_template_has_contextual_form_contract(self):
         template = self._read("views/website_contextual_submission.xml")
