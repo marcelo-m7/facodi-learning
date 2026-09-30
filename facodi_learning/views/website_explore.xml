@@ -412,7 +412,7 @@
             <t t-elif="content_type == 'roadmaps'">
                 <div class="row g-3">
                     <div t-foreach="records" t-as="reference" class="col-12 col-md-6 col-lg-4">
-                        <a t-att-href="'/roadmaps/%s' % reference.id" class="facodi-sheet facodi-home-fragment-card facodi-home-roadmap-card">
+                        <a t-att-href="reference._facodi_public_path()" class="facodi-sheet facodi-home-fragment-card facodi-home-roadmap-card">
                             <p class="facodi-label">Roadmap</p>
                             <h3 t-esc="reference.programme_name"/>
                             <p class="mb-2"><t t-esc="reference.institution"/> · <t t-esc="reference.academic_year"/></p>
