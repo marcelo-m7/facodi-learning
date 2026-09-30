@@ -210,6 +210,27 @@ class TestWebsiteI18nContract(unittest.TestCase):
                 self.assertIn(f'msgid "{source}"', catalogue)
                 self.assertIn(f'msgstr "{translated}"', catalogue)
 
+    def test_portal_home_portuguese_translation_is_complete(self):
+        portal = (MODULE_ROOT / "views" / "portal_home.xml").read_text()
+        catalogue = (I18N_DIR / "pt.po").read_text()
+        expected = {
+            "My FACODI": "MINHA FACODI",
+            "Your campus // your tabs // your pace": "O teu campus // os teus separadores // o teu ritmo",
+            "Keep learning": "Continuar a aprender",
+            "Course": "Curso",
+            "Next tab": "Próximo separador",
+            "Academic map": "Mapa académico",
+            "Open full roadmap": "Abrir percurso completo",
+            "What people are talking about": "O que a comunidade está a discutir",
+            "Open community": "Abrir comunidade",
+            "Your FACODI toolbox": "A tua caixa de ferramentas FACODI",
+        }
+        self.assertIn("My FACODI", portal)
+        self.assertNotIn(">MINHA FACODI<", portal)
+        for source, translated in expected.items():
+            self.assertIn(f'msgid "{source}"', catalogue)
+            self.assertIn(f'msgstr "{translated}"', catalogue)
+
     def test_submission_processing_trace_labels_are_translated(self):
         expected = {
             "pt": {
