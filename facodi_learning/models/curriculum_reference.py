@@ -515,16 +515,7 @@ class FacodiLearningCurriculumUnit(models.Model):
 
     def _facodi_public_catalog_path(self):
         self.ensure_one()
-        if not self.reference_id._facodi_is_public():
-            return False
-        normalized_name = unicodedata.normalize("NFKD", self.name or "")
-        normalized_name = normalized_name.encode("ascii", "ignore").decode("ascii")
-        readable_name = re.sub(r"[^a-z0-9]+", "-", normalized_name.lower()).strip("-")
-        return "/curricular-units/%s/%s-%s" % (
-            self.reference_id.id,
-            quote(self.external_unit_code or "", safe=""),
-            readable_name or "curricular-unit",
-        )
+        return self._facodi_public_path()
 
     @api.model
     def _facodi_public_catalog_entries(
