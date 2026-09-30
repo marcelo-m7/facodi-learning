@@ -41,6 +41,21 @@ class OdooDataQualityTest(unittest.TestCase):
                     f"{relative_path} declares duplicate external IDs: {duplicates}",
                 )
 
+    def test_curriculum_verification_documentation_matches_runtime(self):
+        validation = (ROOT / "docs" / "validation.md").read_text(encoding="utf-8")
+        source = (
+            ADDON / "models" / "curriculum_source.py"
+        ).read_text(encoding="utf-8")
+
+        self.assertIn("def _cron_verify_enabled_sources", source)
+        self.assertIn("def action_verify_now", source)
+        self.assertIn("explicitly opted in", validation)
+        self.assertIn("changed sources create a new private", validation)
+        self.assertNotIn(
+            "No live curriculum scraper, scheduled sync or AI matcher is bundled",
+            validation,
+        )
+
     def test_github_actions_are_commit_pinned(self):
         workflow = (ROOT / ".github" / "workflows" / "ci.yml").read_text(
             encoding="utf-8"
