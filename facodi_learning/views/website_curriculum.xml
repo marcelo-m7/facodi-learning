@@ -37,7 +37,7 @@
                                                 <t t-esc="reference.institution"/> · <t t-esc="reference.academic_year"/>
                                             </p>
                                             <h2 class="h4 facodi-record-card__title">
-                                                <a t-att-href="'/roadmaps/%s' % reference.id" class="text-decoration-none">
+                                                <a t-att-href="reference._facodi_public_path()" class="text-decoration-none">
                                                     <t t-esc="reference.programme_name"/>
                                                 </a>
                                             </h2>
@@ -400,7 +400,7 @@
                                 <span class="text-muted mx-1">/</span>
                                 <a href="/curricular-units" class="text-decoration-none">Curricular units</a>
                                 <span class="text-muted mx-1">/</span>
-                                <a t-att-href="'/roadmaps/%s' % reference.id" class="text-decoration-none"><t t-esc="reference.programme_name"/></a>
+                                <a t-att-href="reference._facodi_public_path()" class="text-decoration-none"><t t-esc="reference.programme_name"/></a>
                                 <span class="text-muted mx-1">/</span>
                                 <span t-esc="unit.external_unit_code"/>
                             </nav>

@@ -369,7 +369,7 @@ class FacodiContextualSubmissionController(FacodiSubmissionController):
             return_url = curriculum_unit._facodi_public_catalog_path() or curriculum_unit._facodi_public_path()
             return_label = request.env._("Back to curricular unit")
         elif not return_url and roadmap:
-            return_url = "/roadmaps/%s" % roadmap.id
+            return_url = roadmap._facodi_public_path()
             return_label = request.env._("Back to roadmap")
         elif not return_url and module:
             return_url = module._facodi_public_path()
