@@ -1,3 +1,4 @@
+import logging
 import re
 from urllib.parse import urlencode, urlsplit
 
@@ -8,6 +9,9 @@ from odoo.http import request
 from . import submission as submission_controller
 from .submission import FacodiSubmissionController
 from ..services.youtube import youtube_video_identity
+
+
+_logger = logging.getLogger(__name__)
 
 
 class FacodiContextualSubmissionController(FacodiSubmissionController):
@@ -624,6 +628,9 @@ class FacodiContextualSubmissionController(FacodiSubmissionController):
                 except submission_controller.MetadataDiscoveryRateLimited:
                     discovered = False
                 except Exception:
+                    _logger.exception(
+                        "Unexpected FACODI public metadata discovery failure"
+                    )
                     discovered = False
                 if discovered and discovered.get("supported"):
                     values["source_url"] = discovered.get("canonical_url") or source_url
@@ -694,6 +701,9 @@ class FacodiContextualSubmissionController(FacodiSubmissionController):
             )
             return self._render_submission_form(context)
         except Exception:
+            _logger.exception(
+                "Unexpected FACODI contextual submission create failure"
+            )
             context.update(
                 {
                     "form_values": values,
