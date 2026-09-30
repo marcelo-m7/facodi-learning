@@ -269,7 +269,12 @@
                                 </div>
 
                                 <div class="d-flex flex-wrap gap-2">
-                                    <button type="submit" class="btn btn-primary">Send to the review desk</button>
+                                    <button type="submit" class="btn btn-primary">
+                                        <t t-if="submission_type == 'contact'">Send message</t>
+                                        <t t-elif="submission_type == 'resource' and form_values.get('resource_type') == 'video'">Share video</t>
+                                        <t t-elif="submission_type == 'resource'">Submit resource</t>
+                                        <t t-else="">Send submission</t>
+                                    </button>
                                     <a t-att-href="return_url" class="btn btn-outline-secondary"><t t-esc="return_label"/></a>
                                 </div>
                             </form>
@@ -280,8 +285,9 @@
                                     <h2 class="h5">What happens next?</h2>
                                     <ol class="mb-0">
                                         <li>FACODI receives the structured submission.</li>
-                                        <li>The team reviews relevance, provenance and safety.</li>
-                                        <li>Accepted resources may later enter the editorial pipeline.</li>
+                                        <li t-if="submission_type == 'resource' and form_values.get('resource_type') == 'video'">A valid public YouTube video is immediately visible in Community videos; editorial review is not required for that community listing.</li>
+                                        <li>The team may still review relevance, provenance and safety for later curation.</li>
+                                        <li t-if="submission_type == 'resource'">Accepted resources may later enter the editorial learning pipeline.</li>
                                     </ol>
                                 </div>
                             </div>
