@@ -120,7 +120,10 @@ class TestWebsiteI18nContract(unittest.TestCase):
         status_and_management = SUBMISSION_TEMPLATE.read_text()
 
         self.assertIn("Suggest a learning resource", contextual)
-        self.assertIn("Send to the review desk", contextual)
+        self.assertIn("Send message", contextual)
+        self.assertIn("Share video", contextual)
+        self.assertIn("Submit resource", contextual)
+        self.assertIn("immediately visible in Community videos", contextual)
         self.assertIn("Submission received", status_and_management)
         self.assertIn("Waiting for editorial review.", status_and_management)
         self.assertNotIn("Sugerir um recurso de aprendizagem", contextual)
