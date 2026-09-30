@@ -1,11 +1,13 @@
 import logging
 
-from odoo import _, fields, models
+from odoo import _, api, fields, models
 from odoo.exceptions import AccessError, ValidationError
 
 from ..services.curriculum import (
+    CurriculumFetchError,
     CurriculumParseError,
     canonical_payload_hash,
+    fetch_official_curriculum,
     parse_ualg_course_plan,
 )
 
@@ -16,6 +18,8 @@ _logger = logging.getLogger(__name__)
 class CurriculumSource(models.Model):
     _name = "facodi.learning.curriculum.source"
     _description = "Official curriculum source"
+    _inherit = ["mail.thread", "mail.activity.mixin"]
+    _rec_name = "programme_name"
 
     provider = fields.Char(required=True, default="ualg")
     external_id = fields.Char(required=True)
@@ -25,10 +29,237 @@ class CurriculumSource(models.Model):
     academic_year = fields.Char(required=True)
     source_url = fields.Char(required=True)
     website_id = fields.Many2one("website", required=True, ondelete="restrict")
-    checked_at = fields.Datetime(readonly=True)
+    verification_enabled = fields.Boolean(
+        default=False,
+        help="Opt in this source to the bounded daily verification cron.",
+    )
+    responsible_id = fields.Many2one(
+        "res.users",
+        default=lambda self: self.env.user,
+        domain=[("share", "=", False)],
+        help="Internal user responsible for source-verification activities.",
+    )
+    checked_at = fields.Datetime(
+        readonly=True,
+        help="Last successful source verification.",
+    )
+    last_attempt_at = fields.Datetime(readonly=True)
+    last_check_status = fields.Selection(
+        [
+            ("never", "Never checked"),
+            ("ok", "No change"),
+            ("changed", "Change detected"),
+            ("failed", "Failed"),
+        ],
+        default="never",
+        required=True,
+        readonly=True,
+    )
+    last_check_error = fields.Text(readonly=True)
     current_reference_id = fields.Many2one("facodi.learning.curriculum.reference", readonly=True)
     reference_ids = fields.One2many("facodi.learning.curriculum.reference", "source_id")
     capture_ids = fields.One2many("facodi.learning.curriculum.capture", "source_id")
+
+    def _require_manager(self):
+        if not self.env.su and not self.env.user.has_group(
+            "website_slides.group_website_slides_manager"
+        ):
+            raise AccessError(_("Only eLearning Managers can verify curriculum sources."))
+
+    def _problem_activity(self, problem):
+        self.ensure_one()
+        summaries = {
+            "changed": "Review changed FACODI curriculum source",
+            "failed": "Review failed FACODI curriculum source check",
+        }
+        summary = summaries[problem]
+        todo = self.env.ref("mail.mail_activity_data_todo")
+        return self.activity_ids.filtered(
+            lambda activity: (
+                activity.activity_type_id == todo
+                and activity.summary == summary
+            )
+        )[:1]
+
+    def _ensure_problem_activity(self, problem, note):
+        self.ensure_one()
+        if self._problem_activity(problem):
+            return False
+        user = self.responsible_id
+        if not user or not user.active or user.share:
+            user = self.env.user
+        if user.share:
+            user = self.env.ref("base.user_admin")
+        summaries = {
+            "changed": "Review changed FACODI curriculum source",
+            "failed": "Review failed FACODI curriculum source check",
+        }
+        return self.activity_schedule(
+            "mail.mail_activity_data_todo",
+            user_id=user.id,
+            summary=summaries[problem],
+            note=note,
+        )
+
+    def _clear_problem_activity(self, problem):
+        self.ensure_one()
+        activity = self._problem_activity(problem)
+        if activity:
+            activity.unlink()
+
+    def _record_check_failure(self, message, *, create_capture=False):
+        self.ensure_one()
+        if create_capture:
+            self.env["facodi.learning.curriculum.capture"].create(
+                {
+                    "source_id": self.id,
+                    "status": "failed",
+                    "error": message,
+                }
+            )
+        self.write(
+            {
+                "last_attempt_at": fields.Datetime.now(),
+                "last_check_status": "failed",
+                "last_check_error": message,
+            }
+        )
+        self._ensure_problem_activity(
+            "failed",
+            _(
+                "The official curriculum source could not be verified. "
+                "The previously reviewed/published reference was preserved. "
+                "Review the source configuration and server logs before retrying."
+            ),
+        )
+        return "failed"
+
+    def _verify_source_once(self):
+        self.ensure_one()
+        locked = self.try_lock_for_update()
+        if not locked:
+            return "skipped"
+        source = locked
+        source.invalidate_recordset()
+        previous = source.current_reference_id
+        try:
+            raw, _final_url = fetch_official_curriculum(source.source_url)
+        except CurriculumFetchError as error:
+            return source._record_check_failure(str(error), create_capture=True)
+        try:
+            reference = source._import_raw(raw)
+        except ValidationError as error:
+            return source._record_check_failure(str(error), create_capture=False)
+        except Exception:
+            _logger.exception(
+                "Unexpected curriculum verification failure for source %s",
+                source.id,
+            )
+            return source._record_check_failure(
+                _(
+                    "The curriculum verification failed unexpectedly. "
+                    "Please review the server logs."
+                ),
+                create_capture=True,
+            )
+
+        changed = not previous or reference != previous
+        source.write(
+            {
+                "last_attempt_at": fields.Datetime.now(),
+                "last_check_status": "changed" if changed else "ok",
+                "last_check_error": False,
+            }
+        )
+        source._clear_problem_activity("failed")
+        if changed:
+            source._ensure_problem_activity(
+                "changed",
+                _(
+                    "The official curriculum source changed. A new draft reference "
+                    "was created. Review and validate it explicitly before publication."
+                ),
+            )
+        return "changed" if changed else "ok"
+
+    def action_verify_now(self):
+        self._require_manager()
+        statuses = [source._verify_source_once() for source in self]
+        if len(self) == 1:
+            status = statuses[0]
+            labels = {
+                "ok": _("No curriculum change detected."),
+                "changed": _("A curriculum change was detected and stored as draft."),
+                "failed": _("Curriculum verification failed; review the pending activity."),
+                "skipped": _("Curriculum verification is already running."),
+            }
+            return {
+                "type": "ir.actions.client",
+                "tag": "display_notification",
+                "params": {
+                    "title": _("Curriculum source verification"),
+                    "message": labels[status],
+                    "type": "warning" if status == "failed" else "success",
+                    "sticky": status in {"changed", "failed"},
+                },
+            }
+        return True
+
+    @api.model
+    def _cron_verify_enabled_sources(self):
+        parameter = (
+            self.env["ir.config_parameter"]
+            .sudo()
+            .get_param("facodi_learning.curriculum_verify_batch_size", "10")
+        )
+        try:
+            batch_size = max(1, min(int(parameter), 50))
+        except (TypeError, ValueError):
+            batch_size = 10
+
+        domain = [("verification_enabled", "=", True)]
+        Source = self.sudo()
+        never_checked = Source.search(
+            domain + [("last_attempt_at", "=", False)],
+            limit=batch_size,
+            order="id",
+        )
+        sources = never_checked
+        missing = batch_size - len(sources)
+        if missing:
+            sources |= Source.search(
+                domain + [("last_attempt_at", "!=", False)],
+                limit=missing,
+                order="last_attempt_at, id",
+            )
+        remaining = Source.search_count(domain)
+        for source in sources:
+            try:
+                with self.env.cr.savepoint():
+                    source._verify_source_once()
+            except Exception:
+                _logger.exception(
+                    "Unhandled curriculum cron failure for source %s",
+                    source.id,
+                )
+                try:
+                    source._record_check_failure(
+                        _(
+                            "The curriculum verification failed unexpectedly. "
+                            "Please review the server logs."
+                        ),
+                        create_capture=True,
+                    )
+                except Exception:
+                    _logger.exception(
+                        "Could not persist curriculum cron failure evidence for source %s",
+                        source.id,
+                    )
+            remaining = max(0, remaining - 1)
+            if self.env.context.get("cron_id"):
+                if not self.env["ir.cron"]._commit_progress(1, remaining=remaining):
+                    break
+        return True
 
     def _import_raw(self, raw):
         self.ensure_one()
@@ -170,6 +401,8 @@ class CurriculumReference(models.Model):
                 "validated_by_id": self.env.user.id,
             }
         )
+        for source in self.mapped("source_id"):
+            source._clear_problem_activity("changed")
 
     def action_publish(self):
         self._require_manager()

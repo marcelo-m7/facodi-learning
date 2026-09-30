@@ -1,5 +1,125 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+    <!-- Official curriculum source verification -->
+    <record id="view_facodi_curriculum_source_search" model="ir.ui.view">
+        <field name="name">facodi.learning.curriculum.source.search</field>
+        <field name="model">facodi.learning.curriculum.source</field>
+        <field name="arch" type="xml">
+            <search string="Curriculum Sources">
+                <field name="programme_name"/>
+                <field name="external_programme_code"/>
+                <field name="academic_year"/>
+                <field name="provider"/>
+                <field name="source_url"/>
+                <filter name="verification_enabled"
+                        string="Daily verification enabled"
+                        domain="[('verification_enabled', '=', True)]"/>
+                <filter name="failed"
+                        string="Failed checks"
+                        domain="[('last_check_status', '=', 'failed')]"/>
+                <filter name="changed"
+                        string="Changes detected"
+                        domain="[('last_check_status', '=', 'changed')]"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="view_facodi_curriculum_source_list" model="ir.ui.view">
+        <field name="name">facodi.learning.curriculum.source.list</field>
+        <field name="model">facodi.learning.curriculum.source</field>
+        <field name="arch" type="xml">
+            <list string="Curriculum Sources"
+                  decoration-danger="last_check_status == 'failed'"
+                  decoration-warning="last_check_status == 'changed'">
+                <field name="programme_name"/>
+                <field name="external_programme_code"/>
+                <field name="academic_year"/>
+                <field name="provider" optional="show"/>
+                <field name="verification_enabled"/>
+                <field name="last_check_status"/>
+                <field name="checked_at" optional="show"/>
+                <field name="last_attempt_at" optional="hide"/>
+                <field name="current_reference_id" optional="show"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_facodi_curriculum_source_form" model="ir.ui.view">
+        <field name="name">facodi.learning.curriculum.source.form</field>
+        <field name="model">facodi.learning.curriculum.source</field>
+        <field name="arch" type="xml">
+            <form string="Official Curriculum Source">
+                <header>
+                    <button name="action_verify_now"
+                            type="object"
+                            string="Verify now"
+                            class="btn-primary"
+                            groups="website_slides.group_website_slides_manager"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <label for="programme_name"/>
+                        <h1><field name="programme_name"/></h1>
+                    </div>
+                    <group>
+                        <group string="Official Source">
+                            <field name="institution"/>
+                            <field name="external_programme_code"/>
+                            <field name="academic_year"/>
+                            <field name="provider"/>
+                            <field name="external_id"/>
+                            <field name="source_url" widget="url"/>
+                            <field name="website_id"/>
+                        </group>
+                        <group string="Verification">
+                            <field name="verification_enabled"/>
+                            <field name="responsible_id"/>
+                            <field name="last_check_status" readonly="1"/>
+                            <field name="last_attempt_at" readonly="1"/>
+                            <field name="checked_at" readonly="1"/>
+                            <field name="last_check_error"
+                                   readonly="1"
+                                   invisible="not last_check_error"/>
+                            <field name="current_reference_id" readonly="1"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Versions" name="source_references">
+                            <field name="reference_ids" readonly="1">
+                                <list>
+                                    <field name="revision"/>
+                                    <field name="programme_name"/>
+                                    <field name="state"/>
+                                    <field name="website_published"/>
+                                    <field name="source_hash" optional="hide"/>
+                                    <field name="validated_at" optional="hide"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Check history" name="source_captures">
+                            <field name="capture_ids" readonly="1">
+                                <list default_order="id desc">
+                                    <field name="create_date"/>
+                                    <field name="status"/>
+                                    <field name="payload_hash" optional="hide"/>
+                                    <field name="error" optional="show"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_facodi_curriculum_sources" model="ir.actions.act_window">
+        <field name="name">Official Sources</field>
+        <field name="res_model">facodi.learning.curriculum.source</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_facodi_curriculum_source_search"/>
+    </record>
+
     <!-- External curriculum references -->
     <record id="view_facodi_curriculum_reference_search" model="ir.ui.view">
         <field name="name">facodi.learning.curriculum.reference.search</field>
@@ -322,12 +442,18 @@
               parent="menu_facodi_learning_root"
               groups="website_slides.group_website_slides_officer"
               sequence="4"/>
+    <menuitem id="menu_facodi_curriculum_sources"
+              name="Official Sources"
+              parent="menu_facodi_learning_curriculum_coverage"
+              action="action_facodi_curriculum_sources"
+              groups="website_slides.group_website_slides_manager"
+              sequence="1"/>
     <menuitem id="menu_facodi_curriculum_references"
               name="References"
               parent="menu_facodi_learning_curriculum_coverage"
               action="action_facodi_curriculum_references"
               groups="website_slides.group_website_slides_officer"
-              sequence="1"/>
+              sequence="2"/>
     <menuitem id="menu_facodi_curriculum_units"
               name="Curricular Units"
               parent="menu_facodi_learning_curriculum_coverage"
