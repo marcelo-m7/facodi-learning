@@ -11,7 +11,7 @@ from ..services.youtube import youtube_video_identity
 
 
 class FacodiContextualSubmissionController(FacodiSubmissionController):
-    _CONTACT_EMAIL_RE = re.compile(r"^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$")
+    _CONTACT_EMAIL_RE = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
 
     @classmethod
     def _is_valid_contact_email(cls, value):

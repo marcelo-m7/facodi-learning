@@ -64,6 +64,8 @@ class TestContextualSubmissionHttp(HttpCase):
             tree.xpath('//textarea[@name="context"]//text()')
         ).strip()
         self.assertIn("public video", context.lower())
+        self.assertIn("immediately visible in Community videos", response.text)
+        self.assertIn(">Share video<", response.text)
 
     def test_contact_cta_prefills_topic_and_human_context(self):
         response = self.url_open(
@@ -206,6 +208,31 @@ class TestContextualSubmissionHttp(HttpCase):
                 tree.xpath('//*[@data-facodi-contribution-brief="1"]//text()')
             )
             self.assertIn(expected_label, brief)
+
+    def test_contact_post_accepts_valid_email_server_side(self):
+        Submission = self.env["facodi.learning.submission"].sudo()
+        before = Submission.search_count([])
+        response = self.url_open(
+            "/submissions/new",
+            data={
+                "csrf_token": self._csrf_token("/contact"),
+                "type": "contact",
+                "context": "Please contact me about FACODI.",
+                "contact_topic": "collaboration",
+                "contact_email": "marcelo@example.com",
+            },
+            allow_redirects=False,
+        )
+        self.assertEqual(response.status_code, 303)
+        submission = Submission.search(
+            [("contact_email", "=", "marcelo@example.com")],
+            order="id desc",
+            limit=1,
+        )
+        self.assertEqual(Submission.search_count([]), before + 1)
+        self.assertTrue(submission)
+        self.assertEqual(submission.submission_type, "contact")
+        self.assertEqual(submission.state, "submitted")
 
     def test_contact_post_rejects_malformed_email_server_side(self):
         Submission = self.env["facodi.learning.submission"].sudo()

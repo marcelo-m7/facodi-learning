@@ -292,4 +292,7 @@ class TestContextualSubmissionStaticContracts(TransactionCase):
         self.assertIn("Context carried over", template)
         self.assertIn("Step 1 · Add the useful part", template)
         self.assertIn("Step 2 · Optional follow-up", template)
-        self.assertIn("Send to the review desk", template)
+        self.assertIn("Send message", template)
+        self.assertIn("Share video", template)
+        self.assertIn("Submit resource", template)
+        self.assertIn("editorial review is not required for that community listing", template)

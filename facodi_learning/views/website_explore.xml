@@ -74,7 +74,7 @@
                             <div class="facodi-explore-card__icon"><span class="fa fa-play-circle-o" aria-hidden="true"></span></div>
                             <p class="facodi-label">Community videos</p>
                             <h2>See what the campus shared.</h2>
-                            <p><t t-esc="explore_stats['community']"/> public community video drops are visible with their editorial review status.</p>
+                            <p><t t-esc="explore_stats['community']"/> public community video drops appear immediately after submission; review status remains visible for transparency.</p>
                             <span class="facodi-explore-card__cta">Browse community videos →</span>
                         </a>
 
@@ -302,7 +302,7 @@
                         <span class="fa fa-users" aria-hidden="true"></span>
                         <div>
                             <strong class="d-block mb-1">Community queue · shared first, curated next</strong>
-                            <span>Videos can appear here immediately after submission, before FACODI reviews their relevance, accuracy, provenance or publication rights. A listing here is not an endorsement or an approved learning-resource publication.</span>
+                            <span>Valid public YouTube submissions appear here immediately after submission, without waiting for editorial approval. FACODI may still review their relevance, accuracy, provenance or publication rights. A listing here is not an endorsement or an approved learning-resource publication.</span>
                         </div>
                     </div>
 

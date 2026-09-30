@@ -846,6 +846,77 @@ class TestResourceSubmissionWebsite(HttpCase):
         )
         self.assertEqual(submission.language, "pt")
 
+    def test_youtube_post_is_immediately_visible_on_community_wall(self):
+        title = "FACODI YouTube submission example"
+        share_url = "https://youtu.be/IUDuzmE9DXM?si=diuDR7Nh9RaH2Yb5"
+        discovered = {
+            "supported": True,
+            "provider": "youtube",
+            "external_id": "IUDuzmE9DXM",
+            "canonical_url": "https://www.youtube.com/watch?v=IUDuzmE9DXM",
+            "title": title,
+            "language": "en",
+            "author_name": "FACODI Test Channel",
+            "thumbnail_url": "https://i.ytimg.com/vi/IUDuzmE9DXM/hqdefault.jpg",
+            "duration_seconds": 180,
+            "published_at": "2026-01-01",
+        }
+
+        form = self.url_open(
+            "/submissions/new?type=resource&resource_type=video"
+            "&source=community_video_cta&section=explore-videos"
+        )
+        tree = html.fromstring(form.text)
+        token = tree.xpath('//input[@name="csrf_token"]/@value')[0]
+
+        with patch(
+            "odoo.addons.facodi_learning.controllers.submission."
+            "_discover_public_youtube_metadata",
+            return_value=discovered,
+        ):
+            created = self.url_open(
+                "/submissions/new",
+                data={
+                    "csrf_token": token,
+                    "submission_type": "resource",
+                    "source_cta": "community_video_cta",
+                    "source_section": "explore-videos",
+                    "name": title,
+                    "source_url": share_url,
+                    "resource_type": "video",
+                    "language": "en",
+                    "context": "Shared directly with the FACODI community.",
+                    "contact_email": "",
+                },
+                allow_redirects=False,
+            )
+
+        self.assertEqual(created.status_code, 303)
+        submission = (
+            self.env["facodi.learning.submission"]
+            .sudo()
+            .search([("name", "=", title)], order="id desc", limit=1)
+        )
+        self.assertTrue(submission)
+        self.assertEqual(submission.state, "submitted")
+        self.assertEqual(submission.submission_type, "resource")
+        self.assertEqual(submission.resource_type, "video")
+        self.assertEqual(
+            submission.source_url,
+            "https://www.youtube.com/watch?v=IUDuzmE9DXM",
+        )
+
+        community = self.url_open(
+            "/explore/videos?q=FACODI%20YouTube%20submission%20example"
+        )
+        self.assertEqual(community.status_code, 200)
+        self.assertIn(title, community.text)
+        self.assertIn("Shared by community", community.text)
+        self.assertIn(
+            "https://www.youtube.com/watch?v=IUDuzmE9DXM",
+            community.text,
+        )
+
     def test_community_video_wall_is_public_before_review_without_private_fields(self):
         Submission = self.env["facodi.learning.submission"].sudo()
         pending = Submission.create(
@@ -880,7 +951,7 @@ class TestResourceSubmissionWebsite(HttpCase):
         response = self.url_open("/explore/videos")
         self.assertEqual(response.status_code, 200)
         self.assertIn("Community pending video", response.text)
-        self.assertIn("Awaiting review", response.text)
+        self.assertIn("Shared by community", response.text)
         self.assertIn(
             "https://www.youtube.com/watch?v=w9gb71ZUJDs",
             response.text,
