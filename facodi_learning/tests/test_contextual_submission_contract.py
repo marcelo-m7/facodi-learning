@@ -36,6 +36,10 @@ class TestContextualSubmissionModelContract(TransactionCase):
             "Course coverage gap",
         )
         self.assertEqual(
+            self.Submission._facodi_source_cta_label("about_resource_cta"),
+            "About FACODI",
+        )
+        self.assertEqual(
             self.Submission._facodi_source_cta_label("future_resource_cta"),
             "Future Resource Cta",
         )
@@ -106,6 +110,8 @@ class TestContextualSubmissionStaticContracts(TransactionCase):
         self.assertIn("closing_cta", controller)
         self.assertIn("Homepage closing call", self._read("models/contextual_submission.py"))
         self.assertIn('"module-resources": request.env._("Module resources")', controller)
+        self.assertIn('"about": request.env._("About FACODI")', controller)
+        self.assertIn("about_resource_cta", controller)
         self.assertIn("study_player_correction_cta", self._read("models/contextual_submission.py"))
         self.assertIn('"lesson": request.env._("Lesson")', controller)
         self.assertLess(
