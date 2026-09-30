@@ -134,7 +134,7 @@ class TestCurriculumUI(TransactionCase):
         )
         self.assertEqual(len(menus), 1)
         menu = menus[0]
-        self.assertEqual(menu.name, "Roadmaps")
+        self.assertEqual(menu.name, "Learning paths")
         self.assertEqual(menu.url, "/roadmaps")
         self.assertEqual(menu.parent_id.name, "Explore")
         self.assertEqual(menu.parent_id.parent_id, website.menu_id)
@@ -155,7 +155,7 @@ class TestCurriculumUI(TransactionCase):
         expected_names = {
             "pt_PT": (
                 "Explorar",
-                "Roadmaps",
+                "Percursos de aprendizagem",
                 "Unidades curriculares",
                 "Comunidade",
                 "Sobre",
@@ -163,7 +163,7 @@ class TestCurriculumUI(TransactionCase):
             ),
             "es_ES": (
                 "Explorar",
-                "Rutas",
+                "Rutas de aprendizaje",
                 "Unidades curriculares",
                 "Comunidad",
                 "Acerca de",
@@ -171,7 +171,7 @@ class TestCurriculumUI(TransactionCase):
             ),
             "fr_FR": (
                 "Explorer",
-                "Parcours",
+                "Parcours d’apprentissage",
                 "Unités d’enseignement",
                 "Communauté",
                 "À propos",

@@ -70,40 +70,40 @@ class WebsiteMenu(models.Model):
                 "es_ES": "Cursos",
                 "fr_FR": "Cours",
             },
-            "Roadmaps": {
-                "pt_PT": "Roadmaps",
-                "es_ES": "Rutas",
-                "fr_FR": "Parcours",
+            "Learning paths": {
+                "pt_PT": "Percursos de aprendizagem",
+                "es_ES": "Rutas de aprendizaje",
+                "fr_FR": "Parcours d’apprentissage",
             },
             "Curricular units": {
                 "pt_PT": "Unidades curriculares",
                 "es_ES": "Unidades curriculares",
                 "fr_FR": "Unités d’enseignement",
             },
-            "Areas": {
-                "pt_PT": "Áreas",
-                "es_ES": "Áreas",
-                "fr_FR": "Domaines",
+            "Study areas": {
+                "pt_PT": "Áreas de estudo",
+                "es_ES": "Áreas de estudio",
+                "fr_FR": "Domaines d’étude",
             },
             "Learning resources": {
                 "pt_PT": "Recursos de aprendizagem",
                 "es_ES": "Recursos de aprendizaje",
                 "fr_FR": "Ressources d’apprentissage",
             },
-            "Community videos": {
-                "pt_PT": "Vídeos da comunidade",
-                "es_ES": "Vídeos de la comunidad",
-                "fr_FR": "Vidéos de la communauté",
+            "Videos": {
+                "pt_PT": "Vídeos",
+                "es_ES": "Vídeos",
+                "fr_FR": "Vidéos",
             },
             "News": {
                 "pt_PT": "Notícias",
                 "es_ES": "Noticias",
                 "fr_FR": "Actualités",
             },
-            "Forum": {
-                "pt_PT": "Fórum",
-                "es_ES": "Foro",
-                "fr_FR": "Forum",
+            "Discussions": {
+                "pt_PT": "Discussões",
+                "es_ES": "Debates",
+                "fr_FR": "Discussions",
             },
             "Contribute": {
                 "pt_PT": "Contribuir",
@@ -225,14 +225,14 @@ class WebsiteMenu(models.Model):
 
         learning_entries = (
             ("Courses", "/courses", 10, ("/slides", "/explore/courses")),
-            ("Roadmaps", "/roadmaps", 20, ()),
+            ("Learning paths", "/roadmaps", 20, ()),
             (
                 "Curricular units",
                 "/curricular-units",
                 30,
                 ("/unidades-curriculares",),
             ),
-            ("Areas", "/explore/areas", 40, ("/explorar/areas",)),
+            ("Study areas", "/explore/areas", 40, ("/explorar/areas",)),
             (
                 "Learning resources",
                 "/explore/content",
@@ -240,7 +240,7 @@ class WebsiteMenu(models.Model):
                 ("/explorar/conteudos",),
             ),
             (
-                "Community videos",
+                "Videos",
                 "/explore/videos",
                 60,
                 ("/explorar/videos",),
@@ -320,7 +320,7 @@ class WebsiteMenu(models.Model):
             [("website_id", "=", facodi.id), ("url", "=", "/forum")], limit=1
         )
         if forum_installed or existing_forum:
-            ensure_menu("Forum", "/forum", 20, community)
+            ensure_menu("Discussions", "/forum", 20, community)
 
         ensure_menu(
             "Contribute",
@@ -345,7 +345,7 @@ class WebsiteMenu(models.Model):
             about = Menu.create(
                 {
                     "name": "About",
-                    "url": "/sobre",
+                    "url": "/about",
                     "parent_id": root.id,
                     "website_id": facodi.id,
                     "sequence": 30,
