@@ -80,6 +80,7 @@ _SOURCE_CTA_LABELS = {
     "folder_tabs_contribute": _lt("Learning navigation"),
     "course_showcase_contribute": _lt("Learning catalogue"),
     "closing_cta": _lt("Homepage closing call"),
+    "about_resource_cta": _lt("About FACODI"),
     "submission_status_followup": _lt("Submission follow-up"),
     "legacy_submission_followup": _lt("Submission follow-up"),
     "my_submissions_new": _lt("My submissions"),
