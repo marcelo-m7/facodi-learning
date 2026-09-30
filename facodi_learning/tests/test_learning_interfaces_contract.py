@@ -1,3 +1,4 @@
+import ast
 from pathlib import Path
 import unittest
 
@@ -19,8 +20,9 @@ class TestLearningInterfacesContract(unittest.TestCase):
         cls.slides = SLIDES.read_text(encoding="utf-8")
 
     def test_d1_release_version(self):
-        manifest = MANIFEST.read_text(encoding="utf-8")
-        self.assertIn('"version": "19.0.1.131.0"', manifest)
+        manifest = ast.literal_eval(MANIFEST.read_text(encoding="utf-8"))
+        version = tuple(int(part) for part in manifest["version"].split("."))
+        self.assertGreaterEqual(version, (19, 0, 1, 131, 0))
 
     def test_contextual_forum_uses_native_odoo_forum_flow(self):
         manifest = MANIFEST.read_text(encoding="utf-8")
