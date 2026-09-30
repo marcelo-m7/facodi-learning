@@ -539,7 +539,7 @@ msgstr ""
 #: model:ir.model,name:facodi_learning.model_slide_channel
 #: model:ir.model.fields,field_description:facodi_learning.field_facodi_learning_curriculum_module_item__channel_id
 msgid "Course"
-msgstr ""
+msgstr "Curso"
 
 #. module: facodi_learning
 #: model:ir.actions.act_window,name:facodi_learning.action_facodi_course_candidates
@@ -4409,3 +4409,73 @@ msgstr "vídeos públicos partilhados pela comunidade ficam visíveis com o resp
 #: model_terms:ir.ui.view,arch_db:facodi_learning.explore_landing
 msgid "Browse community videos →"
 msgstr "Explorar vídeos da comunidade →"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.portal_my_home_facodi
+msgid "My FACODI"
+msgstr "MINHA FACODI"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.portal_my_home_facodi
+msgid "OPEN CAMPUS DESK"
+msgstr "MESA DO CAMPUS ABERTO"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.portal_my_home_facodi
+msgid "Academic map // coverage, not equivalence"
+msgstr "Mapa académico // cobertura, não equivalência"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.portal_my_home_facodi
+msgid "See where FACODI can take you next"
+msgstr "Vê até onde a FACODI te pode levar a seguir"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.portal_my_home_facodi
+msgid "Open full roadmap"
+msgstr "Abrir percurso completo"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.portal_my_home_facodi
+msgid "covered"
+msgstr "cobertas"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.portal_my_home_facodi
+msgid "partial"
+msgstr "parciais"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.portal_my_home_facodi
+msgid "open gaps"
+msgstr "lacunas abertas"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.portal_my_home_facodi
+msgid "ON YOUR DESK"
+msgstr "NA TUA MESA"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.portal_my_home_facodi
+msgid "Campus pulse"
+msgstr "Pulso do campus"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.portal_my_home_facodi
+msgid "What people are talking about"
+msgstr "O que a comunidade está a discutir"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.portal_my_home_facodi
+msgid "Open community"
+msgstr "Abrir comunidade"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.portal_my_home_facodi
+msgid "replies"
+msgstr "respostas"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.portal_my_home_facodi
+msgid "votes"
+msgstr "votos"
