@@ -294,6 +294,33 @@ class TestPipelineSecurity(TransactionCase):
         self.assertTrue(self.slide.tag_ids.filtered(lambda tag: tag.name == "new tag"))
         self.assertTrue(first.result_id.tags_applied_at)
 
+    def test_post_ingestion_failure_does_not_persist_false_provider_failure(self):
+        from unittest.mock import patch
+
+        Source = self.env["facodi.learning.source"]
+        source = Source.create(
+            {
+                "name": "Post-hook failure",
+                "external_id": "post-hook-failure",
+                "provider": "manual",
+                "channel_id": self.channel.id,
+            }
+        )
+
+        with patch.object(
+            type(Source),
+            "_ensure_pending_publication_review",
+            side_effect=RuntimeError("review hook failed"),
+        ):
+            with self.assertRaises(RuntimeError), self.env.cr.savepoint():
+                source.action_ingest()
+
+        source.invalidate_recordset()
+        self.assertEqual(source.state, "pending")
+        self.assertFalse(source.slide_id)
+        self.assertFalse(source.imported_at)
+        self.assertFalse(source.last_error)
+
     def test_source_failure_rolls_back_content(self):
         source = self.env["facodi.learning.source"].create(
             {
