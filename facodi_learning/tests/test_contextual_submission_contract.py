@@ -36,6 +36,10 @@ class TestContextualSubmissionModelContract(TransactionCase):
             "Course coverage gap",
         )
         self.assertEqual(
+            self.Submission._facodi_source_cta_label("about_resource_cta"),
+            "About FACODI",
+        )
+        self.assertEqual(
             self.Submission._facodi_source_cta_label("future_resource_cta"),
             "Future Resource Cta",
         )
