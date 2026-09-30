@@ -33,12 +33,14 @@ def ensure_lesti_2026_27(env):
     """Create or safely reconcile the curated UAlg LESTI 2026/27 reference.
 
     The operation is idempotent. Existing reviewed source facts are never
-    rewritten. Publication state is operational and may be enabled when the
-    persisted identity/source still matches the curated fixture.
+    rewritten. The bootstrap owns source facts only: new references stay draft
+    and private, while an existing reviewed/published reference keeps its
+    editorial state unchanged.
     """
     payload = _load_fixture()
     reference_values = dict(payload["reference"])
-    publish_requested = bool(reference_values.pop("website_published", False))
+    # Editorial state is never driven by fixture/bootstrap data.
+    reference_values.pop("website_published", None)
     Reference = env["facodi.learning.curriculum.reference"].sudo()
     Unit = env["facodi.learning.curriculum.unit"].sudo()
 
@@ -103,10 +105,6 @@ def ensure_lesti_2026_27(env):
         if mutable:
             unit.write(mutable)
 
-    if reference.state == "draft":
-        reference.action_validate()
-    if publish_requested and reference.state == "validated" and not reference.website_published:
-        reference.action_publish()
     return reference
 
 def _load_design_fixture():

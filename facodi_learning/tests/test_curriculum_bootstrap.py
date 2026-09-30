@@ -7,7 +7,7 @@ from ..services.curriculum_bootstrap import ensure_design_curricula_2026_27, ens
 
 
 class TestCurriculumBootstrap(TransactionCase):
-    def test_lesti_bootstrap_is_idempotent_and_public(self):
+    def test_lesti_bootstrap_is_idempotent_draft_and_private(self):
         reference = ensure_lesti_2026_27(self.env)
         again = ensure_lesti_2026_27(self.env)
 
@@ -16,8 +16,9 @@ class TestCurriculumBootstrap(TransactionCase):
         self.assertEqual(reference.external_id, "ualg-1941-2026-27")
         self.assertEqual(reference.external_programme_code, "1941")
         self.assertEqual(reference.academic_year, "2026/27")
-        self.assertTrue(reference.validated_at)
-        self.assertTrue(reference.website_published)
+        self.assertEqual(reference.state, "draft")
+        self.assertFalse(reference.validated_at)
+        self.assertFalse(reference.website_published)
         self.assertEqual(len(reference.unit_ids), 43)
         self.assertEqual(
             reference.unit_ids.filtered(
@@ -228,11 +229,14 @@ class TestCurriculumBootstrap(TransactionCase):
 
         reference.invalidate_recordset()
         self.assertEqual(reference.institution, original_institution)
-        self.assertTrue(reference.website_published)
+        self.assertEqual(reference.state, "draft")
+        self.assertFalse(reference.website_published)
         self.assertEqual(len(reference.unit_ids), 43)
 
     def test_public_curriculum_links_require_reviewed_coverage(self):
         reference = ensure_lesti_2026_27(self.env)
+        reference.action_validate()
+        reference.action_publish()
         unit = reference.unit_ids.filtered(
             lambda item: item.external_unit_code == "19411017"
         )
@@ -261,7 +265,7 @@ class TestCurriculumBootstrap(TransactionCase):
 
     def test_unpublished_reference_is_not_exposed_by_course_link(self):
         reference = ensure_lesti_2026_27(self.env)
-        reference.action_archive()
+        reference.action_validate()
         unit = reference.unit_ids.filtered(
             lambda item: item.external_unit_code == "19411017"
         )

@@ -8,6 +8,8 @@ class TestCurriculumPublicUnits(TransactionCase):
     def setUpClass(cls):
         super().setUpClass()
         cls.reference = ensure_lesti_2026_27(cls.env)
+        cls.reference.action_validate()
+        cls.reference.action_publish()
         cls.database_unit = cls.reference.unit_ids.filtered(
             lambda unit: unit.external_unit_code == "19411017"
         )
