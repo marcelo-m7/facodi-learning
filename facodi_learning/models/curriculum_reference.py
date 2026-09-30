@@ -149,6 +149,36 @@ class FacodiLearningCurriculumReference(models.Model):
         self.ensure_one()
         return bool(self.website_published and self.validated_at)
 
+    @staticmethod
+    def _facodi_route_token(value, fallback):
+        normalized = unicodedata.normalize("NFKD", value or "")
+        normalized = normalized.encode("ascii", "ignore").decode("ascii")
+        token = re.sub(r"[^a-z0-9]+", "-", normalized.lower()).strip("-")
+        return token or fallback
+
+    def _facodi_public_path(self):
+        self.ensure_one()
+        if not self._facodi_is_public():
+            return False
+        institution = self._facodi_route_token(self.institution, "institution")
+        programme = self._facodi_route_token(
+            self.external_programme_code or self.programme_name,
+            "programme",
+        )
+        academic_year = self._facodi_route_token(self.academic_year, "year")
+        revision = max(int(getattr(self, "revision", 1) or 1), 1)
+        return "/roadmaps/%s/%s/%s/r%s" % (
+            institution,
+            programme,
+            academic_year,
+            revision,
+        )
+
+    def _facodi_public_year_path(self):
+        self.ensure_one()
+        path = self._facodi_public_path()
+        return path.rsplit("/", 1)[0] if path else False
+
     def _facodi_public_units_grouped(self):
         self.ensure_one()
         grouped = []
@@ -343,7 +373,7 @@ class FacodiLearningCurriculumReference(models.Model):
             curriculum_map.append(
                 {
                     "reference": reference,
-                    "reference_url": "/roadmaps/%s" % reference.id,
+                    "reference_url": reference._facodi_public_path(),
                     "unit_matrix": unit_matrix,
                 }
             )
@@ -478,8 +508,8 @@ class FacodiLearningCurriculumUnit(models.Model):
         self.ensure_one()
         if not self.reference_id._facodi_is_public():
             return False
-        return "/roadmaps/%s/units/%s" % (
-            self.reference_id.id,
+        return "%s/units/%s" % (
+            self.reference_id._facodi_public_path(),
             quote(self.external_unit_code or "", safe=""),
         )
 
