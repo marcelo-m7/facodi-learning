@@ -77,6 +77,12 @@ class TestLearningInterfacesContract(unittest.TestCase):
         self.assertIn('descendants = duplicates.mapped("child_id") - menu', menu_model)
         self.assertIn('descendants = duplicate_explore.mapped("child_id") - explore', menu_model)
         self.assertIn("stale_top_level.unlink()", menu_model)
+        self.assertIn('("Learning paths", "/roadmaps", 20, ())', menu_model)
+        self.assertIn('("Study areas", "/explore/areas", 40', menu_model)
+        self.assertIn('"Videos",', menu_model)
+        self.assertIn('ensure_menu("Discussions", "/forum", 20, community)', menu_model)
+        self.assertIn('"url": "/about"', menu_model)
+        self.assertNotIn('"url": "/sobre"', menu_model)
 
     def test_explore_filter_chips_have_individual_remove_urls(self):
         explore_controller = (MODULE_ROOT / "controllers" / "explore.py").read_text(encoding="utf-8")
