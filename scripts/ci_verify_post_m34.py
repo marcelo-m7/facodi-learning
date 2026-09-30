@@ -97,10 +97,13 @@ if len(lesti) != 1:
 if (
     lesti.external_programme_code != "1941"
     or lesti.academic_year != "2026/27"
-    or not lesti.validated_at
-    or not lesti.website_published
+    or lesti.state != "draft"
+    or lesti.validated_at
+    or lesti.website_published
 ):
-    raise AssertionError("Curated UAlg LESTI reference has an invalid public identity/state.")
+    raise AssertionError(
+        "Curated UAlg LESTI reference must enter an unreviewed upgrade as private draft."
+    )
 
 units = env["facodi.learning.curriculum.unit"].search(
     [("reference_id", "=", lesti.id)]
