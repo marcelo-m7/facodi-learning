@@ -19,6 +19,7 @@ class CurriculumSource(models.Model):
     _name = "facodi.learning.curriculum.source"
     _description = "Official curriculum source"
     _inherit = ["mail.thread", "mail.activity.mixin"]
+    _rec_name = "programme_name"
 
     provider = fields.Char(required=True, default="ualg")
     external_id = fields.Char(required=True)
@@ -217,12 +218,21 @@ class CurriculumSource(models.Model):
             batch_size = 10
 
         domain = [("verification_enabled", "=", True)]
-        sources = self.sudo().search(
-            domain,
+        Source = self.sudo()
+        never_checked = Source.search(
+            domain + [("last_attempt_at", "=", False)],
             limit=batch_size,
-            order="last_attempt_at, id",
+            order="id",
         )
-        remaining = self.sudo().search_count(domain)
+        sources = never_checked
+        missing = batch_size - len(sources)
+        if missing:
+            sources |= Source.search(
+                domain + [("last_attempt_at", "!=", False)],
+                limit=missing,
+                order="last_attempt_at, id",
+            )
+        remaining = Source.search_count(domain)
         for source in sources:
             try:
                 with self.env.cr.savepoint():
