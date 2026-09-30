@@ -10,8 +10,8 @@ class FacodiExploreController(http.Controller):
     PAGE_SIZE = 12
     LANGUAGE_PREFIX = "lang:"
     COMMUNITY_STATES = {
-        "submitted": "Awaiting review",
-        "reviewing": "Under review",
+        "submitted": "Shared by community",
+        "reviewing": "Shared · review in progress",
         "accepted": "Accepted for curation",
         "resolved": "Routed to FACODI",
     }
@@ -363,7 +363,7 @@ class FacodiExploreController(http.Controller):
             request.env["facodi.learning.submission"]
             .sudo()
             .search(
-                [("state", "in", list(cls.COMMUNITY_STATES))],
+                [("submission_type", "=", "resource"), ("state", "in", list(cls.COMMUNITY_STATES))],
                 order="create_date desc, id desc",
             )
         )
