@@ -129,6 +129,26 @@ class CurriculumReference(models.Model):
     revision = fields.Integer(default=1, readonly=True)
     state = fields.Selection([("draft", "Draft"), ("validated", "Validated"), ("archived", "Archived")], default="draft", required=True, readonly=True)
     is_published = fields.Boolean(readonly=True)
+    validated_by_id = fields.Many2one(
+        "res.users",
+        readonly=True,
+        copy=False,
+        string="Validated By",
+    )
+    published_at = fields.Datetime(readonly=True, copy=False)
+    published_by_id = fields.Many2one(
+        "res.users",
+        readonly=True,
+        copy=False,
+        string="Published By",
+    )
+    archived_at = fields.Datetime(readonly=True, copy=False)
+    archived_by_id = fields.Many2one(
+        "res.users",
+        readonly=True,
+        copy=False,
+        string="Archived By",
+    )
     occurrence_ids = fields.One2many("facodi.learning.curriculum.occurrence", "reference_id")
 
     def _require_manager(self):
@@ -141,22 +161,57 @@ class CurriculumReference(models.Model):
 
     def action_validate(self):
         self._require_manager()
+        if any(reference.state != "draft" for reference in self):
+            raise ValidationError(_("Only draft curriculum references can be validated."))
         self._write_lifecycle(
-            {"state": "validated", "validated_at": fields.Datetime.now()}
+            {
+                "state": "validated",
+                "validated_at": fields.Datetime.now(),
+                "validated_by_id": self.env.user.id,
+            }
         )
 
     def action_publish(self):
         self._require_manager()
         if any(reference.state != "validated" for reference in self):
             raise ValidationError(_("Only validated curriculum references can be published."))
-        self._write_lifecycle({"is_published": True, "website_published": True})
+        to_publish = self.filtered(lambda reference: not reference.website_published)
+        if to_publish:
+            to_publish._write_lifecycle(
+                {
+                    "is_published": True,
+                    "website_published": True,
+                    "published_at": fields.Datetime.now(),
+                    "published_by_id": self.env.user.id,
+                }
+            )
 
     def action_archive(self):
         self._require_manager()
-        self._write_lifecycle({"state": "archived", "website_published": False})
+        to_archive = self.filtered(lambda reference: reference.state != "archived")
+        if to_archive:
+            to_archive._write_lifecycle(
+                {
+                    "state": "archived",
+                    "is_published": False,
+                    "website_published": False,
+                    "archived_at": fields.Datetime.now(),
+                    "archived_by_id": self.env.user.id,
+                }
+            )
 
     def write(self, vals):
-        lifecycle_fields = {"state", "is_published", "website_published", "validated_at"}
+        lifecycle_fields = {
+            "state",
+            "is_published",
+            "website_published",
+            "validated_at",
+            "validated_by_id",
+            "published_at",
+            "published_by_id",
+            "archived_at",
+            "archived_by_id",
+        }
         if lifecycle_fields.intersection(vals):
             raise AccessError(_("Use curriculum review actions to change lifecycle state."))
         if any(reference.state == "validated" for reference in self):
