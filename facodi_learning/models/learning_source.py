@@ -144,8 +144,6 @@ class LearningSource(models.Model):
                             "last_error": False,
                         }
                     )
-                source._ensure_pending_publication_review()
-                source._queue_supabase_analysis()
             except Exception as exc:
                 super(LearningSource, source).write(
                     {
@@ -153,6 +151,9 @@ class LearningSource(models.Model):
                         "last_error": f"{type(exc).__name__}: operation failed; inspect the provider configuration.",
                     }
                 )
+                continue
+            source._ensure_pending_publication_review()
+            source._queue_supabase_analysis()
         return True
 
     def _ensure_pending_publication_review(self):
