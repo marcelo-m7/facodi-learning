@@ -47,6 +47,28 @@
         <field name="model">facodi.learning.curriculum.reference</field>
         <field name="arch" type="xml">
             <form string="Curriculum Reference">
+                <header>
+                    <button name="action_validate"
+                            type="object"
+                            string="Validate"
+                            class="btn-primary"
+                            groups="website_slides.group_website_slides_manager"
+                            invisible="state != 'draft'"/>
+                    <button name="action_publish"
+                            type="object"
+                            string="Publish"
+                            class="btn-primary"
+                            groups="website_slides.group_website_slides_manager"
+                            invisible="state != 'validated' or website_published"/>
+                    <button name="action_archive"
+                            type="object"
+                            string="Archive"
+                            groups="website_slides.group_website_slides_manager"
+                            invisible="state == 'archived'"/>
+                    <field name="state"
+                           widget="statusbar"
+                           statusbar_visible="draft,validated,archived"/>
+                </header>
                 <sheet>
                     <div class="oe_title">
                         <label for="programme_name"/>
@@ -66,8 +88,19 @@
                             <field name="provider"/>
                             <field name="external_id"/>
                             <field name="imported_at" readonly="1"/>
-                            <field name="validated_at"/>
-                            <field name="website_published"/>
+                            <field name="validated_at" readonly="1"/>
+                            <field name="website_published" readonly="1"/>
+                        </group>
+                    </group>
+                    <group string="Editorial Review">
+                        <group>
+                            <field name="validated_by_id" readonly="1"/>
+                            <field name="published_by_id" readonly="1"/>
+                            <field name="archived_by_id" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="published_at" readonly="1"/>
+                            <field name="archived_at" readonly="1"/>
                         </group>
                     </group>
                     <group string="Source Metadata">
