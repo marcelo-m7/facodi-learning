@@ -347,7 +347,7 @@ class FacodiCurriculumController(http.Controller):
         if not unit:
             return request.not_found()
 
-        return self._render_unit(reference, unit)
+        return request.redirect(unit._facodi_public_path(), code=301)
 
     @http.route(
         "/modulos/<int:module_id>",
