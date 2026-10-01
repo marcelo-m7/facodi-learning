@@ -130,7 +130,9 @@ class ContentReview(models.Model):
     responsible_id = fields.Many2one(
         "res.users",
         default=lambda self: self.env.user,
+        required=True,
         index=True,
+        domain=[("share", "=", False)],
         help="Internal user responsible for completing the pending review.",
     )
     author = fields.Char(
@@ -212,7 +214,22 @@ class ContentReview(models.Model):
                 vals["responsible_id"] = self._default_review_responsible(slide).id
         records = super().create(vals_list)
         records._check_source_consistency()
+        records._check_review_responsible()
         return records
+
+    @api.constrains("responsible_id")
+    def _check_review_responsible(self):
+        root = self.env.ref("base.user_root")
+        for review in self:
+            if (
+                not review.responsible_id
+                or not review.responsible_id.active
+                or review.responsible_id.share
+                or review.responsible_id == root
+            ):
+                raise ValidationError(
+                    "Review responsibility must belong to an active internal user."
+                )
 
     def write(self, vals):
         protected = {
@@ -229,6 +246,7 @@ class ContentReview(models.Model):
             raise AccessError("Completed content reviews are immutable.")
         result = super().write(vals)
         self._check_source_consistency()
+        self._check_review_responsible()
         return result
 
     def unlink(self):
@@ -586,39 +604,40 @@ class Website(models.Model):
         }
         for slide in public_slides:
             review_website = slide._facodi_review_website()
-            if (
-                review_website
-                and review_website.id in website_by_id
-                and not slide.facodi_legacy_review_pending
-            ):
+            if review_website and review_website.id in website_by_id:
                 candidate_slides |= slide
                 candidate_slides_by_website[review_website.id] |= slide
         approved_slide_ids = candidate_slides._facodi_current_approved_slide_ids()
+        Review = self.env["facodi.learning.content.review"].sudo()
         for candidate_slides in candidate_slides_by_website.values():
-            slides_to_flag = candidate_slides.filtered(
+            slides_needing_review = candidate_slides.filtered(
                 lambda slide: slide.id not in approved_slide_ids
+            )
+            if not slides_needing_review:
+                continue
+            slides_to_flag = slides_needing_review.filtered(
+                lambda slide: not slide.facodi_legacy_review_pending
             )
             if slides_to_flag:
                 slides_to_flag.write({"facodi_legacy_review_pending": True})
-                Review = self.env["facodi.learning.content.review"].sudo()
-                pending_slide_ids = set(
-                    Review.search(
-                        [
-                            ("slide_id", "in", slides_to_flag.ids),
-                            ("state", "=", "pending"),
-                        ]
-                    ).mapped("slide_id").ids
+            pending_slide_ids = set(
+                Review.search(
+                    [
+                        ("slide_id", "in", slides_needing_review.ids),
+                        ("state", "=", "pending"),
+                    ]
+                ).mapped("slide_id").ids
+            )
+            for slide in slides_needing_review.filtered(
+                lambda record: record.id not in pending_slide_ids
+            ):
+                Review.create(
+                    {
+                        "slide_id": slide.id,
+                        "origin": "legacy_reconciliation",
+                        "responsible_id": Review._default_review_responsible(slide).id,
+                    }
                 )
-                for slide in slides_to_flag.filtered(
-                    lambda record: record.id not in pending_slide_ids
-                ):
-                    Review.create(
-                        {
-                            "slide_id": slide.id,
-                            "origin": "legacy_reconciliation",
-                            "responsible_id": Review._default_review_responsible(slide).id,
-                        }
-                    )
 
     def write(self, vals):
         enabling = (
