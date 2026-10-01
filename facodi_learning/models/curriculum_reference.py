@@ -185,32 +185,6 @@ class FacodiLearningCurriculumReference(models.Model):
         token = re.sub(r"[^a-z0-9]+", "-", normalized.lower()).strip("-")
         return token or fallback
 
-    def _facodi_coverage_candidates(self, limit=20):
-        self.ensure_one()
-        from ..services.curriculum_coverage_suggestion import (
-            curriculum_coverage_candidates,
-        )
-
-        return curriculum_coverage_candidates(self, limit=limit)
-
-    def action_generate_coverage_proposals(self):
-        self.ensure_one()
-        from ..services.curriculum_coverage_suggestion import (
-            propose_curriculum_coverage,
-        )
-
-        proposals = propose_curriculum_coverage(self)
-        action = self.env.ref("facodi_learning.action_facodi_curriculum_coverage").read()[0]
-        action["domain"] = (
-            [("id", "in", proposals.ids)]
-            if proposals
-            else [
-                ("curriculum_unit_id", "=", self.id),
-                ("state", "=", "proposed"),
-            ]
-        )
-        return action
-
     def _facodi_public_path(self):
         self.ensure_one()
         if not self._facodi_is_public():
@@ -558,6 +532,32 @@ class FacodiLearningCurriculumUnit(models.Model):
         from ..services.curriculum_coverage import build_curriculum_unit_coverage
 
         return build_curriculum_unit_coverage(self)
+
+    def _facodi_coverage_candidates(self, limit=20):
+        self.ensure_one()
+        from ..services.curriculum_coverage_suggestion import (
+            curriculum_coverage_candidates,
+        )
+
+        return curriculum_coverage_candidates(self, limit=limit)
+
+    def action_generate_coverage_proposals(self):
+        self.ensure_one()
+        from ..services.curriculum_coverage_suggestion import (
+            propose_curriculum_coverage,
+        )
+
+        proposals = propose_curriculum_coverage(self)
+        action = self.env.ref("facodi_learning.action_facodi_curriculum_coverage").read()[0]
+        action["domain"] = (
+            [("id", "in", proposals.ids)]
+            if proposals
+            else [
+                ("curriculum_unit_id", "=", self.id),
+                ("state", "=", "proposed"),
+            ]
+        )
+        return action
 
     def _facodi_public_path(self):
         self.ensure_one()
