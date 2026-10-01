@@ -170,10 +170,21 @@ class ContentReview(models.Model):
 
     @api.model
     def _default_review_responsible(self, slide=False):
+        root = self.env.ref("base.user_root")
         candidate = slide.channel_id.user_id if slide else self.env.user
-        if not candidate or not candidate.active or candidate.share:
+        if (
+            not candidate
+            or not candidate.active
+            or candidate.share
+            or candidate == root
+        ):
             candidate = self.env.user
-        if not candidate or candidate.share:
+        if (
+            not candidate
+            or not candidate.active
+            or candidate.share
+            or candidate == root
+        ):
             candidate = self.env.ref("base.user_admin")
         return candidate
 
