@@ -116,6 +116,23 @@ class ContentReview(models.Model):
         required=True,
         readonly=True,
     )
+    review_reason = fields.Selection(
+        [
+            ("manual", "Manual publication review"),
+            ("source_ingestion", "Source ingestion requires review"),
+            ("legacy_publication", "Legacy public content requires provenance review"),
+        ],
+        default="manual",
+        required=True,
+        readonly=True,
+        help="Why this review entered the editorial queue. This is workflow evidence, not source provenance.",
+    )
+    responsible_id = fields.Many2one(
+        "res.users",
+        default=lambda self: self.env.user,
+        index=True,
+        help="Internal user responsible for completing the pending review.",
+    )
     author = fields.Char(
         help="Claimed creator or responsible author. Leave blank until verified."
     )
@@ -151,17 +168,50 @@ class ContentReview(models.Model):
         help="Manager decision note. Required when rejecting a review."
     )
 
+    @api.model
+    def _default_review_responsible(self, slide=False):
+        candidate = slide.channel_id.user_id if slide else self.env.user
+        if not candidate or not candidate.active or candidate.share:
+            candidate = self.env.user
+        if not candidate or candidate.share:
+            candidate = self.env.ref("base.user_admin")
+        return candidate
+
     @api.model_create_multi
     def create(self, vals_list):
-        protected = {"state", "content_hash", "reviewed_by_id", "reviewed_at"}
+        protected = {
+            "state",
+            "content_hash",
+            "reviewed_by_id",
+            "reviewed_at",
+            "review_reason",
+        }
         if any(protected & set(vals) for vals in vals_list):
             raise AccessError("Review lifecycle evidence is managed by review actions.")
+        reason_by_origin = {
+            "manual": "manual",
+            "source_ingestion": "source_ingestion",
+            "legacy_reconciliation": "legacy_publication",
+        }
+        for vals in vals_list:
+            origin = vals.get("origin", "manual")
+            vals["review_reason"] = reason_by_origin.get(origin, "manual")
+            if not vals.get("responsible_id"):
+                slide = self.env["slide.slide"].browse(vals.get("slide_id")).exists()
+                vals["responsible_id"] = self._default_review_responsible(slide).id
         records = super().create(vals_list)
         records._check_source_consistency()
         return records
 
     def write(self, vals):
-        protected = {"state", "content_hash", "reviewed_by_id", "reviewed_at", "origin"}
+        protected = {
+            "state",
+            "content_hash",
+            "reviewed_by_id",
+            "reviewed_at",
+            "origin",
+            "review_reason",
+        }
         if protected & set(vals):
             raise AccessError("Use review actions to change review lifecycle evidence.")
         if any(review.state in {"approved", "rejected"} for review in self):
@@ -539,6 +589,25 @@ class Website(models.Model):
             )
             if slides_to_flag:
                 slides_to_flag.write({"facodi_legacy_review_pending": True})
+                Review = self.env["facodi.learning.content.review"].sudo()
+                pending_slide_ids = set(
+                    Review.search(
+                        [
+                            ("slide_id", "in", slides_to_flag.ids),
+                            ("state", "=", "pending"),
+                        ]
+                    ).mapped("slide_id").ids
+                )
+                for slide in slides_to_flag.filtered(
+                    lambda record: record.id not in pending_slide_ids
+                ):
+                    Review.create(
+                        {
+                            "slide_id": slide.id,
+                            "origin": "legacy_reconciliation",
+                            "responsible_id": Review._default_review_responsible(slide).id,
+                        }
+                    )
 
     def write(self, vals):
         enabling = (
