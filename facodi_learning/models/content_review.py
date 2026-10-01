@@ -416,6 +416,51 @@ class SlideSlide(models.Model):
             or getattr(self, "website_published", False)
         )
 
+    def _facodi_enqueue_legacy_review_queue(self):
+        """Attach one accountable pending review to legacy public content.
+
+        This method records workflow evidence only. It deliberately leaves
+        authorship, rights, source URL and permitted-use evidence empty until a
+        human verifies them, and it never changes publication state.
+        """
+        slides = self.filtered(lambda slide: slide._facodi_is_public())
+        if not slides:
+            return self
+
+        approved_slide_ids = slides._facodi_current_approved_slide_ids()
+        slides_needing_review = slides.filtered(
+            lambda slide: slide.id not in approved_slide_ids
+        )
+        if not slides_needing_review:
+            return self.env["slide.slide"]
+
+        slides_to_flag = slides_needing_review.filtered(
+            lambda slide: not slide.facodi_legacy_review_pending
+        )
+        if slides_to_flag:
+            slides_to_flag.write({"facodi_legacy_review_pending": True})
+
+        Review = self.env["facodi.learning.content.review"].sudo()
+        pending_slide_ids = set(
+            Review.search(
+                [
+                    ("slide_id", "in", slides_needing_review.ids),
+                    ("state", "=", "pending"),
+                ]
+            ).mapped("slide_id").ids
+        )
+        for slide in slides_needing_review.filtered(
+            lambda record: record.id not in pending_slide_ids
+        ):
+            Review.create(
+                {
+                    "slide_id": slide.id,
+                    "origin": "legacy_reconciliation",
+                    "responsible_id": Review._default_review_responsible(slide).id,
+                }
+            )
+        return slides_needing_review
+
     def _facodi_check_publication_review(self):
         for slide in self:
             if (
@@ -599,45 +644,11 @@ class Website(models.Model):
             ]
         )
         candidate_slides = self.env["slide.slide"]
-        candidate_slides_by_website = {
-            website_id: self.env["slide.slide"] for website_id in website_by_id
-        }
         for slide in public_slides:
             review_website = slide._facodi_review_website()
             if review_website and review_website.id in website_by_id:
                 candidate_slides |= slide
-                candidate_slides_by_website[review_website.id] |= slide
-        approved_slide_ids = candidate_slides._facodi_current_approved_slide_ids()
-        Review = self.env["facodi.learning.content.review"].sudo()
-        for candidate_slides in candidate_slides_by_website.values():
-            slides_needing_review = candidate_slides.filtered(
-                lambda slide: slide.id not in approved_slide_ids
-            )
-            if not slides_needing_review:
-                continue
-            slides_to_flag = slides_needing_review.filtered(
-                lambda slide: not slide.facodi_legacy_review_pending
-            )
-            if slides_to_flag:
-                slides_to_flag.write({"facodi_legacy_review_pending": True})
-            pending_slide_ids = set(
-                Review.search(
-                    [
-                        ("slide_id", "in", slides_needing_review.ids),
-                        ("state", "=", "pending"),
-                    ]
-                ).mapped("slide_id").ids
-            )
-            for slide in slides_needing_review.filtered(
-                lambda record: record.id not in pending_slide_ids
-            ):
-                Review.create(
-                    {
-                        "slide_id": slide.id,
-                        "origin": "legacy_reconciliation",
-                        "responsible_id": Review._default_review_responsible(slide).id,
-                    }
-                )
+        candidate_slides._facodi_enqueue_legacy_review_queue()
 
     def write(self, vals):
         enabling = (
