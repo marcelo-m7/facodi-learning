@@ -145,6 +145,35 @@ class FacodiLearningCurriculumReference(models.Model):
 
         return build_curriculum_reference_coverage(self)
 
+    def _facodi_coverage_candidates(self, limit_per_unit=20):
+        self.ensure_one()
+        from ..services.curriculum_coverage_suggestion import (
+            curriculum_coverage_candidates,
+        )
+
+        rows = []
+        for unit in self.unit_ids.sorted(key=lambda item: (item.sequence, item.id)):
+            rows.extend(curriculum_coverage_candidates(unit, limit=limit_per_unit))
+        return rows
+
+    def action_generate_coverage_proposals(self):
+        self.ensure_one()
+        from ..services.curriculum_coverage_suggestion import (
+            propose_reference_curriculum_coverage,
+        )
+
+        proposals = propose_reference_curriculum_coverage(self)
+        action = self.env.ref("facodi_learning.action_facodi_curriculum_coverage").read()[0]
+        action["domain"] = (
+            [("id", "in", proposals.ids)]
+            if proposals
+            else [
+                ("curriculum_unit_id.reference_id", "=", self.id),
+                ("state", "=", "proposed"),
+            ]
+        )
+        return action
+
     def _facodi_is_public(self):
         self.ensure_one()
         return bool(self.website_published and self.validated_at)
@@ -155,6 +184,32 @@ class FacodiLearningCurriculumReference(models.Model):
         normalized = normalized.encode("ascii", "ignore").decode("ascii")
         token = re.sub(r"[^a-z0-9]+", "-", normalized.lower()).strip("-")
         return token or fallback
+
+    def _facodi_coverage_candidates(self, limit=20):
+        self.ensure_one()
+        from ..services.curriculum_coverage_suggestion import (
+            curriculum_coverage_candidates,
+        )
+
+        return curriculum_coverage_candidates(self, limit=limit)
+
+    def action_generate_coverage_proposals(self):
+        self.ensure_one()
+        from ..services.curriculum_coverage_suggestion import (
+            propose_curriculum_coverage,
+        )
+
+        proposals = propose_curriculum_coverage(self)
+        action = self.env.ref("facodi_learning.action_facodi_curriculum_coverage").read()[0]
+        action["domain"] = (
+            [("id", "in", proposals.ids)]
+            if proposals
+            else [
+                ("curriculum_unit_id", "=", self.id),
+                ("state", "=", "proposed"),
+            ]
+        )
+        return action
 
     def _facodi_public_path(self):
         self.ensure_one()
