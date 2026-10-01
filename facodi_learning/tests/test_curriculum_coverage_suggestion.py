@@ -100,6 +100,28 @@ class TestCurriculumCoverageSuggestions(TransactionCase):
         self.assertIn("signals", programming["evidence"])
         self.assertIn("boundary", programming["evidence"])
 
+    def test_ranking_applies_limit_after_scoring_all_published_courses(self):
+        fillers = self.env["slide.channel"]
+        for index in range(25):
+            fillers |= self.env["slide.channel"].create(
+                {
+                    "name": f"Unrelated filler course {index:02d}",
+                    "description_short": "Generic unrelated material.",
+                    "sequence": index,
+                    "is_published": True,
+                }
+            )
+        self.programming.sequence = 999
+
+        candidates = curriculum_coverage_candidates(self.unit, limit=5)
+
+        self.assertEqual(len(candidates), 5)
+        self.assertIn(self.programming.id, [row["channel_id"] for row in candidates])
+        self.assertNotEqual(
+            [row["channel_id"] for row in candidates],
+            fillers.sorted(key=lambda channel: (channel.sequence, channel.id))[:5].ids,
+        )
+
     def test_generation_creates_review_only_analysis_proposals(self):
         created = propose_curriculum_coverage(
             self.unit.with_user(self.manager),
