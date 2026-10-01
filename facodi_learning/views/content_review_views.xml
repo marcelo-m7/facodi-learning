@@ -8,6 +8,8 @@
                 <field name="slide_id"/>
                 <field name="state"/>
                 <field name="origin"/>
+                <field name="review_reason"/>
+                <field name="responsible_id"/>
                 <field name="author"/>
                 <field name="rights_mode"/>
                 <field name="source_id"/>
@@ -33,6 +35,8 @@
                             <field name="slide_id" readonly="state != 'pending'"/>
                             <field name="source_id" readonly="state != 'pending'"/>
                             <field name="origin" readonly="1"/>
+                            <field name="review_reason" readonly="1"/>
+                            <field name="responsible_id" readonly="state != 'pending'"/>
                             <field name="source_url" readonly="state != 'pending'"/>
                         </group>
                         <group string="Evidence">

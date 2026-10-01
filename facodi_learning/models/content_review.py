@@ -116,6 +116,25 @@ class ContentReview(models.Model):
         required=True,
         readonly=True,
     )
+    review_reason = fields.Selection(
+        [
+            ("manual", "Manual publication review"),
+            ("source_ingestion", "Source ingestion requires review"),
+            ("legacy_publication", "Legacy public content requires provenance review"),
+        ],
+        default="manual",
+        required=True,
+        readonly=True,
+        help="Why this review entered the editorial queue. This is workflow evidence, not source provenance.",
+    )
+    responsible_id = fields.Many2one(
+        "res.users",
+        default=lambda self: self.env.user,
+        required=True,
+        index=True,
+        domain=[("share", "=", False)],
+        help="Internal user responsible for completing the pending review.",
+    )
     author = fields.Char(
         help="Claimed creator or responsible author. Leave blank until verified."
     )
@@ -151,23 +170,83 @@ class ContentReview(models.Model):
         help="Manager decision note. Required when rejecting a review."
     )
 
+    @api.model
+    def _default_review_responsible(self, slide=False):
+        root = self.env.ref("base.user_root")
+        candidate = slide.channel_id.user_id if slide else self.env.user
+        if (
+            not candidate
+            or not candidate.active
+            or candidate.share
+            or candidate == root
+        ):
+            candidate = self.env.user
+        if (
+            not candidate
+            or not candidate.active
+            or candidate.share
+            or candidate == root
+        ):
+            candidate = self.env.ref("base.user_admin")
+        return candidate
+
     @api.model_create_multi
     def create(self, vals_list):
-        protected = {"state", "content_hash", "reviewed_by_id", "reviewed_at"}
+        protected = {
+            "state",
+            "content_hash",
+            "reviewed_by_id",
+            "reviewed_at",
+            "review_reason",
+        }
         if any(protected & set(vals) for vals in vals_list):
             raise AccessError("Review lifecycle evidence is managed by review actions.")
+        reason_by_origin = {
+            "manual": "manual",
+            "source_ingestion": "source_ingestion",
+            "legacy_reconciliation": "legacy_publication",
+        }
+        for vals in vals_list:
+            origin = vals.get("origin", "manual")
+            vals["review_reason"] = reason_by_origin.get(origin, "manual")
+            if not vals.get("responsible_id"):
+                slide = self.env["slide.slide"].browse(vals.get("slide_id")).exists()
+                vals["responsible_id"] = self._default_review_responsible(slide).id
         records = super().create(vals_list)
         records._check_source_consistency()
+        records._check_review_responsible()
         return records
 
+    @api.constrains("responsible_id")
+    def _check_review_responsible(self):
+        root = self.env.ref("base.user_root")
+        for review in self:
+            if (
+                not review.responsible_id
+                or not review.responsible_id.active
+                or review.responsible_id.share
+                or review.responsible_id == root
+            ):
+                raise ValidationError(
+                    "Review responsibility must belong to an active internal user."
+                )
+
     def write(self, vals):
-        protected = {"state", "content_hash", "reviewed_by_id", "reviewed_at", "origin"}
+        protected = {
+            "state",
+            "content_hash",
+            "reviewed_by_id",
+            "reviewed_at",
+            "origin",
+            "review_reason",
+        }
         if protected & set(vals):
             raise AccessError("Use review actions to change review lifecycle evidence.")
         if any(review.state in {"approved", "rejected"} for review in self):
             raise AccessError("Completed content reviews are immutable.")
         result = super().write(vals)
         self._check_source_consistency()
+        self._check_review_responsible()
         return result
 
     def unlink(self):
@@ -336,6 +415,51 @@ class SlideSlide(models.Model):
             getattr(self, "is_published", False)
             or getattr(self, "website_published", False)
         )
+
+    def _facodi_enqueue_legacy_review_queue(self):
+        """Attach one accountable pending review to legacy public content.
+
+        This method records workflow evidence only. It deliberately leaves
+        authorship, rights, source URL and permitted-use evidence empty until a
+        human verifies them, and it never changes publication state.
+        """
+        slides = self.filtered(lambda slide: slide._facodi_is_public())
+        if not slides:
+            return self
+
+        approved_slide_ids = slides._facodi_current_approved_slide_ids()
+        slides_needing_review = slides.filtered(
+            lambda slide: slide.id not in approved_slide_ids
+        )
+        if not slides_needing_review:
+            return self.env["slide.slide"]
+
+        slides_to_flag = slides_needing_review.filtered(
+            lambda slide: not slide.facodi_legacy_review_pending
+        )
+        if slides_to_flag:
+            slides_to_flag.write({"facodi_legacy_review_pending": True})
+
+        Review = self.env["facodi.learning.content.review"].sudo()
+        pending_slide_ids = set(
+            Review.search(
+                [
+                    ("slide_id", "in", slides_needing_review.ids),
+                    ("state", "=", "pending"),
+                ]
+            ).mapped("slide_id").ids
+        )
+        for slide in slides_needing_review.filtered(
+            lambda record: record.id not in pending_slide_ids
+        ):
+            Review.create(
+                {
+                    "slide_id": slide.id,
+                    "origin": "legacy_reconciliation",
+                    "responsible_id": Review._default_review_responsible(slide).id,
+                }
+            )
+        return slides_needing_review
 
     def _facodi_check_publication_review(self):
         for slide in self:
@@ -520,25 +644,11 @@ class Website(models.Model):
             ]
         )
         candidate_slides = self.env["slide.slide"]
-        candidate_slides_by_website = {
-            website_id: self.env["slide.slide"] for website_id in website_by_id
-        }
         for slide in public_slides:
             review_website = slide._facodi_review_website()
-            if (
-                review_website
-                and review_website.id in website_by_id
-                and not slide.facodi_legacy_review_pending
-            ):
+            if review_website and review_website.id in website_by_id:
                 candidate_slides |= slide
-                candidate_slides_by_website[review_website.id] |= slide
-        approved_slide_ids = candidate_slides._facodi_current_approved_slide_ids()
-        for candidate_slides in candidate_slides_by_website.values():
-            slides_to_flag = candidate_slides.filtered(
-                lambda slide: slide.id not in approved_slide_ids
-            )
-            if slides_to_flag:
-                slides_to_flag.write({"facodi_legacy_review_pending": True})
+        candidate_slides._facodi_enqueue_legacy_review_queue()
 
     def write(self, vals):
         enabling = (
