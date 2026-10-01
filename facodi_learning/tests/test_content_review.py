@@ -239,6 +239,33 @@ class TestContentPublicationGovernance(TransactionCase):
         self.assertEqual(slide.facodi_content_review_ids, first_review)
         self.assertEqual(len(slide.facodi_content_review_ids), 1)
 
+    def test_legacy_backfill_never_assigns_odoo_bot_as_responsible(self):
+        self.website.sudo().write({"facodi_publication_review_enabled": False})
+        root = self.env.ref("base.user_root")
+        admin = self.env.ref("base.user_admin")
+        root_channel = self.env["slide.channel"].create(
+            {
+                "name": "OdooBot-owned legacy course",
+                "website_id": self.website.id,
+                "user_id": root.id,
+            }
+        )
+        slide = self.env["slide.slide"].create(
+            {
+                "name": "OdooBot-owned legacy content",
+                "channel_id": root_channel.id,
+                "slide_category": "article",
+                "is_published": True,
+            }
+        )
+
+        self.website.action_facodi_enable_publication_review()
+
+        review = slide.facodi_content_review_ids
+        self.assertEqual(len(review), 1)
+        self.assertEqual(review.responsible_id, admin)
+        self.assertNotEqual(review.responsible_id, root)
+
     def test_legacy_backfill_skips_currently_approved_public_content(self):
         self.website.sudo().write({"facodi_publication_review_enabled": False})
         slide = self._slide("Approved before governance enablement")
