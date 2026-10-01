@@ -111,7 +111,6 @@ def curriculum_coverage_candidates(curriculum_unit, limit=20):
             ("is_published", "=", True),
         ],
         order="sequence, id",
-        limit=limit,
     )
     ranked = [
         rank_course_curriculum_unit(channel, curriculum_unit)
@@ -120,7 +119,7 @@ def curriculum_coverage_candidates(curriculum_unit, limit=20):
     return sorted(
         ranked,
         key=lambda item: (-item["confidence"], item["channel_id"]),
-    )
+    )[:limit]
 
 
 def _lock_generation(curriculum_unit):
