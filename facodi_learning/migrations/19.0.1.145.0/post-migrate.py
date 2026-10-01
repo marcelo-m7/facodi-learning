@@ -56,3 +56,15 @@ def migrate(cr, version):
     )
 
     env["website"].search([]).action_facodi_enable_publication_review()
+
+    # Production's historical eLearning catalogue includes valid site-less
+    # slide records (website_id=False). They are intentionally not brought
+    # under the runtime publication guard, but the one-time reconciliation
+    # still needs accountable pending evidence for every currently public item.
+    env["slide.slide"].search(
+        [
+            "|",
+            ("is_published", "=", True),
+            ("website_published", "=", True),
+        ]
+    )._facodi_enqueue_legacy_review_queue()
