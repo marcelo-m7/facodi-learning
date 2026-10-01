@@ -185,6 +185,11 @@
                             string="Archive"
                             groups="website_slides.group_website_slides_manager"
                             invisible="state == 'archived'"/>
+                    <button name="action_generate_coverage_proposals"
+                            type="object"
+                            string="Suggest coverage"
+                            groups="website_slides.group_website_slides_manager"
+                            invisible="not unit_ids"/>
                     <field name="state"
                            widget="statusbar"
                            statusbar_visible="draft,validated,archived"/>
@@ -300,6 +305,13 @@
         <field name="model">facodi.learning.curriculum.unit</field>
         <field name="arch" type="xml">
             <form string="Curricular Unit">
+                <header>
+                    <button name="action_generate_coverage_proposals"
+                            type="object"
+                            string="Suggest coverage"
+                            class="btn-primary"
+                            groups="website_slides.group_website_slides_manager"/>
+                </header>
                 <sheet>
                     <div class="oe_title">
                         <label for="name"/>

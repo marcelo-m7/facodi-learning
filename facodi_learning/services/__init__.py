@@ -37,3 +37,12 @@ from .curriculum_coverage import (
     score_candidate_curriculum_gap,
 )
 from .probability_statistics_mapping import apply_probability_statistics_mapping
+
+from .curriculum_coverage_suggestion import (
+    CURRICULUM_COVERAGE_MIN_CONFIDENCE,
+    CURRICULUM_COVERAGE_RANKING_VERSION,
+    curriculum_coverage_candidates,
+    propose_curriculum_coverage,
+    propose_reference_curriculum_coverage,
+    rank_course_curriculum_unit,
+)
