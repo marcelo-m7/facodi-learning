@@ -239,6 +239,24 @@ class TestContentPublicationGovernance(TransactionCase):
         self.assertEqual(slide.facodi_content_review_ids, first_review)
         self.assertEqual(len(slide.facodi_content_review_ids), 1)
 
+    def test_preflagged_legacy_content_still_gets_pending_review(self):
+        self.website.sudo().write({"facodi_publication_review_enabled": False})
+        slide = self._slide("Pre-flagged legacy content")
+        slide.write({"is_published": True})
+        slide.sudo().write({"facodi_legacy_review_pending": True})
+        self.assertFalse(slide.facodi_content_review_ids)
+
+        self.website.action_facodi_enable_publication_review()
+
+        slide.invalidate_recordset()
+        self.assertTrue(slide.is_published)
+        self.assertTrue(slide.facodi_legacy_review_pending)
+        review = slide.facodi_content_review_ids
+        self.assertEqual(len(review), 1)
+        self.assertEqual(review.origin, "legacy_reconciliation")
+        self.assertEqual(review.review_reason, "legacy_publication")
+        self.assertEqual(review.responsible_id, self.manager)
+
     def test_legacy_backfill_never_assigns_odoo_bot_as_responsible(self):
         self.website.sudo().write({"facodi_publication_review_enabled": False})
         root = self.env.ref("base.user_root")
