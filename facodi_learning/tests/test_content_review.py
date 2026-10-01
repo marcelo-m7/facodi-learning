@@ -109,6 +109,8 @@ class TestContentPublicationGovernance(TransactionCase):
         self.assertFalse(review.author)
         self.assertFalse(review.rights_mode)
         self.assertFalse(review.source_url)
+        self.assertEqual(review.review_reason, "legacy_publication")
+        self.assertEqual(review.responsible_id, self.manager)
         with self.assertRaises(ValidationError):
             review.with_user(self.manager).action_approve()
 
@@ -197,7 +199,15 @@ class TestContentPublicationGovernance(TransactionCase):
         slide.invalidate_recordset()
         self.assertTrue(slide.is_published)
         self.assertTrue(slide.facodi_legacy_review_pending)
-        self.assertFalse(slide.facodi_content_review_ids)
+        review = slide.facodi_content_review_ids
+        self.assertEqual(len(review), 1)
+        self.assertEqual(review.state, "pending")
+        self.assertEqual(review.origin, "legacy_reconciliation")
+        self.assertEqual(review.review_reason, "legacy_publication")
+        self.assertEqual(review.responsible_id, self.manager)
+        self.assertFalse(review.author)
+        self.assertFalse(review.rights_mode)
+        self.assertFalse(review.source_url)
 
     def test_legacy_website_published_content_is_backfilled(self):
         self.website.sudo().write({"facodi_publication_review_enabled": False})
@@ -209,6 +219,25 @@ class TestContentPublicationGovernance(TransactionCase):
         slide.invalidate_recordset()
         self.assertTrue(slide.website_published)
         self.assertTrue(slide.facodi_legacy_review_pending)
+        review = slide.facodi_content_review_ids
+        self.assertEqual(len(review), 1)
+        self.assertEqual(review.review_reason, "legacy_publication")
+        self.assertEqual(review.responsible_id, self.manager)
+
+    def test_legacy_backfill_is_idempotent_and_keeps_publication(self):
+        self.website.sudo().write({"facodi_publication_review_enabled": False})
+        slide = self._slide("Idempotent legacy reconciliation")
+        slide.write({"is_published": True})
+
+        self.website.action_facodi_enable_publication_review()
+        first_review = slide.facodi_content_review_ids
+        self.website.action_facodi_enable_publication_review()
+
+        slide.invalidate_recordset()
+        self.assertTrue(slide.is_published)
+        self.assertTrue(slide.facodi_legacy_review_pending)
+        self.assertEqual(slide.facodi_content_review_ids, first_review)
+        self.assertEqual(len(slide.facodi_content_review_ids), 1)
 
     def test_legacy_backfill_skips_currently_approved_public_content(self):
         self.website.sudo().write({"facodi_publication_review_enabled": False})
@@ -255,6 +284,10 @@ class TestContentPublicationGovernance(TransactionCase):
 
         self.assertFalse(approved_slide.facodi_legacy_review_pending)
         self.assertTrue(pending_slide.facodi_legacy_review_pending)
+        review = pending_slide.facodi_content_review_ids
+        self.assertEqual(len(review), 1)
+        self.assertEqual(review.responsible_id, self.manager)
+        self.assertEqual(review.review_reason, "legacy_publication")
 
     def test_governance_cannot_be_disabled_through_normal_orm(self):
         self.website.action_facodi_enable_publication_review()
