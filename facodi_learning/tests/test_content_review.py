@@ -343,6 +343,39 @@ class TestContentPublicationGovernance(TransactionCase):
             )
         self.assertTrue(self.website.facodi_publication_review_enabled)
 
+    def test_explicit_legacy_reconciliation_includes_site_less_public_content(self):
+        channel = self.env["slide.channel"].create(
+            {
+                "name": "Site-less legacy reconciliation course",
+                "user_id": self.manager.id,
+            }
+        )
+        slide = self.env["slide.slide"].create(
+            {
+                "name": "Site-less legacy publication",
+                "channel_id": channel.id,
+                "slide_category": "article",
+                "is_published": True,
+            }
+        )
+        self.assertFalse(slide._facodi_requires_review())
+        self.assertFalse(slide.facodi_content_review_ids)
+
+        slide._facodi_enqueue_legacy_review_queue()
+
+        slide.invalidate_recordset()
+        self.assertTrue(slide.is_published)
+        self.assertTrue(slide.facodi_legacy_review_pending)
+        self.assertFalse(slide._facodi_requires_review())
+        review = slide.facodi_content_review_ids
+        self.assertEqual(len(review), 1)
+        self.assertEqual(review.origin, "legacy_reconciliation")
+        self.assertEqual(review.review_reason, "legacy_publication")
+        self.assertEqual(review.responsible_id, self.manager)
+        self.assertFalse(review.author)
+        self.assertFalse(review.rights_mode)
+        self.assertFalse(review.source_url)
+
     def test_site_less_content_is_not_accidentally_governed(self):
         channel = self.env["slide.channel"].create({"name": "Site-less course"})
         slide = self.env["slide.slide"].create(
