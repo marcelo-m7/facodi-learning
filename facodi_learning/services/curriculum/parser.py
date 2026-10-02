@@ -3,7 +3,7 @@ from html.parser import HTMLParser
 from urllib.parse import urlparse
 
 
-PARSER_VERSION = "ualg-course-plan-v1"
+PARSER_VERSION = "ualg-course-plan-v2"
 
 
 class CurriculumParseError(ValueError):
@@ -13,13 +13,16 @@ class CurriculumParseError(ValueError):
 class _TableParser(HTMLParser):
     def __init__(self):
         super().__init__()
+        self.tables = []
         self.rows, self.row, self.cell, self.in_table = [], [], [], False
         self.year = None
         self.context = []
 
     def handle_starttag(self, tag, attrs):
         attributes = dict(attrs)
-        if tag == "table": self.in_table = True
+        if tag == "table":
+            self.in_table = True
+            self.rows = []
         elif tag == "tr" and self.in_table: self.row = []
         elif tag in {"td", "th"} and self.in_table: self.cell = []
         if attributes.get("data-academic-year"): self.year = attributes["data-academic-year"]
@@ -33,7 +36,11 @@ class _TableParser(HTMLParser):
     def handle_endtag(self, tag):
         if tag in {"td", "th"} and self.in_table: self.row.append(" ".join(self.cell))
         elif tag == "tr" and self.in_table and self.row: self.rows.append(self.row)
-        elif tag == "table": self.in_table = False
+        elif tag == "table" and self.in_table:
+            if self.rows:
+                self.tables.append(self.rows)
+            self.rows = []
+            self.in_table = False
 
 
 def parse_ualg_course_plan(raw, *, academic_year, source_url):
@@ -51,7 +58,7 @@ def parse_ualg_course_plan(raw, *, academic_year, source_url):
     programme = re.search(r"<h1[^>]*>\s*(.*?)\s*</h1>", html, re.S | re.I)
     if not code or not programme: raise CurriculumParseError("Official curriculum page has no programme identity.")
     units, occurrences, sequence = {}, [], 0
-    for rows in [parser.rows]:
+    for rows in parser.tables:
         if len(rows) < 2: continue
         header = [" ".join(value.lower().split()) for value in rows[0]]
         def index(*names): return next((i for i, value in enumerate(header) if any(name in value for name in names)), None)
