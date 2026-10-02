@@ -284,6 +284,23 @@ def sync_slide_video_to_supabase(slide):
         },
     }
 
+    try:
+        from odoo.addons.facodi_api.service import FacodiApiService
+    except Exception:  # pragma: no cover - compatibility when the API addon is absent.
+        FacodiApiService = None
+
+    if FacodiApiService is not None:
+        result = FacodiApiService.ingest_video(
+            payload,
+            config={
+                "url": _env("SUPABASE_URL"),
+                "secret": secret,
+            },
+        )
+        if not isinstance(result, dict) or result.get("success") is not True:
+            raise ValueError("Supabase video ingest did not complete successfully.")
+        return result
+
     request = urllib.request.Request(
         _video_ingest_endpoint(),
         data=json.dumps(payload, ensure_ascii=False).encode("utf-8"),

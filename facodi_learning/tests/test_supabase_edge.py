@@ -85,6 +85,43 @@ class TestSupabaseEdgeAnalysis(TransactionCase):
             self.assertEqual(payload["channel_id"], str(self.channel.id))
             self.assertEqual(captured["timeout"], 30)
 
+    def test_short_youtube_share_url_is_canonicalized_for_supabase(self):
+        with patch.dict(
+            os.environ,
+            {
+                "SUPABASE_URL": "https://example.supabase.co",
+                "SUPABASE_SECRET_KEY": "sb_secret_test",
+            },
+            clear=False,
+        ):
+            captured = {}
+
+            def fake_ingest_video(payload=None, config=None):
+                captured["payload"] = payload
+                captured["config"] = config
+                return {"success": True, "video_id": "8OZkiphLBJM", "status": "pending"}
+
+            with patch(
+                "odoo.addons.facodi_api.service.FacodiApiService.ingest_video",
+                side_effect=fake_ingest_video,
+            ):
+                slide = self.env["slide.slide"].create(
+                    {
+                        "name": "Share URL sync",
+                        "channel_id": self.channel.id,
+                        "slide_category": "video",
+                        "source_type": "external",
+                        "video_url": "https://youtu.be/8OZkiphLBJM?si=6atGXTa_MDT09az2",
+                        "is_published": True,
+                        "website_published": True,
+                    }
+                )
+
+            self.assertTrue(slide)
+            self.assertEqual(captured["payload"]["url"], "https://www.youtube.com/watch?v=8OZkiphLBJM")
+            self.assertEqual(captured["payload"]["video_id"], "8OZkiphLBJM")
+            self.assertEqual(captured["config"]["secret"], "sb_secret_test")
+
     def test_imported_source_queues_one_supabase_job_when_runtime_is_configured(self):
         with patch.dict(
             os.environ,
