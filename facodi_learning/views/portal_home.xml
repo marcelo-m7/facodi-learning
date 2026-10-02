@@ -200,9 +200,13 @@
                                     </div>
                                     <strong t-esc="entry['unit'].name"/>
                                     <small>
-                                        <span t-esc="entry['coverage_status']"/>
+                                        <span t-if="entry['coverage_status'] == 'covered'">Covered</span>
+                                        <span t-elif="entry['coverage_status'] == 'partial'">Partial</span>
+                                        <span t-else="">Open gap</span>
                                         <span aria-hidden="true"> · </span>
-                                        <t t-esc="entry['published_course_count']"/> course<t t-if="entry['published_course_count'] != 1">s</t>
+                                        <t t-esc="entry['published_course_count']"/>
+                                        <t t-if="entry['published_course_count'] == 1">course</t>
+                                        <t t-else="">courses</t>
                                     </small>
                                 </a>
                             </div>

@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: Odoo Server 19.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-09-23 21:55+0000\n"
-"PO-Revision-Date: 2026-09-23 21:55+0000\n"
+"PO-Revision-Date: 2026-10-02 23:50+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -211,6 +211,7 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:facodi_learning.view_facodi_course_mapping_form
 #: model_terms:ir.ui.view,arch_db:facodi_learning.view_facodi_curriculum_coverage_form
 #: model_terms:ir.ui.view,arch_db:facodi_learning.view_facodi_learning_mapping_form
+#: model_terms:ir.ui.view,arch_db:facodi_learning.view_facodi_content_review_form
 msgid "Approve"
 msgstr ""
 
@@ -407,6 +408,7 @@ msgstr ""
 #: model:ir.model.fields.selection,name:facodi_learning.selection__facodi_learning_analysis_job__state__completed
 #: model:ir.model.fields.selection,name:facodi_learning.selection__facodi_learning_discovery_run__state__completed
 #: model_terms:ir.ui.view,arch_db:facodi_learning.view_facodi_discovery_run_search
+#: model:ir.model.fields.selection,name:facodi_learning.selection__facodi_learning_submission__processing_state__completed
 msgid "Completed"
 msgstr ""
 
@@ -460,6 +462,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:facodi_learning.field_facodi_learning_analysis_job__slide_id
 #: model:ir.model.fields,field_description:facodi_learning.field_facodi_learning_analysis_result__slide_id
 #: model:ir.model.fields,field_description:facodi_learning.field_facodi_learning_curriculum_module_item__slide_id
+#: model_terms:ir.ui.view,arch_db:facodi_learning.view_facodi_content_review_form
 msgid "Content"
 msgstr ""
 
@@ -520,8 +523,13 @@ msgid ""
 msgstr ""
 
 #. module: facodi_learning
+#. odoo-python
 #: model:ir.model,name:facodi_learning.model_slide_channel
 #: model:ir.model.fields,field_description:facodi_learning.field_facodi_learning_curriculum_module_item__channel_id
+#: code:addons/facodi_learning/controllers/contextual_submission.py:0
+#: code:addons/facodi_learning/models/contextual_submission.py:0
+#: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
+#: model_terms:ir.ui.view,arch_db:facodi_learning.view_facodi_submission_search_contextual
 msgid "Course"
 msgstr ""
 
@@ -598,6 +606,7 @@ msgstr ""
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit_index
+#: model_terms:ir.ui.view,arch_db:facodi_learning.portal_my_home_facodi
 msgid "Covered"
 msgstr ""
 
@@ -681,6 +690,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:facodi_learning.field_facodi_learning_curriculum_coverage__curriculum_unit_id
 #: model_terms:ir.ui.view,arch_db:facodi_learning.view_facodi_curriculum_coverage_search
 #: model_terms:ir.ui.view,arch_db:facodi_learning.view_facodi_curriculum_unit_form
+#: model_terms:ir.ui.view,arch_db:facodi_learning.view_facodi_submission_search_context
 msgid "Curricular Unit"
 msgstr ""
 
@@ -694,6 +704,7 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:facodi_learning.view_facodi_curriculum_reference_form
 #: model_terms:ir.ui.view,arch_db:facodi_learning.view_facodi_curriculum_unit_list
 #: model_terms:ir.ui.view,arch_db:facodi_learning.view_facodi_curriculum_unit_search
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_landing
 msgid "Curricular Units"
 msgstr ""
 
@@ -706,14 +717,22 @@ msgid "Curricular Year"
 msgstr ""
 
 #. module: facodi_learning
+#. odoo-python
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_detail
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit
+#: code:addons/facodi_learning/models/contextual_submission.py:0
+#: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
+#: model_terms:ir.ui.view,arch_db:facodi_learning.homepage_catalogue_fragment
+#: model_terms:ir.ui.view,arch_db:facodi_learning.view_facodi_submission_search_contextual
 msgid "Curricular unit"
 msgstr ""
 
 #. module: facodi_learning
+#. odoo-python
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit_index
+#: code:addons/facodi_learning/controllers/contextual_submission.py:0
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_index
 msgid "Curricular units"
 msgstr ""
 
@@ -878,6 +897,7 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_detail
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_map
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit_index
+#: model_terms:ir.ui.view,arch_db:facodi_learning.homepage_catalogue_fragment
 msgid "ECTS"
 msgstr ""
 
@@ -952,6 +972,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:facodi_learning.field_facodi_learning_course_mapping__evidence
 #: model:ir.model.fields,field_description:facodi_learning.field_facodi_learning_curriculum_coverage__evidence
 #: model_terms:ir.ui.view,arch_db:facodi_learning.view_facodi_curriculum_coverage_form
+#: model_terms:ir.ui.view,arch_db:facodi_learning.view_facodi_content_review_form
 msgid "Evidence"
 msgstr ""
 
@@ -1279,6 +1300,8 @@ msgstr ""
 #: model:ir.model.fields.selection,name:facodi_learning.selection__facodi_learning_source__state__failed
 #: model_terms:ir.ui.view,arch_db:facodi_learning.view_facodi_analysis_job_search
 #: model_terms:ir.ui.view,arch_db:facodi_learning.view_facodi_discovery_run_search
+#: model:ir.model.fields.selection,name:facodi_learning.selection__facodi_learning_curriculum_source__last_check_status__failed
+#: model:ir.model.fields.selection,name:facodi_learning.selection__facodi_learning_submission__processing_state__failed
 msgid "Failed"
 msgstr ""
 
@@ -1355,6 +1378,7 @@ msgstr ""
 
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit_index
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit
 msgid "related courses"
 msgstr ""
 
@@ -1415,9 +1439,17 @@ msgid "Jobs"
 msgstr ""
 
 #. module: facodi_learning
+#. odoo-python
 #: model:ir.model.fields,field_description:facodi_learning.field_facodi_learning_course_candidate__language
 #: model_terms:ir.ui.view,arch_db:facodi_learning.view_facodi_course_candidate_search
 #: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_status
+#: code:addons/facodi_learning/models/contextual_submission.py:0
+#: model:ir.model.fields,field_description:facodi_learning.field_facodi_learning_submission__language
+#: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_community_videos
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_content
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_manage
+#: model_terms:ir.ui.view,arch_db:facodi_learning.view_facodi_submission_search
 msgid "Language"
 msgstr ""
 
@@ -1507,7 +1539,9 @@ msgid "Learning pathway"
 msgstr ""
 
 #. module: facodi_learning
+#. odoo-python
 #: model_terms:ir.ui.view,arch_db:facodi_learning.approved_learning_resources
+#: code:addons/facodi_learning/controllers/contextual_submission.py:0
 msgid "Learning resources"
 msgstr ""
 
@@ -1517,7 +1551,11 @@ msgid "Learning roadmaps grounded in verified academic sources"
 msgstr ""
 
 #. module: facodi_learning
+#. odoo-python
 #: model:ir.model.fields,field_description:facodi_learning.field_facodi_learning_course_candidate__level
+#: code:addons/facodi_learning/models/contextual_submission.py:0
+#: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_manage
 msgid "Level"
 msgstr ""
 
@@ -1555,6 +1593,7 @@ msgstr ""
 #: model:ir.model.fields.selection,name:facodi_learning.selection__facodi_learning_mapping__origin__manual
 #: model:ir.model.fields.selection,name:facodi_learning.selection__res_config_settings__facodi_learning_course_mapping_mode__manual
 #: model:ir.model.fields.selection,name:facodi_learning.selection__res_config_settings__facodi_learning_course_selection_mode__manual
+#: model:ir.model.fields.selection,name:facodi_learning.selection__facodi_learning_content_review__origin__manual
 msgid "Manual"
 msgstr ""
 
@@ -1658,6 +1697,9 @@ msgstr ""
 #: model:ir.model.fields,field_description:facodi_learning.field_facodi_learning_curriculum_reference__name
 #: model:ir.model.fields,field_description:facodi_learning.field_facodi_learning_curriculum_unit__name
 #: model:ir.model.fields,field_description:facodi_learning.field_facodi_learning_source__name
+#: model:ir.model.fields,field_description:facodi_learning.field_facodi_learning_submission__name
+#: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_manage
 msgid "Name"
 msgstr ""
 
@@ -1744,6 +1786,8 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_detail
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit
 #: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_status
+#: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_manage
 msgid "Not specified"
 msgstr ""
 
@@ -1796,6 +1840,7 @@ msgstr ""
 
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit
+#: model_terms:ir.ui.view,arch_db:facodi_learning.portal_my_home_facodi
 msgid "Open course"
 msgstr ""
 
@@ -1830,6 +1875,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:facodi_learning.field_facodi_learning_mapping__origin
 #: model_terms:ir.ui.view,arch_db:facodi_learning.view_facodi_course_mapping_search
 #: model_terms:ir.ui.view,arch_db:facodi_learning.view_facodi_curriculum_coverage_search
+#: model:ir.model.fields,field_description:facodi_learning.field_facodi_learning_content_review__origin
 msgid "Origin"
 msgstr ""
 
@@ -1840,6 +1886,8 @@ msgstr ""
 
 #. module: facodi_learning
 #: model:ir.model.fields.selection,name:facodi_learning.selection__facodi_learning_curriculum_occurrence__period__other
+#: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_manage
 msgid "Other"
 msgstr ""
 
@@ -1852,6 +1900,7 @@ msgstr ""
 #: model:ir.model.fields.selection,name:facodi_learning.selection__facodi_learning_curriculum_coverage__coverage_type__partial
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit_index
+#: model_terms:ir.ui.view,arch_db:facodi_learning.portal_my_home_facodi
 msgid "Partial"
 msgstr ""
 
@@ -1880,6 +1929,7 @@ msgstr ""
 #: model:ir.model.fields.selection,name:facodi_learning.selection__facodi_learning_source__state__pending
 #: model_terms:ir.ui.view,arch_db:facodi_learning.view_facodi_analysis_job_search
 #: model_terms:ir.ui.view,arch_db:facodi_learning.view_facodi_discovery_run_search
+#: model:ir.model.fields.selection,name:facodi_learning.selection__facodi_learning_submission__processing_state__pending
 msgid "Pending"
 msgstr ""
 
@@ -1918,6 +1968,7 @@ msgstr ""
 #. module: facodi_learning
 #: model:ir.model.fields.selection,name:facodi_learning.selection__facodi_learning_analysis_job__state__processing
 #: model:ir.model.fields.selection,name:facodi_learning.selection__facodi_learning_discovery_run__state__processing
+#: model:ir.model.fields.selection,name:facodi_learning.selection__facodi_learning_submission__processing_state__processing
 msgid "Processing"
 msgstr ""
 
@@ -2066,6 +2117,8 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:facodi_learning.view_facodi_course_mapping_form
 #: model_terms:ir.ui.view,arch_db:facodi_learning.view_facodi_curriculum_coverage_form
 #: model_terms:ir.ui.view,arch_db:facodi_learning.view_facodi_learning_mapping_form
+#: model_terms:ir.ui.view,arch_db:facodi_learning.view_facodi_content_review_form
+#: model_terms:ir.ui.view,arch_db:facodi_learning.view_facodi_submission_form
 msgid "Reject"
 msgstr ""
 
@@ -2084,6 +2137,8 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:facodi_learning.view_facodi_course_mapping_search
 #: model_terms:ir.ui.view,arch_db:facodi_learning.view_facodi_curriculum_coverage_search
 #: model:ir.model.fields.selection,name:facodi_learning.selection__facodi_learning_submission__state__rejected
+#: model:ir.model.fields.selection,name:facodi_learning.selection__facodi_learning_content_review__state__rejected
+#: model_terms:ir.ui.view,arch_db:facodi_learning.view_facodi_submission_search
 msgid "Rejected"
 msgstr ""
 
@@ -2134,6 +2189,7 @@ msgstr ""
 #: model:ir.model.fields.selection,name:facodi_learning.selection__facodi_learning_course_candidate__state__resolved
 #: model_terms:ir.ui.view,arch_db:facodi_learning.view_facodi_course_candidate_search
 #: model:ir.model.fields.selection,name:facodi_learning.selection__facodi_learning_submission__state__resolved
+#: model_terms:ir.ui.view,arch_db:facodi_learning.view_facodi_submission_search
 msgid "Resolved"
 msgstr ""
 
@@ -2179,6 +2235,8 @@ msgstr ""
 #: model:ir.model.fields,field_description:facodi_learning.field_facodi_learning_course_mapping__reviewed_at
 #: model:ir.model.fields,field_description:facodi_learning.field_facodi_learning_curriculum_coverage__reviewed_at
 #: model:ir.model.fields,field_description:facodi_learning.field_facodi_learning_mapping__reviewed_at
+#: model:ir.model.fields,field_description:facodi_learning.field_facodi_learning_content_review__reviewed_at
+#: model:ir.model.fields,field_description:facodi_learning.field_facodi_learning_submission__reviewed_at
 msgid "Reviewed At"
 msgstr ""
 
@@ -2187,6 +2245,8 @@ msgstr ""
 #: model:ir.model.fields,field_description:facodi_learning.field_facodi_learning_course_mapping__reviewed_by_id
 #: model:ir.model.fields,field_description:facodi_learning.field_facodi_learning_curriculum_coverage__reviewed_by_id
 #: model:ir.model.fields,field_description:facodi_learning.field_facodi_learning_mapping__reviewed_by_id
+#: model:ir.model.fields,field_description:facodi_learning.field_facodi_learning_content_review__reviewed_by_id
+#: model:ir.model.fields,field_description:facodi_learning.field_facodi_learning_submission__reviewed_by_id
 msgid "Reviewed By"
 msgstr ""
 
@@ -2201,8 +2261,13 @@ msgid "Rights Mode"
 msgstr ""
 
 #. module: facodi_learning
+#. odoo-python
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_detail
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit_index
+#: code:addons/facodi_learning/controllers/contextual_submission.py:0
+#: code:addons/facodi_learning/models/contextual_submission.py:0
+#: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
+#: model_terms:ir.ui.view,arch_db:facodi_learning.homepage_catalogue_fragment
 msgid "Roadmap"
 msgstr ""
 
@@ -2212,6 +2277,7 @@ msgid "Roadmap coverage"
 msgstr ""
 
 #. module: facodi_learning
+#. odoo-python
 #: model:website.menu,name:facodi_learning.menu_public_curriculum_map
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_catalog_navigation
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_index
@@ -2219,6 +2285,8 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_module
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit_index
+#: code:addons/facodi_learning/controllers/contextual_submission.py:0
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_landing
 msgid "Roadmaps"
 msgstr ""
 
@@ -2286,6 +2354,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:facodi_learning.field_facodi_learning_curriculum_capture__source_id
 #: model:ir.model.fields,field_description:facodi_learning.field_facodi_learning_curriculum_reference__source_id
 #: model_terms:ir.ui.view,arch_db:facodi_learning.view_slide_slide_form_facodi_learning
+#: model:ir.model.fields,field_description:facodi_learning.field_facodi_learning_content_review__source_id
 msgid "Source"
 msgstr ""
 
@@ -2327,6 +2396,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:facodi_learning.field_facodi_learning_course_candidate__source_url
 #: model:ir.model.fields,field_description:facodi_learning.field_facodi_learning_curriculum_reference__source_url
 #: model:ir.model.fields,field_description:facodi_learning.field_facodi_learning_curriculum_source__source_url
+#: model:ir.model.fields,field_description:facodi_learning.field_facodi_learning_submission__source_url
 msgid "Source Url"
 msgstr ""
 
@@ -2353,6 +2423,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:facodi_learning.field_facodi_learning_discovery_run__state
 #: model:ir.model.fields,field_description:facodi_learning.field_facodi_learning_mapping__state
 #: model:ir.model.fields,field_description:facodi_learning.field_facodi_learning_source__state
+#: model:ir.model.fields,field_description:facodi_learning.field_facodi_learning_submission__state
 msgid "State"
 msgstr ""
 
@@ -2364,6 +2435,7 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:facodi_learning.view_facodi_curriculum_coverage_search
 #: model_terms:ir.ui.view,arch_db:facodi_learning.view_facodi_discovery_run_search
 #: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_status
+#: model_terms:ir.ui.view,arch_db:facodi_learning.view_facodi_submission_search
 msgid "Status"
 msgstr ""
 
@@ -2510,6 +2582,8 @@ msgstr ""
 
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_detail
+#: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
+#: model_terms:ir.ui.view,arch_db:facodi_learning.view_facodi_submission_search_contextual
 msgid "Type"
 msgstr ""
 
@@ -2644,20 +2718,17 @@ msgstr ""
 msgid "← Back to curricular units"
 msgstr ""
 
-
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_catalog_navigation
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_index
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit_index
 msgid "Learning"
-msgstr ""
-
-#. module: facodi_learning
-#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_catalog_navigation
-msgid "Curricular Units"
 msgstr ""
 
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_status
 #: model_terms:ir.ui.view,arch_db:facodi_learning.course_contribution_cta
+#: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
 msgid "Contribute to FACODI"
 msgstr ""
 
@@ -2668,6 +2739,7 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit_index
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_detail
 #: model_terms:ir.ui.view,arch_db:facodi_learning.course_contribution_cta
+#: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
 msgid "Suggest a learning resource"
 msgstr ""
 
@@ -2678,6 +2750,7 @@ msgstr ""
 
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_status
+#: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
 msgid "Check the information below."
 msgstr ""
 
@@ -2688,6 +2761,8 @@ msgstr ""
 
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_status
+#: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_manage
 msgid "Public resource URL"
 msgstr ""
 
@@ -2698,21 +2773,29 @@ msgstr ""
 
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_status
+#: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_manage
 msgid "Portuguese"
 msgstr ""
 
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_status
+#: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_manage
 msgid "English"
 msgstr ""
 
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_status
+#: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_manage
 msgid "Spanish"
 msgstr ""
 
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_status
+#: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_manage
 msgid "French"
 msgstr ""
 
@@ -2744,6 +2827,7 @@ msgstr ""
 
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_status
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_manage
 msgid "Resource"
 msgstr ""
 
@@ -2783,32 +2867,40 @@ msgid "Explore learning content"
 msgstr ""
 
 #. module: facodi_learning
+#. odoo-python
 #: code:addons/facodi_learning/controllers/submission.py:0
+#: code:addons/facodi_learning/controllers/contextual_submission.py:0
 msgid "Enter a short title for the resource."
 msgstr ""
 
 #. module: facodi_learning
+#. odoo-python
 #: code:addons/facodi_learning/controllers/submission.py:0
+#: code:addons/facodi_learning/controllers/contextual_submission.py:0
 msgid "Enter a valid public HTTP or HTTPS URL."
 msgstr ""
 
 #. module: facodi_learning
+#. odoo-python
 #: code:addons/facodi_learning/controllers/submission.py:0
 msgid "The resource could not be submitted. Check the URL and try again."
 msgstr ""
 
 #. module: facodi_learning
 #: model:ir.model.fields.selection,name:facodi_learning.selection__facodi_learning_submission__state__submitted
+#: model_terms:ir.ui.view,arch_db:facodi_learning.view_facodi_submission_search
 msgid "Submitted"
 msgstr ""
 
 #. module: facodi_learning
 #: model:ir.model.fields.selection,name:facodi_learning.selection__facodi_learning_submission__state__reviewing
+#: model_terms:ir.ui.view,arch_db:facodi_learning.view_facodi_submission_search
 msgid "Reviewing"
 msgstr ""
 
 #. module: facodi_learning
 #: model:ir.model.fields.selection,name:facodi_learning.selection__facodi_learning_submission__state__accepted
+#: model_terms:ir.ui.view,arch_db:facodi_learning.view_facodi_submission_search
 msgid "Accepted"
 msgstr ""
 
@@ -2817,6 +2909,8 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_catalog_navigation
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit_index
 #: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_status
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_module
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_areas
 msgid "Suggest a resource"
 msgstr ""
 
@@ -2825,10 +2919,12 @@ msgid "For supported YouTube links, FACODI can fill the title and language autom
 msgstr ""
 
 #. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
 msgid "Detect details"
 msgstr ""
 
 #. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
 msgid "Detected resource"
 msgstr ""
 
@@ -2879,8 +2975,11 @@ msgid "Not Queued"
 msgstr ""
 
 #. module: facodi_learning
+#. odoo-python
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_index
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit_index
+#: code:addons/facodi_learning/controllers/contextual_submission.py:0
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_landing
 msgid "Courses"
 msgstr ""
 
@@ -3000,6 +3099,7 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_my_list
 #: model_terms:ir.ui.view,arch_db:facodi_learning.explore_community_videos
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit_index
+#: model_terms:ir.ui.view,arch_db:facodi_learning.portal_my_home_facodi
 msgid "Explore roadmaps"
 msgstr ""
 
@@ -3065,6 +3165,8 @@ msgstr ""
 
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.portal_my_home_facodi
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_content
 msgid "Drop a resource"
 msgstr ""
 
@@ -3074,7 +3176,10 @@ msgid "Put something useful on the community desk"
 msgstr ""
 
 #. module: facodi_learning
+#. odoo-python
 #: model_terms:ir.ui.view,arch_db:facodi_learning.portal_my_home_facodi
+#: code:addons/facodi_learning/controllers/contextual_submission.py:0
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_landing
 msgid "Community"
 msgstr ""
 
@@ -3100,6 +3205,7 @@ msgstr ""
 
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.portal_my_home_facodi
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit
 msgid "Done ✓"
 msgstr ""
 
@@ -3214,7 +3320,11 @@ msgid "Areas"
 msgstr ""
 
 #. module: facodi_learning
+#. odoo-python
 #: model:website.menu,name:facodi_learning.menu_public_explore_videos
+#: code:addons/facodi_learning/controllers/contextual_submission.py:0
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_landing
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_status
 msgid "Community videos"
 msgstr ""
 
@@ -3339,30 +3449,44 @@ msgid "Explore curricular units from validated programmes and their published FA
 msgstr ""
 
 #. module: facodi_learning
+#. odoo-python
 #: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
 #: model_terms:ir.ui.view,arch_db:facodi_learning.unit_provenance_correction_cta
 #: model_terms:ir.ui.view,arch_db:facodi_learning.roadmap_provenance_correction_cta
+#: code:addons/facodi_learning/controllers/contextual_submission.py:0
+#: model:ir.model.fields.selection,name:facodi_learning.selection__facodi_learning_submission__submission_type__contact
+#: model_terms:ir.ui.view,arch_db:facodi_learning.view_facodi_submission_search
 msgid "Contact"
 msgstr ""
 
 #. module: facodi_learning
+#. odoo-python
 #: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
 #: model_terms:ir.ui.view,arch_db:facodi_learning.unit_provenance_correction_cta
 #: model_terms:ir.ui.view,arch_db:facodi_learning.roadmap_provenance_correction_cta
+#: code:addons/facodi_learning/controllers/contextual_submission.py:0
+#: model:ir.model.fields.selection,name:facodi_learning.selection__facodi_learning_submission__submission_type__correction
 msgid "Correction"
 msgstr ""
 
 #. module: facodi_learning
+#. odoo-python
 #: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
 #: model_terms:ir.ui.view,arch_db:facodi_learning.unit_provenance_correction_cta
 #: model_terms:ir.ui.view,arch_db:facodi_learning.roadmap_provenance_correction_cta
+#: code:addons/facodi_learning/controllers/contextual_submission.py:0
+#: model:ir.model.fields.selection,name:facodi_learning.selection__facodi_learning_submission__submission_type__question
 msgid "Question"
 msgstr ""
 
 #. module: facodi_learning
+#. odoo-python
 #: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
 #: model_terms:ir.ui.view,arch_db:facodi_learning.unit_provenance_correction_cta
 #: model_terms:ir.ui.view,arch_db:facodi_learning.roadmap_provenance_correction_cta
+#: code:addons/facodi_learning/controllers/contextual_submission.py:0
+#: model:ir.model.fields.selection,name:facodi_learning.selection__facodi_learning_submission__submission_type__resource
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_status
 msgid "Learning resource"
 msgstr ""
 
@@ -3388,57 +3512,68 @@ msgid "Why does this belong in FACODI?"
 msgstr ""
 
 #. module: facodi_learning
+#. odoo-python
 #: code:addons/facodi_learning/controllers/contextual_submission.py:0
 msgid "The curricular unit context is no longer publicly available."
 msgstr ""
 
 #. module: facodi_learning
+#. odoo-python
 #: code:addons/facodi_learning/controllers/contextual_submission.py:0
 msgid "The roadmap context is no longer publicly available."
 msgstr ""
 
 #. module: facodi_learning
+#. odoo-python
 #: code:addons/facodi_learning/controllers/contextual_submission.py:0
 msgid "The course context is no longer publicly available."
 msgstr ""
 
 #. module: facodi_learning
+#. odoo-python
 #: code:addons/facodi_learning/controllers/contextual_submission.py:0
 msgid "The learning item context is no longer publicly available."
 msgstr ""
 
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_manage
 msgid "What is this about?"
 msgstr ""
 
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_manage
 msgid "Choose a topic"
 msgstr ""
 
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_manage
 msgid "Collaboration"
 msgstr ""
 
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_manage
 msgid "Partnership"
 msgstr ""
 
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_manage
 msgid "Content / editorial"
 msgstr ""
 
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_manage
 msgid "Technical issue"
 msgstr ""
 
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_manage
 msgid "Accessibility"
 msgstr ""
 
@@ -3453,7 +3588,9 @@ msgid "Came from"
 msgstr ""
 
 #. module: facodi_learning
+#. odoo-python
 #: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
+#: code:addons/facodi_learning/controllers/contextual_submission.py:0
 msgid "Choose what you are contacting FACODI about."
 msgstr ""
 
@@ -3478,66 +3615,79 @@ msgid "FACODI project"
 msgstr ""
 
 #. module: facodi_learning
+#. odoo-python
 #: code:addons/facodi_learning/controllers/contextual_submission.py:0
 msgid "I found a useful public resource to leave on the community learning trail."
 msgstr ""
 
 #. module: facodi_learning
+#. odoo-python
 #: code:addons/facodi_learning/controllers/contextual_submission.py:0
 msgid "I found a resource that could strengthen the FACODI open-learning ecosystem."
 msgstr ""
 
 #. module: facodi_learning
+#. odoo-python
 #: code:addons/facodi_learning/controllers/contextual_submission.py:0
 msgid "I want to add another useful page to the shared FACODI learning notebook."
 msgstr ""
 
 #. module: facodi_learning
+#. odoo-python
 #: code:addons/facodi_learning/controllers/contextual_submission.py:0
 msgid "I am using the contribution route because this is a learning resource for editorial review."
 msgstr ""
 
 #. module: facodi_learning
+#. odoo-python
 #: code:addons/facodi_learning/controllers/contextual_submission.py:0
 msgid "I want to share a useful public resource for FACODI editorial review."
 msgstr ""
 
 #. module: facodi_learning
+#. odoo-python
 #: code:addons/facodi_learning/controllers/contextual_submission.py:0
 msgid "Community resource"
 msgstr ""
 
 #. module: facodi_learning
+#. odoo-python
 #: code:addons/facodi_learning/controllers/contextual_submission.py:0
 msgid "Ecosystem contribution"
 msgstr ""
 
 #. module: facodi_learning
+#. odoo-python
 #: code:addons/facodi_learning/controllers/contextual_submission.py:0
 msgid "Shared learning notebook"
 msgstr ""
 
 #. module: facodi_learning
+#. odoo-python
 #: code:addons/facodi_learning/controllers/contextual_submission.py:0
 msgid "Contact page resource"
 msgstr ""
 
 #. module: facodi_learning
+#. odoo-python
 #: code:addons/facodi_learning/controllers/contextual_submission.py:0
 msgid "Contribution board"
 msgstr ""
 
 #. module: facodi_learning
+#. odoo-python
 #: code:addons/facodi_learning/controllers/contextual_submission.py:0
 msgid "Contribution board correction"
 msgstr ""
 
 #. module: facodi_learning
+#. odoo-python
 #: code:addons/facodi_learning/controllers/contextual_submission.py:0
 msgid "Contribution"
 msgstr ""
 
 #. module: facodi_learning
+#. odoo-python
 #: code:addons/facodi_learning/controllers/contextual_submission.py:0
 msgid "General"
 msgstr ""
@@ -3567,6 +3717,7 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_status
 #: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_my_list
 #: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_manage
+#: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
 msgid "Message"
 msgstr ""
 
@@ -3613,16 +3764,21 @@ msgid "Start your first submission"
 msgstr ""
 
 #. module: facodi_learning
+#. odoo-python
 #: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_status
 #: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_my_list
 #: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_manage
+#: code:addons/facodi_learning/controllers/contextual_submission.py:0
+#: code:addons/facodi_learning/controllers/submission.py:0
 msgid "Write a short message so FACODI can review the submission."
 msgstr ""
 
 #. module: facodi_learning
+#. odoo-python
 #: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_status
 #: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_my_list
 #: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_manage
+#: code:addons/facodi_learning/controllers/submission.py:0
 msgid "Enter a short title for the submission."
 msgstr ""
 
@@ -3634,76 +3790,95 @@ msgid "Withdrawal stops this submission from continuing through the FACODI workf
 msgstr ""
 
 #. module: facodi_learning
+#. odoo-python
 #: code:addons/facodi_learning/controllers/contextual_submission.py:0
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_areas
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_community_videos
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_content
 msgid "Back to Explore"
 msgstr ""
 
 #. module: facodi_learning
+#. odoo-python
 #: code:addons/facodi_learning/controllers/contextual_submission.py:0
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_status
 msgid "Back to curricular unit"
 msgstr ""
 
 #. module: facodi_learning
+#. odoo-python
 #: code:addons/facodi_learning/controllers/contextual_submission.py:0
 msgid "Back to roadmap"
 msgstr ""
 
 #. module: facodi_learning
+#. odoo-python
 #: code:addons/facodi_learning/controllers/contextual_submission.py:0
 msgid "Back to learning item"
 msgstr ""
 
 #. module: facodi_learning
+#. odoo-python
 #: code:addons/facodi_learning/controllers/contextual_submission.py:0
 msgid "Back to course"
 msgstr ""
 
 #. module: facodi_learning
+#. odoo-python
 #: code:addons/facodi_learning/controllers/contextual_submission.py:0
 msgid "Back to where I was"
 msgstr ""
 
 #. module: facodi_learning
+#. odoo-python
 #: code:addons/facodi_learning/controllers/contextual_submission.py:0
 msgid "Learning navigation"
 msgstr ""
 
 #. module: facodi_learning
+#. odoo-python
 #: code:addons/facodi_learning/controllers/contextual_submission.py:0
 msgid "Learning catalogue"
 msgstr ""
 
 #. module: facodi_learning
+#. odoo-python
 #: code:addons/facodi_learning/controllers/contextual_submission.py:0
 msgid "Submission follow-up"
 msgstr ""
 
 #. module: facodi_learning
+#. odoo-python
 #: code:addons/facodi_learning/controllers/contextual_submission.py:0
 msgid "Submission status"
 msgstr ""
 
 #. module: facodi_learning
+#. odoo-python
 #: code:addons/facodi_learning/controllers/contextual_submission.py:0
 msgid "Suggested around learning item: %s (course: %s)."
 msgstr ""
 
 #. module: facodi_learning
+#. odoo-python
 #: code:addons/facodi_learning/controllers/contextual_submission.py:0
 msgid "I suggest this resource as a useful companion to this lesson."
 msgstr ""
 
 #. module: facodi_learning
+#. odoo-python
 #: code:addons/facodi_learning/controllers/contextual_submission.py:0
 msgid "Lesson resources"
 msgstr ""
 
 #. module: facodi_learning
+#. odoo-python
 #: code:addons/facodi_learning/controllers/contextual_submission.py:0
 msgid "Lesson problem report"
 msgstr ""
 
 #. module: facodi_learning
+#. odoo-python
 #: code:addons/facodi_learning/controllers/contextual_submission.py:0
 msgid "Lesson"
 msgstr ""
@@ -3714,11 +3889,14 @@ msgid "A title is still required when you submit the resource for review."
 msgstr ""
 
 #. module: facodi_learning
+#. odoo-python
 #: code:addons/facodi_learning/controllers/contextual_submission.py:0
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_my_list
 msgid "My submissions"
 msgstr ""
 
 #. module: facodi_learning
+#. odoo-python
 #: code:addons/facodi_learning/controllers/contextual_submission.py:0
 msgid "My submissions empty state"
 msgstr ""
@@ -3744,31 +3922,39 @@ msgid "Leave this field empty"
 msgstr ""
 
 #. module: facodi_learning
+#. odoo-python
 #: code:addons/facodi_learning/controllers/contextual_submission.py:0
 #: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
+#: code:addons/facodi_learning/controllers/submission.py:0
 msgid "Enter a valid email address."
 msgstr ""
 
 #. module: facodi_learning
+#. odoo-python
 #: code:addons/facodi_learning/controllers/contextual_submission.py:0
 #: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
 msgid "Add an email address if FACODI may contact you about this submission."
 msgstr ""
 
 #. module: facodi_learning
+#. odoo-python
 #: code:addons/facodi_learning/controllers/contextual_submission.py:0
 #: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
 msgid "Required for contact requests and whenever you ask FACODI to follow up."
 msgstr ""
 
 #. module: facodi_learning
+#. odoo-python
 #: code:addons/facodi_learning/controllers/contextual_submission.py:0
 #: model:ir.model.fields,field_description:facodi_learning.field_facodi_learning_submission__area_tag_id
 #: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
+#: code:addons/facodi_learning/models/contextual_submission.py:0
+#: model_terms:ir.ui.view,arch_db:facodi_learning.view_facodi_submission_search_contextual
 msgid "Learning area"
 msgstr ""
 
 #. module: facodi_learning
+#. odoo-python
 #: code:addons/facodi_learning/controllers/contextual_submission.py:0
 #: model:ir.model.fields,field_description:facodi_learning.field_facodi_learning_submission__area_tag_id
 #: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
@@ -3776,6 +3962,7 @@ msgid "Learning Area Context"
 msgstr ""
 
 #. module: facodi_learning
+#. odoo-python
 #: code:addons/facodi_learning/controllers/contextual_submission.py:0
 #: model:ir.model.fields,field_description:facodi_learning.field_facodi_learning_submission__area_tag_id
 #: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
@@ -3783,6 +3970,7 @@ msgid "Suggested for learning area: %s."
 msgstr ""
 
 #. module: facodi_learning
+#. odoo-python
 #: code:addons/facodi_learning/controllers/contextual_submission.py:0
 #: model:ir.model.fields,field_description:facodi_learning.field_facodi_learning_submission__area_tag_id
 #: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
@@ -3790,32 +3978,40 @@ msgid "The learning area context is no longer publicly available."
 msgstr ""
 
 #. module: facodi_learning
+#. odoo-python
 #: code:addons/facodi_learning/controllers/contextual_submission.py:0
 #: model_terms:ir.ui.view,arch_db:facodi_learning.explore_areas
 msgid "Browse resources"
 msgstr ""
 
 #. module: facodi_learning
+#. odoo-python
 #: code:addons/facodi_learning/controllers/contextual_submission.py:0
 #: model_terms:ir.ui.view,arch_db:facodi_learning.explore_areas
 msgid "I suggest this resource for this learning area."
 msgstr ""
 
 #. module: facodi_learning
+#. odoo-python
 #: code:addons/facodi_learning/controllers/contextual_submission.py:0
 #: model_terms:ir.ui.view,arch_db:facodi_learning.explore_areas
 msgid "Learning area resources"
 msgstr ""
 
 #. module: facodi_learning
+#. odoo-python
 #: code:addons/facodi_learning/controllers/contextual_submission.py:0
 #: model_terms:ir.ui.view,arch_db:facodi_learning.explore_areas
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_landing
 msgid "Learning areas"
 msgstr ""
 
 #. module: facodi_learning
+#. odoo-python
 #: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_module
+#: code:addons/facodi_learning/models/contextual_submission.py:0
+#: model_terms:ir.ui.view,arch_db:facodi_learning.view_facodi_submission_search_contextual
 msgid "Learning module"
 msgstr ""
 
@@ -3832,14 +4028,18 @@ msgid "Suggest a public resource directly for this learning module."
 msgstr ""
 
 #. module: facodi_learning
+#. odoo-python
 #: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_module
+#: code:addons/facodi_learning/controllers/contextual_submission.py:0
 msgid "Suggested for learning module: %s."
 msgstr ""
 
 #. module: facodi_learning
+#. odoo-python
 #: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_module
+#: code:addons/facodi_learning/controllers/contextual_submission.py:0
 msgid "I suggest this resource for this learning module."
 msgstr ""
 
@@ -3850,65 +4050,80 @@ msgid "Learning module resources"
 msgstr ""
 
 #. module: facodi_learning
+#. odoo-python
 #: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_module
+#: code:addons/facodi_learning/controllers/contextual_submission.py:0
 msgid "Module resources"
 msgstr ""
 
 #. module: facodi_learning
+#. odoo-python
 #: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_module
+#: code:addons/facodi_learning/controllers/contextual_submission.py:0
 msgid "Back to learning module"
 msgstr ""
 
 #. module: facodi_learning
+#. odoo-python
 #: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_module
+#: code:addons/facodi_learning/controllers/contextual_submission.py:0
 msgid "The learning module context is no longer publicly available."
 msgstr ""
 
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
 #: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_module
+#: model:ir.model.fields,field_description:facodi_learning.field_facodi_learning_submission__module_id
 msgid "Learning Module Context"
 msgstr ""
 
 #. module: facodi_learning
+#. odoo-python
 #: code:addons/facodi_learning/controllers/contextual_submission.py:0
 msgid "I found a resource that could help start the curricular-unit shelf."
 msgstr ""
 
 #. module: facodi_learning
+#. odoo-python
 #: code:addons/facodi_learning/controllers/contextual_submission.py:0
 msgid "Curricular units · open shelf"
 msgstr ""
 
 #. module: facodi_learning
+#. odoo-python
 #: code:addons/facodi_learning/controllers/contextual_submission.py:0
 msgid "Explore content"
 msgstr ""
 
 #. module: facodi_learning
+#. odoo-python
 #: code:addons/facodi_learning/controllers/contextual_submission.py:0
 msgid "Submission"
 msgstr ""
 
 #. module: facodi_learning
+#. odoo-python
 #: code:addons/facodi_learning/controllers/contextual_submission.py:0
 msgid "Contribution board collaboration"
 msgstr ""
 
 #. module: facodi_learning
+#. odoo-python
 #: code:addons/facodi_learning/controllers/contextual_submission.py:0
 msgid "Translation correction"
 msgstr ""
 
 #. module: facodi_learning
+#. odoo-python
 #: code:addons/facodi_learning/controllers/contextual_submission.py:0
 msgid "Translation"
 msgstr ""
 
 #. module: facodi_learning
+#. odoo-python
 #: code:addons/facodi_learning/controllers/contextual_submission.py:0
 msgid "Lesson question"
 msgstr ""
@@ -3959,7 +4174,9 @@ msgid "Send to the review desk"
 msgstr ""
 
 #. module: facodi_learning
+#. odoo-python
 #: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
+#: code:addons/facodi_learning/controllers/contextual_submission.py:0
 msgid "General FACODI contribution"
 msgstr ""
 
@@ -4002,6 +4219,7 @@ msgstr ""
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_status
 #: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_manage
+#: model_terms:ir.ui.view,arch_db:facodi_learning.view_facodi_content_review_form
 msgid "Decision"
 msgstr ""
 
@@ -4039,6 +4257,7 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:facodi_learning.view_facodi_submission_form
 #: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_status
 #: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_manage
+#: model:ir.model.fields,field_description:facodi_learning.field_facodi_learning_submission__editorial_reply
 msgid "Reply to Contributor"
 msgstr ""
 
@@ -4066,54 +4285,48 @@ msgstr ""
 #. module: facodi_learning
 #: model:ir.model.fields.selection,name:facodi_learning.selection__facodi_learning_submission__state__changes_requested
 #: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_manage
+#: model_terms:ir.ui.view,arch_db:facodi_learning.view_facodi_submission_search
 msgid "Changes Requested"
 msgstr ""
 
 #. module: facodi_learning
-#: model:ir.model.fields.selection,name:facodi_learning.selection__facodi_learning_submission__state__changes_requested
 #: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_manage
 msgid "The review desk needs a revision."
 msgstr ""
 
 #. module: facodi_learning
-#: model:ir.model.fields.selection,name:facodi_learning.selection__facodi_learning_submission__state__changes_requested
 #: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_manage
 msgid "Update the fields below using FACODI's note, save your changes, then send the same contribution back to review."
 msgstr ""
 
 #. module: facodi_learning
-#: model:ir.model.fields.selection,name:facodi_learning.selection__facodi_learning_submission__state__changes_requested
 #: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_manage
 msgid "Save revision"
 msgstr ""
 
 #. module: facodi_learning
-#: model:ir.model.fields.selection,name:facodi_learning.selection__facodi_learning_submission__state__changes_requested
 #: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_manage
 msgid "Revision ready?"
 msgstr ""
 
 #. module: facodi_learning
-#: model:ir.model.fields.selection,name:facodi_learning.selection__facodi_learning_submission__state__changes_requested
 #: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_manage
 msgid "Send this tab back to the review desk."
 msgstr ""
 
 #. module: facodi_learning
-#: model:ir.model.fields.selection,name:facodi_learning.selection__facodi_learning_submission__state__changes_requested
 #: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_manage
 msgid "Resubmitting keeps the same contribution, context and tracking history. No duplicate submission is created."
 msgstr ""
 
 #. module: facodi_learning
-#: model:ir.model.fields.selection,name:facodi_learning.selection__facodi_learning_submission__state__changes_requested
 #: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_manage
 msgid "Resubmit for review →"
 msgstr ""
 
 #. module: facodi_learning
-#: model:ir.model.fields.selection,name:facodi_learning.selection__facodi_learning_submission__state__changes_requested
 #: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_manage
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_status
 msgid "The review desk returned this tab to you. Revise it and resubmit when ready."
 msgstr ""
 
@@ -4128,6 +4341,7 @@ msgid "The page, CTA and academic/learning context that brought you here stay lo
 msgstr ""
 
 #. module: facodi_learning
+#. odoo-python
 #: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_status
 #: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_manage
 #: code:addons/facodi_learning/models/contextual_submission.py:0
@@ -4135,6 +4349,7 @@ msgid "Context captured"
 msgstr ""
 
 #. module: facodi_learning
+#. odoo-python
 #: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_status
 #: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_manage
 #: code:addons/facodi_learning/models/contextual_submission.py:0
@@ -4142,6 +4357,7 @@ msgid "FACODI kept the useful part of where you started."
 msgstr ""
 
 #. module: facodi_learning
+#. odoo-python
 #: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_status
 #: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_manage
 #: code:addons/facodi_learning/models/contextual_submission.py:0
@@ -4149,6 +4365,7 @@ msgid "Private link · safe summary"
 msgstr ""
 
 #. module: facodi_learning
+#. odoo-python
 #: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_status
 #: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_manage
 #: code:addons/facodi_learning/models/contextual_submission.py:0
@@ -4156,6 +4373,7 @@ msgid "Raw origin URLs, tracking tokens and internal review notes are never show
 msgstr ""
 
 #. module: facodi_learning
+#. odoo-python
 #: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_status
 #: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_manage
 #: code:addons/facodi_learning/models/contextual_submission.py:0
@@ -4163,6 +4381,7 @@ msgid "The provenance stays pinned while you revise the useful details."
 msgstr ""
 
 #. module: facodi_learning
+#. odoo-python
 #: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_status
 #: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_manage
 #: code:addons/facodi_learning/models/contextual_submission.py:0
@@ -4170,6 +4389,7 @@ msgid "Locked context"
 msgstr ""
 
 #. module: facodi_learning
+#. odoo-python
 #: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_status
 #: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_manage
 #: code:addons/facodi_learning/models/contextual_submission.py:0
@@ -4177,6 +4397,7 @@ msgid "Contribution type"
 msgstr ""
 
 #. module: facodi_learning
+#. odoo-python
 #: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_status
 #: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_manage
 #: code:addons/facodi_learning/models/contextual_submission.py:0
@@ -4184,27 +4405,34 @@ msgid "Started from"
 msgstr ""
 
 #. module: facodi_learning
+#. odoo-python
 #: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_status
 #: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_manage
 #: code:addons/facodi_learning/models/contextual_submission.py:0
+#: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
 msgid "Section"
 msgstr ""
 
 #. module: facodi_learning
+#. odoo-python
 #: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_status
 #: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_manage
 #: code:addons/facodi_learning/models/contextual_submission.py:0
+#: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
 msgid "Learning item"
 msgstr ""
 
 #. module: facodi_learning
+#. odoo-python
 #: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_status
 #: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_manage
 #: code:addons/facodi_learning/models/contextual_submission.py:0
+#: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
 msgid "Resource type"
 msgstr ""
 
 #. module: facodi_learning
+#. odoo-python
 #: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_status
 #: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_manage
 #: code:addons/facodi_learning/models/contextual_submission.py:0
@@ -4212,12 +4440,14 @@ msgid "Contact topic"
 msgstr ""
 
 #. module: facodi_learning
+#. odoo-python
 #: code:addons/facodi_learning/controllers/contextual_submission.py:0
 #: code:addons/facodi_learning/models/contextual_submission.py:0
 msgid "FAQ contact"
 msgstr ""
 
 #. module: facodi_learning
+#. odoo-python
 #: code:addons/facodi_learning/controllers/contextual_submission.py:0
 #: code:addons/facodi_learning/models/contextual_submission.py:0
 msgid "Community notebook"
@@ -4234,93 +4464,85 @@ msgid "Continue next lesson"
 msgstr ""
 
 #. module: facodi_learning
+#. odoo-python
 #: code:addons/facodi_learning/controllers/contextual_submission.py:0
 #: code:addons/facodi_learning/models/contextual_submission.py:0
 msgid "Homepage closing call"
 msgstr ""
 
 #. module: facodi_learning
+#. odoo-python
 #: code:addons/facodi_learning/controllers/contextual_submission.py:0
 #: code:addons/facodi_learning/models/contextual_submission.py:0
 msgid "I found a useful public resource and want to leave it on the FACODI learning trail."
 msgstr ""
 
 #. module: facodi_learning
+#. odoo-python
 #: code:addons/facodi_learning/controllers/contextual_submission.py:0
 msgid "Main navigation"
 msgstr ""
 
 #. module: facodi_learning
+#. odoo-python
 #: code:addons/facodi_learning/controllers/contextual_submission.py:0
 msgid "Homepage"
 msgstr ""
-
 
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.explore_content
 msgid "matching resources"
 msgstr ""
 
-
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.explore_content
 msgid "courses represented"
 msgstr ""
-
 
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.explore_content
 msgid "resource views"
 msgstr ""
 
-
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.explore_content
 msgid "catalogue resources"
 msgstr ""
-
 
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.explore_content
 msgid "Live from Odoo:"
 msgstr ""
 
-
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.course_live_stats
 msgid "Live course snapshot"
 msgstr ""
-
 
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.course_live_stats
 msgid "What is available right now"
 msgstr ""
 
-
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.course_live_stats
 msgid "Calculated from published Odoo content"
 msgstr ""
-
 
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.course_live_stats
 msgid "published resources"
 msgstr ""
 
-
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.course_live_stats
 msgid "content formats"
 msgstr ""
 
-
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.course_live_stats
 msgid "reviewed curriculum links"
 msgstr ""
-
 
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.course_live_stats
@@ -4355,4 +4577,2115 @@ msgstr ""
 #. module: facodi_learning
 #: model_terms:ir.ui.view,arch_db:facodi_learning.explore_landing
 msgid "Browse community videos →"
+msgstr ""
+
+#. module: facodi_learning
+msgid "Suggested for curricular unit"
+msgstr ""
+
+#. module: facodi_learning
+msgid "View curricular unit"
+msgstr ""
+
+#. module: facodi_learning
+msgid ""
+"This resource is already under editorial review for this context. You can "
+"suggest another resource instead."
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_status
+msgid "Suggested for"
+msgstr ""
+
+#. module: facodi_learning
+#: model:ir.model.fields,field_description:facodi_learning.field_facodi_learning_submission__curriculum_unit_id
+msgid "Curricular Unit Context"
+msgstr ""
+
+#. module: facodi_learning
+#: model:ir.model.fields,help:facodi_learning.field_facodi_learning_submission__curriculum_unit_id
+msgid ""
+"Optional contributor context only. This relation does not create curriculum "
+"coverage or an approved academic mapping."
+msgstr ""
+
+#. module: facodi_learning
+#. odoo-python
+#: code:addons/facodi_learning/controllers/contextual_submission.py:0
+#: model_terms:ir.ui.view,arch_db:facodi_learning.portal_my_home_facodi
+msgid "My FACODI"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.portal_my_home_facodi
+msgid "OPEN CAMPUS DESK"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.portal_my_home_facodi
+msgid "Academic map // coverage, not equivalence"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.portal_my_home_facodi
+msgid "See where FACODI can take you next"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.portal_my_home_facodi
+msgid "Open full roadmap"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.portal_my_home_facodi
+msgid "covered"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.portal_my_home_facodi
+msgid "partial"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.portal_my_home_facodi
+msgid "open gaps"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.portal_my_home_facodi
+msgid "ON YOUR DESK"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.portal_my_home_facodi
+msgid "Campus pulse"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.portal_my_home_facodi
+msgid "What people are talking about"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.portal_my_home_facodi
+msgid "Open community"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.portal_my_home_facodi
+msgid "replies"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.portal_my_home_facodi
+msgid "votes"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.view_slide_slide_form_facodi_learning
+msgid "Publication Governance"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.view_facodi_submission_search
+#: model_terms:ir.ui.view,arch_db:facodi_learning.view_facodi_submission_search_contextual
+msgid "Resources"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.view_facodi_submission_search_contextual
+msgid "Contacts"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.view_facodi_submission_search
+#: model_terms:ir.ui.view,arch_db:facodi_learning.view_facodi_submission_search_contextual
+msgid "Corrections"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.view_facodi_submission_search
+#: model_terms:ir.ui.view,arch_db:facodi_learning.view_facodi_submission_search_contextual
+msgid "Questions"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.view_facodi_submission_search_contextual
+msgid "Source section"
+msgstr ""
+
+#. module: facodi_learning
+#: model:ir.model.fields,field_description:facodi_learning.field_facodi_learning_submission__context
+#: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_manage
+#: model_terms:ir.ui.view,arch_db:facodi_learning.view_facodi_submission_form_contextual
+msgid "Context"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
+msgid "Contact the FACODI team"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
+msgid "Ask a contextual question"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
+msgid ""
+"The form is pre-filled from the CTA you clicked. FACODI keeps all "
+"submissions under human review before any editorial action."
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
+#: model_terms:ir.ui.view,arch_db:facodi_learning.course_live_stats
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_detail
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_index
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_map
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit_index
+#: model_terms:ir.ui.view,arch_db:facodi_learning.homepage_catalogue_fragment
+msgid "·"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
+msgid ""
+"<span data-facodi-message=\"discovering\">Detecting title and language…</span>\n"
+"                                    <span data-facodi-message=\"detected\">FACODI detected this YouTube resource.</span>\n"
+"                                    <span data-facodi-message=\"unavailable\">Could not detect details automatically. You can continue manually.</span>\n"
+"                                    <span data-facodi-message=\"unsupported\">Automatic discovery is currently available for public YouTube videos. You can continue manually.</span>"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
+msgid "Submission details"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
+msgid "Context pre-filled"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
+msgid ""
+"We already added the context from where you clicked. Review it, add the "
+"resource itself and tell us why it belongs here."
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
+msgid "Title / subject"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
+msgid ""
+"FACODI can detect the title from supported public URLs. A title is still "
+"required when you submit the resource for review."
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
+msgid "https://..."
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
+msgid ""
+"Use a public HTTP or HTTPS page. Do not submit passwords, private links or "
+"credentials."
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_manage
+msgid "Choose a type"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_manage
+msgid "Video"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_manage
+msgid "Article"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_manage
+msgid "Book"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_manage
+msgid "Tool"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_manage
+msgid "Repository"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_manage
+msgid "External course"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_manage
+msgid "Introductory"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_manage
+msgid "Intermediate"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_manage
+msgid "Advanced"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
+msgid "Why is this useful?"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_manage
+msgid "Email"
+msgstr ""
+
+#. module: facodi_learning
+#: model:ir.model.fields,field_description:facodi_learning.field_facodi_learning_submission__organization
+#: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_manage
+msgid "Organization"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_manage
+msgid "FACODI may contact me about this submission."
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
+msgid "Send message"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
+msgid "Share video"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
+msgid "Submit resource"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
+msgid "Send submission"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
+msgid "What happens next?"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
+msgid "FACODI receives the structured submission."
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
+msgid ""
+"A valid public YouTube video is immediately visible in Community videos; "
+"editorial review is not required for that community listing."
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
+msgid ""
+"The team may still review relevance, provenance and safety for later "
+"curation."
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.contextual_submission_form
+msgid "Accepted resources may later enter the editorial learning pipeline."
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit_index
+msgid ""
+"<span class=\"text-muted mx-1\">/</span>\n"
+"                                        <span>Curricular units</span>"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.approved_course_curriculum_links
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit_index
+msgid "("
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.approved_course_curriculum_links
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit_index
+msgid ")"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit_index
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_community_videos
+msgid "Clear filters"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit_index
+#: model_terms:ir.ui.view,arch_db:facodi_learning.portal_my_home_facodi
+msgid "Open gap"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit_index
+msgid "Help fill this stop →"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_detail
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit
+msgid "."
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_detail
+msgid ""
+"<strong>Provenance.</strong>\n"
+"                                    This page reproduces a versioned external reference. FACODI does not award academic credits or replace the institutional source."
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_detail
+msgid "Campus map"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_detail
+msgid "See the path. Spot the gaps."
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_detail
+msgid ""
+"Each unit is a stop: green is covered, orange is partial and pink marks an "
+"open learning gap the community can help fill."
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_detail
+#: model_terms:ir.ui.view,arch_db:facodi_learning.portal_my_home_facodi
+msgid "<span>covered</span>"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_detail
+#: model_terms:ir.ui.view,arch_db:facodi_learning.portal_my_home_facodi
+msgid "<span>partial</span>"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_detail
+#: model_terms:ir.ui.view,arch_db:facodi_learning.portal_my_home_facodi
+msgid "<span>open gaps</span>"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_detail
+msgid "<span>UC stops</span>"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_detail
+msgid "Roadmap coverage snapshot"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit
+msgid "Your route through this UC"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit
+msgid ""
+"Move module by module. Start where it makes sense, continue where you "
+"paused, and keep the finished stops visible."
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_module
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit
+#: model_terms:ir.ui.view,arch_db:facodi_learning.portal_my_home_facodi
+msgid "%"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit
+msgid "Continue →"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit
+msgid "Start here →"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit
+msgid "Ready when you are"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit
+msgid "Community margin"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit
+msgid "Got a question? Drop it on the forum."
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit
+msgid ""
+"Use the FACODI community to compare notes, ask for explanations and share "
+"study approaches around this curricular unit."
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit
+msgid "Ask about this unit"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit
+msgid "Share with the community"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_unit
+msgid ""
+"<strong>Provenance and limits.</strong>\n"
+"                                        ECTS and the curricular structure shown are facts from the external source.\n"
+"                                        FACODI does not grant credits, enrolment, academic equivalence, or replace the institution."
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.curriculum_public_module
+msgid "<strong>Missing something useful?</strong>"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_status
+msgid ""
+"<span class=\"facodi-contribution-step__marker\">1</span>\n"
+"                                        <span><strong>Sent</strong><small>Your contribution reached FACODI.</small></span>"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_status
+msgid ""
+"<span class=\"facodi-contribution-step__marker\">2</span>\n"
+"                                        <span><strong>Review desk</strong><small>Context and usefulness are checked.</small></span>"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_status
+msgid ""
+"<span class=\"facodi-contribution-step__marker\">3</span>\n"
+"                                        <span><strong>Decision</strong><small>FACODI decides the right editorial route.</small></span>"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_status
+msgid ""
+"<span class=\"facodi-contribution-step__marker\">4</span>\n"
+"                                        <span><strong>Community route</strong><small>Accepted contributions move into the appropriate FACODI workflow.</small></span>"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_status
+msgid ""
+"<span class=\"facodi-captured-context__safe\">Private link · safe "
+"summary</span>"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_status
+msgid ""
+"You withdrew this submission. It is retained only as audit history and will "
+"not continue through the FACODI workflow."
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_status
+msgid "Manage submission"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_my_list
+msgid "Your FACODI contributions"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_my_list
+msgid "<span>Total</span>"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_my_list
+msgid "<span>In review</span>"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_my_list
+msgid "<span>Accepted / routed</span>"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_my_list
+msgid "<span>Closed</span>"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_my_list
+msgid "Submission #"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_my_list
+msgid "Manage"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_my_list
+msgid "Editable"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_my_list
+msgid "Withdrawal available"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_manage
+msgid "Your contribution"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_manage
+msgid "Back to my submissions"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_manage
+msgid ""
+"<strong>The review desk needs a revision.</strong>\n"
+"                                Update the fields below using FACODI's note, save your changes, then send the same contribution back to review."
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_manage
+msgid ""
+"You can edit this submission until FACODI starts editorial review. Changes "
+"are reflected in the public Community videos queue when applicable."
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_manage
+msgid ""
+"Editorial review has started, so the submitted details are locked. You can "
+"still withdraw the submission."
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_manage
+msgid ""
+"This submission has progressed into FACODI curation. Its original "
+"contribution record is now preserved as audit history."
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_manage
+msgid "This submission was not accepted in its current form."
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_manage
+msgid ""
+"You withdrew this submission. It is no longer displayed in the public "
+"Community videos queue."
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_manage
+msgid "<span class=\"facodi-captured-context__safe\">Locked context</span>"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_manage
+msgid "Title"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_manage
+msgid "Contribution context"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_manage
+msgid "Save changes"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_manage
+msgid "<strong>Withdraw this submission?</strong>"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.resource_submission_manage
+msgid "Withdraw submission"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.view_facodi_submission_search
+msgid "Needs Attention"
+msgstr ""
+
+#. module: facodi_learning
+#: model:ir.model.fields.selection,name:facodi_learning.selection__facodi_learning_submission__state__withdrawn
+#: model_terms:ir.ui.view,arch_db:facodi_learning.view_facodi_submission_search
+msgid "Withdrawn"
+msgstr ""
+
+#. module: facodi_learning
+#: model:ir.model.fields,field_description:facodi_learning.field_facodi_learning_submission__submission_type
+#: model_terms:ir.ui.view,arch_db:facodi_learning.view_facodi_submission_search
+msgid "Submission Type"
+msgstr ""
+
+#. module: facodi_learning
+#: model:ir.model.fields,field_description:facodi_learning.field_facodi_learning_submission__contact_topic
+#: model_terms:ir.ui.view,arch_db:facodi_learning.view_facodi_submission_search
+msgid "Contact Topic"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.view_facodi_submission_search
+msgid "Source CTA"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.view_facodi_submission_list
+#: model_terms:ir.ui.view,arch_db:facodi_learning.view_facodi_submission_search
+msgid "FACODI Submissions"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.view_facodi_submission_form
+msgid "Start Review"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.view_facodi_submission_form
+msgid "Accept for Curation"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.view_facodi_submission_form
+msgid "Request Changes"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.view_facodi_submission_form
+msgid "Mark Resolved"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.view_facodi_submission_form
+msgid "Internal editorial note; never shown on the public status page."
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.view_facodi_submission_form
+msgid "Contributor Context"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.view_facodi_submission_form
+msgid "FACODI Submission"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.view_facodi_curriculum_source_search
+msgid "Daily verification enabled"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.view_facodi_curriculum_source_search
+msgid "Failed checks"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.view_facodi_curriculum_source_search
+msgid "Changes detected"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.view_facodi_curriculum_source_list
+#: model_terms:ir.ui.view,arch_db:facodi_learning.view_facodi_curriculum_source_search
+msgid "Curriculum Sources"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.view_facodi_curriculum_source_form
+msgid "Verify now"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.view_facodi_curriculum_source_form
+msgid "Official Source"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.view_facodi_curriculum_source_form
+msgid "Verification"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.view_facodi_curriculum_source_form
+msgid "Versions"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.view_facodi_curriculum_source_form
+msgid "Check history"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.view_facodi_curriculum_source_form
+msgid "Official Curriculum Source"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.view_facodi_curriculum_reference_form
+msgid "Validate"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.view_facodi_curriculum_reference_form
+msgid "Publish"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.view_facodi_curriculum_reference_form
+msgid "Archive"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.view_facodi_curriculum_reference_form
+#: model_terms:ir.ui.view,arch_db:facodi_learning.view_facodi_curriculum_unit_form
+msgid "Suggest coverage"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.view_facodi_curriculum_reference_form
+msgid "Editorial Review"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_landing
+msgid "FACODI · Explore"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_landing
+msgid "Where do you want to go next?"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_landing
+msgid ""
+"Courses, curricular units, learning roadmaps and open resources — connected "
+"instead of isolated."
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_landing
+msgid ""
+"<span>Question</span><i class=\"fa fa-arrow-down\" aria-hidden=\"true\"/>\n"
+"                            <span>Course</span><i class=\"fa fa-arrow-down\" aria-hidden=\"true\"/>\n"
+"                            <span>Curricular Unit</span><i class=\"fa fa-arrow-down\" aria-hidden=\"true\"/>\n"
+"                            <span>Roadmap</span><i class=\"fa fa-arrow-down\" aria-hidden=\"true\"/>\n"
+"                            <span>Community</span>"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_landing
+msgid "Learning route"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_landing
+msgid "<span>courses</span>"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_landing
+msgid "<span>resources</span>"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_landing
+msgid "<span>roadmaps</span>"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_landing
+msgid "<span>curricular units</span>"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_landing
+msgid "<span>community drops</span>"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_landing
+msgid "FACODI discovery snapshot"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_landing
+msgid "Learn by course."
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_landing
+msgid "public courses across"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_landing
+msgid "learning areas."
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_landing
+msgid "<span class=\"facodi-explore-card__cta\">Explore courses →</span>"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_landing
+msgid "Follow the academic path."
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_landing
+msgid ""
+"validated learning roadmaps connect programme structure to open resources."
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_landing
+msgid "<span class=\"facodi-explore-card__cta\">Follow a roadmap →</span>"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_landing
+msgid "Start from the syllabus."
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_landing
+msgid ""
+"published curricular-unit records with academic context and FACODI coverage."
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_landing
+msgid "<span class=\"facodi-explore-card__cta\">Explore curricular units →</span>"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_landing
+msgid "Open resources"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_landing
+msgid "Find the useful tab."
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_landing
+msgid ""
+"public learning resources can be filtered by area, language and format."
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_landing
+msgid "<span class=\"facodi-explore-card__cta\">Browse resources →</span>"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_landing
+msgid "<span class=\"facodi-explore-card__cta\">Explore learning areas →</span>"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_landing
+msgid ""
+"public community video drops appear immediately after submission; review "
+"status remains visible for transparency."
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_landing
+msgid "<span class=\"facodi-explore-card__cta\">Browse community videos →</span>"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_landing
+msgid "Ask. Compare notes. Share."
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_landing
+msgid ""
+"The community layer turns isolated resources into discussion, explanation "
+"and shared study routes."
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_landing
+msgid "<span class=\"facodi-explore-card__cta\">Join the conversation →</span>"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_landing
+msgid "Contribute"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_landing
+msgid "Found something useful?"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_landing
+msgid ""
+"Put it on the community desk with the current Explore context already "
+"attached."
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_landing
+msgid "<span class=\"facodi-explore-card__cta\">Suggest a resource →</span>"
+msgstr ""
+
+#. module: facodi_learning
+#. odoo-python
+#: code:addons/facodi_learning/controllers/contextual_submission.py:0
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_areas
+msgid "Explore"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_areas
+msgid ""
+"Only areas represented by publicly available courses on this website are "
+"shown."
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_areas
+msgid "Search areas"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_areas
+msgid "e.g. Mathematics"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_areas
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_content
+msgid "Search"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_areas
+msgid "No public learning areas match this search."
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_content
+msgid "Explore · discovery desk"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_content
+msgid "Find your next useful tab."
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_content
+msgid "public resources in this view. Filter hard, wander freely."
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_content
+msgid "<span>matching resources</span>"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_content
+msgid "<span>courses represented</span>"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_content
+msgid "<span>resource views</span>"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_content
+msgid "<span>catalogue resources</span>"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_content
+msgid "Live catalogue snapshot"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_content
+msgid ""
+"areas\n"
+"                        <span aria-hidden=\"true\"> · </span>"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_content
+msgid ""
+"languages\n"
+"                        <span aria-hidden=\"true\"> · </span>"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_content
+msgid "formats"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_content
+msgid "Search title or description"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_content
+msgid "Area"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_content
+msgid "<option value=\"\">All areas</option>"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_community_videos
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_content
+msgid "<option value=\"\">All languages</option>"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_content
+msgid "Format"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_content
+msgid "<option value=\"\">All formats</option>"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_community_videos
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_content
+msgid "Filter"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_content
+msgid "<span class=\"facodi-filter-chips__label\">On your desk:</span>"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_content
+msgid "<span class=\"facodi-filter-chip__remove\" aria-hidden=\"true\">×</span>"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_content
+msgid "Clear the desk"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_content
+msgid "Active filters"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_content
+msgid ""
+"<span class=\"small fw-semibold\">Open the tab →</span>\n"
+"                                        <span class=\"fa fa-external-link\" aria-hidden=\"true\"/>"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_content
+msgid "That shelf is empty. The campus isn't."
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_content
+msgid ""
+"No public resource matches this exact combination. Clear the desk, browse "
+"learning areas or drop a useful resource for the community."
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_content
+msgid "Browse areas"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_community_videos
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_content
+msgid "Previous"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_community_videos
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_content
+msgid "Page"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_community_videos
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_content
+msgid "of"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_community_videos
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_content
+msgid "Next"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_content
+msgid "Content pagination"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_community_videos
+msgid "Community submissions"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_community_videos
+msgid "Videos shared by the community"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_community_videos
+msgid "public YouTube submissions found."
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_community_videos
+msgid ""
+"<strong class=\"d-block mb-1\">Community queue · shared first, curated next</strong>\n"
+"                            <span>Valid public YouTube submissions appear here immediately after submission, without waiting for editorial approval. FACODI may still review their relevance, accuracy, provenance or publication rights. A listing here is not an endorsement or an approved learning-resource publication.</span>"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_community_videos
+msgid "Search submitted videos"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_community_videos
+msgid "Search by submitted title"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_community_videos
+msgid "<span class=\"badge text-bg-light border\">YouTube</span>"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_community_videos
+msgid ""
+"Submitted by the community. Contributor identity and private review details "
+"are not published."
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_community_videos
+msgid "Watch on YouTube"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_community_videos
+msgid "Community video pagination"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.homepage_catalogue_fragment
+msgid "<span>Open course</span>"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.homepage_catalogue_fragment
+msgid "Open roadmap"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.homepage_catalogue_fragment
+msgid "Roadmaps are being prepared"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.homepage_catalogue_fragment
+msgid ""
+"Browse curricular units or open courses while new learning paths are "
+"reviewed."
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.homepage_catalogue_fragment
+#: model_terms:ir.ui.view,arch_db:facodi_learning.portal_my_home_facodi
+msgid "<span aria-hidden=\"true\"> · </span>"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.homepage_catalogue_fragment
+msgid ""
+"year\n"
+"                                <span aria-hidden=\"true\"> · </span>"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.homepage_catalogue_fragment
+msgid "Open unit"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.homepage_catalogue_fragment
+msgid "Curricular units are being prepared"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.homepage_catalogue_fragment
+msgid ""
+"Explore available courses or roadmaps while this catalogue is completed."
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.view_facodi_submission_form_candidate_handoff
+msgid "Route to Candidate Pipeline"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.approved_learning_resources
+msgid "<strong>Discuss this lesson</strong>"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.approved_learning_resources
+msgid ""
+"Ask a question or share what you learned without losing the lesson context."
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.approved_learning_resources
+msgid "Ask a question"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.approved_learning_resources
+#: model_terms:ir.ui.view,arch_db:facodi_learning.course_contribution_cta
+msgid "Share a note"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.approved_learning_resources
+msgid "Discuss this lesson with the FACODI community"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.course_live_stats
+msgid ""
+"<span class=\"small text-muted\">Calculated from published Odoo "
+"content</span>"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.course_live_stats
+msgid "<span class=\"small text-muted\">published resources</span>"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.course_live_stats
+msgid "<span class=\"small text-muted\">content formats</span>"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.course_live_stats
+msgid "<span class=\"small text-muted\">reviewed curriculum links</span>"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.course_live_stats
+msgid "<span class=\"small text-muted\">resource views</span>"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.course_contribution_cta
+msgid "<strong>Contribute to FACODI</strong>"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.course_contribution_cta
+msgid "Ask the community"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.portal_my_home_facodi
+msgid ""
+"<span>My FACODI</span>\n"
+"                    <span aria-hidden=\"true\">//</span>\n"
+"                    <span>OPEN CAMPUS DESK</span>"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.portal_my_home_facodi
+msgid "Hey,"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.portal_my_home_facodi
+msgid ". Your desk is open."
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.portal_my_home_facodi
+msgid ""
+"<span class=\"fa fa-circle\" aria-hidden=\"true\"/>\n"
+"                        CAMPUS ACCESS ACTIVE"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.portal_my_home_facodi
+msgid "<span class=\"facodi-momentum-card__label\">courses on your desk</span>"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.portal_my_home_facodi
+msgid "<span class=\"facodi-momentum-card__label\">community drops</span>"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.portal_my_home_facodi
+msgid "<span class=\"facodi-momentum-card__label\">on the review desk</span>"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.portal_my_home_facodi
+msgid "<span class=\"facodi-momentum-card__label\">accepted / routed</span>"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.portal_my_home_facodi
+msgid "Learning pulse"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.portal_my_home_facodi
+msgid ""
+"<strong>Keep learning</strong><small>Courses, lessons and your next study "
+"stop</small>"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.portal_my_home_facodi
+msgid ""
+"<strong>Academic map</strong><small>Explore UCs and their open-learning "
+"coverage</small>"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.portal_my_home_facodi
+msgid ""
+"<strong>Drop a resource</strong><small>Put something useful on the community"
+" desk</small>"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.portal_my_home_facodi
+msgid ""
+"<strong>Community</strong><small>Ask, compare notes and help another "
+"learner</small>"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.portal_my_home_facodi
+msgid "FACODI quick actions"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.portal_my_home_facodi
+msgid ""
+"<span class=\"facodi-resource-pill facodi-resource-pill--"
+"course\">Course</span>"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.portal_my_home_facodi
+msgid "<small>Next tab</small>"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.portal_my_home_facodi
+msgid ""
+"<span aria-hidden=\"true\"> · </span>\n"
+"                                <span>open details →</span>"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.portal_my_home_facodi
+msgid "course"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.portal_my_home_facodi
+msgid "courses"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.portal_my_home_facodi
+msgid "No academic map pinned yet"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.portal_my_home_facodi
+msgid ""
+"The campus is still open. Browse the public Roadmaps and pick a path worth "
+"exploring."
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.portal_my_home_facodi
+msgid "<span class=\"facodi-campus-pulse__tag\">FORUM</span>"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.portal_my_home_facodi
+msgid ""
+"votes\n"
+"                                    <span aria-hidden=\"true\"> · </span>"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.portal_my_home_facodi
+msgid "Campus is quiet on your side — for now."
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.portal_my_home_facodi
+msgid ""
+"Open the Forum, ask something useful or help another learner move forward."
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.portal_my_home_facodi
+msgid "Start a conversation"
+msgstr ""
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.portal_my_home_facodi
+msgid "<span class=\"facodi-latest-win__arrow\" aria-hidden=\"true\">↗</span>"
+msgstr ""
+
+#. module: facodi_learning
+#. odoo-python
+#: code:addons/facodi_learning/controllers/submission.py:0
+msgid "Add an email address if you want FACODI to contact you."
+msgstr ""
+
+#. module: facodi_learning
+#. odoo-python
+#: code:addons/facodi_learning/controllers/submission.py:0
+msgid "Choose the type of learning resource."
+msgstr ""
+
+#. module: facodi_learning
+#. odoo-python
+#: code:addons/facodi_learning/controllers/submission.py:0
+msgid "Choose what your contact request is about."
+msgstr ""
+
+#. module: facodi_learning
+#. odoo-python
+#: code:addons/facodi_learning/controllers/submission.py:0
+msgid "Enter an email address so FACODI can reply."
+msgstr ""
+
+#. module: facodi_learning
+#. odoo-python
+#: code:addons/facodi_learning/controllers/submission.py:0
+msgid "This resource is already under editorial review for this context."
+msgstr ""
+
+#. module: facodi_learning
+#. odoo-python
+#: code:addons/facodi_learning/controllers/contextual_submission.py:0
+msgid ""
+"I found a resource that could help learners studying this curricular unit."
+msgstr ""
+
+#. module: facodi_learning
+#. odoo-python
+#: code:addons/facodi_learning/controllers/contextual_submission.py:0
+msgid ""
+"I suggest this resource to strengthen the learning coverage for this "
+"curricular unit."
+msgstr ""
+
+#. module: facodi_learning
+#. odoo-python
+#: code:addons/facodi_learning/controllers/contextual_submission.py:0
+msgid "I suggest this resource for this learning roadmap."
+msgstr ""
+
+#. module: facodi_learning
+#. odoo-python
+#: code:addons/facodi_learning/controllers/contextual_submission.py:0
+msgid "I suggest this resource as a useful companion to this course."
+msgstr ""
+
+#. module: facodi_learning
+#. odoo-python
+#: code:addons/facodi_learning/controllers/contextual_submission.py:0
+msgid "I found a resource that is missing from the current FACODI catalogue."
+msgstr ""
+
+#. module: facodi_learning
+#. odoo-python
+#: code:addons/facodi_learning/controllers/contextual_submission.py:0
+msgid "I want to share this public video with the FACODI community."
+msgstr ""
+
+#. module: facodi_learning
+#. odoo-python
+#: code:addons/facodi_learning/controllers/contextual_submission.py:0
+msgid "I want to add a useful resource to the FACODI community desk."
+msgstr ""
+
+#. module: facodi_learning
+#. odoo-python
+#: code:addons/facodi_learning/controllers/contextual_submission.py:0
+msgid "I want to contribute a useful public learning resource to FACODI."
+msgstr ""
+
+#. module: facodi_learning
+#. odoo-python
+#: code:addons/facodi_learning/controllers/contextual_submission.py:0
+msgid ""
+"I found a resource that could strengthen one of the FACODI learning "
+"roadmaps."
+msgstr ""
+
+#. module: facodi_learning
+#. odoo-python
+#: code:addons/facodi_learning/controllers/contextual_submission.py:0
+msgid ""
+"I found a resource that could help cover a curricular unit in the FACODI "
+"academic map."
+msgstr ""
+
+#. module: facodi_learning
+#. odoo-python
+#: code:addons/facodi_learning/controllers/contextual_submission.py:0
+msgid "I found a resource that could strengthen the FACODI course catalogue."
+msgstr ""
+
+#. module: facodi_learning
+#. odoo-python
+#: code:addons/facodi_learning/controllers/contextual_submission.py:0
+msgid "I found a useful public resource while learning about FACODI."
+msgstr ""
+
+#. module: facodi_learning
+#. odoo-python
+#: code:addons/facodi_learning/controllers/contextual_submission.py:0
+msgid "About FACODI"
+msgstr ""
+
+#. module: facodi_learning
+#. odoo-python
+#: code:addons/facodi_learning/controllers/contextual_submission.py:0
+msgid "Provenance"
+msgstr ""
+
+#. module: facodi_learning
+#. odoo-python
+#: code:addons/facodi_learning/controllers/contextual_submission.py:0
+msgid "FAQ"
+msgstr ""
+
+#. module: facodi_learning
+#. odoo-python
+#: code:addons/facodi_learning/controllers/contextual_submission.py:0
+msgid "Ecosystem"
+msgstr ""
+
+#. module: facodi_learning
+#. odoo-python
+#: code:addons/facodi_learning/controllers/contextual_submission.py:0
+msgid "Project"
+msgstr ""
+
+#. module: facodi_learning
+#. odoo-python
+#: code:addons/facodi_learning/controllers/contextual_submission.py:0
+msgid "Editorial routes"
+msgstr ""
+
+#. module: facodi_learning
+#. odoo-python
+#: code:addons/facodi_learning/controllers/contextual_submission.py:0
+msgid "Suggested for curricular unit: %s (%s)."
+msgstr ""
+
+#. module: facodi_learning
+#. odoo-python
+#: code:addons/facodi_learning/controllers/contextual_submission.py:0
+msgid "Suggested for roadmap: %s."
+msgstr ""
+
+#. module: facodi_learning
+#. odoo-python
+#: code:addons/facodi_learning/controllers/contextual_submission.py:0
+msgid "Contextual action"
+msgstr ""
+
+#. module: facodi_learning
+#. odoo-python
+#: code:addons/facodi_learning/controllers/contextual_submission.py:0
+msgid "Enter an email for follow-up."
+msgstr ""
+
+#. module: facodi_learning
+#. odoo-python
+#: code:addons/facodi_learning/controllers/contextual_submission.py:0
+msgid "no source code"
+msgstr ""
+
+#. module: facodi_learning
+#. odoo-python
+#: code:addons/facodi_learning/controllers/contextual_submission.py:0
+msgid "The submission could not be saved. Check the fields and try again."
+msgstr ""
+
+#. module: facodi_learning
+#. odoo-python
+#: code:addons/facodi_learning/controllers/contextual_submission.py:0
+msgid "Suggested around learning item: %s."
+msgstr ""
+
+#. module: facodi_learning
+#. odoo-python
+#: code:addons/facodi_learning/controllers/contextual_submission.py:0
+msgid "Suggested for course: %s."
+msgstr ""
+
+#. module: facodi_learning
+#: model:ir.model.fields,field_description:facodi_learning.field_facodi_learning_submission__normalized_source_url
+msgid "Normalized Source Url"
+msgstr ""
+
+#. module: facodi_learning
+#: model:ir.model.fields,field_description:facodi_learning.field_facodi_learning_submission__submitted_by_id
+msgid "Submitted By"
+msgstr ""
+
+#. module: facodi_learning
+#: model:ir.model.fields,field_description:facodi_learning.field_facodi_learning_submission__access_token
+msgid "Access Token"
+msgstr ""
+
+#. module: facodi_learning
+#: model:ir.model.fields,field_description:facodi_learning.field_facodi_learning_content_review__decision_note
+#: model:ir.model.fields,field_description:facodi_learning.field_facodi_learning_submission__decision_note
+msgid "Decision Note"
+msgstr ""
+
+#. module: facodi_learning
+#: model:ir.model.fields,help:facodi_learning.field_facodi_learning_submission__decision_note
+msgid ""
+"Internal editorial note. Never render this field on public status pages."
+msgstr ""
+
+#. module: facodi_learning
+#: model:ir.model.fields,help:facodi_learning.field_facodi_learning_submission__editorial_reply
+msgid ""
+"Optional contributor-facing editorial reply. This text is shown on the "
+"private status page and the signed-in contributor view; never put internal "
+"notes or secrets here."
+msgstr ""
+
+#. module: facodi_learning
+#: model:ir.model.fields,field_description:facodi_learning.field_facodi_learning_submission__candidate_id
+msgid "Course Candidate"
+msgstr ""
+
+#. module: facodi_learning
+#: model:ir.model.fields,field_description:facodi_learning.field_facodi_learning_submission__source_id
+msgid "Canonical Source"
+msgstr ""
+
+#. module: facodi_learning
+#: model:ir.model.fields,field_description:facodi_learning.field_facodi_learning_submission__source_cta
+msgid "Source Cta"
+msgstr ""
+
+#. module: facodi_learning
+#: model:ir.model.fields,field_description:facodi_learning.field_facodi_learning_submission__source_section
+msgid "Source Section"
+msgstr ""
+
+#. module: facodi_learning
+#: model:ir.model.fields,field_description:facodi_learning.field_facodi_learning_submission__source_page_url
+msgid "Source Page Url"
+msgstr ""
+
+#. module: facodi_learning
+#: model:ir.model.fields,field_description:facodi_learning.field_facodi_learning_submission__roadmap_id
+msgid "Roadmap Context"
+msgstr ""
+
+#. module: facodi_learning
+#: model:ir.model.fields,field_description:facodi_learning.field_facodi_learning_submission__course_id
+msgid "Course Context"
+msgstr ""
+
+#. module: facodi_learning
+#: model:ir.model.fields,field_description:facodi_learning.field_facodi_learning_submission__suggested_slide_id
+msgid "Learning Item Context"
+msgstr ""
+
+#. module: facodi_learning
+#: model:ir.model.fields,field_description:facodi_learning.field_facodi_learning_submission__contact_name
+msgid "Contact Name"
+msgstr ""
+
+#. module: facodi_learning
+#: model:ir.model.fields,field_description:facodi_learning.field_facodi_learning_submission__contact_email
+msgid "Contact Email"
+msgstr ""
+
+#. module: facodi_learning
+#: model:ir.model.fields,field_description:facodi_learning.field_facodi_learning_submission__resource_type
+msgid "Resource Type"
+msgstr ""
+
+#. module: facodi_learning
+#: model:ir.model.fields,field_description:facodi_learning.field_facodi_learning_submission__resource_level
+msgid "Resource Level"
+msgstr ""
+
+#. module: facodi_learning
+#: model:ir.model.fields,field_description:facodi_learning.field_facodi_learning_submission__permission_to_contact
+msgid "Permission To Contact"
+msgstr ""
+
+#. module: facodi_learning
+#. odoo-python
+#: code:addons/facodi_learning/models/curriculum_source.py:0
+msgid ""
+"The official curriculum source could not be verified. The previously "
+"reviewed/published reference was preserved. Review the source configuration "
+"and server logs before retrying."
+msgstr ""
+
+#. module: facodi_learning
+#. odoo-python
+#: code:addons/facodi_learning/models/curriculum_source.py:0
+msgid "Only eLearning Managers can verify curriculum sources."
+msgstr ""
+
+#. module: facodi_learning
+#. odoo-python
+#: code:addons/facodi_learning/models/curriculum_source.py:0
+msgid ""
+"The official curriculum source changed. A new draft reference was created. "
+"Review and validate it explicitly before publication."
+msgstr ""
+
+#. module: facodi_learning
+#. odoo-python
+#: code:addons/facodi_learning/models/curriculum_source.py:0
+msgid "No curriculum change detected."
+msgstr ""
+
+#. module: facodi_learning
+#. odoo-python
+#: code:addons/facodi_learning/models/curriculum_source.py:0
+msgid "A curriculum change was detected and stored as draft."
+msgstr ""
+
+#. module: facodi_learning
+#. odoo-python
+#: code:addons/facodi_learning/models/curriculum_source.py:0
+msgid "Curriculum verification failed; review the pending activity."
+msgstr ""
+
+#. module: facodi_learning
+#. odoo-python
+#: code:addons/facodi_learning/models/curriculum_source.py:0
+msgid "Curriculum verification is already running."
+msgstr ""
+
+#. module: facodi_learning
+#. odoo-python
+#: code:addons/facodi_learning/models/curriculum_source.py:0
+msgid "Only draft curriculum references can be validated."
+msgstr ""
+
+#. module: facodi_learning
+#. odoo-python
+#: code:addons/facodi_learning/models/curriculum_source.py:0
+msgid ""
+"The curriculum verification failed unexpectedly. Please review the server "
+"logs."
+msgstr ""
+
+#. module: facodi_learning
+#. odoo-python
+#: code:addons/facodi_learning/models/curriculum_source.py:0
+msgid "Curriculum source verification"
+msgstr ""
+
+#. module: facodi_learning
+#: model:ir.model.fields,field_description:facodi_learning.field_facodi_learning_curriculum_source__verification_enabled
+msgid "Verification Enabled"
+msgstr ""
+
+#. module: facodi_learning
+#: model:ir.model.fields,help:facodi_learning.field_facodi_learning_curriculum_source__verification_enabled
+msgid "Opt in this source to the bounded daily verification cron."
+msgstr ""
+
+#. module: facodi_learning
+#: model:ir.model.fields,field_description:facodi_learning.field_facodi_learning_content_review__responsible_id
+#: model:ir.model.fields,field_description:facodi_learning.field_facodi_learning_curriculum_source__responsible_id
+msgid "Responsible"
+msgstr ""
+
+#. module: facodi_learning
+#: model:ir.model.fields,help:facodi_learning.field_facodi_learning_curriculum_source__responsible_id
+msgid "Internal user responsible for source-verification activities."
+msgstr ""
+
+#. module: facodi_learning
+#: model:ir.model.fields,help:facodi_learning.field_facodi_learning_curriculum_source__checked_at
+msgid "Last successful source verification."
+msgstr ""
+
+#. module: facodi_learning
+#: model:ir.model.fields,field_description:facodi_learning.field_facodi_learning_curriculum_source__last_attempt_at
+msgid "Last Attempt At"
+msgstr ""
+
+#. module: facodi_learning
+#: model:ir.model.fields,field_description:facodi_learning.field_facodi_learning_curriculum_source__last_check_status
+msgid "Last Check Status"
+msgstr ""
+
+#. module: facodi_learning
+#: model:ir.model.fields.selection,name:facodi_learning.selection__facodi_learning_curriculum_source__last_check_status__never
+msgid "Never checked"
+msgstr ""
+
+#. module: facodi_learning
+#: model:ir.model.fields.selection,name:facodi_learning.selection__facodi_learning_curriculum_source__last_check_status__ok
+msgid "No change"
+msgstr ""
+
+#. module: facodi_learning
+#: model:ir.model.fields.selection,name:facodi_learning.selection__facodi_learning_curriculum_source__last_check_status__changed
+msgid "Change detected"
+msgstr ""
+
+#. module: facodi_learning
+#: model:ir.model.fields,field_description:facodi_learning.field_facodi_learning_curriculum_source__last_check_error
+msgid "Last Check Error"
+msgstr ""
+
+#. module: facodi_learning
+#: model:ir.model.fields,field_description:facodi_learning.field_facodi_learning_curriculum_reference__validated_by_id
+msgid "Validated By"
+msgstr ""
+
+#. module: facodi_learning
+#: model:ir.model.fields,field_description:facodi_learning.field_facodi_learning_curriculum_reference__published_at
+msgid "Published At"
+msgstr ""
+
+#. module: facodi_learning
+#: model:ir.model.fields,field_description:facodi_learning.field_facodi_learning_curriculum_reference__published_by_id
+msgid "Published By"
+msgstr ""
+
+#. module: facodi_learning
+#: model:ir.model.fields,field_description:facodi_learning.field_facodi_learning_curriculum_reference__archived_at
+msgid "Archived At"
+msgstr ""
+
+#. module: facodi_learning
+#: model:ir.model.fields,field_description:facodi_learning.field_facodi_learning_curriculum_reference__archived_by_id
+msgid "Archived By"
+msgstr ""
+
+#. module: facodi_learning
+#: model:ir.model.fields,help:facodi_learning.field_facodi_learning_content_review__source_id
+msgid "Canonical FACODI source when this review originated from ingestion."
+msgstr ""
+
+#. module: facodi_learning
+#: model:ir.model.fields.selection,name:facodi_learning.selection__facodi_learning_content_review__origin__source_ingestion
+msgid "Source ingestion"
+msgstr ""
+
+#. module: facodi_learning
+#: model:ir.model.fields.selection,name:facodi_learning.selection__facodi_learning_content_review__origin__legacy_reconciliation
+msgid "Legacy reconciliation"
+msgstr ""
+
+#. module: facodi_learning
+#: model:ir.model.fields,field_description:facodi_learning.field_facodi_learning_content_review__review_reason
+msgid "Review Reason"
+msgstr ""
+
+#. module: facodi_learning
+#: model:ir.model.fields,help:facodi_learning.field_facodi_learning_content_review__review_reason
+msgid ""
+"Why this review entered the editorial queue. This is workflow evidence, not "
+"source provenance."
+msgstr ""
+
+#. module: facodi_learning
+#: model:ir.model.fields.selection,name:facodi_learning.selection__facodi_learning_content_review__review_reason__manual
+msgid "Manual publication review"
+msgstr ""
+
+#. module: facodi_learning
+#: model:ir.model.fields.selection,name:facodi_learning.selection__facodi_learning_content_review__review_reason__source_ingestion
+msgid "Source ingestion requires review"
+msgstr ""
+
+#. module: facodi_learning
+#: model:ir.model.fields.selection,name:facodi_learning.selection__facodi_learning_content_review__review_reason__legacy_publication
+msgid "Legacy public content requires provenance review"
+msgstr ""
+
+#. module: facodi_learning
+#: model:ir.model.fields,help:facodi_learning.field_facodi_learning_content_review__responsible_id
+msgid "Internal user responsible for completing the pending review."
+msgstr ""
+
+#. module: facodi_learning
+#: model:ir.model.fields,help:facodi_learning.field_facodi_learning_content_review__author
+msgid "Claimed creator or responsible author. Leave blank until verified."
+msgstr ""
+
+#. module: facodi_learning
+#: model:ir.model.fields,help:facodi_learning.field_facodi_learning_content_review__rights_mode
+msgid ""
+"How FACODI is permitted to use this material. Leave blank until verified."
+msgstr ""
+
+#. module: facodi_learning
+#: model:ir.model.fields,field_description:facodi_learning.field_facodi_learning_content_review__usage_basis
+msgid "Usage Basis"
+msgstr ""
+
+#. module: facodi_learning
+#: model:ir.model.fields,help:facodi_learning.field_facodi_learning_content_review__usage_basis
+msgid "Evidence or rationale supporting the permitted use of this content."
+msgstr ""
+
+#. module: facodi_learning
+#: model:ir.model.fields,help:facodi_learning.field_facodi_learning_content_review__purpose
+msgid "Editorial purpose for including this content in FACODI."
+msgstr ""
+
+#. module: facodi_learning
+#: model:ir.model.fields,help:facodi_learning.field_facodi_learning_content_review__source_url
+msgid "Public provenance URL when one exists. Do not invent a source URL."
+msgstr ""
+
+#. module: facodi_learning
+#: model:ir.model.fields,help:facodi_learning.field_facodi_learning_content_review__decision_note
+msgid "Manager decision note. Required when rejecting a review."
+msgstr ""
+
+#. module: facodi_learning
+#: model:ir.model.fields,field_description:facodi_learning.field_slide_slide__facodi_content_review_ids
+msgid "FACODI Publication Reviews"
+msgstr ""
+
+#. module: facodi_learning
+#: model:ir.model.fields,help:facodi_learning.field_slide_slide__facodi_legacy_review_pending
+msgid ""
+"This content was already public when FACODI publication governance was "
+"enabled and still needs provenance review."
+msgstr ""
+
+#. module: facodi_learning
+#: model:ir.model.fields,help:facodi_learning.field_website__facodi_publication_review_enabled
+msgid ""
+"FACODI requires provenance and Manager review before new learning content "
+"can be published."
 msgstr ""
