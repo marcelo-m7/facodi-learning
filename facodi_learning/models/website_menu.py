@@ -45,27 +45,28 @@ class WebsiteMenu(models.Model):
                 "es_ES": "Inicio",
                 "fr_FR": "Accueil",
             },
-            "Explore": {
-                "pt_PT": "Explorar",
-                "es_ES": "Explorar",
-                "fr_FR": "Explorer",
+            "Learn": {
+                "pt_PT": "Aprender",
+                "es_ES": "Aprender",
+                "fr_FR": "Apprendre",
             },
             "Community": {
                 "pt_PT": "Comunidade",
                 "es_ES": "Comunidad",
                 "fr_FR": "Communauté",
             },
+            "Project": {
+                "pt_PT": "Projeto",
+                "es_ES": "Proyecto",
+                "fr_FR": "Projet",
+            },
             "About": {
-                "pt_PT": "Sobre",
-                "es_ES": "Acerca de",
-                "fr_FR": "À propos",
+                "pt_PT": "Sobre", "es_ES": "Acerca de", "fr_FR": "À propos",
             },
-            "Project & team": {
-                "pt_PT": "Projeto e equipa", "es_ES": "Proyecto y equipo", "fr_FR": "Projet et équipe",
+            "Partners & network": {
+                "pt_PT": "Parceiros e rede", "es_ES": "Socios y red", "fr_FR": "Partenaires et réseau",
             },
-            "Partnerships": {
-                "pt_PT": "Parcerias", "es_ES": "Colaboraciones", "fr_FR": "Partenariats",
-            },
+            "Infrastructure": {"pt_PT": "Infraestrutura", "es_ES": "Infraestructura", "fr_FR": "Infrastructure"},
             "Contact": {
                 "pt_PT": "Contacto",
                 "es_ES": "Contacto",
@@ -196,7 +197,7 @@ class WebsiteMenu(models.Model):
                 ("url", "in", ["/explore", "/courses"]),
                 "&",
                 ("url", "=", "#"),
-                ("name", "in", ["Explore", "Learn", "Learning"]),
+                ("name", "in", ["Explore", "Learn", "Learning", "Aprender", "Apprendre"]),
             ],
             order="id",
         )
@@ -204,7 +205,7 @@ class WebsiteMenu(models.Model):
         if not explore:
             explore = Menu.create(
                 {
-                    "name": "Explore",
+                    "name": "Learn",
                     "url": "#",
                     "parent_id": root.id,
                     "website_id": facodi.id,
@@ -220,7 +221,7 @@ class WebsiteMenu(models.Model):
                     "sequence": 10,
                 }
             )
-        write_menu_name(explore, "Explore")
+        write_menu_name(explore, "Learn")
 
         duplicate_explore = explore_candidates - explore
         if duplicate_explore:
@@ -265,7 +266,7 @@ class WebsiteMenu(models.Model):
                     "url": "#",
                     "parent_id": root.id,
                     "website_id": facodi.id,
-                    "sequence": 20,
+                    "sequence": 900,
                 }
             )
         else:
@@ -274,7 +275,7 @@ class WebsiteMenu(models.Model):
                     "url": "#",
                     "parent_id": root.id,
                     "website_id": facodi.id,
-                    "sequence": 20,
+                    "sequence": 900,
                 }
             )
         write_menu_name(community, "Community")
@@ -297,14 +298,15 @@ class WebsiteMenu(models.Model):
         published_news = bool(
             blog_installed
             and self.env["blog.post"].sudo().search_count(
-                [("website_published", "=", True)]
+                [("website_published", "=", True), ("website_id", "in", [False, facodi.id])]
             )
         )
         existing_news = Menu.search(
             [("website_id", "=", facodi.id), ("url", "=", "/blog")]
         )
+        news = Menu.browse()
         if published_news:
-            ensure_menu("News", "/blog", 10, community)
+            news = ensure_menu("News", "/blog", 40, root)
         elif existing_news:
             existing_news.unlink()
 
@@ -319,11 +321,11 @@ class WebsiteMenu(models.Model):
         if forum_installed or existing_forum:
             ensure_menu("Discussions", "/forum", 20, community)
 
-        ensure_menu(
+        contribute = ensure_menu(
             "Contribute",
             "/submissions/new?type=resource&source=main_nav_contribute&section=header",
             30,
-            community,
+            root,
             aliases=("/contribuir/recurso", "/contribuir"),
         )
 
@@ -335,7 +337,7 @@ class WebsiteMenu(models.Model):
                 ("url", "in", ["/sobre", "/about"]),
                 "&", ("parent_id", "=", root.id),
                 "&", ("url", "=", "#"),
-                ("name", "in", ["About", "Sobre", "Acerca de", "À propos"]),
+                ("name", "in", ["About", "Sobre", "Acerca de", "À propos", "Project", "Projeto", "Proyecto", "Projet"]),
             ],
             order="id",
         )
@@ -345,11 +347,11 @@ class WebsiteMenu(models.Model):
         if not about:
             about = Menu.create(
                 {
-                    "name": "About",
+                    "name": "Project",
                     "url": "/about",
                     "parent_id": root.id,
                     "website_id": facodi.id,
-                    "sequence": 30,
+                    "sequence": 20,
                 }
             )
         else:
@@ -357,10 +359,10 @@ class WebsiteMenu(models.Model):
                 {
                     "parent_id": root.id,
                     "website_id": facodi.id,
-                    "sequence": 30,
+                    "sequence": 20,
                 }
             )
-        write_menu_name(about, "About")
+        write_menu_name(about, "Project")
         duplicate_about = about_candidates - about
         if duplicate_about:
             descendants = duplicate_about.mapped("child_id") - about
@@ -368,10 +370,12 @@ class WebsiteMenu(models.Model):
                 descendants.write({"parent_id": about.id})
             duplicate_about.unlink()
 
-        ensure_menu("Project & team", "/about#project", 10, about,
+        ensure_menu("About", "/about#project", 10, about,
                     aliases=("/academic-model",))
-        ensure_menu("Partnerships", "/partners", 20, about,
+        ensure_menu("Partners & network", "/partners", 20, about,
                     aliases=("/about-ualg",))
+
+        ensure_menu("Infrastructure", "/about#infrastructure", 30, about, aliases=("/infrastructure",))
 
         # These destinations remain available in the catalogue/project page and
         # policy footer. Remove only leaf links owned by the old IA, never pages
@@ -384,7 +388,7 @@ class WebsiteMenu(models.Model):
         ]).filtered(lambda menu: not menu.child_id)
         redundant.unlink()
 
-        ensure_menu("Contact", "/contact", 40, root, aliases=("/contactus",))
+        contact = ensure_menu("Contact", "/contact", 50, root, aliases=("/contactus",))
 
         # Remove stale top-level shells left by previous iterations now that their
         # destinations are owned by Explore/Community.
@@ -392,7 +396,7 @@ class WebsiteMenu(models.Model):
             [
                 ("website_id", "=", facodi.id),
                 ("parent_id", "=", root.id),
-                ("id", "not in", [home.id, explore.id, community.id, about.id]),
+                ("id", "not in", [home.id, explore.id, community.id, about.id, contribute.id, contact.id, *news.ids]),
                 (
                     "url",
                     "in",

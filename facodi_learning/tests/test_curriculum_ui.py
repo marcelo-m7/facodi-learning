@@ -125,13 +125,13 @@ class TestCurriculumUI(TransactionCase):
         Menu = self.env["website.menu"]
         for _pass in range(2):
             self.assertTrue(Menu.facodi_reconcile_navigation())
-            explore = website.menu_id.child_id.filtered(lambda m: m.name == "Explore")
+            explore = website.menu_id.child_id.filtered(lambda m: m.name == "Learn")
             self.assertEqual(set(explore.child_id.mapped("url")), {
                 "/courses", "/roadmaps", "/curricular-units", "/explore/content"
             })
-            about = website.menu_id.child_id.filtered(lambda m: m.name == "About")
+            about = website.menu_id.child_id.filtered(lambda m: m.name == "Project")
             self.assertEqual(len(about), 1)
-            self.assertEqual(set(about.child_id.mapped("url")), {"/about#project", "/partners"})
+            self.assertEqual(set(about.child_id.mapped("url")), {"/about#project", "/partners", "/about#infrastructure"})
 
     def test_public_roadmaps_menu_uses_the_canonical_route(self):
         website = self.env["website"].search([], order="id", limit=1)
@@ -150,14 +150,14 @@ class TestCurriculumUI(TransactionCase):
         menu = menus[0]
         self.assertEqual(menu.name, "Learning paths")
         self.assertEqual(menu.url, "/roadmaps")
-        self.assertEqual(menu.parent_id.name, "Explore")
+        self.assertEqual(menu.parent_id.name, "Learn")
         self.assertEqual(menu.parent_id.parent_id, website.menu_id)
         self.assertEqual(menu.parent_id.url, "#")
         self.assertEqual(menu.parent_id.sequence, 10)
         self.assertEqual(website.default_lang_id.code, "en_GB")
         self.assertEqual(
             website.menu_id.child_id.sorted("sequence").mapped("name")[:5],
-            ["Home", "Explore", "Community", "About", "Contact"],
+            ["Home", "Learn", "Project", "Contribute", "Contact"],
         )
 
         for code in ("pt_PT", "es_ES", "fr_FR"):
@@ -168,27 +168,27 @@ class TestCurriculumUI(TransactionCase):
         self.assertTrue(self.env["website.menu"].facodi_reconcile_navigation())
         expected_names = {
             "pt_PT": (
-                "Explorar",
+                "Aprender",
                 "Percursos de aprendizagem",
                 "Unidades curriculares",
                 "Comunidade",
-                "Sobre",
+                "Projeto",
                 "Contacto",
             ),
             "es_ES": (
-                "Explorar",
+                "Aprender",
                 "Rutas de aprendizaje",
                 "Unidades curriculares",
                 "Comunidad",
-                "Acerca de",
+                "Proyecto",
                 "Contacto",
             ),
             "fr_FR": (
-                "Explorer",
+                "Apprendre",
                 "Parcours d’apprentissage",
                 "Unités d’enseignement",
                 "Communauté",
-                "À propos",
+                "Projet",
                 "Contact",
             ),
         }
@@ -212,7 +212,7 @@ class TestCurriculumUI(TransactionCase):
             [
                 ("website_id", "=", website.id),
                 ("parent_id", "=", website.menu_id.id),
-                ("name", "=", "About"),
+                ("name", "=", "Project"),
             ],
             limit=1,
         )
@@ -273,7 +273,7 @@ class TestCurriculumUI(TransactionCase):
             news_menu,
             "empty public blogs must not leave a dead News destination in navigation",
         )
-        self.assertEqual(contribute_menu.parent_id, community_menu)
+        self.assertEqual(contribute_menu.parent_id, website.menu_id)
 
         # Reconciliation is idempotent and must not recreate legacy/duplicate
         # Explore or Learn trees on every module update.
@@ -282,7 +282,7 @@ class TestCurriculumUI(TransactionCase):
             [
                 ("website_id", "=", website.id),
                 ("parent_id", "=", website.menu_id.id),
-                ("name", "=", "Explore"),
+                ("name", "=", "Learn"),
             ]
         )
         self.assertEqual(len(explore_menus), 1)
@@ -324,12 +324,12 @@ class TestCurriculumUI(TransactionCase):
                 ("website_id", "=", website.id),
                 ("parent_id", "=", website.menu_id.id),
                 ("url", "=", "#"),
-                ("name", "=", "Explore"),
+                ("name", "=", "Learn"),
             ],
             limit=1,
         )
         self.assertTrue(explore)
-        self.assertEqual(explore.with_context(lang="en_GB").name, "Explore")
+        self.assertEqual(explore.with_context(lang="en_GB").name, "Learn")
         courses = Menu.search(
             [
                 ("website_id", "=", website.id),
@@ -351,7 +351,7 @@ class TestCurriculumUI(TransactionCase):
             [
                 ("website_id", "=", website.id),
                 ("parent_id", "=", website.menu_id.id),
-                ("name", "=", "Explore"),
+                ("name", "=", "Learn"),
             ],
             limit=1,
         )

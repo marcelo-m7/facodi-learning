@@ -44,3 +44,5 @@ from . import test_portal_home
 from . import test_canonical_routes
 from . import test_contextual_submission_contract
 from . import test_contextual_submission_http
+
+from . import test_home_field_notebook

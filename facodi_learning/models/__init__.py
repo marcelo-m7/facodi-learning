@@ -21,3 +21,5 @@ from . import submission
 from . import contextual_submission
 
 from . import website_menu
+
+from . import website_home
