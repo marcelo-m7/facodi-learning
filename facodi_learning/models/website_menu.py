@@ -331,7 +331,11 @@ class WebsiteMenu(models.Model):
         about_candidates = Menu.search(
             [
                 ("website_id", "=", facodi.id),
+                "|",
                 ("url", "in", ["/sobre", "/about"]),
+                "&", ("parent_id", "=", root.id),
+                "&", ("url", "=", "#"),
+                ("name", "in", ["About", "Sobre", "Acerca de", "À propos"]),
             ],
             order="id",
         )

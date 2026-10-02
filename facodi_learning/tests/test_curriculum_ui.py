@@ -130,6 +130,7 @@ class TestCurriculumUI(TransactionCase):
                 "/courses", "/roadmaps", "/curricular-units", "/explore/content"
             })
             about = website.menu_id.child_id.filtered(lambda m: m.name == "About")
+            self.assertEqual(len(about), 1)
             self.assertEqual(set(about.child_id.mapped("url")), {"/about#project", "/partners"})
 
     def test_public_roadmaps_menu_uses_the_canonical_route(self):
@@ -211,7 +212,7 @@ class TestCurriculumUI(TransactionCase):
             [
                 ("website_id", "=", website.id),
                 ("parent_id", "=", website.menu_id.id),
-                ("url", "in", ["/sobre", "/about"]),
+                ("name", "=", "About"),
             ],
             limit=1,
         )
