@@ -60,6 +60,12 @@ class WebsiteMenu(models.Model):
                 "es_ES": "Acerca de",
                 "fr_FR": "À propos",
             },
+            "Project & team": {
+                "pt_PT": "Projeto e equipa", "es_ES": "Proyecto y equipo", "fr_FR": "Projet et équipe",
+            },
+            "Partnerships": {
+                "pt_PT": "Parcerias", "es_ES": "Colaboraciones", "fr_FR": "Partenariats",
+            },
             "Contact": {
                 "pt_PT": "Contacto",
                 "es_ES": "Contacto",
@@ -232,18 +238,9 @@ class WebsiteMenu(models.Model):
                 30,
                 ("/unidades-curriculares",),
             ),
-            ("Study areas", "/explore/areas", 40, ("/explorar/areas",)),
             (
-                "Learning resources",
-                "/explore/content",
-                50,
+                "Learning resources", "/explore/content", 40,
                 ("/explorar/conteudos",),
-            ),
-            (
-                "Videos",
-                "/explore/videos",
-                60,
-                ("/explorar/videos",),
             ),
         )
         for name, url, sequence, aliases in learning_entries:
@@ -330,7 +327,7 @@ class WebsiteMenu(models.Model):
             aliases=("/contribuir/recurso", "/contribuir"),
         )
 
-        # Keep the editor-owned About page and any manually curated children.
+        # Keep the editor-owned About page; consolidate known editorial destinations.
         about_candidates = Menu.search(
             [
                 ("website_id", "=", facodi.id),
@@ -366,6 +363,22 @@ class WebsiteMenu(models.Model):
             if descendants:
                 descendants.write({"parent_id": about.id})
             duplicate_about.unlink()
+
+        ensure_menu("Project & team", "/about#project", 10, about,
+                    aliases=("/academic-model",))
+        ensure_menu("Partnerships", "/partners", 20, about,
+                    aliases=("/about-ualg",))
+
+        # These destinations remain available in the catalogue/project page and
+        # policy footer. Remove only leaf links owned by the old IA, never pages
+        # or custom menu subtrees.
+        redundant = Menu.search([
+            ("website_id", "=", facodi.id),
+            ("parent_id", "in", [explore.id, about.id]),
+            ("url", "in", ["/explore/areas", "/explore/videos",
+                           "/about-marcelo", "/infrastructure", "/accessibility"]),
+        ]).filtered(lambda menu: not menu.child_id)
+        redundant.unlink()
 
         ensure_menu("Contact", "/contact", 40, root, aliases=("/contactus",))
 

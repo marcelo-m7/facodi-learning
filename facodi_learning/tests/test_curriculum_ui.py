@@ -119,6 +119,19 @@ class TestCurriculumUI(TransactionCase):
         self.assertNotIn("slide.slide", detail.arch_db)
         self.assertNotIn("facodi.learning.curriculum.coverage", detail.arch_db)
 
+    def test_compact_navigation_preserves_destinations_and_is_idempotent(self):
+        website = self.env["website"].search([], order="id", limit=1)
+        website.domain = "https://facodi.com"
+        Menu = self.env["website.menu"]
+        for _pass in range(2):
+            self.assertTrue(Menu.facodi_reconcile_navigation())
+            explore = website.menu_id.child_id.filtered(lambda m: m.name == "Explore")
+            self.assertEqual(set(explore.child_id.mapped("url")), {
+                "/courses", "/roadmaps", "/curricular-units", "/explore/content"
+            })
+            about = website.menu_id.child_id.filtered(lambda m: m.name == "About")
+            self.assertEqual(set(about.child_id.mapped("url")), {"/about#project", "/partners"})
+
     def test_public_roadmaps_menu_uses_the_canonical_route(self):
         website = self.env["website"].search([], order="id", limit=1)
         self.assertTrue(website)
