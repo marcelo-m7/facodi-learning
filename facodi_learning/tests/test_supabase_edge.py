@@ -42,6 +42,49 @@ class TestSupabaseEdgeAnalysis(TransactionCase):
             }
         )
 
+    def test_video_slide_is_sent_to_supabase_ingest_function(self):
+        with patch.dict(
+            os.environ,
+            {
+                "SUPABASE_URL": "https://example.supabase.co",
+                "SUPABASE_SECRET_KEY": "sb_secret_test",
+            },
+            clear=False,
+        ):
+            captured = {}
+
+            def fake_urlopen(request, timeout=0):
+                captured["request"] = request
+                captured["timeout"] = timeout
+                return _FakeResponse({"success": True, "video_id": "abc123", "status": "pending"})
+
+            with patch(
+                "odoo.addons.facodi_learning.services.supabase_edge._open_endpoint",
+                side_effect=fake_urlopen,
+            ):
+                slide = self.env["slide.slide"].create(
+                    {
+                        "name": "FACODI video sync",
+                        "channel_id": self.channel.id,
+                        "slide_category": "video",
+                        "source_type": "external",
+                        "video_url": "https://www.youtube.com/watch?v=SNma-fAeMzA",
+                        "is_published": True,
+                        "website_published": True,
+                    }
+                )
+
+            self.assertTrue(slide)
+            self.assertIn("request", captured)
+            request = captured["request"]
+            self.assertEqual(request.full_url, "https://example.supabase.co/functions/v1/v2_ingest_youtube_video")
+            self.assertEqual(request.get_header("Apikey"), "sb_secret_test")
+            payload = json.loads(request.data.decode("utf-8"))
+            self.assertEqual(payload["url"], "https://www.youtube.com/watch?v=SNma-fAeMzA")
+            self.assertEqual(payload["title"], "FACODI video sync")
+            self.assertEqual(payload["channel_id"], str(self.channel.id))
+            self.assertEqual(captured["timeout"], 30)
+
     def test_imported_source_queues_one_supabase_job_when_runtime_is_configured(self):
         with patch.dict(
             os.environ,

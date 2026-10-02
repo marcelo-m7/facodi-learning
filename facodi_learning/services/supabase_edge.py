@@ -11,8 +11,10 @@ from odoo import tools
 
 DEFAULT_FUNCTION = "v3_analyze_learning_resource"
 DEFAULT_METADATA_FUNCTION = "v3_discover_resource_metadata"
+DEFAULT_VIDEO_INGEST_FUNCTION = "v2_ingest_youtube_video"
 MAX_ANALYSIS_RESPONSE_BYTES = 512 * 1024
 MAX_METADATA_RESPONSE_BYTES = 64 * 1024
+MAX_VIDEO_INGEST_RESPONSE_BYTES = 64 * 1024
 MAX_ERROR_RESPONSE_BYTES = 16 * 1024
 _FUNCTION_RE = re.compile(r"^[A-Za-z0-9_-]+$")
 
@@ -66,6 +68,11 @@ def _analysis_endpoint():
 
 def _metadata_endpoint():
     function = _env("FACODI_SUPABASE_METADATA_FUNCTION") or DEFAULT_METADATA_FUNCTION
+    return _function_endpoint(function)
+
+
+def _video_ingest_endpoint():
+    function = _env("FACODI_SUPABASE_VIDEO_INGEST_FUNCTION") or DEFAULT_VIDEO_INGEST_FUNCTION
     return _function_endpoint(function)
 
 
@@ -239,6 +246,72 @@ def analyze_supabase_edge(slide):
         raise ValueError("Supabase analysis did not complete successfully.")
 
     return _validate_response_correlation(result, idempotency_key)
+
+
+def sync_slide_video_to_supabase(slide):
+    """Send a YouTube slide to the live Supabase ingestion function."""
+    slide.ensure_one()
+    secret = _env("SUPABASE_SECRET_KEY")
+    if not secret:
+        raise ValueError("SUPABASE_SECRET_KEY is not configured.")
+
+    video_url = (slide.video_url or slide.url or "").strip()
+    if not video_url:
+        raise ValueError("Cannot sync a video slide without a public video URL.")
+
+    from .youtube import youtube_video_identity
+
+    extracted = youtube_video_identity(video_url)
+    if not extracted or not extracted.get("source_url"):
+        raise ValueError("Only public YouTube watch URLs can be synced to Supabase.")
+
+    title = (slide.name or "").strip() or extracted.get("external_id") or "YouTube video"
+    description = tools.html2plaintext(slide.description or "").strip()
+    payload = {
+        "url": extracted["source_url"],
+        "video_id": extracted.get("external_id") or "",
+        "title": title[:200],
+        "description": description[:2000] if description else "",
+        "channel_id": str(slide.channel_id.id) if slide.channel_id else "",
+        "language": (slide.env.context.get("lang") or "pt_PT")[:16],
+        "metadata": {
+            "odoo_slide_id": slide.id,
+            "odoo_channel_id": slide.channel_id.id if slide.channel_id else False,
+            "source_model": "slide.slide",
+            "source_url": extracted["source_url"],
+            "is_published": bool(slide.is_published),
+            "website_published": bool(slide.website_published),
+        },
+    }
+
+    request = urllib.request.Request(
+        _video_ingest_endpoint(),
+        data=json.dumps(payload, ensure_ascii=False).encode("utf-8"),
+        headers={
+            "apikey": secret,
+            "content-type": "application/json",
+            "user-agent": "FACODI-Odoo/19 SupabaseVideoIngest",
+        },
+        method="POST",
+    )
+
+    try:
+        with _open_endpoint(request, timeout=30) as response:
+            raw = _read_bounded_response(response, MAX_VIDEO_INGEST_RESPONSE_BYTES)
+    except urllib.error.HTTPError as exc:
+        raise ValueError(f"Supabase video ingest returned HTTP {exc.code}.") from exc
+    except urllib.error.URLError as exc:
+        raise ValueError("Supabase video ingest endpoint is unavailable.") from exc
+
+    try:
+        result = json.loads(raw)
+    except json.JSONDecodeError as exc:
+        raise ValueError("Supabase video ingest returned invalid JSON.") from exc
+
+    if not isinstance(result, dict) or result.get("success") is not True:
+        raise ValueError("Supabase video ingest did not complete successfully.")
+
+    return result
 
 
 def discover_supabase_resource_metadata(source_url):

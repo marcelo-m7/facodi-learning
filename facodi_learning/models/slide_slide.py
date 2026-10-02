@@ -1,4 +1,10 @@
-from odoo import fields, models
+import logging
+
+from odoo import api, fields, models
+
+from ..services.supabase_edge import sync_slide_video_to_supabase
+
+_logger = logging.getLogger(__name__)
 
 
 class SlideSlide(models.Model):
@@ -62,6 +68,52 @@ class SlideSlide(models.Model):
                 "sticky": False,
             },
         }
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        slides = super().create(vals_list)
+        for slide in slides:
+            try:
+                slide._facodi_sync_supabase_video_if_needed()
+            except Exception as exc:  # pragma: no cover - should be logged, never block content creation.
+                _logger.warning(
+                    "FACODI Supabase video sync failed for slide %s (%s)",
+                    slide.id,
+                    type(exc).__name__,
+                )
+        return slides
+
+    def write(self, vals):
+        result = super().write(vals)
+        if any(
+            key in vals for key in ("video_url", "url", "name", "description", "slide_category")
+        ):
+            for slide in self:
+                try:
+                    slide._facodi_sync_supabase_video_if_needed()
+                except Exception as exc:  # pragma: no cover - should be logged, never block updates.
+                    _logger.warning(
+                        "FACODI Supabase video sync failed for slide %s (%s)",
+                        slide.id,
+                        type(exc).__name__,
+                    )
+        return result
+
+    def _facodi_sync_supabase_video_if_needed(self):
+        self.ensure_one()
+        if self.env.context.get("facodi_supabase_video_sync"):
+            return False
+        if self.slide_category != "video" and self.slide_type != "youtube_video":
+            return False
+        video_url = (self.video_url or self.url or "").strip()
+        if not video_url:
+            return False
+        self.with_context(facodi_supabase_video_sync=True)._facodi_sync_supabase_video()
+        return True
+
+    def _facodi_sync_supabase_video(self):
+        self.ensure_one()
+        return sync_slide_video_to_supabase(self)
 
     def _facodi_related_slides(self, website):
         """Expose only approved links, then apply standard learner access rules.
