@@ -368,7 +368,18 @@ class SlideSlide(models.Model):
 
     def _facodi_review_website(self):
         self.ensure_one()
-        return self.website_id or self.channel_id.website_id
+        explicit_website = self.website_id or self.channel_id.website_id
+        if explicit_website:
+            return explicit_website
+        # A global Odoo slide is also visible on FACODI. Apply FACODI's
+        # publication rule to it without imposing that rule on unrelated sites.
+        return self.env["website"].sudo().search(
+            [
+                ("domain", "=", "https://facodi.com"),
+                ("facodi_publication_review_enabled", "=", True),
+            ],
+            limit=1,
+        )
 
     def _facodi_requires_review(self):
         return any(
@@ -643,6 +654,20 @@ class Website(models.Model):
                 ("channel_id.website_id", "in", self.ids),
             ]
         )
+        if any(
+            website.domain == "https://facodi.com"
+            and website.facodi_publication_review_enabled
+            for website in self
+        ):
+            public_slides |= self.env["slide.slide"].search(
+                [
+                    "|",
+                    ("is_published", "=", True),
+                    ("website_published", "=", True),
+                    ("website_id", "=", False),
+                    ("channel_id.website_id", "=", False),
+                ]
+            )
         candidate_slides = self.env["slide.slide"]
         for slide in public_slides:
             review_website = slide._facodi_review_website()

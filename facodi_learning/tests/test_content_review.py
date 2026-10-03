@@ -344,6 +344,7 @@ class TestContentPublicationGovernance(TransactionCase):
         self.assertTrue(self.website.facodi_publication_review_enabled)
 
     def test_explicit_legacy_reconciliation_includes_site_less_public_content(self):
+        self.website.domain = "https://unrelated.example"
         channel = self.env["slide.channel"].create(
             {
                 "name": "Site-less legacy reconciliation course",
@@ -377,6 +378,7 @@ class TestContentPublicationGovernance(TransactionCase):
         self.assertFalse(review.source_url)
 
     def test_site_less_content_is_not_accidentally_governed(self):
+        self.website.domain = "https://unrelated.example"
         channel = self.env["slide.channel"].create({"name": "Site-less course"})
         slide = self.env["slide.slide"].create(
             {
@@ -388,6 +390,43 @@ class TestContentPublicationGovernance(TransactionCase):
         )
         self.assertTrue(slide.is_published)
         self.assertFalse(slide._facodi_requires_review())
+
+    def test_facodi_domain_governs_globally_visible_content(self):
+        self.website.domain = "https://facodi.com"
+        self.website.action_facodi_enable_publication_review()
+        channel = self.env["slide.channel"].create({"name": "FACODI global course"})
+        slide = self.env["slide.slide"].create(
+            {
+                "name": "Unreviewed global content",
+                "channel_id": channel.id,
+                "slide_category": "article",
+            }
+        )
+        self.assertTrue(slide._facodi_requires_review())
+        with self.assertRaises(ValidationError):
+            slide.write({"website_published": True})
+
+    def test_facodi_backfill_queues_globally_visible_legacy_content(self):
+        self.website.sudo().write({"facodi_publication_review_enabled": False})
+        self.website.domain = "https://facodi.com"
+        channel = self.env["slide.channel"].create({"name": "Global legacy course"})
+        slide = self.env["slide.slide"].create(
+            {
+                "name": "Global legacy publication",
+                "channel_id": channel.id,
+                "slide_category": "article",
+                "website_published": True,
+            }
+        )
+
+        self.website.action_facodi_enable_publication_review()
+        self.website.action_facodi_enable_publication_review()
+
+        slide.invalidate_recordset()
+        self.assertTrue(slide.website_published)
+        self.assertTrue(slide.facodi_legacy_review_pending)
+        self.assertEqual(len(slide.facodi_content_review_ids), 1)
+        self.assertEqual(slide.facodi_content_review_ids.state, "pending")
 
     def test_moving_public_content_into_governed_scope_requires_review(self):
         self.website.sudo().write({"facodi_publication_review_enabled": False})
