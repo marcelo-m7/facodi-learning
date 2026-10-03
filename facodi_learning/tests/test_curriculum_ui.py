@@ -131,7 +131,7 @@ class TestCurriculumUI(TransactionCase):
             })
             about = website.menu_id.child_id.filtered(lambda m: m.name == "About")
             self.assertEqual(len(about), 1)
-            self.assertEqual(set(about.child_id.mapped("url")), {"/about#project", "/partners"})
+            self.assertEqual(set(about.child_id.mapped("url")), {"/about", "/about-ualg"})
 
     def test_public_roadmaps_menu_uses_the_canonical_route(self):
         website = self.env["website"].search([], order="id", limit=1)

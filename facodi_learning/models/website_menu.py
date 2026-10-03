@@ -60,11 +60,11 @@ class WebsiteMenu(models.Model):
                 "es_ES": "Acerca de",
                 "fr_FR": "À propos",
             },
-            "Project & team": {
-                "pt_PT": "Projeto e equipa", "es_ES": "Proyecto y equipo", "fr_FR": "Projet et équipe",
+            "Project overview": {
+                "pt_PT": "O projeto", "es_ES": "El proyecto", "fr_FR": "Le projet",
             },
-            "Partnerships": {
-                "pt_PT": "Parcerias", "es_ES": "Colaboraciones", "fr_FR": "Partenariats",
+            "UAlg & FACODI": {
+                "pt_PT": "UAlg e FACODI", "es_ES": "UAlg y FACODI", "fr_FR": "UAlg et FACODI",
             },
             "Contact": {
                 "pt_PT": "Contacto",
@@ -368,10 +368,10 @@ class WebsiteMenu(models.Model):
                 descendants.write({"parent_id": about.id})
             duplicate_about.unlink()
 
-        ensure_menu("Project & team", "/about#project", 10, about,
-                    aliases=("/academic-model",))
-        ensure_menu("Partnerships", "/partners", 20, about,
-                    aliases=("/about-ualg",))
+        ensure_menu("Project overview", "/about", 10, about,
+                    aliases=("/about#project", "/academic-model"))
+        ensure_menu("UAlg & FACODI", "/about-ualg", 20, about,
+                    aliases=("/partners",))
 
         # These destinations remain available in the catalogue/project page and
         # policy footer. Remove only leaf links owned by the old IA, never pages

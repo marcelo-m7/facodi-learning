@@ -58,7 +58,7 @@
                             <div class="facodi-explore-card__icon"><span class="fa fa-folder-open-o" aria-hidden="true"></span></div>
                             <p class="facodi-label">Open resources</p>
                             <h2>Find the useful tab.</h2>
-                            <p><t t-esc="explore_stats['resources']"/> public learning resources can be filtered by area, language and format.</p>
+                            <p><t t-esc="explore_stats['resources']"/> public learning resources can be filtered by area and format.</p>
                             <span class="facodi-explore-card__cta">Browse resources →</span>
                         </a>
 
@@ -202,7 +202,7 @@
                                     </option>
                                 </select>
                             </div>
-                            <div class="col-12 col-md-4 col-lg-2">
+                            <div t-if="language_options" class="col-12 col-md-4 col-lg-2">
                                 <label for="facodi-language-filter" class="form-label">Language</label>
                                 <select id="facodi-language-filter" name="language" class="form-select">
                                     <option value="">All languages</option>
