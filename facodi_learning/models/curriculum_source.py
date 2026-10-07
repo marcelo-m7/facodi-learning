@@ -313,9 +313,9 @@ class CurriculumSource(models.Model):
         by_code = {unit.external_unit_code: unit for unit in units}
         groups = {}
         for values in payload["option_groups"]:
-            groups[values["external_id"]] = self.env["facodi.learning.curriculum.option.group"].create(dict(values, reference_id=reference.id))
+            groups[values["external_id"]] = self.env["facodi.learning.curriculum.option.group"].sudo().create(dict(values, reference_id=reference.id))
         for values in payload["occurrences"]:
-            self.env["facodi.learning.curriculum.occurrence"].create({
+            self.env["facodi.learning.curriculum.occurrence"].sudo().create({
                 "reference_id": reference.id, "unit_id": by_code[values["external_unit_code"]].id,
                 "option_group_id": groups.get(values.get("option_group_external_id")).id if values.get("option_group_external_id") else False,
                 "curricular_year": values["curricular_year"], "period": values["period"], "sequence": values["sequence"],

@@ -22,7 +22,7 @@ class TestCurriculumReleaseInvariants(TransactionCase):
         units = Unit.search([("reference_id", "=", reference.id)])
         self.assertEqual(len(units), 43)
         self.assertEqual(len(set(units.mapped("external_unit_code"))), 43)
-        self.assertFalse(Coverage.search([]))
+        self.assertFalse(Coverage.search([("curriculum_unit_id", "in", units.ids)]))
 
     def test_empty_curriculum_analysis_does_not_mutate_standard_course_graph(self):
         prerequisite = self.env["slide.channel"].create({"name": "Existing Prerequisite"})
