@@ -222,6 +222,7 @@ class TestApiConsumers(TransactionCase):
         self.assertTrue(run.action_execute_pipeline())
         self.assertEqual(job.state, 'completed')
         run.action_cancel(expected_revision=run.revision)
+        self.env['facodi.pipeline.run']._reconcile_processing_receipts()
         job.invalidate_recordset()
         self.assertEqual(job.state, 'cancelled')
         self.assertEqual(job.pipeline_receipt_revision, run.revision)
@@ -261,6 +262,10 @@ class TestApiConsumers(TransactionCase):
         self.env['facodi.pipeline.run']._reconcile_processing_receipts()
         blocked.invalidate_recordset()
         valid.invalidate_recordset()
-        self.assertNotEqual(blocked.pipeline_receipt_revision, blocked.pipeline_run_id.revision)
+        blocked_admin = blocked.sudo()
+        self.assertNotEqual(
+            blocked_admin.pipeline_receipt_revision,
+            blocked_admin.pipeline_run_id.revision,
+        )
         self.assertEqual(valid.state, 'waiting_input')
         self.assertEqual(valid.pipeline_receipt_revision, valid.pipeline_run_id.revision)
