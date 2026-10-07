@@ -1,5 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+    <template id="authored_opengraph_description" inherit_id="website.layout" name="Authored learning metadata">
+        <xpath expr="//t[@t-set='opengraph_meta']" position="after">
+            <t t-if="website_meta_description and meta_description">
+                <t t-set="opengraph_meta" t-value="dict(opengraph_meta or {}, **{'og:description': meta_description})"/>
+            </t>
+        </xpath>
+    </template>
     <template id="explore_landing" name="Explore FACODI">
         <t t-call="website.layout">
             <t t-set="additional_title">Explore open learning · FACODI</t>

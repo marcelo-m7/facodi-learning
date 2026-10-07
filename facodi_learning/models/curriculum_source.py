@@ -109,8 +109,9 @@ class CurriculumSource(models.Model):
 
     def _record_check_failure(self, message, *, create_capture=False):
         self.ensure_one()
+        self.check_access("write")
         if create_capture:
-            self.env["facodi.learning.curriculum.capture"].create(
+            self.env["facodi.learning.curriculum.capture"].sudo().create(
                 {
                     "source_id": self.id,
                     "status": "failed",
@@ -136,6 +137,7 @@ class CurriculumSource(models.Model):
 
     def _verify_source_once(self):
         self.ensure_one()
+        self.check_access("write")
         locked = self.try_lock_for_update()
         if not locked:
             return "skipped"
@@ -263,6 +265,7 @@ class CurriculumSource(models.Model):
 
     def _import_raw(self, raw):
         self.ensure_one()
+        self.check_access("write")
         message = False
         try:
             if self.provider != "ualg":
@@ -282,12 +285,12 @@ class CurriculumSource(models.Model):
             )
 
         if message:
-            self.env["facodi.learning.curriculum.capture"].create(
+            self.env["facodi.learning.curriculum.capture"].sudo().create(
                 {"source_id": self.id, "status": "failed", "error": message}
             )
             raise ValidationError(message)
 
-        self.env["facodi.learning.curriculum.capture"].create({
+        self.env["facodi.learning.curriculum.capture"].sudo().create({
             "source_id": self.id, "status": "success", "payload_hash": payload_hash,
         })
         current = self.current_reference_id

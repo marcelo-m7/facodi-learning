@@ -254,8 +254,9 @@ class TestCurriculumReference(TransactionCase):
             with self.assertRaises(AccessError):
                 unit.write(values)
 
-        reference.write({"validated_at": "2026-09-06 10:00:00"})
-        self.assertTrue(reference.validated_at)
+        with self.assertRaises(AccessError):
+            reference.write({"validated_at": "2026-09-06 10:00:00"})
+        self.assertFalse(reference.validated_at)
 
     def test_officer_can_read_reference_and_unit(self):
         reference = self.env["facodi.learning.curriculum.reference"].create(

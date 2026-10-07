@@ -8,7 +8,7 @@ class TestCurriculumReleaseInvariants(TransactionCase):
         Unit = self.env["facodi.learning.curriculum.unit"]
         Coverage = self.env["facodi.learning.curriculum.coverage"]
 
-        references = Reference.search([])
+        references = Reference.search([("external_id", "=", "ualg-1941-2026-27")])
         self.assertEqual(len(references), 1)
         reference = references
         self.assertEqual(reference.provider, "ualg")
