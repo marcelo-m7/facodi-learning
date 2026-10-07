@@ -51,6 +51,7 @@ class TestSupabaseEdgeAnalysis(TransactionCase):
             {
                 "SUPABASE_URL": "https://example.supabase.co",
                 "SUPABASE_SECRET_KEY": "sb_secret_test",
+                "FACODI_SUPABASE_VIDEO_INGEST_FUNCTION": "v2_ingest_youtube_video",
             },
             clear=False,
         ):
@@ -86,6 +87,7 @@ class TestSupabaseEdgeAnalysis(TransactionCase):
             {
                 "SUPABASE_URL": "https://example.supabase.co",
                 "SUPABASE_SECRET_KEY": "sb_secret_test",
+                "FACODI_SUPABASE_VIDEO_INGEST_FUNCTION": "v2_ingest_youtube_video",
             },
             clear=False,
         ):
@@ -116,6 +118,49 @@ class TestSupabaseEdgeAnalysis(TransactionCase):
             self.assertEqual(captured["payload"]["url"], "https://www.youtube.com/watch?v=8OZkiphLBJM")
             self.assertEqual(captured["payload"]["video_id"], "8OZkiphLBJM")
             self.assertEqual(captured["config"]["secret"], "sb_secret_test")
+
+    def test_video_slide_does_not_call_stale_legacy_ingest_without_explicit_function(self):
+        with patch.dict(
+            os.environ,
+            {
+                "SUPABASE_URL": "https://example.supabase.co",
+                "SUPABASE_SECRET_KEY": "sb_secret_test",
+            },
+            clear=True,
+        ), patch(
+            "odoo.addons.facodi_api.service.FacodiApiService.ingest_video",
+            return_value={"success": True},
+        ) as transport:
+            slide = self.env["slide.slide"].create(
+                {
+                    "name": "No implicit legacy sync",
+                    "channel_id": self.channel.id,
+                    "slide_category": "video",
+                    "source_type": "external",
+                    "video_url": "https://www.youtube.com/watch?v=SNma-fAeMzA",
+                }
+            )
+
+        self.assertTrue(slide)
+        transport.assert_not_called()
+
+    def test_legacy_video_ingest_endpoint_requires_explicit_function(self):
+        from odoo.addons.facodi_learning.services.supabase_edge import (
+            _video_ingest_endpoint,
+        )
+
+        with patch.dict(
+            os.environ,
+            {
+                "SUPABASE_URL": "https://example.supabase.co",
+                "SUPABASE_SECRET_KEY": "sb_secret_test",
+            },
+            clear=True,
+        ):
+            with self.assertRaisesRegex(
+                ValueError, "FACODI_SUPABASE_VIDEO_INGEST_FUNCTION"
+            ):
+                _video_ingest_endpoint()
 
     def test_imported_source_queues_one_supabase_job_when_runtime_is_configured(self):
         with patch.dict(
