@@ -1,4 +1,5 @@
 import logging
+import os
 
 from odoo import api, fields, models
 from odoo.exceptions import AccessError
@@ -117,6 +118,8 @@ class SlideSlide(models.Model):
 
     def _facodi_sync_supabase_video_if_needed(self):
         self.ensure_one()
+        if not (os.environ.get("FACODI_SUPABASE_VIDEO_INGEST_FUNCTION") or "").strip():
+            return False
         if self.facodi_processing_origin == 'odoo_python':
             return False
         # Receipt existence is a private yes/no origin lookup, never a public projection.
