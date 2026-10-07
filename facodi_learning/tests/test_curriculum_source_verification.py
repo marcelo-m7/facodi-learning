@@ -99,6 +99,14 @@ class TestCurriculumSourceVerification(TransactionCase):
         self.assertFalse(source.verification_enabled)
         with self.assertRaises(AccessError):
             source.with_user(self.officer).action_verify_now()
+        with self._fetch(HTML_V1) as fetch:
+            with self.assertRaises(AccessError):
+                source.with_user(self.officer)._verify_source_once()
+            fetch.assert_not_called()
+        with self.assertRaises(AccessError):
+            self.env['facodi.learning.curriculum.capture'].with_user(self.manager).create({
+                'source_id': source.id, 'status': 'success',
+            })
 
     def test_first_check_creates_private_draft_and_replay_updates_checked_at(self):
         source = self._source("draft")
@@ -112,6 +120,7 @@ class TestCurriculumSourceVerification(TransactionCase):
         self.assertFalse(reference.website_published)
         self.assertEqual(len(reference.unit_ids), 1)
         self.assertEqual(source.last_check_status, "changed")
+        self.assertEqual(source.capture_ids.create_uid, self.manager)
         first_checked_at = source.checked_at
         self.assertTrue(first_checked_at)
         self.assertEqual(

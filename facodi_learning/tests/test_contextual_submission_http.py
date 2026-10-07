@@ -65,12 +65,15 @@ class TestContextualSubmissionHttp(HttpCase):
         ).strip()
         self.assertIn("public video", context.lower())
         self.assertIn("immediately visible in Community videos", response.text)
-        self.assertIn(">Share video<", response.text)
+        self.assertEqual(
+            " ".join(tree.xpath('//button[@type="submit"]//text()')).strip(),
+            "Share video",
+        )
 
     def test_contact_cta_prefills_topic_and_human_context(self):
         response = self.url_open(
             "/submissions/new?type=contact&source=course_contact_cta"
-            "&section=course&topic=content&source_page_url=https%3A%2F%2Ffacodi.com%2Fcourses%3Ftoken%3Dprivate"
+            "&section=course&topic=content&source_page_url=%2Fcourses%3Ftoken%3Dprivate"
         )
         self.assertEqual(response.status_code, 200)
         tree = html.fromstring(response.text)
@@ -157,8 +160,11 @@ class TestContextualSubmissionHttp(HttpCase):
         )
         self.assertEqual(response.status_code, 200)
         tree = html.fromstring(response.text)
+        self.assertFalse(
+            tree.xpath('//select[@name="resource_type"]/option[@value="malicious"]')
+        )
         self.assertTrue(
-            tree.xpath('//select[@name="resource_type"]/option[@value="video"][@selected]')
+            tree.xpath('//select[@name="resource_type"]/option[@value=""][@selected]')
         )
         self.assertFalse(
             tree.xpath('//select[@name="language"]/option[@value="xx"]')
