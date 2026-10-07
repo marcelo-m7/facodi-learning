@@ -144,3 +144,28 @@ class TestApiConsumers(TransactionCase):
         job.with_user(self.actor).action_process()
         self.assertEqual(job.state, 'completed')
         self.assertEqual(len(job.attempt_ids), 1)
+
+    def test_editorial_projection_failure_rolls_back_partial_result(self):
+        from odoo.exceptions import ValidationError
+        job = self.request()
+        Attempt = self.env['facodi.learning.analysis.attempt']
+        with patch.object(type(Attempt), '_record_attempt', side_effect=ValidationError('Controlled persistence failure')):
+            self.assertTrue(job.pipeline_run_id.with_user(self.actor).action_execute_pipeline())
+        self.assertEqual(job.state, 'failed')
+        self.assertEqual(job.last_error, 'EDITORIAL_PROJECTION_FAILED')
+        self.assertFalse(job.result_id)
+        self.assertFalse(self.slide.facodi_analysis_result_ids)
+        with self.assertRaises(ValidationError):
+            job.pipeline_run_id.with_user(self.actor).action_approve_and_publish(publication_evidence={
+                'author': 'Original fixture', 'rights_mode': 'original',
+                'usage_basis': 'Original acceptance fixture.', 'purpose': 'Validate incomplete editorial handoff.'})
+
+    def test_cancelled_job_records_command_without_a_fake_processing_attempt(self):
+        job = self.request()
+        revision = job.pipeline_run_id.revision
+        job.with_user(self.actor).action_cancel(expected_revision=revision)
+        job.with_user(self.actor).action_cancel(expected_revision=revision)
+        self.assertEqual(job.state, 'cancelled')
+        self.assertEqual(job.pipeline_run_id.status, 'cancelled')
+        self.assertFalse(job.result_id)
+        self.assertFalse(job.attempt_ids)
