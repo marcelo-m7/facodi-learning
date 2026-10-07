@@ -97,7 +97,7 @@ class TestApiConsumers(TransactionCase):
 
     def test_local_origin_survives_selector_change_and_prevents_legacy_sync(self):
         with patch.object(type(self.slide), '_facodi_sync_supabase_video', autospec=True, return_value=True):
-            video = self.env['slide.slide'].with_user(self.actor).create({
+            video = self.env['slide.slide'].with_user(self.actor).with_context(website_slides_skip_fetch_metadata=True).create({
                 'name': 'Local video fixture', 'channel_id': self.course.id,
                 'slide_category': 'video', 'source_type': 'external',
                 'video_url': 'https://www.youtube.com/watch?v=4GVbqYFmGBw',
