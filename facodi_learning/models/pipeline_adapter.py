@@ -1,4 +1,5 @@
 """Native editorial projection of API receipts. Only the API executes processing."""
+import hashlib
 import json
 
 from odoo import api, fields, models, tools
@@ -31,11 +32,14 @@ class AnalysisJob(models.Model):
 
     def _pipeline_actor(self):
         self.ensure_one()
-        value = self.env['ir.config_parameter'].sudo().get_param('facodi_learning.pipeline_user_id', '')
-        if not isinstance(value, str) or not value.isdecimal():
-            raise ValidationError('Configure an internal pipeline user before selecting API processing.')
-        actor = self.env['res.users'].browse(int(value)).exists()
-        company = self.slide_id.channel_id.website_id.company_id
+        if self.pipeline_run_id:
+            actor, company = self.pipeline_run_id.owner_id, self.pipeline_run_id.company_id
+        else:
+            value = self.env['ir.config_parameter'].sudo().get_param('facodi_learning.pipeline_user_id', '')
+            if not isinstance(value, str) or not value.isdecimal():
+                raise ValidationError('Configure an internal pipeline user before selecting API processing.')
+            actor = self.env['res.users'].browse(int(value)).exists()
+            company = self.slide_id.channel_id.website_id.company_id
         if (not actor or not actor.active or actor.share or company not in actor.company_ids
                 or not actor.has_group('facodi_api.group_pipeline_operator')
                 or not actor.has_group('website_slides.group_website_slides_manager')):
@@ -147,6 +151,11 @@ class PipelineRun(models.Model):
 
     learning_job_id = fields.Many2one('facodi.learning.analysis.job', readonly=True, ondelete='restrict', index=True,
                                     groups='website_slides.group_website_slides_officer')
+
+    @api.model
+    def _canonical_source_hash(self, slide):
+        original = super()._canonical_source_hash(slide)
+        return hashlib.sha256((original + '\0' + (slide.facodi_transcript or '')).encode()).hexdigest()
 
     def _on_processing_complete(self):
         result = super()._on_processing_complete()

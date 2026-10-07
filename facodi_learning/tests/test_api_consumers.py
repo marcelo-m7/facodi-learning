@@ -130,7 +130,7 @@ class TestApiConsumers(TransactionCase):
             'channel_id': self.course.id, 'metadata': {'description': 'Original source learning evidence.'},
         })
         with patch.dict('os.environ', {'SUPABASE_URL': '', 'SUPABASE_SECRET_KEY': ''}):
-            source.action_ingest()
+            source._ingest(slide_id=self.slide.id)
             source.action_ingest()
         self.assertEqual(len(source.slide_id.facodi_analysis_job_ids), 1)
         job = source.slide_id.facodi_analysis_job_ids
