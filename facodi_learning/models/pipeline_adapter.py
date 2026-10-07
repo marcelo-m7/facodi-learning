@@ -30,14 +30,22 @@ class AnalysisJob(models.Model):
         return jobs
 
     def write(self, values):
+        if values.get('provider') == 'odoo_python':
+            raise AccessError('Create a new analysis request to select API processing.')
         if any(job.pipeline_run_id or job.provider == 'odoo_python' for job in self):
             raise AccessError('Accepted API jobs are immutable; use processing actions.')
         return super().write(values)
 
     def _pipeline_actor(self):
         self.ensure_one()
-        if self.pipeline_run_id:
-            actor, company = self.pipeline_run_id.owner_id, self.pipeline_run_id.company_id
+        # The caller authorizes the job action; only this exact receipt identity
+        # is resolved privately because API run fields have a narrower ACL.
+        scoped_job = self.sudo()
+        scoped_run = scoped_job.pipeline_run_id.sudo()
+        if scoped_run:
+            if scoped_run.learning_job_id != scoped_job:
+                raise ValidationError('Processing receipt is not associated with this job.')
+            actor, company = scoped_run.owner_id, scoped_run.company_id
         else:
             value = self.env['ir.config_parameter'].sudo().get_param('facodi_learning.pipeline_user_id', '')
             if not isinstance(value, str) or not value.isdecimal():
@@ -93,7 +101,7 @@ class AnalysisJob(models.Model):
         if not self.try_lock_for_update():
             return False
         self.invalidate_recordset()
-        if self.pipeline_receipt_revision == run.revision or self.state == 'completed':
+        if self.pipeline_receipt_revision == run.revision:
             return True
         if run.status in ('received', 'running'):
             return True
@@ -167,10 +175,8 @@ class AnalysisJob(models.Model):
                 'state': 'failed',
                 'result_id': False,
                 'model_name': False,
-                'attempt_count': run.attempt_count,
                 'completed_at': fields.Datetime.now(),
                 'last_error': 'EDITORIAL_PROJECTION_FAILED',
-                'pipeline_receipt_revision': run.revision,
             })
             return False
         return True
@@ -220,6 +226,9 @@ class PipelineRun(models.Model):
 
     def _on_processing_complete(self):
         result = super()._on_processing_complete()
+        if (not self.env.su
+                and not self.env.user.has_group('website_slides.group_website_slides_officer')):
+            return result
         for run in self.filtered('learning_job_id'):
             if run.learning_job_id.pipeline_run_id == run:
                 run.learning_job_id._reconcile_pipeline_receipt()
@@ -239,9 +248,30 @@ class PipelineRun(models.Model):
     @api.model
     def _reconcile_processing_receipts(self):
         result = super()._reconcile_processing_receipts()
-        runs = self.search([('learning_job_id', '!=', False), ('status', 'in', ['waiting_review', 'failed', 'waiting_input', 'cancelled'])], limit=100, order='id desc')
-        for run in runs:
-            actor = run.owner_id
-            if actor.active and actor.has_group('website_slides.group_website_slides_manager'):
-                run.with_user(actor).with_company(run.company_id)._on_processing_complete()
+        domain = [('learning_job_id', '!=', False),
+                  ('status', 'in', ['waiting_review', 'failed', 'waiting_input', 'cancelled'])]
+        offset = 0
+        reconciled = 0
+        while reconciled < 100:
+            batch = self.search(domain, limit=100, offset=offset, order='id')
+            if not batch:
+                break
+            offset += len(batch)
+            for run in batch:
+                job = run.sudo().learning_job_id
+                if job.pipeline_receipt_revision == run.revision:
+                    continue
+                try:
+                    with self.env.cr.savepoint():
+                        actor, company = job._pipeline_actor()
+                        run.with_user(actor).with_company(company)._on_processing_complete()
+                except Exception as exc:
+                    _logger.warning(
+                        'FACODI receipt reconciliation skipped run %s (%s)',
+                        run.id, type(exc).__name__,
+                    )
+                    continue
+                reconciled += 1
+                if reconciled >= 100:
+                    break
         return result

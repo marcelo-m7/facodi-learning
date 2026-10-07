@@ -204,10 +204,20 @@ class LearningSource(models.Model):
                 else:
                     jobs |= jobs.create({'slide_id': source.slide_id.id, 'provider': 'odoo_python'})
             return jobs
-        delegated = self.filtered(lambda source: source.slide_id and source.slide_id.facodi_processing_origin == 'odoo_python')
+        slide_ids = self.filtered('slide_id').slide_id.ids
+        api_jobs = self.env['facodi.learning.analysis.job'].search([
+            ('slide_id', 'in', slide_ids), ('provider', '=', 'odoo_python'),
+            ('pipeline_run_id', '!=', False),
+        ]) if slide_ids else self.env['facodi.learning.analysis.job']
+        delegated_ids = set(api_jobs.slide_id.ids)
+        delegated = self.filtered(
+            lambda source: source.slide_id and (
+                source.slide_id.facodi_processing_origin == 'odoo_python'
+                or source.slide_id.id in delegated_ids
+            )
+        )
         if delegated:
-            local_jobs = self.env['facodi.learning.analysis.job'].search([
-                ('slide_id', 'in', delegated.slide_id.ids), ('provider', '=', 'odoo_python')])
+            local_jobs = api_jobs.filtered(lambda job: job.slide_id in delegated.slide_id)
             return local_jobs | (self - delegated)._queue_supabase_analysis()
         if not (
             (os.environ.get("SUPABASE_URL") or "").strip()
