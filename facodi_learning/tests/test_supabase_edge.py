@@ -144,7 +144,7 @@ class TestSupabaseEdgeAnalysis(TransactionCase):
         self.assertTrue(slide)
         transport.assert_not_called()
 
-    def test_legacy_video_ingest_endpoint_requires_explicit_function(self):
+    def test_video_ingest_endpoint_defaults_to_facodi_v3(self):
         from odoo.addons.facodi_learning.services.supabase_edge import (
             _video_ingest_endpoint,
         )
@@ -157,10 +157,10 @@ class TestSupabaseEdgeAnalysis(TransactionCase):
             },
             clear=True,
         ):
-            with self.assertRaisesRegex(
-                ValueError, "FACODI_SUPABASE_VIDEO_INGEST_FUNCTION"
-            ):
-                _video_ingest_endpoint()
+            self.assertEqual(
+                _video_ingest_endpoint(),
+                "https://example.supabase.co/functions/v1/v3_ingest_youtube_video",
+            )
 
     def test_imported_source_queues_one_supabase_job_when_runtime_is_configured(self):
         with patch.dict(
