@@ -116,3 +116,31 @@ class TestApiConsumers(TransactionCase):
             })
         with self.assertRaises(AccessError):
             self.slide.write({'facodi_processing_origin': 'legacy'})
+
+    def test_transcript_change_invalidates_the_accepted_source(self):
+        job = self.request()
+        self.slide.write({'facodi_transcript': 'A new transcript after acceptance.'})
+        self.assertFalse(job.pipeline_run_id.with_user(self.actor).action_execute_pipeline())
+        self.assertEqual(job.pipeline_run_id.status, 'waiting_input')
+        self.assertFalse(job.result_id)
+
+    def test_source_ingestion_queues_local_job_without_legacy_secrets(self):
+        source = self.env['facodi.learning.source'].with_user(self.actor).create({
+            'name': 'Local source fixture', 'provider': 'manual', 'external_id': 'api-consumer-source',
+            'channel_id': self.course.id, 'metadata': {'description': 'Original source learning evidence.'},
+        })
+        with patch.dict('os.environ', {'SUPABASE_URL': '', 'SUPABASE_SECRET_KEY': ''}):
+            source.action_ingest()
+            source.action_ingest()
+        self.assertEqual(len(source.slide_id.facodi_analysis_job_ids), 1)
+        job = source.slide_id.facodi_analysis_job_ids
+        self.assertEqual(job.provider, 'odoo_python')
+        self.assertEqual(job.pipeline_run_id.existing_slide_id, source.slide_id)
+
+    def test_reconciliation_uses_the_accepted_actor_after_config_change(self):
+        job = self.request()
+        job.pipeline_run_id.with_user(self.actor).action_execute_pipeline()
+        self.params.set_param('facodi_learning.pipeline_user_id', '')
+        job.with_user(self.actor).action_process()
+        self.assertEqual(job.state, 'completed')
+        self.assertEqual(len(job.attempt_ids), 1)
