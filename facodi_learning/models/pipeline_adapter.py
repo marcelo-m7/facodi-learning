@@ -1,11 +1,15 @@
 """Native editorial projection of API receipts. Only the API executes processing."""
 import hashlib
 import json
+import logging
 
 from odoo import api, fields, models, tools
 from odoo.exceptions import AccessError, ValidationError
 
 from ..services.analysis import normalize_output
+
+
+_logger = logging.getLogger(__name__)
 
 
 class AnalysisJob(models.Model):
@@ -93,36 +97,82 @@ class AnalysisJob(models.Model):
             return True
         if run.status in ('received', 'running'):
             return True
-        result = self.env['facodi.learning.analysis.result']
-        error = run.error_message or False
-        state = {'waiting_input': 'waiting_input', 'cancelled': 'cancelled', 'failed': 'failed'}.get(run.status, 'completed')
-        if state == 'completed':
-            if run.status not in ('waiting_review', 'published'):
-                raise ValidationError('Processing receipt is not complete.')
-            run._prepare_content_source()
-            metadata = json.loads(run.metadata_json or '{}')
-            document, enriched = metadata.get('document_data', {}), metadata.get('enriched_data', {})
-            normalized = normalize_output({
-                'summary': enriched.get('summary'), 'transcript': document.get('text_content'),
-                'detected_language': document.get('language'), 'model_name': enriched.get('model_name'),
-                'suggested_tags': enriched.get('keywords', []),
-                'raw_payload': {'pipeline_run_id': run.run_id, 'provider': enriched.get('provider_name'),
-                                'warnings': enriched.get('warnings', []), 'concepts': enriched.get('concepts', [])},
-            }, self.env)
-            if not normalized['summary'] or not normalized['transcript']:
-                raise ValidationError('Processing output has no usable evidence.')
-            result = result._record_output(dict(normalized, job_id=self.id, slide_id=self.slide_id.id, provider=self.provider))
-        now = fields.Datetime.now()
-        # Cancellation before execution is a command, not a processing attempt.
-        if run.attempt_count > self.attempt_count:
-            self.env['facodi.learning.analysis.attempt']._record_attempt({
-                'job_id': self.id, 'provider': self.provider, 'number': run.attempt_count,
-                'started_at': run.create_date, 'completed_at': now,
-                'state': 'completed' if result else 'failed', 'error': error, 'result_id': result.id,
+        try:
+            with self.env.cr.savepoint():
+                result = self.env['facodi.learning.analysis.result']
+                error = run.error_message or False
+                state = {
+                    'waiting_input': 'waiting_input',
+                    'cancelled': 'cancelled',
+                    'failed': 'failed',
+                }.get(run.status, 'completed')
+                if state == 'completed':
+                    if run.status not in ('waiting_review', 'published'):
+                        raise ValidationError('Processing receipt is not complete.')
+                    run._prepare_content_source()
+                    metadata = json.loads(run.metadata_json or '{}')
+                    document = metadata.get('document_data', {})
+                    enriched = metadata.get('enriched_data', {})
+                    normalized = normalize_output({
+                        'summary': enriched.get('summary'),
+                        'transcript': document.get('text_content'),
+                        'detected_language': document.get('language'),
+                        'model_name': enriched.get('model_name'),
+                        'suggested_tags': enriched.get('keywords', []),
+                        'raw_payload': {
+                            'pipeline_run_id': run.run_id,
+                            'provider': enriched.get('provider_name'),
+                            'warnings': enriched.get('warnings', []),
+                            'concepts': enriched.get('concepts', []),
+                        },
+                    }, self.env)
+                    if not normalized['summary'] or not normalized['transcript']:
+                        raise ValidationError('Processing output has no usable evidence.')
+                    result = result._record_output(dict(
+                        normalized,
+                        job_id=self.id,
+                        slide_id=self.slide_id.id,
+                        provider=self.provider,
+                    ))
+                now = fields.Datetime.now()
+                # Cancellation before execution is a command, not an attempt.
+                if run.attempt_count > self.attempt_count:
+                    self.env['facodi.learning.analysis.attempt']._record_attempt({
+                        'job_id': self.id,
+                        'provider': self.provider,
+                        'number': run.attempt_count,
+                        'started_at': run.create_date,
+                        'completed_at': now,
+                        'state': 'completed' if result else 'failed',
+                        'error': error,
+                        'result_id': result.id,
+                    })
+                self._set_processing_values({
+                    'state': state,
+                    'result_id': result.id,
+                    'model_name': result.model_name if result else False,
+                    'attempt_count': run.attempt_count,
+                    'completed_at': now,
+                    'last_error': error,
+                    'pipeline_receipt_revision': run.revision,
+                })
+        except Exception as exc:
+            _logger.warning(
+                'FACODI editorial projection failed for job %s (%s)',
+                self.id,
+                type(exc).__name__,
+            )
+            self.invalidate_recordset()
+            self._set_processing_values({
+                'state': 'failed',
+                'result_id': False,
+                'model_name': False,
+                'attempt_count': run.attempt_count,
+                'completed_at': fields.Datetime.now(),
+                'last_error': 'EDITORIAL_PROJECTION_FAILED',
+                'pipeline_receipt_revision': run.revision,
             })
-        self._set_processing_values({'state': state, 'result_id': result.id, 'model_name': result.model_name if result else False,
-                                     'attempt_count': run.attempt_count, 'completed_at': now,
-                                     'last_error': error, 'pipeline_receipt_revision': run.revision})
+            return False
         return True
 
     def action_process(self):
@@ -145,6 +195,17 @@ class AnalysisJob(models.Model):
             job._set_processing_values({'state': 'pending'})
         return super(AnalysisJob, self - local).action_retry() if self - local else True
 
+    def action_cancel(self, expected_revision=None):
+        self.ensure_one()
+        if self.provider != 'odoo_python':
+            raise ValidationError('Only API-delegated jobs support versioned cancellation.')
+        self.check_access('write')
+        actor, company = self._pipeline_actor()
+        run = self.pipeline_run_id.with_user(actor).with_company(company)
+        run.action_cancel(expected_revision=expected_revision)
+        self.with_user(actor).with_company(company)._reconcile_pipeline_receipt()
+        return True
+
 
 class PipelineRun(models.Model):
     _inherit = 'facodi.pipeline.run'
@@ -163,6 +224,17 @@ class PipelineRun(models.Model):
             if run.learning_job_id.pipeline_run_id == run:
                 run.learning_job_id._reconcile_pipeline_receipt()
         return result
+
+    def action_approve_and_publish(self, publication_evidence=None):
+        for run in self.filtered('learning_job_id'):
+            job = run.learning_job_id
+            if run.status != 'published' and (job.state != 'completed' or not job.result_id):
+                raise ValidationError(
+                    'Publication requires a complete native editorial projection.'
+                )
+        return super().action_approve_and_publish(
+            publication_evidence=publication_evidence
+        )
 
     @api.model
     def _reconcile_processing_receipts(self):

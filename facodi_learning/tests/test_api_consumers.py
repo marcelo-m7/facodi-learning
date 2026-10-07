@@ -67,8 +67,8 @@ class TestApiConsumers(TransactionCase):
     def test_publication_reuses_canonical_slide_and_native_review(self):
         job = self.request()
         run = job.pipeline_run_id.with_user(self.actor)
-        run.action_execute_pipeline()
         count = self.env['slide.slide'].search_count([])
+        run.action_execute_pipeline()
         run.action_approve_and_publish(publication_evidence={
             'author': 'FACODI original acceptance fixture', 'rights_mode': 'original',
             'usage_basis': 'Original text authored exclusively for disposable acceptance.',
@@ -77,6 +77,8 @@ class TestApiConsumers(TransactionCase):
         run.action_approve_and_publish()
         self.assertEqual(run.published_slide_id, self.slide)
         self.assertEqual(self.env['slide.slide'].search_count([]), count)
+        self.assertTrue(self.slide.is_published)
+        self.assertTrue(self.slide.website_published)
         self.assertEqual(self.env['facodi.learning.content.review'].search_count([
             ('slide_id', '=', self.slide.id), ('state', '=', 'approved')]), 1)
         self.assertFalse(self.course.website_published)
@@ -96,18 +98,20 @@ class TestApiConsumers(TransactionCase):
         self.assertEqual(job.pipeline_run_id.error_message, 'CANONICAL_INPUT_CHANGED')
 
     def test_local_origin_survives_selector_change_and_prevents_legacy_sync(self):
-        with patch.object(type(self.slide), '_facodi_sync_supabase_video', autospec=True, return_value=True):
+        with patch.object(type(self.slide), '_facodi_sync_supabase_video', autospec=True, return_value=True) as transport:
             video = self.env['slide.slide'].with_user(self.actor).with_context(website_slides_skip_fetch_metadata=True).create({
                 'name': 'Local video fixture', 'channel_id': self.course.id,
                 'slide_category': 'video', 'source_type': 'external',
                 'video_url': 'https://www.youtube.com/watch?v=4GVbqYFmGBw',
                 'is_published': False, 'website_published': False,
             })
+            self.assertEqual(transport.call_count, 0)
         self.assertEqual(video.facodi_processing_origin, 'odoo_python')
         self.params.set_param('facodi_learning.analysis_provider', 'local_metadata')
         with patch.object(type(video), '_facodi_sync_supabase_video', autospec=True, return_value=True) as transport:
             video.write({'description': '<p>Changed after provider selection.</p>'})
-            self.assertFalse(transport.call_count)
+            video.write({'description': '<p>Replayed change after provider selection.</p>'})
+            self.assertEqual(transport.call_count, 0)
 
     def test_client_cannot_inject_run_or_processing_origin(self):
         with self.assertRaises(AccessError):

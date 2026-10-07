@@ -26,6 +26,9 @@ class TestSupabaseEdgeAnalysis(TransactionCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
+        cls.env['ir.config_parameter'].sudo().set_param(
+            'facodi_learning.analysis_provider', 'local_metadata'
+        )
         cls.channel = cls.env["slide.channel"].create(
             {"name": "Supabase Analysis Course"}
         )
@@ -51,17 +54,10 @@ class TestSupabaseEdgeAnalysis(TransactionCase):
             },
             clear=False,
         ):
-            captured = {}
-
-            def fake_urlopen(request, timeout=0):
-                captured["request"] = request
-                captured["timeout"] = timeout
-                return _FakeResponse({"success": True, "video_id": "abc123", "status": "pending"})
-
             with patch(
-                "odoo.addons.facodi_learning.services.supabase_edge._open_endpoint",
-                side_effect=fake_urlopen,
-            ):
+                "odoo.addons.facodi_api.service.FacodiApiService.ingest_video",
+                return_value={"success": True, "video_id": "abc123", "status": "pending"},
+            ) as transport:
                 slide = self.env["slide.slide"].create(
                     {
                         "name": "FACODI video sync",
@@ -75,15 +71,14 @@ class TestSupabaseEdgeAnalysis(TransactionCase):
                 )
 
             self.assertTrue(slide)
-            self.assertIn("request", captured)
-            request = captured["request"]
-            self.assertEqual(request.full_url, "https://example.supabase.co/functions/v1/v2_ingest_youtube_video")
-            self.assertEqual(request.get_header("Apikey"), "sb_secret_test")
-            payload = json.loads(request.data.decode("utf-8"))
+            self.assertEqual(transport.call_count, 1)
+            payload = transport.call_args.args[0]
+            config = transport.call_args.kwargs["config"]
             self.assertEqual(payload["url"], "https://www.youtube.com/watch?v=SNma-fAeMzA")
             self.assertEqual(payload["title"], "FACODI video sync")
             self.assertEqual(payload["channel_id"], str(self.channel.id))
-            self.assertEqual(captured["timeout"], 30)
+            self.assertEqual(config["url"], "https://example.supabase.co")
+            self.assertEqual(config["secret"], "sb_secret_test")
 
     def test_short_youtube_share_url_is_canonicalized_for_supabase(self):
         with patch.dict(

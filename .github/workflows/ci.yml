@@ -10,7 +10,7 @@ permissions:
 env:
   # Stable M3.3 patch baseline. The real-upgrade fixture intentionally starts
   # before M3.4 so post-M3.4 fixes remain testable even if main itself needs repair.
-  FACODI_API_SOURCE_SHA: 982321b925b55c2979b1251cce7c41e675151c59
+  FACODI_API_SOURCE_SHA: 38790d3808630b44a6093b6c3f05fbe922c10682
   FACODI_PRE_M34_BASE_SHA: 1ff81c0585728037dfb24b3310d5905ce38c6fc7
 
 jobs:
