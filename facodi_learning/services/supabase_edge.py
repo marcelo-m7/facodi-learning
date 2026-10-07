@@ -11,6 +11,7 @@ from odoo import tools
 
 DEFAULT_FUNCTION = "v3_analyze_learning_resource"
 DEFAULT_METADATA_FUNCTION = "v3_discover_resource_metadata"
+DEFAULT_VIDEO_INGEST_FUNCTION = "v3_ingest_youtube_video"
 MAX_ANALYSIS_RESPONSE_BYTES = 512 * 1024
 MAX_METADATA_RESPONSE_BYTES = 64 * 1024
 MAX_VIDEO_INGEST_RESPONSE_BYTES = 64 * 1024
@@ -71,12 +72,10 @@ def _metadata_endpoint():
 
 
 def _video_ingest_endpoint():
-    function = _env("FACODI_SUPABASE_VIDEO_INGEST_FUNCTION")
-    if not function:
-        raise ValueError(
-            "FACODI_SUPABASE_VIDEO_INGEST_FUNCTION is not configured. "
-            "Legacy v2 video ingest is disabled by default."
-        )
+    function = (
+        _env("FACODI_SUPABASE_VIDEO_INGEST_FUNCTION")
+        or DEFAULT_VIDEO_INGEST_FUNCTION
+    )
     return _function_endpoint(function)
 
 
