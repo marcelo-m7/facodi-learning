@@ -1,0 +1,14 @@
+FROM odoo:19.0@sha256:dd9013e669caaa23d26765dc55814655eaeecca7cfc2c265dbabae913bce22fd
+USER root
+COPY requirements.txt /opt/facodi-api-requirements.txt
+COPY facodi_api /opt/facodi-api/facodi_api
+RUN apt-get -o Acquire::Retries=3 update \
+    && apt-get install -y --no-install-recommends python3-venv \
+    && rm -rf /var/lib/apt/lists/* \
+    && python3 -m venv --system-site-packages /opt/facodi-venv \
+    && /opt/facodi-venv/bin/pip install --no-cache-dir -r /opt/facodi-api-requirements.txt setuptools==78.1.1 \
+    && /opt/facodi-venv/bin/pip check \
+    && /opt/facodi-venv/bin/python3 -c 'import youtube_transcript_api, pypdf, docx' \
+    && printf '%s\n' '#!/bin/sh' 'exec /opt/facodi-venv/bin/python3 /usr/bin/odoo "$@"' > /usr/local/bin/odoo \
+    && chmod 0755 /usr/local/bin/odoo
+USER odoo

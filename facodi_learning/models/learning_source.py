@@ -192,6 +192,23 @@ class LearningSource(models.Model):
         The queue is enabled only when the server-to-server Supabase credentials
         are present. Replaying ingestion does not create duplicate analysis jobs.
         """
+        selected = self.env['ir.config_parameter'].sudo().get_param('facodi_learning.analysis_provider', 'local_metadata')
+        if selected == 'odoo_python':
+            jobs = self.env['facodi.learning.analysis.job']
+            for source in self.filtered('slide_id'):
+                # A source replay retains its accepted job/provider; selection changes
+                # apply only to fresh work, never to an existing editorial receipt.
+                existing = jobs.search([('slide_id', '=', source.slide_id.id)], order='id desc', limit=1)
+                if existing:
+                    jobs |= existing
+                else:
+                    jobs |= jobs.create({'slide_id': source.slide_id.id, 'provider': 'odoo_python'})
+            return jobs
+        delegated = self.filtered(lambda source: source.slide_id and source.slide_id.facodi_processing_origin == 'odoo_python')
+        if delegated:
+            local_jobs = self.env['facodi.learning.analysis.job'].search([
+                ('slide_id', 'in', delegated.slide_id.ids), ('provider', '=', 'odoo_python')])
+            return local_jobs | (self - delegated)._queue_supabase_analysis()
         if not (
             (os.environ.get("SUPABASE_URL") or "").strip()
             and (os.environ.get("SUPABASE_SECRET_KEY") or "").strip()

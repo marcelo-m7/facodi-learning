@@ -10,6 +10,7 @@ permissions:
 env:
   # Stable M3.3 patch baseline. The real-upgrade fixture intentionally starts
   # before M3.4 so post-M3.4 fixes remain testable even if main itself needs repair.
+  FACODI_API_SOURCE_SHA: 38790d3808630b44a6093b6c3f05fbe922c10682
   FACODI_PRE_M34_BASE_SHA: 1ff81c0585728037dfb24b3310d5905ce38c6fc7
 
 jobs:
@@ -69,6 +70,14 @@ jobs:
       - name: Validate portal home contract
         run: python facodi_learning/tests/test_portal_home_contract.py
 
+      - name: Build pinned API dependency runtime
+        run: |
+          git init /tmp/facodi-api-ci
+          git -C /tmp/facodi-api-ci fetch --depth=1 https://github.com/marcelo-m7/facodi-api.git "$FACODI_API_SOURCE_SHA"
+          git -C /tmp/facodi-api-ci checkout --detach FETCH_HEAD
+          test "$(git -C /tmp/facodi-api-ci rev-parse HEAD)" = "$FACODI_API_SOURCE_SHA"
+          docker build -t facodi-learning-ci-odoo -f scripts/Dockerfile.ci /tmp/facodi-api-ci
+
       - name: Start PostgreSQL 16
         run: |
           docker network create facodi-learning-ci
@@ -101,8 +110,8 @@ jobs:
             -e PASSWORD=odoo \
             -v /tmp/facodi-learning-baseline:/mnt/extra-addons:ro \
             -v facodi-learning-upgrade-data:/var/lib/odoo \
-            odoo:19.0 \
-            --addons-path=/usr/lib/python3/dist-packages/odoo/addons,/mnt/extra-addons \
+            facodi-learning-ci-odoo \
+            --addons-path=/usr/lib/python3/dist-packages/odoo/addons,/mnt/extra-addons,/opt/facodi-api \
             --workers=0 \
             --without-demo=True \
             -d facodi_learning_upgrade_ci \
@@ -119,9 +128,9 @@ jobs:
             -e PASSWORD=odoo \
             -v /tmp/facodi-learning-baseline:/mnt/extra-addons:ro \
             -v facodi-learning-upgrade-data:/var/lib/odoo \
-            odoo:19.0 \
+            facodi-learning-ci-odoo \
             odoo shell \
-            --addons-path=/usr/lib/python3/dist-packages/odoo/addons,/mnt/extra-addons \
+            --addons-path=/usr/lib/python3/dist-packages/odoo/addons,/mnt/extra-addons,/opt/facodi-api \
             --workers=0 \
             -d facodi_learning_upgrade_ci \
             < scripts/ci_seed_pre_m34.py
@@ -136,8 +145,8 @@ jobs:
             -e PASSWORD=odoo \
             -v "$GITHUB_WORKSPACE:/mnt/extra-addons:ro" \
             -v facodi-learning-upgrade-data:/var/lib/odoo \
-            odoo:19.0 \
-            --addons-path=/usr/lib/python3/dist-packages/odoo/addons,/mnt/extra-addons \
+            facodi-learning-ci-odoo \
+            --addons-path=/usr/lib/python3/dist-packages/odoo/addons,/mnt/extra-addons,/opt/facodi-api \
             --workers=0 \
             --without-demo=True \
             -d facodi_learning_upgrade_ci \
@@ -154,9 +163,9 @@ jobs:
             -e PASSWORD=odoo \
             -v "$GITHUB_WORKSPACE:/mnt/extra-addons:ro" \
             -v facodi-learning-upgrade-data:/var/lib/odoo \
-            odoo:19.0 \
+            facodi-learning-ci-odoo \
             odoo shell \
-            --addons-path=/usr/lib/python3/dist-packages/odoo/addons,/mnt/extra-addons \
+            --addons-path=/usr/lib/python3/dist-packages/odoo/addons,/mnt/extra-addons,/opt/facodi-api \
             --workers=0 \
             -d facodi_learning_upgrade_ci \
             < scripts/ci_verify_post_m34.py
@@ -172,13 +181,13 @@ jobs:
             -e PASSWORD=odoo \
             -v "$GITHUB_WORKSPACE:/mnt/extra-addons:ro" \
             -v facodi-learning-data:/var/lib/odoo \
-            odoo:19.0 \
-            --addons-path=/usr/lib/python3/dist-packages/odoo/addons,/mnt/extra-addons \
+            facodi-learning-ci-odoo \
+            --addons-path=/usr/lib/python3/dist-packages/odoo/addons,/mnt/extra-addons,/opt/facodi-api \
             --workers=0 \
             --without-demo=True \
             -d facodi_learning_ci \
             -i facodi_learning \
-            --test-tags /facodi_learning:TestCurriculumBootstrap,/facodi_learning:TestCurriculumUI,/facodi_learning:TestCurriculumPublicUnits,/facodi_learning:TestCurriculumCoverageSuggestions,/facodi_learning:TestCurriculumModule,/facodi_learning:TestProbabilityStatisticsMapping,/facodi_learning:TestResourceSubmissionModel,/facodi_learning:TestResourceSubmissionWebsite,/facodi_learning:TestSubmissionContextModel,/facodi_learning:TestSubmissionContextWebsite,/facodi_learning:TestContextualSubmissionModelContract,/facodi_learning:TestContextualSubmissionStaticContracts,/facodi_learning:TestPipelineSecurity,/facodi_learning:TestSupabaseEdgeAnalysis,/facodi_learning:TestContentPublicationGovernance,/facodi_learning:TestExploreLearningWebsite,/facodi_learning:TestFacodiPortalHome \
+            --test-tags facodi_api_consumers,/facodi_learning:TestFacodiLearningAnalysis,/facodi_learning:TestCurriculumBootstrap,/facodi_learning:TestCurriculumUI,/facodi_learning:TestCurriculumPublicUnits,/facodi_learning:TestCurriculumCoverageSuggestions,/facodi_learning:TestCurriculumModule,/facodi_learning:TestProbabilityStatisticsMapping,/facodi_learning:TestResourceSubmissionModel,/facodi_learning:TestResourceSubmissionWebsite,/facodi_learning:TestSubmissionContextModel,/facodi_learning:TestSubmissionContextWebsite,/facodi_learning:TestContextualSubmissionModelContract,/facodi_learning:TestContextualSubmissionStaticContracts,/facodi_learning:TestPipelineSecurity,/facodi_learning:TestSupabaseEdgeAnalysis,/facodi_learning:TestContentPublicationGovernance,/facodi_learning:TestExploreLearningWebsite,/facodi_learning:TestFacodiPortalHome \
             --stop-after-init \
             2>&1 | tee /tmp/facodi-current-install.log
 
@@ -198,8 +207,8 @@ jobs:
             -e HOST=facodi-learning-db -e USER=odoo -e PASSWORD=odoo \
             -v "$GITHUB_WORKSPACE:/mnt/extra-addons:ro" \
             -v facodi-learning-data:/var/lib/odoo \
-            odoo:19.0 \
-            --addons-path=/usr/lib/python3/dist-packages/odoo/addons,/mnt/extra-addons \
+            facodi-learning-ci-odoo \
+            --addons-path=/usr/lib/python3/dist-packages/odoo/addons,/mnt/extra-addons,/opt/facodi-api \
             --workers=0 --without-demo=True \
             -d facodi_learning_ci -u facodi_learning \
             --stop-after-init

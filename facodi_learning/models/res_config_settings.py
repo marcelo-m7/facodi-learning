@@ -8,16 +8,22 @@ class ResConfigSettings(models.TransientModel):
         [
             ("supabase_edge", "Supabase Edge Functions"),
             ("local_metadata", "Local Odoo metadata"),
+            ("odoo_python", "FACODI API pipeline (opt-in)"),
         ],
         string="FACODI analysis provider",
         required=True,
         default="local_metadata",
         config_parameter="facodi_learning.analysis_provider",
         help=(
-            "Provider used for new FACODI analysis jobs. Production processing "
-            "should use Supabase Edge Functions; local metadata is a deterministic "
-            "development/test fallback."
+            "Provider used for new FACODI analysis jobs. API processing requires "
+            "an authorized internal processing user and the separate API gate. "
+            "Accepted requests retain their provider."
         ),
+    )
+    facodi_learning_pipeline_user_id = fields.Many2one(
+        'res.users', string='API processing user', domain=[('share', '=', False), ('active', '=', True)],
+        config_parameter='facodi_learning.pipeline_user_id',
+        help='Internal user with Pipeline Operator and eLearning Manager roles. Permissions remain scoped to its companies and courses.',
     )
     facodi_learning_analysis_batch_size = fields.Integer(
         string="FACODI analysis batch size",

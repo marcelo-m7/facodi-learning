@@ -92,7 +92,12 @@ class FacodiLearningAnalysisJob(models.Model):
                 model_name=False,
                 attempt_ids=[],
             )
-        return super().create(vals_list)
+        clean_context = {key: value for key, value in self.env.context.items() if not key.startswith('default_')}
+        return super(FacodiLearningAnalysisJob, self.with_context(clean_context)).create(vals_list)
+
+    def _set_processing_values(self, values):
+        """Private processor boundary; never callable through RPC."""
+        return super().write(values)
 
     def write(self, vals):
         if vals.keys() - {"provider"} or any(job.state != "pending" for job in self):
@@ -206,11 +211,12 @@ class FacodiLearningAnalysisJob(models.Model):
             batch_size = max(1, min(int(parameter), 100))
         except (TypeError, ValueError):
             batch_size = 10
-        jobs = self.search([("state", "=", "pending")], limit=batch_size, order="id")
+        domain = [("state", "=", "pending"), ("provider", "!=", "odoo_python")]
+        jobs = self.search(domain, limit=batch_size, order="id")
         for job in jobs:
             job.action_process()
             if self.env.context.get("cron_id"):
-                remaining = self.search_count([("state", "=", "pending")])
+                remaining = self.search_count(domain)
                 if not self.env["ir.cron"]._commit_progress(1, remaining=remaining):
                     break
         return True
