@@ -132,6 +132,7 @@ class AnalysisJob(models.Model):
                             'provider': enriched.get('provider_name'),
                             'warnings': enriched.get('warnings', []),
                             'concepts': enriched.get('concepts', []),
+                            **({'mapping_data': metadata['mapping_data']} if 'mapping_data' in metadata else {}),
                         },
                     }, self.env)
                     if not normalized['summary'] or not normalized['transcript']:

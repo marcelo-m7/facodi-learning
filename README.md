@@ -4,6 +4,14 @@
 course discovery, content ingestion and educational enrichment. It works
 independently of any theme.
 
+## Canonical Processing Evidence
+
+Version `19.0.2.2.1` preserves authenticated API catalog-mapping proposals in the
+existing analysis result's `raw_payload`. This is immutable editorial evidence,
+not a new workflow, reviewed mapping, automatic publication or academic decision.
+Projection keeps native permissions and replay identity; historical results are
+not rewritten. Canonical P2 intake/worker activation remains a separate gate.
+
 ## Standard Odoo remains authoritative
 
 Courses (`slide.channel`), content (`slide.slide`), tags (`slide.tag`), membership,

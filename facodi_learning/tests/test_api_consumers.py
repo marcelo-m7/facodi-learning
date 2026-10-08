@@ -1,4 +1,5 @@
 """Real registry acceptance for the opt-in processing adapter."""
+import json
 from unittest.mock import patch
 
 from odoo import Command
@@ -58,6 +59,7 @@ class TestApiConsumers(TransactionCase):
         self.assertEqual(job.state, 'completed')
         self.assertTrue(job.result_id.summary)
         self.assertEqual(job.result_id.provider, 'odoo_python')
+        self.assertEqual(job.result_id.raw_payload['mapping_data'], json.loads(run.metadata_json)['mapping_data'])
         self.assertEqual(len(job.attempt_ids), 1)
         job.with_user(self.actor).action_process()
         self.assertEqual(len(job.attempt_ids), 1)
