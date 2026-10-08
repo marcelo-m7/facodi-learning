@@ -1,5 +1,6 @@
 """Real registry acceptance for the opt-in processing adapter."""
 import json
+from uuid import uuid4
 from unittest.mock import patch
 
 from odoo import Command
@@ -217,6 +218,42 @@ class TestApiConsumers(TransactionCase):
         self.assertEqual(job.pipeline_run_id.status, 'cancelled')
         self.assertFalse(job.result_id)
         self.assertFalse(job.attempt_ids)
+
+    def test_canonical_cancellation_ack_records_only_the_real_remote_attempt(self):
+        workspace = self.env['project.project'].create({
+            'name': 'Private cancellation workspace', 'facodi_managed': True,
+            'company_id': self.env.company.id, 'privacy_visibility': 'employees',
+        })
+        self.params.set_param('facodi_api.canonical_intake_enabled', 'true')
+        self.params.set_param('facodi_api.canonical_workspace.%s' % self.course.website_id.id, workspace.id)
+        job = self.request()
+        run = job.pipeline_run_id.with_user(self.actor)
+        job.with_user(self.actor).action_cancel(expected_revision=run.revision)
+        self.assertEqual(job.state, 'cancelled')
+        self.assertFalse(job.attempt_ids)
+        self.assertFalse(run.canonical_job_id)
+        command = json.loads(run.canonical_command_json)
+        receipt = {'job_id': str(uuid4()), 'task_ref': run.task_id.facodi_ref,
+                   'company_id': run.company_id.id, 'cohort': 'p2', 'revision': 2,
+                   'status': 'processing', 'attempt': 1, 'result': {}}
+
+        def boundary(record, payload):
+            if payload['action'] == 'submit':
+                return receipt
+            return {'receipt': dict(receipt, status='cancelled', revision=3,
+                                    result={'error_code': 'CANCELLED_BY_OPERATOR'}),
+                    'command_id': command['command_id'], 'command_revision': 1}
+
+        with patch.object(type(run), '_call_canonical_boundary', boundary):
+            self.assertTrue(run._dispatch_canonical_receipts())
+        job.invalidate_recordset()
+        self.assertEqual(job.state, 'cancelled')
+        self.assertEqual(job.attempt_count, 1)
+        self.assertEqual(len(job.attempt_ids), 1)
+        self.assertFalse(job.result_id)
+        self.assertFalse(self.slide.is_published)
+        self.assertTrue(job.with_user(self.actor)._reconcile_pipeline_receipt())
+        self.assertEqual(len(job.attempt_ids), 1)
 
     def test_cancelling_completed_projection_reconciles_newer_receipt(self):
         job = self.request()

@@ -101,7 +101,7 @@ class AnalysisJob(models.Model):
         if not self.try_lock_for_update():
             return False
         self.invalidate_recordset()
-        if self.pipeline_receipt_revision == run.revision:
+        if self.pipeline_receipt_revision == run.revision and self.attempt_count == run.attempt_count:
             return True
         if run.status in ('received', 'running'):
             return True
@@ -260,7 +260,7 @@ class PipelineRun(models.Model):
             offset += len(batch)
             for run in batch:
                 job = run.sudo().learning_job_id
-                if job.pipeline_receipt_revision == run.revision:
+                if job.pipeline_receipt_revision == run.revision and job.attempt_count == run.attempt_count:
                     continue
                 try:
                     with self.env.cr.savepoint():

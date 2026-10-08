@@ -1,7 +1,7 @@
 {
     "name": "FACODI Learning",
     "summary": "Standard-first analysis and educational mapping for Odoo eLearning",
-    "version": "19.0.2.2.1",
+    "version": "19.0.2.2.2",
     "category": "Website/eLearning",
     "author": "FACODI",
     "website": "https://facodi.com",
