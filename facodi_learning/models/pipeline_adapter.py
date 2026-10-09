@@ -235,6 +235,26 @@ class PipelineRun(models.Model):
                 run.learning_job_id._reconcile_pipeline_receipt()
         return result
 
+    def _on_input_revision_accepted(self, child):
+        result = super()._on_input_revision_accepted(child)
+        self.ensure_one()
+        if self.execution_plane != 'supabase' or not self.learning_job_id:
+            return result
+        parent_job = self.learning_job_id
+        parent_job.check_access('read')
+        actor, company = parent_job._pipeline_actor()
+        if (child.input_parent_id != self or child.owner_id != actor or child.company_id != company
+                or child.existing_slide_id != parent_job.slide_id or child.execution_plane != 'supabase'):
+            raise ValidationError('The input revision must preserve its accepted editorial scope.')
+        slide = parent_job.slide_id.with_user(actor).with_company(company)
+        slide.check_access('read')
+        slide.check_access('write')
+        Job = self.env['facodi.learning.analysis.job'].with_user(actor).with_company(company)
+        job = super(AnalysisJob, Job).create({'slide_id': slide.id, 'provider': 'odoo_python'})
+        child._set_execution_values({'learning_job_id': job.id})
+        job._set_processing_values({'pipeline_run_id': child.id, 'pipeline_receipt_revision': -1})
+        return result
+
     def action_approve_and_publish(self, publication_evidence=None):
         for run in self.filtered('learning_job_id'):
             job = run.learning_job_id

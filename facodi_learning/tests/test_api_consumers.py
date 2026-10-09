@@ -35,14 +35,14 @@ class TestApiConsumers(TransactionCase):
     def request(self):
         return self.slide.with_user(self.actor).action_facodi_request_analysis()
 
-    def canonical_request(self):
+    def canonical_request(self, slide=None):
         workspace = self.env['project.project'].create({
             'name': 'Private canonical workspace', 'facodi_managed': True,
             'company_id': self.env.company.id, 'privacy_visibility': 'employees',
         })
         self.params.set_param('facodi_api.canonical_intake_enabled', 'true')
         self.params.set_param('facodi_api.canonical_workspace.%s' % self.course.website_id.id, workspace.id)
-        return self.request()
+        return (slide or self.slide).with_user(self.actor).action_facodi_request_analysis()
 
     def test_request_queues_one_run_without_processing_or_result(self):
         job = self.request()
@@ -304,6 +304,49 @@ class TestApiConsumers(TransactionCase):
         self.assertEqual(run.canonical_job_id, failed['job_id'])
         self.assertFalse(self.slide.is_published)
         self.assertFalse(self.slide.website_published)
+
+    def test_canonical_input_revision_links_one_new_editorial_request_without_legacy_rerouting(self):
+        video = self.env['slide.slide'].with_user(self.actor).with_context(website_slides_skip_fetch_metadata=True).create({
+            'name': 'Original private input revision fixture', 'channel_id': self.course.id,
+            'slide_category': 'video', 'source_type': 'external',
+            'video_url': 'https://www.youtube.com/watch?v=4GVbqYFmGBw',
+            'facodi_transcript': 'Original explicitly supplied transcript.',
+            'is_published': False, 'website_published': False,
+        })
+        job = self.canonical_request(video)
+        run = job.pipeline_run_id.with_user(self.actor)
+        failed = {'job_id': str(uuid4()), 'task_ref': run.task_id.facodi_ref,
+                  'company_id': run.company_id.id, 'cohort': 'p2', 'revision': 2,
+                  'status': 'failed', 'attempt': 1, 'result': {'error_code': 'YOUTUBE_LANGUAGE_UNAVAILABLE'}}
+        run._apply_canonical_receipt(failed)
+        self.assertEqual(job.state, 'waiting_input')
+        original_input = run.canonical_payload_json
+        expected = run.revision
+        jobs_before = self.env['facodi.learning.analysis.job'].search_count([])
+        self.params.set_param('facodi_api.canonical_intake_enabled', 'false')
+        self.params.set_param('facodi_learning.pipeline_user_id', '')
+        with patch.object(type(run), '_call_canonical_boundary', side_effect=AssertionError('No network before commit')):
+            child = run.action_supply_transcript('Explicit revised editorial transcript.', 'native-editorial-input-child', expected)
+            replay = run.action_supply_transcript('Explicit revised editorial transcript.', 'native-editorial-input-child', expected)
+        child_job = child.learning_job_id
+        self.assertEqual(child, replay)
+        self.assertEqual(self.env['facodi.learning.analysis.job'].search_count([]), jobs_before + 1)
+        self.assertEqual(job.state, 'cancelled')
+        self.assertEqual(job.pipeline_run_id, run)
+        self.assertEqual(len(job.attempt_ids), 1)
+        self.assertEqual(run.canonical_payload_json, original_input)
+        self.assertTrue(run.canonical_command_json)
+        self.assertEqual(child_job.pipeline_run_id, child)
+        self.assertEqual(child_job.slide_id, video)
+        self.assertEqual(child_job.state, 'pending')
+        self.assertFalse(child_job.attempt_ids)
+        self.assertFalse(child_job.result_id)
+        self.assertEqual(child.execution_plane, 'supabase')
+        self.assertEqual(child.project_id, run.project_id)
+        self.assertEqual(child.owner_id, run.owner_id)
+        self.assertNotEqual(child.task_id, run.task_id)
+        self.assertFalse(child.task_id.parent_id)
+        self.assertFalse(video.is_published)
 
     def test_cancelling_completed_projection_reconciles_newer_receipt(self):
         job = self.request()

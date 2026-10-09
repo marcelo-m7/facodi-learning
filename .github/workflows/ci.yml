@@ -10,7 +10,7 @@ permissions:
 env:
   # Exact accepted canonical API dependency; historical Learning upgrades retain
   # their pre-M3.4 fixture independently.
-  FACODI_API_SOURCE_SHA: 15a8566c7a2d6a91c10d79756579b4c758ef742b
+  FACODI_API_SOURCE_SHA: e6478285336b48d63b2f7dd2c800132ce3931234
   FACODI_PRE_M34_BASE_SHA: 1ff81c0585728037dfb24b3310d5905ce38c6fc7
 
 jobs:
