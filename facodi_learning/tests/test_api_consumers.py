@@ -348,6 +348,44 @@ class TestApiConsumers(TransactionCase):
         self.assertFalse(child.task_id.parent_id)
         self.assertFalse(video.is_published)
 
+    def test_canonical_automatic_transcript_projects_unpublished_immutable_acquisition_evidence(self):
+        video = self.env['slide.slide'].with_user(self.actor).with_context(website_slides_skip_fetch_metadata=True).create({
+            'name': 'Private automatic transcript fixture', 'channel_id': self.course.id,
+            'slide_category': 'video', 'source_type': 'external',
+            'video_url': 'https://www.youtube.com/watch?v=4GVbqYFmGBw',
+            'is_published': False, 'website_published': False,
+        })
+        job = self.canonical_request(video)
+        run = job.pipeline_run_id.with_user(self.actor)
+        self.assertEqual(json.loads(run.canonical_payload_json)['acquisition_config']['version'], '2.0.3')
+        catalog = json.loads(run.catalog_snapshot_json)
+        document_id = str(uuid4())
+        acquired = {'text_content': 'Automatically acquired educational evidence.', 'language': run.language,
+                    'source_url': run.source_url, 'extraction_provider': 'youtube-transcript-plus',
+                    'extraction_version': '2.0.3'}
+        result = {'metadata': {'document_data': acquired},
+                  'document_data': {'text_content': acquired['text_content'], 'language': run.language},
+                  'enriched_data': {'id': document_id, 'summary': acquired['text_content'], 'concepts': [],
+                                    'provider_name': 'baseline-deterministic', 'model_name': 'regex-frequency-v2-evidence'},
+                  'mapping_data': {'snapshot_id': catalog['snapshot_id'], 'snapshot_hash': catalog['snapshot_hash'],
+                                   'enriched_document_id': document_id, 'ranking_algorithm_version': 'deterministic-v2',
+                                   'candidates': [], 'unmatched_concepts': []}, 'chunks': []}
+        receipt = {'job_id': str(uuid4()), 'task_ref': run.task_id.facodi_ref,
+                   'company_id': run.company_id.id, 'cohort': 'p2', 'revision': 3,
+                   'status': 'needs_review', 'attempt': 1, 'result': result}
+        self.assertTrue(run._apply_canonical_receipt(receipt))
+        job.with_user(self.actor).action_process()
+        self.assertEqual(job.state, 'completed')
+        self.assertEqual(job.result_id.transcript, acquired['text_content'])
+        self.assertEqual(job.result_id.raw_payload['source_acquisition']['extraction_version'], '2.0.3')
+        self.assertEqual(job.result_id.raw_payload['source_acquisition']['source_url'], run.source_url)
+        self.assertEqual(run.raw_content, '')
+        self.assertFalse(run._apply_canonical_receipt(receipt))
+        self.assertEqual(len(job.attempt_ids), 1)
+        self.assertEqual(len(video.facodi_analysis_result_ids), 1)
+        self.assertFalse(video.is_published)
+        self.assertFalse(video.website_published)
+
     def test_cancelling_completed_projection_reconciles_newer_receipt(self):
         job = self.request()
         run = job.pipeline_run_id.with_user(self.actor)

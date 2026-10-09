@@ -121,6 +121,9 @@ class AnalysisJob(models.Model):
                     metadata = json.loads(run.metadata_json or '{}')
                     document = metadata.get('document_data', {})
                     enriched = metadata.get('enriched_data', {})
+                    acquired = (metadata.get('metadata', {}).get('document_data', {})
+                                if run.execution_plane == 'supabase'
+                                and json.loads(run.canonical_payload_json).get('acquisition_config') else {})
                     normalized = normalize_output({
                         'summary': enriched.get('summary'),
                         'transcript': document.get('text_content'),
@@ -133,6 +136,8 @@ class AnalysisJob(models.Model):
                             'warnings': enriched.get('warnings', []),
                             'concepts': enriched.get('concepts', []),
                             **({'mapping_data': metadata['mapping_data']} if 'mapping_data' in metadata else {}),
+                            **({'source_acquisition': {key: acquired[key] for key in
+                                ('source_url', 'language', 'extraction_provider', 'extraction_version')}} if acquired else {}),
                         },
                     }, self.env)
                     if not normalized['summary'] or not normalized['transcript']:
