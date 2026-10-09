@@ -10,97 +10,133 @@
     <template id="explore_landing" name="Explore FACODI">
         <t t-call="website.layout">
             <t t-set="additional_title">Explore open learning · FACODI</t>
-            <t t-set="website_meta_description">Explore FACODI learning areas, public resources, community videos and open courses.</t>
+            <t t-set="website_meta_description">Discover free FACODI courses, roadmaps, curricular units and public learning resources. Search or choose a learning route.</t>
             <div id="wrap" class="oe_structure">
-                <section class="facodi-explore-map container py-5" data-facodi-explore-map="1">
-                    <header class="facodi-explore-map__hero facodi-sheet facodi-grid-paper mb-5" data-facodi-motion="rise">
+                <section class="facodi-explore-map facodi-explore-v2 container py-5" data-facodi-explore-map="1" aria-labelledby="facodi-explore-title">
+                    <header class="facodi-explore-map__hero facodi-sheet facodi-grid-paper mb-4" data-facodi-motion="rise">
                         <div class="facodi-explore-map__copy">
-                            <p class="facodi-kicker mb-2" data-facodi-scramble="1" tabindex="0">FACODI · Explore</p>
-                            <h1 class="display-4 fw-bold mb-3">Where do you want to go next?</h1>
-                            <p class="lead text-muted mb-0">Courses, curricular units, learning roadmaps and open resources — connected instead of isolated.</p>
+                            <p class="facodi-kicker mb-3">FACODI · Open campus / Explore</p>
+                            <h1 id="facodi-explore-title" class="display-4 fw-bold mb-3">A whole campus of ideas. <span class="facodi-explore-v2__underline">One place to start.</span></h1>
+                            <p class="lead mb-4">Find the course, subject or useful resource that gets you moving. Choose a route or search what is on your mind.</p>
+                            <form class="facodi-explore-v2__search" role="search" method="get" action="/explore/content" data-facodi-explore-search="1">
+                                <label class="visually-hidden" for="facodi-explore-search">Search open learning resources</label>
+                                <i class="fa fa-search" aria-hidden="true"></i>
+                                <input id="facodi-explore-search" type="search" name="q" placeholder="Try calculus, programming, design…" autocomplete="off" maxlength="120" required="required"/>
+                                <button type="submit">Find resources <i class="fa fa-arrow-right" aria-hidden="true"></i></button>
+                            </form>
+                            <nav class="facodi-explore-v2__quicklinks mt-3" aria-label="Quick discovery links">
+                                <span>Or jump to</span>
+                                <a href="/courses">Courses <i class="fa fa-arrow-up-right" aria-hidden="true"></i></a>
+                                <a href="/roadmaps">Roadmaps <i class="fa fa-arrow-up-right" aria-hidden="true"></i></a>
+                                <a href="/curricular-units">Curricular units <i class="fa fa-arrow-up-right" aria-hidden="true"></i></a>
+                            </nav>
                         </div>
-                        <div class="facodi-explore-map__route" aria-label="Learning route">
-                            <span>Question</span><i class="fa fa-arrow-down" aria-hidden="true"></i>
-                            <span>Course</span><i class="fa fa-arrow-down" aria-hidden="true"></i>
-                            <span>Curricular Unit</span><i class="fa fa-arrow-down" aria-hidden="true"></i>
-                            <span>Roadmap</span><i class="fa fa-arrow-down" aria-hidden="true"></i>
-                            <span>Community</span>
-                        </div>
+                        <aside class="facodi-explore-v2__compass" aria-label="How discovery works">
+                            <div class="facodi-explore-v2__compass-top">
+                                <span class="facodi-label">Your learning compass</span>
+                                <i class="fa fa-compass" aria-hidden="true"></i>
+                            </div>
+                            <ol class="facodi-explore-v2__steps">
+                                <li><span class="facodi-explore-v2__step-no">01</span><span><strong>Be curious.</strong><small>Start with a question.</small></span></li>
+                                <li><span class="facodi-explore-v2__step-no">02</span><span><strong>Find your thread.</strong><small>Explore open learning.</small></span></li>
+                                <li><span class="facodi-explore-v2__step-no">03</span><span><strong>Keep it moving.</strong><small>Learn, connect and share.</small></span></li>
+                            </ol>
+                            <span class="facodi-explore-v2__compass-bottom">No paywalls. No single right path.</span>
+                        </aside>
                     </header>
 
-                    <div class="facodi-explore-map__snapshot mb-4" data-facodi-motion="fade" data-facodi-motion-delay="60" aria-label="FACODI discovery snapshot">
+                    <div class="facodi-explore-map__snapshot mb-5" data-facodi-motion="fade" aria-label="FACODI public catalogue at a glance">
                         <div class="facodi-stat-note facodi-highlight-lime"><strong t-esc="explore_stats['courses']"/><span>courses</span></div>
                         <div class="facodi-stat-note facodi-highlight-cyan"><strong t-esc="explore_stats['resources']"/><span>resources</span></div>
                         <div class="facodi-stat-note facodi-highlight-mint"><strong t-esc="explore_stats['roadmaps']"/><span>roadmaps</span></div>
                         <div class="facodi-stat-note facodi-highlight-orange"><strong t-esc="explore_stats['units']"/><span>curricular units</span></div>
-                        <div class="facodi-stat-note facodi-highlight-pink"><strong t-esc="explore_stats['community']"/><span>community drops</span></div>
+                        <div t-if="explore_stats['community']" class="facodi-stat-note facodi-highlight-pink"><strong t-esc="explore_stats['community']"/><span>community videos</span></div>
                     </div>
 
-                    <div class="facodi-explore-card-grid">
-                        <a href="/courses" class="facodi-explore-card facodi-sheet text-decoration-none" data-facodi-spotlight="1" data-facodi-motion="rise" data-facodi-motion-delay="0">
+                    <div class="facodi-explore-v2__section-head mb-3" id="facodi-explore-paths">
+                        <div>
+                            <p class="facodi-label mb-2">Pick your way in</p>
+                            <h2 class="mb-2">What brings you here today?</h2>
+                            <p class="mb-0">A few good starting points. Switch the lens to see what suits you.</p>
+                        </div>
+                        <span class="facodi-explore-v2__section-stamp" aria-hidden="true">Find your next step ↗</span>
+                    </div>
+
+                    <div class="facodi-explore-v2__toolbar mb-3" data-facodi-path-toolbar="1">
+                        <div class="facodi-explore-v2__filters" role="group" aria-label="Filter discovery paths">
+                            <button type="button" class="facodi-explore-v2__filter is-active" data-facodi-path-filter="all" aria-pressed="true">Everything</button>
+                            <button type="button" class="facodi-explore-v2__filter" data-facodi-path-filter="explore" aria-pressed="false">I'm exploring</button>
+                            <button type="button" class="facodi-explore-v2__filter" data-facodi-path-filter="academic" aria-pressed="false">I'm following a programme</button>
+                            <button type="button" class="facodi-explore-v2__filter" data-facodi-path-filter="community" aria-pressed="false">I want to connect</button>
+                        </div>
+                        <p class="facodi-explore-v2__results mb-0" aria-live="polite" aria-atomic="true">
+                            <strong data-facodi-path-count="1">8</strong> ways to begin
+                        </p>
+                    </div>
+
+                    <div class="facodi-explore-card-grid" id="facodi-explore-route-grid" data-facodi-explore-grid="1">
+                        <a href="/courses" class="facodi-explore-card facodi-sheet text-decoration-none" data-facodi-path-category="explore academic" data-facodi-spotlight="1" data-facodi-motion="rise">
                             <div class="facodi-explore-card__icon"><span class="fa fa-graduation-cap" aria-hidden="true"></span></div>
-                            <p class="facodi-label">Courses</p>
-                            <h2>Learn by course.</h2>
-                            <p><t t-esc="explore_stats['courses']"/> public courses across <t t-esc="explore_stats['areas']"/> learning areas.</p>
-                            <span class="facodi-explore-card__cta">Explore courses →</span>
+                            <p class="facodi-label">01 / Courses</p>
+                            <h3>Pick a course. Find your flow.</h3>
+                            <p><t t-esc="explore_stats['courses']"/> public courses to help you dive into a subject.</p>
+                            <span class="facodi-explore-card__cta">Explore courses <i class="fa fa-arrow-right" aria-hidden="true"></i></span>
                         </a>
-
-                        <a href="/roadmaps" class="facodi-explore-card facodi-sheet text-decoration-none" data-facodi-spotlight="1" data-facodi-motion="rise" data-facodi-motion-delay="60">
+                        <a href="/roadmaps" class="facodi-explore-card facodi-sheet text-decoration-none" data-facodi-path-category="academic" data-facodi-spotlight="1" data-facodi-motion="rise">
                             <div class="facodi-explore-card__icon"><span class="fa fa-map-o" aria-hidden="true"></span></div>
-                            <p class="facodi-label">Roadmaps</p>
-                            <h2>Follow the academic path.</h2>
-                            <p><t t-esc="explore_stats['roadmaps']"/> validated learning roadmaps connect programme structure to open resources.</p>
-                            <span class="facodi-explore-card__cta">Follow a roadmap →</span>
+                            <p class="facodi-label">02 / Roadmaps</p>
+                            <h3>See the bigger picture.</h3>
+                            <p><t t-esc="explore_stats['roadmaps']"/> validated learning roadmaps connect study topics and academic context.</p>
+                            <span class="facodi-explore-card__cta">Follow a roadmap <i class="fa fa-arrow-right" aria-hidden="true"></i></span>
                         </a>
-
-                        <a href="/curricular-units" class="facodi-explore-card facodi-sheet text-decoration-none" data-facodi-spotlight="1" data-facodi-motion="rise" data-facodi-motion-delay="120">
+                        <a href="/curricular-units" class="facodi-explore-card facodi-sheet text-decoration-none" data-facodi-path-category="academic" data-facodi-spotlight="1" data-facodi-motion="rise">
                             <div class="facodi-explore-card__icon"><span class="fa fa-book" aria-hidden="true"></span></div>
-                            <p class="facodi-label">Curricular Units</p>
-                            <h2>Start from the syllabus.</h2>
-                            <p><t t-esc="explore_stats['units']"/> published curricular-unit records with academic context and FACODI coverage.</p>
-                            <span class="facodi-explore-card__cta">Explore curricular units →</span>
+                            <p class="facodi-label">03 / Curricular units</p>
+                            <h3>Start from the syllabus.</h3>
+                            <p>Explore <t t-esc="explore_stats['units']"/> published curricular units, with academic context and coverage.</p>
+                            <span class="facodi-explore-card__cta">Browse units <i class="fa fa-arrow-right" aria-hidden="true"></i></span>
                         </a>
-
-                        <a href="/explore/content" class="facodi-explore-card facodi-sheet text-decoration-none" data-facodi-spotlight="1" data-facodi-motion="rise" data-facodi-motion-delay="180">
+                        <a href="/explore/content" class="facodi-explore-card facodi-sheet text-decoration-none" data-facodi-path-category="explore" data-facodi-spotlight="1" data-facodi-motion="rise">
                             <div class="facodi-explore-card__icon"><span class="fa fa-folder-open-o" aria-hidden="true"></span></div>
-                            <p class="facodi-label">Open resources</p>
-                            <h2>Find the useful tab.</h2>
-                            <p><t t-esc="explore_stats['resources']"/> public learning resources can be filtered by area and format.</p>
-                            <span class="facodi-explore-card__cta">Browse resources →</span>
+                            <p class="facodi-label">04 / Open resources</p>
+                            <h3>Follow the useful link.</h3>
+                            <p>Search <t t-esc="explore_stats['resources']"/> public learning resources across courses and formats.</p>
+                            <span class="facodi-explore-card__cta">Browse resources <i class="fa fa-arrow-right" aria-hidden="true"></i></span>
                         </a>
-
-                        <a href="/explore/areas" class="facodi-explore-card facodi-sheet text-decoration-none" data-facodi-spotlight="1" data-facodi-motion="rise" data-facodi-motion-delay="220">
+                        <a t-att-href="'/explore/areas' if explore_stats['areas'] else '/courses'" class="facodi-explore-card facodi-sheet text-decoration-none" data-facodi-path-category="explore academic" data-facodi-spotlight="1" data-facodi-motion="rise">
                             <div class="facodi-explore-card__icon"><span class="fa fa-tags" aria-hidden="true"></span></div>
-                            <p class="facodi-label">Learning areas</p>
-                            <h2>Browse by learning area.</h2>
-                            <p><t t-esc="explore_stats['areas']"/> public learning areas organise the catalogue without hiding the courses behind them.</p>
-                            <span class="facodi-explore-card__cta">Explore learning areas →</span>
+                            <p class="facodi-label">05 / Learning areas</p>
+                            <h3>Wander across subjects.</h3>
+                            <p t-if="explore_stats['areas']">Browse <t t-esc="explore_stats['areas']"/> public learning areas to find your next interest.</p>
+                            <p t-else="">Area filters are being organised. In the meantime, explore the full course catalogue.</p>
+                            <span class="facodi-explore-card__cta">Explore learning areas <i class="fa fa-arrow-right" aria-hidden="true"></i></span>
                         </a>
-
-                        <a href="/explore/videos" class="facodi-explore-card facodi-sheet text-decoration-none" data-facodi-spotlight="1" data-facodi-motion="rise" data-facodi-motion-delay="240">
+                        <a href="/explore/videos" class="facodi-explore-card facodi-sheet text-decoration-none" data-facodi-path-category="community" data-facodi-spotlight="1" data-facodi-motion="rise">
                             <div class="facodi-explore-card__icon"><span class="fa fa-play-circle-o" aria-hidden="true"></span></div>
-                            <p class="facodi-label">Community videos</p>
-                            <h2>See what the campus shared.</h2>
-                            <p><t t-esc="explore_stats['community']"/> public community video drops appear immediately after submission; review status remains visible for transparency.</p>
-                            <span class="facodi-explore-card__cta">Browse community videos →</span>
+                            <p class="facodi-label">06 / Community videos</p>
+                            <h3>See what others found.</h3>
+                            <p t-if="explore_stats['community']"><t t-esc="explore_stats['community']"/> community videos are available with transparent curation status.</p>
+                            <p t-else="">Be among the first to share a great public video with the campus.</p>
+                            <span class="facodi-explore-card__cta">Community videos <i class="fa fa-arrow-right" aria-hidden="true"></i></span>
                         </a>
-
-                        <a href="/forum" class="facodi-explore-card facodi-sheet text-decoration-none" data-facodi-spotlight="1" data-facodi-motion="rise" data-facodi-motion-delay="240">
+                        <a href="/forum" class="facodi-explore-card facodi-sheet text-decoration-none" data-facodi-path-category="community" data-facodi-spotlight="1" data-facodi-motion="rise">
                             <div class="facodi-explore-card__icon"><span class="fa fa-comments-o" aria-hidden="true"></span></div>
-                            <p class="facodi-label">Community</p>
-                            <h2>Ask. Compare notes. Share.</h2>
-                            <p>The community layer turns isolated resources into discussion, explanation and shared study routes.</p>
-                            <span class="facodi-explore-card__cta">Join the conversation →</span>
+                            <p class="facodi-label">07 / Community</p>
+                            <h3>Think better together.</h3>
+                            <p>Ask questions, exchange perspectives and leave a useful trail for others.</p>
+                            <span class="facodi-explore-card__cta">Join the conversation <i class="fa fa-arrow-right" aria-hidden="true"></i></span>
                         </a>
-
-                        <a href="/submissions/new?type=resource&amp;source=explore_map_resource_cta&amp;section=explore" class="facodi-explore-card facodi-explore-card--action facodi-note text-decoration-none" data-facodi-spotlight="1" data-facodi-motion="rise" data-facodi-motion-delay="300">
+                        <a href="/submissions/new?type=resource&amp;source=explore_map_resource_cta&amp;section=explore" class="facodi-explore-card facodi-explore-card--action facodi-note text-decoration-none" data-facodi-path-category="community" data-facodi-spotlight="1" data-facodi-motion="rise">
                             <div class="facodi-explore-card__icon"><span class="fa fa-plus" aria-hidden="true"></span></div>
-                            <p class="facodi-label">Contribute</p>
-                            <h2>Found something useful?</h2>
-                            <p>Put it on the community desk with the current Explore context already attached.</p>
-                            <span class="facodi-explore-card__cta">Suggest a resource →</span>
+                            <p class="facodi-label">08 / Contribute</p>
+                            <h3>Found something worth sharing?</h3>
+                            <p>Pass a useful public resource on to the next learner. Your Explore context comes along.</p>
+                            <span class="facodi-explore-card__cta">Suggest a resource <i class="fa fa-arrow-right" aria-hidden="true"></i></span>
                         </a>
                     </div>
+                    <noscript>
+                        <p class="facodi-explore-v2__noscript">All discovery paths are available above. Enable JavaScript to filter the routes interactively.</p>
+                    </noscript>
                 </section>
             </div>
         </t>
