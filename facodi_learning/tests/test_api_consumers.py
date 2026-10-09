@@ -35,6 +35,15 @@ class TestApiConsumers(TransactionCase):
     def request(self):
         return self.slide.with_user(self.actor).action_facodi_request_analysis()
 
+    def canonical_request(self):
+        workspace = self.env['project.project'].create({
+            'name': 'Private canonical workspace', 'facodi_managed': True,
+            'company_id': self.env.company.id, 'privacy_visibility': 'employees',
+        })
+        self.params.set_param('facodi_api.canonical_intake_enabled', 'true')
+        self.params.set_param('facodi_api.canonical_workspace.%s' % self.course.website_id.id, workspace.id)
+        return self.request()
+
     def test_request_queues_one_run_without_processing_or_result(self):
         job = self.request()
         self.assertEqual(job.provider, 'odoo_python')
@@ -220,13 +229,7 @@ class TestApiConsumers(TransactionCase):
         self.assertFalse(job.attempt_ids)
 
     def test_canonical_cancellation_ack_records_only_the_real_remote_attempt(self):
-        workspace = self.env['project.project'].create({
-            'name': 'Private cancellation workspace', 'facodi_managed': True,
-            'company_id': self.env.company.id, 'privacy_visibility': 'employees',
-        })
-        self.params.set_param('facodi_api.canonical_intake_enabled', 'true')
-        self.params.set_param('facodi_api.canonical_workspace.%s' % self.course.website_id.id, workspace.id)
-        job = self.request()
+        job = self.canonical_request()
         run = job.pipeline_run_id.with_user(self.actor)
         job.with_user(self.actor).action_cancel(expected_revision=run.revision)
         self.assertEqual(job.state, 'cancelled')
@@ -254,6 +257,53 @@ class TestApiConsumers(TransactionCase):
         self.assertFalse(self.slide.is_published)
         self.assertTrue(job.with_user(self.actor)._reconcile_pipeline_receipt())
         self.assertEqual(len(job.attempt_ids), 1)
+
+    def test_canonical_retry_preserves_failed_attempt_and_projects_one_unpublished_result(self):
+        job = self.canonical_request()
+        run = job.pipeline_run_id.with_user(self.actor)
+        task, payload = run.task_id, run.canonical_payload_json
+        failed = {'job_id': str(uuid4()), 'task_ref': task.facodi_ref,
+                  'company_id': run.company_id.id, 'cohort': 'p2', 'revision': 2,
+                  'status': 'failed', 'attempt': 1, 'result': {'error_code': 'PROVIDER_FAILED'}}
+        run._apply_canonical_receipt(failed)
+        self.assertEqual(job.state, 'failed')
+        self.assertEqual(len(job.attempt_ids), 1)
+        prior_attempt = job.attempt_ids
+        with patch.object(type(run), '_call_canonical_boundary', side_effect=AssertionError('No network before commit')):
+            job.with_user(self.actor).action_retry()
+        self.assertEqual(job.state, 'pending')
+        self.assertEqual(job.attempt_count, 1)
+        command = json.loads(run.canonical_command_json)
+        queued = dict(failed, status='queued', revision=3, result={})
+        with patch.object(type(run), '_call_canonical_boundary', return_value={
+                'receipt': queued, 'command_id': command['command_id'], 'command_revision': 1}):
+            self.assertTrue(run._dispatch_canonical_receipts())
+        self.assertEqual(len(job.attempt_ids), 1)
+        catalog = json.loads(payload)['catalog_snapshot']
+        document_id = str(uuid4())
+        result = {'document_data': {'text_content': run.raw_content, 'language': run.language},
+                  'enriched_data': {'id': document_id, 'summary': 'Original reviewable learning evidence.',
+                                    'concepts': [], 'provider_name': 'baseline-deterministic',
+                                    'model_name': 'regex-frequency-v2-evidence'}, 'chunks': [],
+                  'mapping_data': {'snapshot_id': catalog['snapshot_id'], 'snapshot_hash': catalog['snapshot_hash'],
+                                   'ranking_algorithm_version': 'deterministic-v2',
+                                   'enriched_document_id': document_id, 'candidates': [], 'unmatched_concepts': []}}
+        completed = dict(failed, status='needs_review', revision=5, attempt=2, result=result)
+        run._apply_canonical_receipt(completed)
+        job.with_user(self.actor).action_process()
+        self.assertFalse(run._apply_canonical_receipt(completed))
+        self.assertEqual(job.state, 'completed')
+        self.assertEqual(job.attempt_count, 2)
+        self.assertEqual(len(job.attempt_ids), 2)
+        self.assertEqual(prior_attempt.state, 'failed')
+        self.assertEqual(prior_attempt.number, 1)
+        self.assertEqual(len(self.slide.facodi_analysis_result_ids), 1)
+        self.assertEqual(job.result_id.raw_payload['mapping_data'], result['mapping_data'])
+        self.assertEqual(run.task_id, task)
+        self.assertEqual(run.canonical_payload_json, payload)
+        self.assertEqual(run.canonical_job_id, failed['job_id'])
+        self.assertFalse(self.slide.is_published)
+        self.assertFalse(self.slide.website_published)
 
     def test_cancelling_completed_projection_reconciles_newer_receipt(self):
         job = self.request()
