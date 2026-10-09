@@ -101,7 +101,7 @@ class AnalysisJob(models.Model):
         if not self.try_lock_for_update():
             return False
         self.invalidate_recordset()
-        if self.pipeline_receipt_revision == run.revision:
+        if self.pipeline_receipt_revision == run.revision and self.attempt_count == run.attempt_count:
             return True
         if run.status in ('received', 'running'):
             return True
@@ -121,6 +121,9 @@ class AnalysisJob(models.Model):
                     metadata = json.loads(run.metadata_json or '{}')
                     document = metadata.get('document_data', {})
                     enriched = metadata.get('enriched_data', {})
+                    acquired = (metadata.get('metadata', {}).get('document_data', {})
+                                if run.execution_plane == 'supabase'
+                                and json.loads(run.canonical_payload_json).get('acquisition_config') else {})
                     normalized = normalize_output({
                         'summary': enriched.get('summary'),
                         'transcript': document.get('text_content'),
@@ -132,6 +135,9 @@ class AnalysisJob(models.Model):
                             'provider': enriched.get('provider_name'),
                             'warnings': enriched.get('warnings', []),
                             'concepts': enriched.get('concepts', []),
+                            **({'mapping_data': metadata['mapping_data']} if 'mapping_data' in metadata else {}),
+                            **({'source_acquisition': {key: acquired[key] for key in
+                                ('source_url', 'language', 'extraction_provider', 'extraction_version')}} if acquired else {}),
                         },
                     }, self.env)
                     if not normalized['summary'] or not normalized['transcript']:
@@ -234,6 +240,26 @@ class PipelineRun(models.Model):
                 run.learning_job_id._reconcile_pipeline_receipt()
         return result
 
+    def _on_input_revision_accepted(self, child):
+        result = super()._on_input_revision_accepted(child)
+        self.ensure_one()
+        if self.execution_plane != 'supabase' or not self.learning_job_id:
+            return result
+        parent_job = self.learning_job_id
+        parent_job.check_access('read')
+        actor, company = parent_job._pipeline_actor()
+        if (child.input_parent_id != self or child.owner_id != actor or child.company_id != company
+                or child.existing_slide_id != parent_job.slide_id or child.execution_plane != 'supabase'):
+            raise ValidationError('The input revision must preserve its accepted editorial scope.')
+        slide = parent_job.slide_id.with_user(actor).with_company(company)
+        slide.check_access('read')
+        slide.check_access('write')
+        Job = self.env['facodi.learning.analysis.job'].with_user(actor).with_company(company)
+        job = super(AnalysisJob, Job).create({'slide_id': slide.id, 'provider': 'odoo_python'})
+        child._set_execution_values({'learning_job_id': job.id})
+        job._set_processing_values({'pipeline_run_id': child.id, 'pipeline_receipt_revision': -1})
+        return result
+
     def action_approve_and_publish(self, publication_evidence=None):
         for run in self.filtered('learning_job_id'):
             job = run.learning_job_id
@@ -259,7 +285,7 @@ class PipelineRun(models.Model):
             offset += len(batch)
             for run in batch:
                 job = run.sudo().learning_job_id
-                if job.pipeline_receipt_revision == run.revision:
+                if job.pipeline_receipt_revision == run.revision and job.attempt_count == run.attempt_count:
                     continue
                 try:
                     with self.env.cr.savepoint():

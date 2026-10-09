@@ -4,6 +4,24 @@
 course discovery, content ingestion and educational enrichment. It works
 independently of any theme.
 
+## Canonical Processing Evidence
+
+Version `19.0.2.2.4` preserves authenticated API catalog-mapping proposals in the
+existing analysis result's `raw_payload`. This is immutable editorial evidence,
+not a new workflow, reviewed mapping, automatic publication or academic decision.
+Projection keeps native permissions and replay identity; historical results are
+not rewritten. Canonical P2 intake/worker activation remains a separate gate.
+
+Canonical input-required requests can accept one new immutable transcript
+revision through API, retaining the original workspace/provider/catalog and
+linking exactly one new editorial request without automatic enqueue or local
+execution. Automatic canonical YouTube acquisition additionally preserves the
+verified source URL, language and extraction provider/version in the existing
+immutable result's `source_acquisition` evidence. The accepted empty input stays
+unchanged; completion and replay produce one unpublished result/attempt. All 429
+native Learning tests passed locally, including 22 API consumers. Remote
+acquisition, full source parity and productive activation remain separate gates.
+
 ## Standard Odoo remains authoritative
 
 Courses (`slide.channel`), content (`slide.slide`), tags (`slide.tag`), membership,
