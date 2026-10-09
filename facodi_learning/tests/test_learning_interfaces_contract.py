@@ -109,7 +109,9 @@ class TestLearningInterfacesContract(unittest.TestCase):
         for marker in (
             'data-facodi-explore-map="1"',
             'data-facodi-spotlight="1"',
-            'data-facodi-scramble="1"',
+            'data-facodi-explore-search="1"',
+            'data-facodi-path-filter="academic"',
+            'data-facodi-explore-grid="1"',
             'href="/courses"',
             'href="/roadmaps"',
             'href="/curricular-units"',

@@ -6927,3 +6927,225 @@ msgid ""
 msgstr ""
 "A FACODI exige proveniência e revisão por um gestor antes de publicar novo "
 "conteúdo de aprendizagem."
+
+# Explore discovery workbench (2026-10-09)
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_landing
+msgid "FACODI · Open campus / Explore"
+msgstr "FACODI · Campus aberto / Explorar"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_landing
+msgid "A whole campus of ideas."
+msgstr "Um campus inteiro de ideias."
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_landing
+msgid "One place to start."
+msgstr "Um ponto de partida."
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_landing
+msgid "Find the course, subject or useful resource that gets you moving. Choose a route or search what is on your mind."
+msgstr "Encontra o curso, tema ou recurso que te faz avançar. Escolhe um percurso ou pesquisa o que tens em mente."
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_landing
+msgid "Search open learning resources"
+msgstr "Pesquisar recursos educativos abertos"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_landing
+msgid "Try calculus, programming, design…"
+msgstr "Experimenta cálculo, programação, design…"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_landing
+msgid "Find resources"
+msgstr "Encontrar recursos"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_landing
+msgid "Quick discovery links"
+msgstr "Ligações rápidas para explorar"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_landing
+msgid "Or jump to"
+msgstr "Ou começa por"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_landing
+msgid "Your learning compass"
+msgstr "A tua bússola de aprendizagem"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_landing
+msgid "How discovery works"
+msgstr "Como funciona a descoberta"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_landing
+msgid "Be curious."
+msgstr "Segue a curiosidade."
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_landing
+msgid "Start with a question."
+msgstr "Começa com uma pergunta."
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_landing
+msgid "Find your thread."
+msgstr "Encontra o teu caminho."
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_landing
+msgid "Explore open learning."
+msgstr "Explora a aprendizagem aberta."
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_landing
+msgid "Keep it moving."
+msgstr "Continua a explorar."
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_landing
+msgid "Learn, connect and share."
+msgstr "Aprende, liga-te e partilha."
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_landing
+msgid "No paywalls. No single right path."
+msgstr "Sem paywalls. Sem um único caminho certo."
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_landing
+msgid "Pick your way in"
+msgstr "Escolhe por onde começar"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_landing
+msgid "What brings you here today?"
+msgstr "O que te traz por aqui hoje?"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_landing
+msgid "A few good starting points. Switch the lens to see what suits you."
+msgstr "Alguns bons pontos de partida. Alterna as opções para encontrares o teu caminho."
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_landing
+msgid "Find your next step ↗"
+msgstr "Descobre o próximo passo ↗"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_landing
+msgid "Filter discovery paths"
+msgstr "Filtrar percursos de descoberta"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_landing
+msgid "Everything"
+msgstr "Tudo"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_landing
+msgid "I'm exploring"
+msgstr "Quero explorar"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_landing
+msgid "I'm following a programme"
+msgstr "Sigo um plano de estudos"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_landing
+msgid "I want to connect"
+msgstr "Quero participar"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_landing
+msgid "ways to begin"
+msgstr "formas de começar"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_landing
+msgid "Pick a course. Find your flow."
+msgstr "Escolhe um curso. Encontra o teu ritmo."
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_landing
+msgid "Explore courses"
+msgstr "Explorar cursos"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_landing
+msgid "See the bigger picture."
+msgstr "Vê o panorama completo."
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_landing
+msgid "Follow a roadmap"
+msgstr "Seguir um percurso"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_landing
+msgid "Browse units"
+msgstr "Explorar unidades curriculares"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_landing
+msgid "Follow the useful link."
+msgstr "Segue a pista certa."
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_landing
+msgid "Wander across subjects."
+msgstr "Passeia por diferentes áreas."
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_landing
+msgid "Area filters are being organised. In the meantime, explore the full course catalogue."
+msgstr "Estamos a organizar os filtros por área. Entretanto, explora o catálogo completo de cursos."
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_landing
+msgid "Explore learning areas"
+msgstr "Explorar áreas de aprendizagem"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_landing
+msgid "See what others found."
+msgstr "Descobre o que a comunidade encontrou."
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_landing
+msgid "Be among the first to share a great public video with the campus."
+msgstr "Sê das primeiras pessoas a partilhar um ótimo vídeo público com o campus."
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_landing
+msgid "Think better together."
+msgstr "Aprendemos melhor em conjunto."
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_landing
+msgid "Ask questions, exchange perspectives and leave a useful trail for others."
+msgstr "Faz perguntas, troca perspetivas e deixa um caminho útil para outras pessoas."
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_landing
+msgid "Join the conversation"
+msgstr "Participar na conversa"
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_landing
+msgid "Pass a useful public resource on to the next learner. Your Explore context comes along."
+msgstr "Partilha um recurso público útil com a próxima pessoa. O contexto da tua exploração acompanha a sugestão."
+
+#. module: facodi_learning
+#: model_terms:ir.ui.view,arch_db:facodi_learning.explore_landing
+msgid "All discovery paths are available above. Enable JavaScript to filter the routes interactively."
+msgstr "Todos os percursos estão disponíveis acima. Ativa o JavaScript para os filtrares interativamente."
+
