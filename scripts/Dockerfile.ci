@@ -2,6 +2,7 @@ FROM odoo:19.0@sha256:dd9013e669caaa23d26765dc55814655eaeecca7cfc2c265dbabae913b
 USER root
 COPY requirements.txt /opt/facodi-api-requirements.txt
 COPY facodi_api /opt/facodi-api/facodi_api
+COPY facodi_project /opt/facodi-api/facodi_project
 RUN apt-get -o Acquire::Retries=3 update \
     && apt-get install -y --no-install-recommends python3-venv \
     && rm -rf /var/lib/apt/lists/* \
