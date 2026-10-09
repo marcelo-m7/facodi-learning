@@ -152,6 +152,66 @@ class TestExploreLearningWebsite(HttpCase):
         self.assertIn(courses.status_code, (301, 302, 303, 307, 308))
         self.assertTrue(courses.headers["Location"].endswith("/courses"))
 
+    def test_explore_landing_discovery_controls_and_accessible_routes(self):
+        response = self.url_open("/explore")
+        self.assertEqual(response.status_code, 200)
+        tree = html.fromstring(response.text)
+        root = tree.xpath('//*[@data-facodi-explore-map="1"]')
+        self.assertEqual(len(root), 1)
+
+        search = root[0].xpath('.//form[@role="search"][@action="/explore/content"]')
+        self.assertEqual(len(search), 1)
+        self.assertEqual(search[0].get("method"), "get")
+        self.assertEqual(
+            search[0].xpath('.//input[@type="search"][@name="q"]/@id'),
+            ["facodi-explore-search"],
+        )
+
+        filters = root[0].xpath('.//button[@data-facodi-path-filter]')
+        self.assertEqual(
+            [button.get("data-facodi-path-filter") for button in filters],
+            ["all", "explore", "academic", "community"],
+        )
+        self.assertEqual(
+            [button.get("aria-pressed") for button in filters],
+            ["true", "false", "false", "false"],
+        )
+
+        cards = root[0].xpath('.//a[@data-facodi-path-category]')
+        self.assertEqual(len(cards), 8)
+        self.assertTrue(all(card.get("href") for card in cards))
+        self.assertTrue(all(card.get("data-facodi-path-category") for card in cards))
+        self.assertEqual(
+            set(" ".join(card.get("data-facodi-path-category") for card in cards).split()),
+            {"explore", "academic", "community"},
+        )
+        self.assertEqual(
+            len(root[0].xpath('.//*[@data-facodi-path-count="1"][@aria-live]')),
+            0,
+        )
+        self.assertEqual(
+            len(root[0].xpath('.//*[@data-facodi-path-count="1"]')),
+            1,
+        )
+        self.assertEqual(
+            len(root[0].xpath('.//*[@aria-live="polite"]')),
+            1,
+        )
+        self.assertTrue(
+            root[0].xpath('.//a[contains(@href, "source=explore_map_resource_cta")]')
+        )
+
+    def test_explore_landing_hides_empty_area_claims(self):
+        self.area_group.write({"website_published": False})
+        response = self.url_open("/explore")
+        self.assertEqual(response.status_code, 200)
+        tree = html.fromstring(response.text)
+        area_card = tree.xpath('//*[@data-facodi-explore-grid="1"]/a[5]')
+        self.assertEqual(len(area_card), 1)
+        self.assertEqual(area_card[0].get("href"), "/courses")
+        self.assertIn("Area filters are being organised", area_card[0].text_content())
+        self.assertNotIn("0 learning areas", response.text)
+
     def test_areas_expose_only_accessible_published_current_website_tags(self):
         response = self.url_open("/explore/areas")
         self.assertEqual(response.status_code, 200)
