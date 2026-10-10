@@ -72,6 +72,7 @@ _SOURCE_CTA_LABELS = {
     "institutional_contact_cta": _lt("FACODI project"),
     "cta_sheet_resource_cta": _lt("Shared learning notebook"),
     "contact_sheet_resource_cta": _lt("Contact page resource"),
+    "footer": _lt("Footer contribution"),
     "contact_page": _lt("Contact FACODI"),
     "contribution_board_resource_cta": _lt("Contribution board"),
     "contribution_board_correction_cta": _lt("Contribution board correction"),

@@ -40,6 +40,10 @@ class TestContextualSubmissionModelContract(TransactionCase):
             "About FACODI",
         )
         self.assertEqual(
+            self.Submission._facodi_source_cta_label("footer"),
+            "Footer contribution",
+        )
+        self.assertEqual(
             self.Submission._facodi_source_cta_label("future_resource_cta"),
             "Future Resource Cta",
         )
