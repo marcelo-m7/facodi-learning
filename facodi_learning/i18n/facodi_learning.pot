@@ -4472,6 +4472,12 @@ msgstr ""
 
 #. module: facodi_learning
 #. odoo-python
+#: code:addons/facodi_learning/models/contextual_submission.py:0
+msgid "Footer contribution"
+msgstr ""
+
+#. module: facodi_learning
+#. odoo-python
 #: code:addons/facodi_learning/controllers/contextual_submission.py:0
 #: code:addons/facodi_learning/models/contextual_submission.py:0
 msgid "I found a useful public resource and want to leave it on the FACODI learning trail."

@@ -39,7 +39,8 @@ class TranslationCatalogueTest(unittest.TestCase):
     def test_portal_and_contribution_messages_are_translated(self):
         required = {'No academic map pinned yet', 'FACODI quick actions',
                     'Contact the FACODI team', 'Save changes', 'Withdraw submission',
-                    'Where do you want to go next?', 'Videos shared by the community'}
+                    'Where do you want to go next?', 'Videos shared by the community',
+                    'Footer contribution'}
         for locale in ('pt', 'es', 'fr'):
             translated = {e['msgid']: e['msgstr'] for e in messages(ROOT / 'i18n' / (locale + '.po'))}
             with self.subTest(locale=locale):
