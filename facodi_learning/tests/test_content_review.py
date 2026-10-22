@@ -78,6 +78,72 @@ class TestContentPublicationGovernance(TransactionCase):
         self.assertEqual(review.state, "approved")
         self.assertEqual(review.reviewed_by_id, self.manager)
 
+    def test_new_draft_section_stays_unpublished_without_explicit_flags(self):
+        self.website.action_facodi_enable_publication_review()
+        # Simulate a website-level default that would otherwise mark a new
+        # section as public before it can receive a content review.
+        section = self.env["slide.slide"].with_context(
+            default_website_published=True
+        ).create(
+            {
+                "name": "Unpublished curriculum section",
+                "channel_id": self.channel.id,
+                "is_category": True,
+                "slide_category": "document",
+            }
+        )
+        self.assertFalse(section.is_published)
+        self.assertFalse(section.website_published)
+        self.assertFalse(section.facodi_content_review_ids)
+
+    def test_explicit_draft_flag_clears_website_publication_default(self):
+        self.website.action_facodi_enable_publication_review()
+        section = self.env["slide.slide"].with_context(
+            default_website_published=True
+        ).create(
+            {
+                "name": "Explicitly unpublished curriculum section",
+                "channel_id": self.channel.id,
+                "is_category": True,
+                "slide_category": "document",
+                "is_published": False,
+            }
+        )
+        self.assertFalse(section.is_published)
+        self.assertFalse(section.website_published)
+
+    def test_explicit_website_publication_is_still_guarded(self):
+        self.website.action_facodi_enable_publication_review()
+        with self.assertRaises(ValidationError):
+            self.env["slide.slide"].create(
+                {
+                    "name": "Unreviewed website publication",
+                    "channel_id": self.channel.id,
+                    "slide_category": "article",
+                    "is_published": False,
+                    "website_published": True,
+                }
+            )
+
+    def test_unrelated_website_keeps_its_publication_default(self):
+        self.website.action_facodi_enable_publication_review()
+        unrelated = self.env["website"].create({"name": "Independent Publication"})
+        unrelated.sudo().write({"facodi_publication_review_enabled": False})
+        course = self.env["slide.channel"].create(
+            {"name": "Independent Course", "website_id": unrelated.id}
+        )
+        slide = self.env["slide.slide"].with_context(
+            default_website_published=True
+        ).create(
+            {
+                "name": "Published by unrelated site's defaults",
+                "channel_id": course.id,
+                "slide_category": "article",
+            }
+        )
+        self.assertFalse(slide._facodi_requires_review())
+        self.assertTrue(slide.website_published)
+
     def test_published_create_rolls_back_when_review_is_missing(self):
         before = self.env["slide.slide"].search_count([])
         try:
