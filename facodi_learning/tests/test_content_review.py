@@ -128,6 +128,7 @@ class TestContentPublicationGovernance(TransactionCase):
     def test_unrelated_website_keeps_its_publication_default(self):
         self.website.action_facodi_enable_publication_review()
         unrelated = self.env["website"].create({"name": "Independent Publication"})
+        unrelated.sudo().write({"facodi_publication_review_enabled": False})
         course = self.env["slide.channel"].create(
             {"name": "Independent Course", "website_id": unrelated.id}
         )
