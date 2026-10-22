@@ -75,6 +75,15 @@ seeds under **YouTube discovery seeds**. A Manager must resolve a candidate befo
 explicitly `website_published=False`; normal Odoo editorial review/publication
 remains authoritative.
 
+Native course lessons and structural sections also start as drafts. During
+`slide.slide.create`, FACODI normalizes an omitted `website_published` to `False`
+for courses governed by its review policy, unless publication was explicitly
+requested via `is_published`. Other websites keep their Odoo defaults. This prevents
+Odoo's two publication flags from accidentally triggering the approval guard
+while an Officer is still building a course. An explicit `True` in either field
+remains subject to the current approved content review; drafting does not bypass
+the Manager decision or the content-hash check.
+
 M3.1 does not perform semantic/AI ranking, curriculum coverage or learner
 progression/credit recognition. YouTube discovery remains bounded, provider
 metadata only, and fail-closed through the existing candidate and review stages.

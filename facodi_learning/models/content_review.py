@@ -485,6 +485,18 @@ class SlideSlide(models.Model):
 
     @api.model_create_multi
     def create(self, vals_list):
+        # Odoo has two publication flags on slide.slide. A website context may
+        # default website_published=True despite an explicit draft request via
+        # is_published=False. Only in the FACODI-governed scope, normalize new
+        # implicit publications to drafts so review can happen *after* creation.
+        # Keep other websites' defaults and explicitly requested publication.
+        for vals in vals_list:
+            if (
+                not vals.get("is_published")
+                and "website_published" not in vals
+                and self.new(vals)._facodi_requires_review()
+            ):
+                vals["website_published"] = False
         with self.env.cr.savepoint():
             records = super().create(vals_list)
             records._facodi_check_publication_review()
