@@ -299,3 +299,23 @@ class TestCurriculumCoverageSuggestions(TransactionCase):
             self.env.ref("website_slides.group_website_slides_manager"),
             action.group_ids,
         )
+
+    def test_existing_individual_and_reference_actions_work_for_managers(self):
+        # Odoo 19 restricts direct reads of ir.actions.act_window to admin.
+        # Managers must still be able to open the reviewed-proposal queue,
+        # without granting them administrative privileges.
+        unit_action = self.unit.with_user(
+            self.manager
+        ).action_generate_coverage_proposals()
+        self.assertEqual(
+            unit_action["res_model"], "facodi.learning.curriculum.coverage"
+        )
+        self.assertIn("domain", unit_action)
+
+        reference_action = self.reference.with_user(
+            self.manager
+        ).action_generate_coverage_proposals()
+        self.assertEqual(
+            reference_action["res_model"], "facodi.learning.curriculum.coverage"
+        )
+        self.assertIn("domain", reference_action)
