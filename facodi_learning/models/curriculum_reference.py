@@ -163,7 +163,7 @@ class FacodiLearningCurriculumReference(models.Model):
         )
 
         proposals = propose_reference_curriculum_coverage(self)
-        action = self.env.ref("facodi_learning.action_facodi_curriculum_coverage").read()[0]
+        action = self.env.ref("facodi_learning.action_facodi_curriculum_coverage").sudo().read()[0]
         action["domain"] = (
             [("id", "in", proposals.ids)]
             if proposals
@@ -548,7 +548,7 @@ class FacodiLearningCurriculumUnit(models.Model):
         )
 
         proposals = propose_curriculum_coverage(self)
-        action = self.env.ref("facodi_learning.action_facodi_curriculum_coverage").read()[0]
+        action = self.env.ref("facodi_learning.action_facodi_curriculum_coverage").sudo().read()[0]
         action["domain"] = (
             [("id", "in", proposals.ids)]
             if proposals
@@ -597,9 +597,11 @@ class FacodiLearningCurriculumUnit(models.Model):
         ):
             proposals |= propose_curriculum_coverage(unit, limit=5)
 
+        # Read only the administrator-owned window action definition. No
+        # privileged read/write is used for curricular records or proposals.
         action = self.env.ref(
             "facodi_learning.action_facodi_curriculum_coverage"
-        ).read()[0]
+        ).sudo().read()[0]
         action["domain"] = (
             [("id", "in", proposals.ids)]
             if proposals
