@@ -1,5 +1,5 @@
 from odoo import Command
-from odoo.exceptions import AccessError
+from odoo.exceptions import AccessError, ValidationError
 from odoo.tests import TransactionCase
 
 from ..services.curriculum_coverage_suggestion import (
@@ -205,3 +205,84 @@ class TestCurriculumCoverageSuggestions(TransactionCase):
                 self.unit.with_user(self.officer),
                 limit=20,
             )
+
+    def test_selected_batch_generates_only_proposed_reviewable_rows(self):
+        machine_learning = self.env["facodi.learning.curriculum.unit"].create(
+            {
+                "reference_id": self.reference.id,
+                "external_unit_code": "19411042",
+                "name": "Aprendizagem Automática",
+                "credits": 6.0,
+                "curricular_year": 2,
+            }
+        )
+        excluded = self.env["facodi.learning.curriculum.unit"].create(
+            {
+                "reference_id": self.reference.id,
+                "external_unit_code": "19411043",
+                "name": "História da Arte Medieval",
+                "curricular_year": 2,
+            }
+        )
+        self.env["slide.channel"].create(
+            {"name": "Aprendizagem Automática", "is_published": True}
+        )
+
+        selected = (self.unit | machine_learning).with_user(self.manager)
+        action = selected.action_generate_selected_coverage_proposals()
+
+        Coverage = self.env["facodi.learning.curriculum.coverage"]
+        created = Coverage.search(
+            [("curriculum_unit_id", "in", selected.ids)]
+        )
+        self.assertTrue(created)
+        self.assertTrue(all(row.state == "proposed" for row in created))
+        self.assertTrue(all(row.origin == "analysis" for row in created))
+        self.assertFalse(Coverage.search_count(
+            [("curriculum_unit_id", "=", excluded.id)]
+        ))
+        self.assertEqual(action["res_model"], "facodi.learning.curriculum.coverage")
+        self.assertEqual(action["domain"], [("id", "in", created.ids)])
+
+        # Replaying the same selection must not duplicate proposals nor
+        # reopen prior decisions; the action shows the existing review queue.
+        count = Coverage.search_count(
+            [("curriculum_unit_id", "in", selected.ids)]
+        )
+        repeated = selected.action_generate_selected_coverage_proposals()
+        self.assertEqual(
+            count,
+            Coverage.search_count([("curriculum_unit_id", "in", selected.ids)]),
+        )
+        self.assertEqual(
+            repeated["domain"],
+            [("curriculum_unit_id", "in", selected.ids), ("state", "=", "proposed")],
+        )
+
+    def test_selected_batch_is_manager_only_even_via_direct_orm_call(self):
+        with self.assertRaises(AccessError):
+            self.unit.with_user(self.officer).action_generate_selected_coverage_proposals()
+        with self.assertRaises(AccessError):
+            self.unit.with_user(self.officer).browse(
+                []
+            ).action_generate_selected_coverage_proposals()
+
+    def test_selected_batch_rejects_empty_or_more_than_ten_units(self):
+        Unit = self.env["facodi.learning.curriculum.unit"].with_user(self.manager)
+        with self.assertRaises(ValidationError):
+            Unit.browse().action_generate_selected_coverage_proposals()
+
+        additional = Unit.create([
+            {
+                "reference_id": self.reference.id,
+                "external_unit_code": f"bulk-guard-{index}",
+                "name": f"Unit {index}",
+            }
+            for index in range(10)
+        ])
+        with self.assertRaises(ValidationError):
+            (self.unit.with_user(self.manager) | additional).action_generate_selected_coverage_proposals()
+
+        self.assertFalse(self.env["facodi.learning.curriculum.coverage"].search_count(
+            [("curriculum_unit_id", "in", (self.unit | additional).ids)]
+        ))
