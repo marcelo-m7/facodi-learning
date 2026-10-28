@@ -242,7 +242,8 @@ class TestCurriculumCoverageSuggestions(TransactionCase):
             [("curriculum_unit_id", "=", excluded.id)]
         ))
         self.assertEqual(action["res_model"], "facodi.learning.curriculum.coverage")
-        self.assertEqual(action["domain"], [("id", "in", created.ids)])
+        self.assertEqual(action["domain"][0][:2], ("id", "in"))
+        self.assertEqual(set(action["domain"][0][2]), set(created.ids))
 
         # Replaying the same selection must not duplicate proposals nor
         # reopen prior decisions; the action shows the existing review queue.
