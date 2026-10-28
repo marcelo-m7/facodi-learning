@@ -287,3 +287,15 @@ class TestCurriculumCoverageSuggestions(TransactionCase):
         self.assertFalse(self.env["facodi.learning.curriculum.coverage"].search_count(
             [("curriculum_unit_id", "in", (self.unit | additional).ids)]
         ))
+
+    def test_selected_batch_action_is_list_only_and_manager_bound(self):
+        action = self.env.ref(
+            "facodi_learning.action_facodi_curriculum_selected_suggestions"
+        )
+        self.assertEqual(action.model_id.model, "facodi.learning.curriculum.unit")
+        self.assertEqual(action.binding_view_types, "list")
+        self.assertEqual(action.state, "code")
+        self.assertIn(
+            self.env.ref("website_slides.group_website_slides_manager"),
+            action.groups_id,
+        )
