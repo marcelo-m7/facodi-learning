@@ -559,6 +559,57 @@ class FacodiLearningCurriculumUnit(models.Model):
         )
         return action
 
+    def action_generate_selected_coverage_proposals(self):
+        """Create review-only suggestions for explicitly selected units (max. 10).
+
+        This method deliberately does not approve, reject, publish, or modify
+        any external curriculum facts. Selection is always server-authorized.
+        """
+        from ..services.curriculum_coverage_suggestion import (
+            propose_curriculum_coverage,
+        )
+
+        if not (
+            self.env.is_superuser()
+            or self.env.user.has_group("website_slides.group_website_slides_manager")
+        ):
+            raise AccessError(
+                "Only eLearning Managers can generate curriculum coverage suggestions."
+            )
+        if not self:
+            raise ValidationError("Select at least one curricular unit.")
+        if len(self) > 10:
+            raise ValidationError(
+                "Select at most 10 curricular units per review batch."
+            )
+        self.check_access("read")
+
+        # One selected unit at a time: reuse the established, versioned
+        # ranking/provenance and duplicate/terminal-decision protections.
+        proposals = self.env["facodi.learning.curriculum.coverage"].browse()
+        for unit in self.sorted(
+            key=lambda item: (
+                item.reference_id.id,
+                item.curricular_year,
+                item.sequence,
+                item.id,
+            )
+        ):
+            proposals |= propose_curriculum_coverage(unit, limit=5)
+
+        action = self.env.ref(
+            "facodi_learning.action_facodi_curriculum_coverage"
+        ).read()[0]
+        action["domain"] = (
+            [("id", "in", proposals.ids)]
+            if proposals
+            else [
+                ("curriculum_unit_id", "in", self.ids),
+                ("state", "=", "proposed"),
+            ]
+        )
+        return action
+
     def _facodi_public_path(self):
         self.ensure_one()
         if not self.reference_id._facodi_is_public():
