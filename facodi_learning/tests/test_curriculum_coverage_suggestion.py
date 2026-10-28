@@ -297,5 +297,5 @@ class TestCurriculumCoverageSuggestions(TransactionCase):
         self.assertEqual(action.state, "code")
         self.assertIn(
             self.env.ref("website_slides.group_website_slides_manager"),
-            action.groups_id,
+            action.group_ids,
         )
