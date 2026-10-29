@@ -119,15 +119,15 @@ class TestCurriculumApiReader(TransactionCase):
         ].with_user(self.reader)
         courses = self.env["slide.channel"].with_user(self.reader)
 
-        self.assertIn(self.reference, references.search([
+        self.assertIn(self.reference.id, references.search([
             ("id", "=", self.reference.id),
-        ]))
+        ]).ids)
         self.assertFalse(references.search([("id", "=", self.private_reference.id)]))
-        self.assertIn(self.unit, units.search([("id", "=", self.unit.id)]))
+        self.assertIn(self.unit.id, units.search([("id", "=", self.unit.id)]).ids)
         self.assertFalse(units.search([("id", "=", self.private_unit.id)]))
-        self.assertIn(self.approved, coverages.search([("id", "=", self.approved.id)]))
+        self.assertIn(self.approved.id, coverages.search([("id", "=", self.approved.id)]).ids)
         self.assertFalse(coverages.search([("id", "=", self.proposed.id)]))
-        self.assertIn(self.course, courses.search([("id", "=", self.course.id)]))
+        self.assertIn(self.course.id, courses.search([("id", "=", self.course.id)]).ids)
         self.assertFalse(courses.search([("id", "=", self.private_course.id)]))
 
     def test_connector_cannot_generate_or_approve_proposals(self):
