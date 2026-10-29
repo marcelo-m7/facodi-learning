@@ -33,7 +33,7 @@
         <field name="name">FACODI connector: approved coverage of public curricula</field>
         <field name="model_id" ref="model_facodi_learning_curriculum_coverage"/>
         <field name="groups" eval="[(4, ref('group_facodi_curriculum_api_reader'))]"/>
-        <field name="domain_force">[('state', '=', 'approved'), ('curriculum_unit_id.reference_id.website_published', '=', True), ('curriculum_unit_id.reference_id.validated_at', '!=', False), ('channel_id.active', '=', True), ('channel_id.is_published', '=', True), ('channel_id.website_published', '=', True)]</field>
+        <field name="domain_force">[('state', '=', 'approved'), ('curriculum_unit_id.reference_id.website_published', '=', True), ('curriculum_unit_id.reference_id.validated_at', '!=', False), ('channel_id.active', '=', True), ('channel_id.is_published', '=', True), ('channel_id.is_visible', '=', True), ('channel_id.website_published', '=', True)]</field>
         <field name="perm_read" eval="1"/>
         <field name="perm_write" eval="0"/>
         <field name="perm_create" eval="0"/>
@@ -44,7 +44,7 @@
         <field name="name">FACODI connector: published visible learning courses only</field>
         <field name="model_id" ref="website_slides.model_slide_channel"/>
         <field name="groups" eval="[(4, ref('group_facodi_curriculum_api_reader'))]"/>
-        <field name="domain_force">[('active', '=', True), ('is_published', '=', True), ('website_published', '=', True)]</field>
+        <field name="domain_force">[('active', '=', True), ('is_published', '=', True), ('is_visible', '=', True), ('website_published', '=', True)]</field>
         <field name="perm_read" eval="1"/>
         <field name="perm_write" eval="0"/>
         <field name="perm_create" eval="0"/>
