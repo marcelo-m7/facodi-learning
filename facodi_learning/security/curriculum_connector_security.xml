@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Dedicated role for an API principal that reads published curricular
+         references/units, approved coverage, and published learning courses.
+         It intentionally implies no editor or administrator group. -->
+    <record id="group_facodi_curriculum_api_reader" model="res.groups">
+        <field name="name">FACODI Curriculum API Reader</field>
+    </record>
+
+    <record id="rule_facodi_reader_references" model="ir.rule">
+        <field name="name">FACODI connector: validated public references only</field>
+        <field name="model_id" ref="model_facodi_learning_curriculum_reference"/>
+        <field name="groups" eval="[(4, ref('group_facodi_curriculum_api_reader'))]"/>
+        <field name="domain_force">[('website_published', '=', True), ('validated_at', '!=', False)]</field>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_write" eval="0"/>
+        <field name="perm_create" eval="0"/>
+        <field name="perm_unlink" eval="0"/>
+    </record>
+
+    <record id="rule_facodi_reader_units" model="ir.rule">
+        <field name="name">FACODI connector: units of validated public references</field>
+        <field name="model_id" ref="model_facodi_learning_curriculum_unit"/>
+        <field name="groups" eval="[(4, ref('group_facodi_curriculum_api_reader'))]"/>
+        <field name="domain_force">[('reference_id.website_published', '=', True), ('reference_id.validated_at', '!=', False)]</field>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_write" eval="0"/>
+        <field name="perm_create" eval="0"/>
+        <field name="perm_unlink" eval="0"/>
+    </record>
+
+    <record id="rule_facodi_reader_coverage" model="ir.rule">
+        <field name="name">FACODI connector: approved coverage of public curricula</field>
+        <field name="model_id" ref="model_facodi_learning_curriculum_coverage"/>
+        <field name="groups" eval="[(4, ref('group_facodi_curriculum_api_reader'))]"/>
+        <field name="domain_force">[('state', '=', 'approved'), ('curriculum_unit_id.reference_id.website_published', '=', True), ('curriculum_unit_id.reference_id.validated_at', '!=', False), ('channel_id.active', '=', True), ('channel_id.is_published', '=', True), ('channel_id.website_published', '=', True)]</field>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_write" eval="0"/>
+        <field name="perm_create" eval="0"/>
+        <field name="perm_unlink" eval="0"/>
+    </record>
+
+    <record id="rule_facodi_reader_channels" model="ir.rule">
+        <field name="name">FACODI connector: published visible learning courses only</field>
+        <field name="model_id" ref="website_slides.model_slide_channel"/>
+        <field name="groups" eval="[(4, ref('group_facodi_curriculum_api_reader'))]"/>
+        <field name="domain_force">[('active', '=', True), ('is_published', '=', True), ('website_published', '=', True)]</field>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_write" eval="0"/>
+        <field name="perm_create" eval="0"/>
+        <field name="perm_unlink" eval="0"/>
+    </record>
+</odoo>
